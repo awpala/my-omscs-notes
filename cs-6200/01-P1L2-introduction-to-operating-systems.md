@@ -272,7 +272,7 @@ In summary, an operating system must incorporate a number of services in order t
   * etc.
 
 <center>
-<img src="./assets/P01L02-010.png" width="350">
+<img src="./assets/P01L02-010.png" width="500">
 </center>
 
 Operating systems make these services available via system calls. The figure above shows examples of system calls in two popular operating systems, Windows and Unix. Notice that despite being two different operating systems, the types of system calls and the abstractions around them are remarkably similar between the two.
