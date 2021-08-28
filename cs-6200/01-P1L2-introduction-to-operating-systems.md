@@ -19,7 +19,7 @@ This course will highlight several abstraction and arbitration mechanisms for th
 
 An operating system is like a *toy shop manager*:
 
-![P01L02-001](./assets/P01L02-001.png)
+<img src="./assets/P01L02-001.png" width="400">
 
 | Characteristic | Toy Shop Manager Metaphor | Operating System |
 | :--: | :--: | :--: |
@@ -29,7 +29,7 @@ An operating system is like a *toy shop manager*:
 
 ## 3. What Is an Operating Systems?
 
-![P01L02-002](./assets/P01L02-002.png)
+<img src="./assets/P01L02-002.png" height="300">
 
 A **computing system** is comprised of several hardware **components**:
   * One or more **processors** (or **CPUS**)
