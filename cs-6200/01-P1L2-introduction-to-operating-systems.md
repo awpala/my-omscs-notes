@@ -329,3 +329,60 @@ Conversely, the **drawbacks** are:
 
 Overall, the modular design delivers significant improvements over the monolithic design, and is consequently more commonly used today.
 
+## 18. Microkernel
+
+<center>
+<img src="./assets/P01L02-013.png" width="350">
+</center>
+
+Another example of operating system design is the **microkernel**. Microkernels require only the most basic primitives at the operating system level (e.g., representing an executing application's **address space** and its execution context [i.e., **threads**]), while all other software components (e.g., database, file system, disk driver, etc.) runs outside of the operating system's kernel at the (unprivileged) user level.
+
+For this reason, the microkernel-based operating system requires many interprocess interactions, therefore, the microkernel itself will typically support **interprocess communications** (**IPCs**) as one of its core abstractions and mechanisms (along with address spaces and threads).
+
+The **benefits** of a microkernel are:
+  * small size, lending to lower overhead and better performance
+  * good verifiability/testability, which is especially important in environments where correct operating system behavior is critical (e.g., embedded devices, control systems, etc.)
+
+Conversely, the **drawbacks** are:
+  * relatively poor portability, due to relative lack of compatible application software
+  * high complexity of software development
+  * frequent user/kernel switching adds a performance penalty
+
+## 19. Linux and macOS Architectures
+
+<center>
+<img src="./assets/P01L02-014.png" width="500">
+</center>
+
+The **Linux** operating system environment is shown above.
+  * the Linux **kernel** abstracts and manages the underlying hardware by supporting a number of abstractions and their associated mechanisms
+  * **standard libraries** are provided, including those that implement system call interfaces
+  * **utility programs** facilitate interaction with the operating system by users and developers
+
+<center>
+<img src="./assets/P01L02-015.png" width="550">
+</center>
+
+The Linux **kernel** itself consists of several logical components (e.g., I/O management, memory management, process management, etc.), all of which have well defined functionality and interfaces.
+  * Each individual component can be independently modified or replaced, making the modular approach possible in Linux.
+
+<center>
+<img src="./assets/P01L02-016.png" width="450">
+</center>
+
+The **Apple macOS** operating system architecture is shown above.
+  * the **Mach** microkernel implements key primitives (e.g., memory management, thread scheduling, interprocess mechanisms [including RPC], etc.)
+    * **BSD** provides Unix interoperatibility via BSD command-line interface, POSIX API support, and network I/O
+    * the bottom two modules (see figure) are dedicated to development of drivers and kernel extension modules that can be dynamically loaded into the kernel
+  * all **application environements** sit above the kernel layer
+
+## 20. Lesson Summary
+
+This lesson answers the question *"What is an operating system?"*
+
+An operating system is important because it abstracts and arbitrates the use of the underlying hardware system. To achieve this, the operating system relies on various operating system elements (e.g., **abstractions**, **mechanisms**, and **policies**)
+
+Communication between applications and the operating systems is performed via **system calls**.
+
+There are various alternatives to operating system organizational schemes, each with their respective advantages and disadvantages.
+  * Representative examples: Linux and macOS
