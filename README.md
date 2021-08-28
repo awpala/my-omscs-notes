@@ -1,1 +1,5 @@
-# my-omscs-notes
+# My OMSCS Notes
+
+| Course Number | Course Title | Semester |
+| :--: | :--:| :--: |
+| CS-6200 | Graduate Introduction to Operating Systems | Fall 2021 |
