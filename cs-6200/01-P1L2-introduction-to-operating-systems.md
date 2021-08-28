@@ -197,4 +197,135 @@ Computer platforms distinguish between at least two modes:
 
 ## 12. System Call Flowchart
 
+<center>
+<img src="./assets/P01L02-006annotated.png" width="400">
+</center>
+
+During a **system call**, data and control are exchanged between the user process and the operating system kernel.
+  1. Starting in a currently executing user process.
+  2. The user process requires system hardware access, so it makes a system call.
+  3. On system call, control is passed to the operating system (in privileged mode).
+      * Executing a system call involves switching the **context** from the user process to the operating system kernel, passing any arguments (if applicable), and then processing the instruction sequence in kernel memory.
+      * With the system call, the operating system operates in privileged mode, and is allowed to perform whatever operation was specified in the system call.
+  4. Once the operating system performs the system call, it returns the result and control back to the user process.
+      * This involves changing the execution context back from kernel mode to user mode, passing any arguments back into the user process's address space (if applicable), and returning to the memory location of the user process immediately prior to executing the system call.
+
+To make a system call, an application must...
+  * write arguments
+  * save relevant data at a well-defined location, which allows the operating system kernel to determine which and how many arguments to retrieve, as well as where they are located.
+  * make the system call (i.e., using the specific system call number)
+
+<center>
+<img src="./assets/P01L02-007.png" width="350">
+</center>
+
+The **arguments** can be passed either directly between the user program and the operating system, or they can be passed indirectly via **registers** per specified address.
+
+In **synchronous mode**, the process waits until the system call is completed.
+  * Asynchronous call will be discussed later.
+
+
+
+
+
+## 13. Crossing the User/Kernel Protection Boundary
+
+In summary, user/kernel transitions are a necessary step during application execution.
+  * Applications may need to perform access to certain types of hardware, or may need to request certain changes in the allocations of hardware resources that have been made to them; only the operating system kernel is permitted to perform such operations.
+  * The hardware provides support for performing user/kernel transitions (e.g., traps on illegal instructions or memory accesses requiring special privilege).
+
+Performing such transitions requires several instructions (e.g., 50-100 ns/transition on a 2 GHz machine running Linux).
+
+<center>
+<img src="./assets/P01L02-008.png" width="200">
+</center>
+
+Furthermore, this switches the **locality**, which affects hardware cache usage.
+  * The application's performance depends upon being able to use the hardware's **cache** effectively, as accessing cache (a few cycles) is much faster than accessing main memory (hundreds of cycles). Performing a system call (or crossing into the operating system in general), while executing, the operating system will likely bring in required content into the cache, which may replace some of the application content that was present prior to this. Therefore, upon return to the application, it will have to re-fetch the "lost" cache data from main memory.
+    * ***N.B.*** Because context switches will swap the data/addresses currently in cache, the performance of applications can benefit or suffer based on how a context switch changes what is in cache at the time they are accessing it. A cache is considered **hot** if an application is accessing the cache when it contains the data/addresses it needs, otherwise a cache is considered **cold** if an application is accessing the cache when it does not contain the data/addresses it needs (thereby forcing it to retrieve the data/addresses from main memory instead).
+
+Therefore, user/kernel transitions are ***not cheap***!
+
+## 14. Basic OS Services
+
+<center>
+<img src="./assets/P01L02-009.png" width="400">
+</center>
+
+An operating system provides applications with access to the underlying hardware. It does so by exporting a number of **services**. 
+
+At the most basic level, these services are directly linked to some of the hardware components, for example:
+  * the **scheduler** controls access to the CPU(s)
+  * the **memory manager** is responsible for allocating the underlying physical memory (i.e., main memory) to one or more co-running applications, and ensure that multiple applications do not overwrite each others' access to main memory
+  * the **block device driver** is responsible for controlling access to a block device (e.g., disk)
+
+Additionally, the operating system exports higher level services that are linked with higher level abstractions (i.e., as opposed to abstractions mapping directly to the hardware), for example:
+  * a **file** is supported by virtually all operating systems, and in principle these operating systems integrate **file systems** as a service in turn
+
+In summary, an operating system must incorporate a number of services in order to provide applications and application developers with a number of useful types of functionality, e.g.,:
+  * process management
+  * file management
+  * device management
+  * memory management
+  * storage management
+  * security
+  * etc.
+
+<center>
+<img src="./assets/P01L02-010.png" width="350">
+</center>
+
+Operating systems make these services available via system calls. The figure above shows examples of system calls in two popular operating systems, Windows and Unix. Notice that despite being two different operating systems, the types of system calls and the abstractions around them are remarkably similar between the two.
+
+## 15. System Calls Quiz and Answers
+
+On a 64-bit Linux-based OS, which system call is used to...
+  * Send a signal to a process?
+    * `kill`
+  * Set the group identity of a process?
+    * `setgid` (***N.B.*** on non-64 bit system, there are corresponding variants `setgid16` and `setgid32`)
+  * Mount a file system?
+    * `mount`
+  * Read/write system parameters?
+    * `sysctl`
+
+## 16. Monolithic OS
+
+We've seen so far some rough indications of how the operating system is laid out. Let's now consider more explicitly the different types of operating-system organizational schemes.
+
+<center>
+<img src="./assets/P01L02-011.png" width="400">
+</center>
+
+Historically, the operating system has had a **monolithic operating system** design, whereby every possible service that any one of the applications can require or that any type of hardware will demand is already part of the operating system.
+  * For example, such a monolithic operating system may include several possible file systems wherein one is specialized for sequential workloads (e.g., sequentially accessing files when reading/reading them) and another is optimized for randomized I/O access (e.g., databases)
+
+The **benefits** of a monolithic operating system are:
+  * everything is included (e.g., abstractions, services, etc.)
+  * because everything is packaged together, there are more possibilities for compile-time optimizations (e.g., inlining)
+
+Conversely, the **drawbacks** are:
+  * poor customization, portability, manageability/debugging, etc.
+  * large memory footprint, which in turn can impact application performance
+
+## 17. Modular OS
+
+<center>
+<img src="./assets/P01L02-012.png" width="350">
+</center>
+
+A more common approach today is a **modular operating system** (e.g., Linux).
+  * In this design, the standard operating system has a set of basic services and APIs already part of it, but more importantly (as the name suggests) everything else can be added in as a **module**, allowing for greater flexibility and customization. This is possible because the operating system specifies certain **interfaces** that any given module must implement in order to be part of the operating system.
+  * Depending on the workload, a module implementing the interface(s) can be dynamically installed in a way that is sensible for the workload itself (e.g., running the file access system that is optimized for databases when running a database application).
+
+The **benefits** of a modular operating system are:
+  * good maintainability and smaller code base
+  * smaller memory footprint, leaving more available memory for applications
+  * lower resource needs
+
+Conversely, the **drawbacks** are:
+  * indirection (i.e., via intermediate interfaces) can impact performance (e.g., reduced compiler optimization opportunities)
+  * maintenance can still be an issue, given that modules can originate from completely disparate code bases
+
+Overall, the modular design delivers significant improvements over the monolithic design, and is consequently more commonly used today.
 
