@@ -120,3 +120,81 @@ In each of these operating systems, there are many choices made in their design 
 
 ## 8. OS Elements
 
+To achieve its goals, an operating system supports a number of higher level **abstractions**, and key **mechanisms** operating on these asbractions.
+
+For example:
+
+| Abstractions | Mechanisms |
+| :--: | :--: |
+| processes and threads | create and launch and application to start it, and schedule to run it on the CPU |
+| file, socket, and memory page | open (e.g., a particular device or hardware component), write (e.g., update state), and allocate memory from an application to a hardware resource |
+
+Operating systems may also integrate specific **policies** to determine how these mechanisms will be used to manage the underlying hardware, e.g.,:
+  * the maximum number of sockets accessible by a process
+  * which data will be removed from physical memory using a particular algorithm (e.g., **least-recently used** [**LRU**], **earliest deadline first** [**EDF**], etc.)
+
+## 9. OS Elements: Memory Management Example
+
+<center>
+<img src="./assets/P01L02-004.png" width="250">
+</center>
+
+***Abstractions***:
+  * **memory page**, corresponding to some addressable region of memory of fixed size (e.g., 4KB)
+
+***Mechanisms***:
+  * allocate the page in **DRAM**
+  * map the page into the address space of a **process**, allowing the process to access the physical memory corresponding to the contents of the page
+    * over time, the page may be moved to different locations of the DRAM or even stored on **disk**
+
+***Policies***:
+  * since it is faster to access data from memory/DRAM than from the disk, it must have some policies to decide whether the page contents will be stored in DRAM or copied over to disk
+    * **least recently used** (**LRU**) is a commonly used policy, whereby the pages that have been least recently used over a time period (i.e., accessed the longest time ago) are the ones that are transferred from DRAM to disk (which is also called **swapping**)
+      * the rationale for this is that least recently used pages are either least important and/or least likely to be used in the near future, whereas the opposite is true for pages being used more recently and more frequently
+
+## OS Design Principles
+
+Consider some guiding principles when designing an operating system as follows:
+  * separation of mechanism and policy
+    * implement ***flexible*** mechanisms to support many policies (e.g., LRU, LFU, random, etc.)
+      * in different settings, different policies can make more sense than others
+  * optimize for the **common case**
+    * there are several relevant questions to determine this, e.g.,:
+      * where will the operating system be used?
+      * what will the user want to execute on that machine?
+      * what are the workload requirements?
+    * once the common case is understood, select a specific policy that is most sensible for that common case and which can be supported by the underlying mechanisms and abstractions supported by the operating system
+
+## 11. User/Kernel Protection Boundary
+
+To achieve its role of controlling and managing hardware resources on behalf of applications, the operating system must have ***special privileges*** to have direct access to the hardware.
+
+<center>
+<img src="./assets/P01L02-005.png" width="325">
+</center>
+
+(***N.B.*** in the figure `Mm` denotes ***main memory*** and `CPU` denotes the ***processor***. This convention will be used throughout the course.)
+
+Computer platforms distinguish between at least two modes:
+  * **user-level** (unprivileged)
+    * applications operate in unpriviliged user mode
+  * **kernel-level** (privileged)
+    * because an operating system must have direct hardware access, it must operate in privileged kernel mode
+    * therefore, hardware access can only be performed by the operating system kernel (i.e., in privileged mode)
+
+**Switching** between the user and kernel modes is supported by hardware on most modern platforms.
+  * **trap instructions**
+    * In kernel mode, a special bit (called the **privilege bit**) is set in the CPU, which allows any instruction that directly manipulates the hardware to execute.
+    * In user mode, when the bit is *not* set, attempts to perform privileged instructions are forbidden; instead, this will result in a **trap instruction**, whereby the application is interrupted and the hardware switches control back to the operating system at a specific location. At that point, the operating system can analyze the trap and determine whether the process should be granted access or terminated.
+  * **system calls**
+    * The operating system exports a **system call interface**, a set of operations that the applications can explicitly invoke in order to request the operating system to perform a service which requires privileged access on their behalf.
+      * Examples include: `open` (file access), `send` (socket access), `malloc` (memory access)
+  * **signals**
+    * A **signal** is a mechanism whereby the operating system can pass messages to the application. This will be discussed in a later lesson.
+
+
+
+
+## 12. System Call Flowchart
+
+
