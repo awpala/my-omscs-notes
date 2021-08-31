@@ -489,3 +489,10 @@ Assess the following statement: Shared-memory-based communication performs bette
     * `CORRECT` - with shared-memory-based communication, the individual data exchange is relatively cheap due to low overhead with respect to the operating system kernel, however, the actual operation of **mapping** memory between the two processes is itself an ***expensive*** operation (therefore, shared-memory-based communication is only "better performing" if this mapping-operation cost can be amortized across a sufficiently large number of comparative messages)
 
 ## 23. Lesson Summary
+
+This lesson demonstrated how a process is represented by an operating system (i.e., process-related **abstractions**)
+  * how a process is laid out in memory via the **address space** and the **process control block (PCB)**
+
+This lesson also explored the key **mechanisms** that operating systems support in order to manage **process resources** (e.g., process creation and process scheduling)
+
+Lastly, this lesson covered several aspects of memory management that are necessary for understanding the decisions and **overhead** involved in process management (e.g., interprocess communication)
