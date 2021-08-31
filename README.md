@@ -2,4 +2,4 @@
 
 | Course Number | Course Title | Semester |
 | :--: | :--:| :--: |
-| CS-6200 | Graduate Introduction to Operating Systems | Fall 2021 |
+| [CS-6200]("./cs-6200") | Graduate Introduction to Operating Systems | Fall 2021 |
