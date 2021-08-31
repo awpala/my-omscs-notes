@@ -161,3 +161,73 @@ Other fields change too frequently to manage via the process control block (e.g.
 
 ## 10. How Is a PCB Used?
 
+Let's assume that the operating system manages two processes `P1` and `P2`, which have already been created along with their respective process control blocks stored in main memory.
+
+<center>
+<img src="./assets/P02L01-015.png" width="350">
+</center>
+
+With `P1` currently running and `P2` idle, the CPU's registers currently hold `PCB_P1` (i.e., the state of process `P1`), which must ultimately be transferred to/stored in the process control block for `P1`.
+
+<center>
+<img src="./assets/P02L01-016.png" width="350">
+</center>
+
+Subsequently, the operating system must interrupt `P1`, making it idle. To do this, the operating system must save the state information of process `P1` immediately prior to the interrupt (including the CPU registers) into the process control block for `P1`.
+
+<center>
+<img src="./assets/P02L01-017.png" width="350">
+</center>
+
+Next, the operating system must restore the state of process `P2` via its corresponding process control block, which also includes updating the CPU registers with the corresponding information.
+
+If at some point process `P2` requires more physical memory, it will make a request (e.g., via call to function `malloc()`), and then the operating system will allocate the memory, establish a new virtual-physical address map, and make the corresponding update to the process control block for process `P2`.
+
+<center>
+<img src="./assets/P02L01-018.png" width="350">
+</center>
+
+When process `P2` completes execution or when the operating system decides to interrupt `P2`, the operating system will save all of the state information regarding process `P2` in the corresponding process control block for process `P2`, and then it will restore the process control block for process `P1`.
+
+Process `P1` will now be running, and the CPU registers will reflect the state of process `P1` accordingly. Given that the values in the process control block for process `P1` correspond *exactly* to the values it had immediately prior to the previous interrupt, this means that process `P1` will resume its execution here in exactly the same state as in that in which it was immediately prior to being interrupted by the operating system.
+
+Each time the operating system performs such a ***swap*** between two processes, this is called a **context switch**.
+
+## 11. What Is a Context Switch?
+
+Recall the previous discussion regarding how an operating system swaps between two processes `P1` and `P2` in order for them to share the CPU, whereby the process control blocks reside in main memory and the values of the CPU change depending on which process is currently executing.
+
+A **context switch** can now be defined more formally as the mechanism used by the operating system to switch the CPU from the context of one running process to the context of another.
+
+These context switch operations are ***expensive***
+  * **direct costs**: the number of cycles that must be executed in order to load and store all of the instructions (i.e., values from the corresponding process control block) to/from memory
+  * **indirect costs**: cold cache and cache misses
+    * described in the following two figures below
+
+<center>
+<img src="./assets/P02L01-019.png" width="300">
+</center>
+
+When process `P1` is running on the CPU, a lot of its data will be stored in the CPU cache. As long as process `P1` is executing, a lot of its data will likely be present in the processor cache hierarchy (i.e., L1-L3) already, which can be accessed much faster (on the order of cycles) by the processor than access via main memory (on the order of hundreds of cycles). Such a cache (i.e., already containing pertinent process data) is called a **hot cache**.
+
+<center>
+<img src="./assets/P02L01-020.png" width="300">
+</center>
+
+Conversely, when a context switch to process `P2` occurs, some or all of the data in the cache belonging to process `P1` will be replaced to make room for the data required by process `P2`. Therefore, next time process `P1` is scheduled to execute, its data will not be present in the cache, but rather more time will be expended to read its data from main memory, thereby incurring **cache misses**. Such a cache (i.e., not having the pertinent process data available, but rather requiring to retrieve it from main memory) is called a **cold cache**.
+
+Therefore, it is ***desirable*** to ***limit*** how frequently context switching is performed.
+
+## 12. Hot Cache Quiz and Answers
+
+For the following sentence, check all options that correctly complete it.
+
+"When a cache is hot..."
+  * it can malfunction, so we must context switch to another process
+    * `DOES NOT APPLY` - here, "hot" is *not* referring to physical "overheating" of the CPU
+  * most process data is in the cache, so the process performance will be at its best
+    * `APPLIES` - this is the most correct/applicable option, as this is *the* characteristic behavior of a hot cache
+  * sometimes we must context switch
+    * `APPLIES` - this is also correct, and can affect performance if switch away from such a process running on a hot cache (e.g.,context switching to a process with higher priority, context switching as a result of a time sharing policy dictating the current process's time has expired, etc.)
+
+# 13. Process Life Cycle: States
