@@ -2,7 +2,7 @@
 
 ## 1. Preview
 
-This introductory level provides a high-level overview of operating systems, e.g.,:
+This introductory lesson provides a high-level overview of operating systems, e.g.,:
   * What is an **operating system**, and what role does it play in computer systems?
   * What are key **components** of an operating system?
   * Design and implementation considerations of operating systems
