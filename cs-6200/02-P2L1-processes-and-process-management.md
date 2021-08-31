@@ -230,4 +230,152 @@ For the following sentence, check all options that correctly complete it.
   * sometimes we must context switch
     * `APPLIES` - this is also correct, and can affect performance if switch away from such a process running on a hot cache (e.g.,context switching to a process with higher priority, context switching as a result of a time sharing policy dictating the current process's time has expired, etc.)
 
-# 13. Process Life Cycle: States
+## 13. Process Life Cycle: Process States
+
+<center>
+<img src="./assets/P02L01-021.png" width="250">
+</center>
+
+Recall that during context switching, processes can be either **running** or **idle**.
+  * When a process is running, it can be **interrupted** and context switched, at which point the process is idle but in a **ready state** (i.e., is ready to execute, but is not the currently running process).
+  * At some later point, the **scheduler** can schedule the process again, thereby moving the process back to executing on the CPU, and therefore back to the **running state**.
+
+With respect to process states:
+  * What other states can a process be in?
+  * How is that determined?
+
+The various **process states** that a process undergoes throughout its life cycle will now be discussed via the following figures below.
+
+<center>
+<img src="./assets/P02L01-022.png" width="350">
+</center>
+
+Initially, when a process is created, it enters the **new state**. At this point, the operating system performs admission control, and if the operating system determines that the process is admissible, then the operating system will allocate and initiate a process control block and some initial resources for the process.
+
+<center>
+<img src="./assets/P02L01-023.png" width="350">
+</center>
+
+Provided that there are some minimum available resources, the process is **admitted**, and at that point the process is ready to begin execution. However, the process is still not executing on the CPU here; in this **ready state**, the process must wait until the scheduler is ready to move it into a **running state** upon scheduling the process to run on the CPU.
+
+<center>
+<img src="./assets/P02L01-024.png" width="350">
+</center>
+
+Once the scheduler assigns the ready-state process to the CPU, that process is now in the **running state**. From here, several transitions can occur:
+  * The running process can be **interrupted**, resulting in a context switch which moves the process back into a ready state.
+  * The running process may need to initiate a longer operation (e.g., reading data from disk, wait on a timer event or user input event, etc.), at which point the process enters a **waiting state**. When the corresponding event or I/O operation completes, the process will subsequently return to the ready state. 
+  * Once the running process finishes all operations in the program, or if it encounters some type of error, the process will **exit**, return the appropriate **exit code** (indicating `success` or `error`), and enter a **terminated state**.
+
+## 14. Process State Quiz and Answers
+
+<center>
+<img src="./assets/P02L01-025.png" width="350">
+</center>
+
+Per the process life cycle diagram, the CPU is able to execute a process when the process is in which state(s)? (Select all choices that apply.)
+  * Running
+    * `APPLIES` - a running process is already executing, so this is "true by default"
+  * Ready
+    * `APPLIES` - a process in ready state is currently available to be run dispatched by the operating system's scheduler to run on the CPU
+      * the process will begin from wherever the program counter last pointed to; this will be the first instruction if the process has just entered the ready state from the new state, otherwise if the process is re-entering the ready state, then this instruction will be at some intermediate point in the process's execution (i.e., immediately prior to the most recent interrupt or wait)
+  * Waiting
+    * `DOES NOT APPLY`
+  * New
+    * `DOES NOT APPLY`
+
+## 15. Process Life Cycle: Process Creation
+
+It is reasonable to ask at this point: how is a process created in the first place?
+
+<center>
+<img src="./assets/P02L01-026.png" width="250">
+</center>
+
+In an operating system, a given process can create **child processes**. As shown in the figure above, all processes originate from a single root process, having various relationships to one another (e.g., the creating process is the **parent process**).
+
+<center>
+<img src="./assets/P02L01-027.png" width="275">
+</center>
+
+Certain of these processes are **privileged processes** (or **root processes**). In fact, this is how most operating systems work: once the initial boot process is completed and the operating system is loaded onto the machine hardware, it will create these initial processes.
+
+Subsequently, when a user logs into the system, a user shell process is created (e.g., `csh`), and then subsequent commands entered by the user (e.g., `ls`, `emacs`, etc.) spawn new child processes, and so on. Therefore, ultimately the relationship between the various processes forms a ***tree structure***.
+
+ Most operating systems support at least two basic ***mechanisms*** for **process creation**, either of which can be used by a process to create a child process
+  * **`fork`**
+    * copies the parent process control block into the new child's process control block
+    * subsequently, both the parent and the child continue execution at the instruction immediately following the `fork` operation (due to the common values in their respective process control blocks, including the program counter)
+  * **`exec`**
+    * replaces the child image, thereby loading a new program (i.e., overwriting the child's origin process control block) and making the child process start from the (new) first instruction per the (new) program counter
+
+## 16. Parent Process Quiz and Answers
+
+On UNIX-based operating systems, which process is often regarded as the "parent process of all processes"?
+  * `init`
+
+Extra credit: On the Android operating system, which process is regarded as the "parent of all app processes"?
+  * `ZYGOTE`
+
+## 17. What Is the Role of the CPU Scheduler?
+
+Now, consider **process scheduling**.
+
+<center>
+<img src="./assets/P02L01-028.png" width="250">
+</center>
+
+In order for the CPU to begin executing a process, the process must first be in the ready state. However, in general, several processes may be in the ready state at any given time; such processes "on standby" wait in the **ready queue**.
+
+In order to determine which process to run onto the CPU next, the **CPU scheduler** (an operating system component) determines which one of the currently ready processes will be dispatched to the CPU in order to start running, and how long it should run for.
+
+The operating system must...
+  * **preempt** - interrupt and save the current context
+  * **schedule** - run the scheduler to choose the next process (i.e., via corresponding **scheduling algorithm**)
+  * **dispatch** - dispatch a process onto the CPU and switch into the process's context so that the process can begin executing
+
+Given that the CPU's resources are scarce, the operating system must be ***efficient*** with respect to managing these process-oriented resources (i.e., it should minimize the time to perform the aforementioned preempt, schedule, and dispatch tasks). This entails both efficient designs and efficient implementations (i.e., algorithms) for these tasks, as well as efficient data structures to represent the constituent components (e.g., the ready queue, prioritization, process history, etc.).
+
+## 18. Length of a Process
+
+Another **issue** to consider is how ***often*** to run the scheduler: The more frequently the scheduler is run, the more CPU time that is expended to run the scheduler as opposed to running application processes.
+
+Equivalently:
+  * How long should a process run for?
+  * How frequently should we run the scheduler?
+
+As these questions imply, the longer a process runs, the less frequently the scheduler is invoked to execute.
+
+<center>
+<img src="./assets/P02L01-029.png" width="450">
+</center>
+
+Consider the scenario in the figure shown above, wherein a process runs for an elapsed time of *`T`*<sub>`p`</sub>, and the scheduler spends time *`t`*<sub>`sched`</sub> to execute.
+
+To quantify how well the CPU is utilized, this can be computed as follows:
+
+<center>
+<img src="./assets/P02L01-030.gif">
+</center>
+
+Therefore, if *`T`*<sub>`P`</sub> `=` *`t`*<sub>`sched`</sub>, only 50% of the CPU time is spent on useful work.
+
+<center>
+<img src="./assets/P02L01-031.png" width="450">
+</center>
+
+Now consider the case where *`T`*<sub>`P`</sub> `>>` *`t`*<sub>`sched`</sub> (e.g., *`T`*<sub>`P`</sub> `=` `10`*`t`*<sub>`sched`</sub>). In this case, the useful CPU work is much higher (e.g., `91%` when *`T`*<sub>`P`</sub> `=` `10`*`t`*<sub>`sched`</sub>).
+
+<center>
+<img src="./assets/P02L01-032.png" width="450">
+</center>
+
+In these examples, time *`T`*<sub>`P`</sub> (the **timeslice**) refers to the time allocated to a process on the CPU.
+
+As is apparent from these examples, there are many **tradeoffs** in making **design decisions** for scheduling, e.g.,:
+  * What are the appropriate timeslice values?
+  * What are useful metrics to use in order to choose the next process to run?
+
+## 19. What about I/O?
+
+
