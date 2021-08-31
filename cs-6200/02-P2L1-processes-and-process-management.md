@@ -378,4 +378,114 @@ As is apparent from these examples, there are many **tradeoffs** in making **des
 
 ## 19. What about I/O?
 
+<center>
+<img src="./assets/P02L01-033.png" width="400">
+</center>
 
+Before proceeding further, consider how **I/O operations** affect scheduling. So far, it is apparent that the operating system manages how processes access resources on the hardware platform (which, in addition to the CPU and memory, includes I/O devices and peripherals e.g., keyboards, networking cards, disks, etc.).
+
+<center>
+<img src="./assets/P02L01-034.png" width="400">
+</center>
+
+Now, consider a process that has made an I/O request (e.g., request to read from disk), which is consequently delivered by the operating system.
+
+<center>
+<img src="./assets/P02L01-035.png" width="400">
+</center>
+
+The operating system then moves the process to the **I/O queue** (e.g., that associated with the particular disk device for which the I/O request was generated), where the process is now in a **waiting state**.
+
+<center>
+<img src="./assets/P02L01-036.png" width="400">
+</center>
+
+The process remains in the waiting queue until the device completes the requested I/O operations (i.e., until the I/O event completes) and responds to that particular request. 
+
+<center>
+<img src="./assets/P02L01-037.png" width="400">
+</center>
+
+Once the I/O request is met, the process is again in the **ready state** and ready to run again on the CPU. Depending on the current workload of the CPU, the process may be scheduled directly to the CPU, or it may be placed in the **ready queue**.
+
+<center>
+<img src="./assets/P02L01-038.png" width="450">
+</center>
+
+To summarize, a process can enter the ready queue in a variety of ways, including:
+  * a process which was waiting on an **I/O event**
+  * a process which was running on the CPU but its timeslice **expired**
+  * a process which was created as a **child process** via `fork`
+  * a process which was waiting for an **interrupt** that subsequently occurred
+
+## 20. Scheduler Responsibility Quiz and Answers
+
+Which of the following are ***not*** a responsibility of the CPU scheduler? (Select all choices that apply.)
+  * maintaining the I/O queue
+    * `APPLIES` - the scheduler has *no* control over I/O operations in general 
+      * a key ***exception*** to this is **timer interrupts**, which is decided by the scheduling algorithm
+  * maintaining the ready queue
+    * `DOES NOT APPLY` - this *is* a role of the scheduler, which determines which process to run on the CPU next
+  * deciding when to context switch
+    * `DOES NOT APPLY` - this *is* a role of the scheduler, whose scheduling algorithm decides when to context switch
+  * deciding when to generate an event that a process is waiting on
+    * `APPLIES` - the scheduler has *no* control over external events that are generated
+
+## 21. Interprocess Communication (IPC)
+
+Another naturally arising question is: Can processes ***interact***? The simple answer is ***yes***. However, in order to accomplish this, the operating system must provide **mechanisms** to allow processes to interact with one another. In the modern landscape, increasingly more applications are in fact structured in such a manner, having multiple interacting processes.
+
+<center>
+<img src="./assets/P02L01-039.png" width="300">
+</center>
+
+For example, consider a **Web application** consisting of two processes on the *same* machine: a Web server (`P1`) and a database (`P2`).
+
+How can processes `P1` and `P2` interact? Before answering this question, recall that operating systems expend considerable effort to isolate processes from one another (e.g., separate address spaces for each process, controlling CPU utilization by each process, memory allocation to each process, etc.). Therefore, these communication mechanisms must be built around these inherent protections performed by the operating system.
+
+Such mechanisms are called **Interprocess Communication (IPC)** mechanisms, which:
+  * transfer data and information between address spaces
+  * maintain protection and isolation
+  * provide flexibility and performance
+    * different types of interactions between processes may exhibit different properties (e.g., periodic data exchanges vs. continuous data streams, coordinating with a shared single piece of information, etc.)
+
+### Message Passing IPC
+
+<center>
+<img src="./assets/P02L01-040.png" width="300">
+</center>
+
+One mechanism that interprocess communication systems support is **message passing**, in which:
+  * the operating system provides a **communication channel** (e.g., shared buffer)
+  * processes write (`send`) and read (`recv`) messages to and from (respectively) the channel
+
+With this mechanism, each process must place shared information explicitly in the message `M` and then subsequently send `M` to the dedicated communication channel between the two processes.
+
+The **benefit** of this approach is that the operating system manages the channel and provides a uniform API (i.e., system calls) to perform the necessary write/read operations.
+
+Conversely, the **drawback** of this approach is that there is incurred ***overhead***, inasmuch as every piece of information passed between the two processes must be first copied from the user space of the first process into the channel (which is in the operating system's kernel memory) and then copied back into the user space of the second process.
+
+### Shared Memory IPC
+
+<center>
+<img src="./assets/P02L01-041.png" width="300">
+</center>
+
+Another mechanism that interprocess communication systems support is **shared memory**, in which:
+  * the operating system establishes a **shared channel** and maps it into each process's respective address space
+  * the processes directly read/write from this **shared memory**, as it would with any other memory location in its own virtual address space
+  * the operating system is completely "out of the way"
+
+Indeed, the main **benefit** of this approach is the reduced overhead due to the lack of necessary intervention by the operating system (i.e., the operating system does not bottleneck the communication path).
+
+Conversely, the main **disadvantage** of this approach is a lack of uniform APIs to share information between the processes, thereby potentially requiring additional (re)implementation of the respective processes' code and therefore being more error-prone.
+
+## 22. Shared Memory Quiz and Answers
+
+Assess the following statement: Shared-memory-based communication performs better than message-passing communication. (Select the correct choice.)
+  * True
+  * False
+  * It depends
+    * `CORRECT` - with shared-memory-based communication, the individual data exchange is relatively cheap due to low overhead with respect to the operating system kernel, however, the actual operation of **mapping** memory between the two processes is itself an ***expensive*** operation (therefore, shared-memory-based communication is only "better performing" if this mapping-operation cost can be amortized across a sufficiently large number of comparative messages)
+
+## 23. Lesson Summary
