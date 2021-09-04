@@ -152,7 +152,7 @@ Operating systems may also integrate specific **policies** to determine how thes
     * **least recently used** (**LRU**) is a commonly used policy, whereby the pages that have been least recently used over a time period (i.e., accessed the longest time ago) are the ones that are transferred from DRAM to disk (which is also called **swapping**)
       * the rationale for this is that least recently used pages are either least important and/or least likely to be used in the near future, whereas the opposite is true for pages being used more recently and more frequently
 
-## OS Design Principles
+## 10. OS Design Principles
 
 Consider some guiding principles when designing an operating system as follows:
   * separation of mechanism and policy
