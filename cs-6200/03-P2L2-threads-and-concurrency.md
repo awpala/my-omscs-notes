@@ -137,5 +137,87 @@ If `t`<sub>`idle`</sub> is longer than the time required to perform a context sw
   * This applies to both processes and threads, however, recall that one of the most costly steps during a context switch is the time required to create the new virtual-to-physical memory mapping of the address space for the new process that will be scheduled. However, given that threads ***share*** an address space, when context switching among ***threads*** it is ***not*** necessary to recreate ***new*** virtual-to-physical memory mapping.
   * Therefore, because this costly step is avoided, in general `t`<sub>`ctx_switch`</sub> is less among threads than among processes. Correspondingly, it is much more likely the critical point will be reached when using threads, and so threads can be effectively used in this manner to **hide latency** (i.e., by being productive during idling time), even on a ***single*** CPU.
 
-  ## 6. Benefits of Multithreading: Applications and Operating Systems Code
+## 6. Benefits of Multithreading: Applications and Operating Systems Code
+
+<center>
+<img src="./assets/P02L02-012.png" width="500">
+</center>
+
+There are benefits from multithreading both to applications and to the operating system itself.
+
+By multithreading the **operating system kernel**, this allows the operating system to support multiple execution contexts (which is particularly useful when there are multiple CPU cores present, allowing for concurrent execution of the operating system contexts on the different CPUs of a multiprocessor/multicore platform)
+  * The operating system's threads may run on behalf of multiple **applications**
+  * The operating system's threads may also run on behalf of OS-level **services** (e.g., daemons, device drivers, etc.)
+
+## 7. Process vs. Threads Quiz and Answers
+
+Do the following statements apply to processes (`P`), threads (`T`), or both (`B`)?
+  * can share a virtual address space
+    * `T` 
+  * take longer to context switch
+    * `P` - by sharing a virtual address space, threads are able to perform context switches faster
+  * have an execution context
+    * `B` - in each case, the execution context is described by the stack and registers
+  * usually result in hotter caches when multiple exist
+    * `T` - because threads share the virtual address space, it is more likely that concurrently executing threads will result in hot caches on the respective CPU cores; conversely, such sharing is not possible among processes
+  * make use of some communication mechanisms
+    * `B` - for processes, the operating system supports interprocess communication (IPC) mechanisms; there are also corresponding mechanisms for coordinating among threads (as will be seen later in this lesson)
+
+## 8. Basic Thread Mechanisms: What Do We Need to Support Threads?
+
+To support threads, the following are required:
+  * a distinct thread **data structure** to distinguish it from a process
+    * identify threads, keep track of resource usage, etc.
+  * mechanisms to ***create*** and ***manage*** threads
+  * mechanisms to safely ***coordinate*** among the threads running **concurrently** in the *same* address space (particularly when there are ***dependencies*** between their execution)
+    * for example, it must be ensured that concurrently executing threads do not overwrite each others' inputs or results
+    * for example, there must be mechanisms in place to allow one thread to wait on results produced by another thread
+
+### Threads and Concurrency
+
+When considering the type of coordination required between threads, we first must consider the **issues** inherent to concurrent execution.
+
+<center>
+<img src="./assets/P02L02-013.png" width="500">
+</center>
+
+When **processes** run concurrently, each process operates within its *own* address space. The operating system together with the underlying hardware ensure that ***no*** access from one address space to another occurs.
+  * For example, in the figure above, the mapping of `VA_p1` (virtual address of process `p1`) to `PAx` (physical address `x`) will be valid for process `p1` but invalid for process `p2` (i.e., process `p2` will not be able to perform a valid access operation on physical address `x`).
+
+Conversely, **threads** share the ***same*** virtual-to-physical address mappings.
+  * For example, in the figure above, both threads `T1` and `T2` (both concurrently running on the *same* virtual address space) can both access the *same* physical address `x`.
+
+<center>
+<img src="./assets/P02L02-014.png" width="300">
+</center>
+
+Consequently, this introduces some **problems**. If threads `T1` and `T2` are both allowed to access and to modify the same data simultaneously, this can yield several **inconsistencies**, e.g.,:
+  * one thread may attempt to read the data while another is modifying it
+  * two (or more) threads attempt to modify the data simultaneously, resulting in a **data race**
+  * etc.
+
+  ### Concurrency Control and Coordination
+
+<center>
+<img src="./assets/P02L02-015.png" width="250">
+</center>
+
+To deal with these concurrency issues, mechanisms are required to enforce execution of threads in an ***exclusive*** manner; such mechanisms are called **mutual exclusion**.
+  * In mutual exclusion, exclusive access is granted to only one thread at a time to perform any given operation; the remaining threads must wait their turn to perform this same operation.
+  * Such **operations** performed under mutual exclusion include: update to state, general access to a data structure that is shared among the threads, etc.
+  * To achieve this, Birrell's and other threading systems use what are called **mutexes**.
+
+<center>
+<img src="./assets/P02L02-016.png" width="150">
+</center>
+
+Additionally, it is also useful for concurrently executing threads to have a mechanism to **wait** on one another, and to exactly specify the necessary **condition** required before proceeding.
+  * For example, a thread dealing with shipment processing must wait on all of the items in the shipping order to be processed before the order can be shipped.
+  * Birrell discusses the use of **conditional variables** to handle this kind of inter-thread coordination.
+
+Both mutual exclusion and waiting are referred to as **synchronization mechanisms**.
+  * Additionally, Birrell describes another such mechanism involving waking up other threads from a **wait state**. (This will be discussed more in a later lesson.)
+
+## 9. Threads and Thread Creation
+
 
