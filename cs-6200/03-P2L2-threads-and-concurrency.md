@@ -473,4 +473,66 @@ In the diagram shown above, threads `T1` to `T5` are contending for a mutex `m`.
 
 ## 15. Producer and Consumer Example
 
+For threads, the first construct suggested by Birrell is mutual exclusion, a binary operation (i.e., a resource is either free and accessible, or it is locked and access to it is restricted until released).
 
+However, what if the processing you wish to perform with mutual exclusion needs to occur only under certain **conditions**?
+
+<center>
+<img src="./assets/P02L02-039.png" width="300">
+</center>
+
+For example, consider the scenario where a number of threads (called **producers**) insert data into a list, while another special thread (called the **consumer**) prints out and then clears the content of the list once it reaches a predefined limit (i.e., is considered "full"). It is desired to ensure that the consumer thread only performs its operation under the condition in which the list is full.
+
+Consider the following pseudocode for the **producer-consumer** problem just described:
+
+```
+// main
+for i=0..10
+  producers[i] = fork(safe_insert, NULL) // creat producers
+consumer = fork(print_and_clear, my_list) // create consumer
+
+// producers: safe_insert
+Lock(m) {
+  list->insert(my_thread_id)
+} // unlock
+
+// consumer: print_and_clear
+Lock(m) {
+  if my_list.full() -> print; clear up to limit of elements of list
+  else -> release lock and try again (later)
+} // unlock
+```
+
+Here, many producer threads are created which perform the operation `safe_insert()`, while the single consumer thread is created and performs the operation `print_and_clear()` (which only occurs if the list `my_list` is full).
+  * The consumer thread waits until the lock is free, and then checks if the list `my_list` is full.
+
+Operating this way is clearly ***wasteful***, inasmuch as the consumer thread must continuously check the status of the mutex. A better approach would be to simply dispatch the consumer thread only when the list is full.
+
+## 16. Condition Variables
+
+Birrell identifies this "wasteful" condition in multithreaded environments, and consequently proposes a new construct called a **condition variable** to address this, which is used in conjunction with the mutex to control the behavior of concurrent threads.
+
+Consider the following modified pseudocode, which includes a condition variable `list_full`:
+
+```
+// producers: safe_insert
+Lock(m) {
+  my_list.insert(my_thread_id)
+  if my_list.full()
+    SIgnal(list_full)
+} // unlock
+
+// consumer: print_and_clear
+Lock(m) {
+  while (my_list.not_full())
+    Wait(m, list_full)
+  my_list.print_and_remove_all()
+} // unlock
+```
+
+The consumer thread checks if the list `my_list` is full, and if it is not full then the consumer thread suspends itself via operation `Wait()` until the list is full.
+
+The producer threads perform `safe_insert()` operations and check if the most recent such operation results in the list becoming full, in which case they call the operation `Signal()` to indicate to the consumer thread that the list is full.
+  * The semantics of the operation `Wait()` are such that the acquired mutex `m` must be automatically released by the consumer thread upon the call to `Wait()`, and then subsequently the mutex `m` must be automatically re-acquired by the consumer thread once the list is full (e.g., the call to `Signal()` by the producer must signal to reacquire the mutex by the consumer when the list becomes full from the most recent insertion operation).
+
+## 17. Condition Variable API
