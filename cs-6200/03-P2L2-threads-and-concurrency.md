@@ -536,3 +536,56 @@ The producer threads perform `safe_insert()` operations and check if the most re
   * The semantics of the operation `Wait()` are such that the acquired mutex `m` must be automatically released by the consumer thread upon the call to `Wait()`, and then subsequently the mutex `m` must be automatically re-acquired by the consumer thread once the list is full (e.g., the call to `Signal()` by the producer must signal to reacquire the mutex by the consumer when the list becomes full from the most recent insertion operation).
 
 ## 17. Condition Variable API
+
+<center>
+<img src="./assets/P02L02-040.png" width="200">
+</center>
+
+To summarize, a common **condition variable API** will be characterized by the following:
+  * the **condition** type/variable is stored in a data structure (as shown in the figure above)
+    * this data structure at a minimum contains the list of waiting threads (which are notified in the even that condition `cond == true` is met), as well as a reference to the mutex associated with the condition `cond` (i.e., in order to implement the operation `Wait()` correctly)
+  * the construct `Wait(mutex, cond)`, wherein `mutex` is automatically released and re-acquired on wait for the condition `cond == true` to occur
+  * the operation `Signal(cond)` notifies the waiting threads only *one at a time* on condition `cond == true` occurring
+    * this is consistent with the operation `Signal()` described by Birrell
+  * additionally, the operation `Broadcast(cond)` may be provided to notify *all* waiting threads when condition `cond == true` has occurred
+    * this additional operation `Broadcast()` is also described by Birrell
+
+For reference, the operation `Wait()` can be implemented in an operating system or a threading library as follows:
+
+```c
+Wait(mutex, cond) {
+  // atomically release the mutex
+  // and proceed to the wait queue
+
+  // ... wait ... wait ... wait ...
+
+  // remove from the wait queue
+  // re-acquire the mutex
+  // exit the operation Wait()
+}
+```
+
+Note that on removal from the wait queue (e.g., via `Signal()` or `Broadcast()`), the immediately subsequent task performed by the thread is to re-acquire the mutex. Therefore, on `Broadcast()`, while all threads are woken up, only one thread will re-acquire the mutex and consequently exit the operation `Wait()`; this suggests for a tenuous use of the operation `Broadcast()` in the multithreading situations where this can occur.
+
+## 18. Conditional Variable Quiz and Answers
+
+Recall the consumer code from the previous example for condition variables, repeated here as follows:
+
+```c
+Lock(m) {
+  while(my_list.not_full())
+    Wait(m, list_full);
+  my_list.print_and_remove_all();
+} // unlock
+```
+
+Instead of using `while`, why did we not simply use `if`? (Select the correct choice.)
+  * `while` can support multiple consumer threads
+  * access to `m` cannot be guaranteed once the condition is signaled
+  * the list `my_list` can change before the consumer is granted access again
+  * all of the above
+    * `CORRECT`
+
+***Explanation***: When there are multiple consumer threads waiting, one consumer thread that is waiting wakes up via call `Wait(m, list_full)`, however, before processing `my_list`, newly arriving consumer threads are also able to (re-)acquire the mutex and then perform the action `my_list.print_and_remove_all()`. Therefore, the state of the mutex may have already changed, and it is not guaranteed that the awakened thread will be able to acquire the mutex at that point. Consequently, the value/state of the list `my_list` is therefore also not guaranteed at any given time when the next consumer thread (re-)acquires the mutex.
+
+## 19. The Readers/Writer Problem
