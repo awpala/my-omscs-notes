@@ -414,4 +414,41 @@ Birrell's `Lock()` construct (as shown in the figure above) will be used through
 
 ## 13. Mutex Example
 
+Returning to the previous example, consider how the operation `safe_insert()` can be made "safe" via a mutex. The corresponding code is as follows:
+
+```cpp
+list<int> my_list;
+Mutex m;
+void safe_insert(int i) {
+  Lock(m) {
+    my_list.insert(i);
+  } // unlock
+}
+```
+
+<center>
+<img src="./assets/P02L02-034.png" width="300">
+</center>
+
+As before (i.e., the thread creation code), threads `T0` and `T1` both attempt to perform the operation `safe_insert()`. Assume in this scenario that upon creating the child thread `T1`, subsequently the parent thread `T0` is the *first* to perform its `safe_insert()` operation (i.e., `safe_insert(6)`).
+
+<center>
+<img src="./assets/P02L02-035.png" width="300">
+</center>
+
+In this case, parent thread `T0` acquires the lock first and consequently adds the element (having value `6`) to `list`. Furthermore, any attempt by child thread `T1` to execute `safe_insert()` will be blocked during this time.
+
+<center>
+<img src="./assets/P02L02-036.png" width="300">
+</center>
+
+At some later point, parent thread `T0` will release the lock and then child thread `T1` will acquire the lock and perform its `safe_insert()` operation (i.e., `safe_insert(4)`).
+
+<center>
+<img src="./assets/P02L02-037.png" width="300">
+</center>
+
+Therefore, in this sequence, the final state of `list` will be as shown in the figure above.
+
+## 14. Mutex Quiz and Answers
 
