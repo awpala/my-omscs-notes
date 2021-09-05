@@ -357,3 +357,61 @@ In this case, both may set `e.p_next` to `NULL`, and then subsequently take turn
 
 ## 12. Mutual Exclusion
 
+In the previous example, there is a **danger** present wherein the parent and the child thread may attempt to update the shared `list` simultaneously, thereby potentially overwriting the list elements. This illustrates a key **challenge** in multithreading: There is a need for a ***mechanism*** to perform **mutual exclusion** among the execution of concurrent threads.
+
+<center>
+<img src="./assets/P02L02-028.png" width="350">
+</center>
+
+To perform such mutual exclusion, operating systems and threading libraries in general support a construct called a **mutex**, which is like a "lock" that is used whenever accessing data or state that is shared among threads.
+
+When a thread **locks** a mutex, it has ***exclusive access*** to the shared resource; other threads attempting to lock the same mutex will be unsuccessful in doing so.
+  * N.B. This operation alternatively called **acquisition** (i.e., "*acquiring* the lock" or "*acquiring* the mutex")
+
+Such threads making unsuccessful attempts to lock the mutex are called **blocked** threads, meaning they will be suspended at this attempt (i.e., rather than proceeding) until the **owner** (the lock holder) releases it.
+
+Therefore, as a **data structure**, at a minimum the mutex should hold at least the following **information**:
+  * its status (i.e., whether or not it is currently locked)
+  * a list (not necessarily ordered) containing all of the threads currently blocked on the mutex waiting to be freed
+  * information on its owner, who currently has the lock
+
+<center>
+<img src="./assets/P02L02-029.png" width="350">
+</center>
+
+A thread that has successfully locked the mutex (e.g., `T1` in the figure shown above) has exclusive access to it and can proceed with its execution. Conversely, all other threads (e.g., `T2` and `T3`) attempting to lock the mutex at this time will be unsuccessful in doing so, but rather they will be blocked and will have to wait until the mutex is released.
+
+<center>
+<img src="./assets/P02L02-030.png" width="350">
+</center>
+
+The portion of the code protected by the mutex is called the **critical section**.
+  * In Birrell's paper, this corresponds to any code within `{ ... }` inside of the proposed operation `Lock()`
+  * The critical-section code should correspond to any kind of operation requiring that only one thread at a time perform the operation (e.g., update to a shared variable [e.g., `list` in the previous example], incrementing/decrementing a counter, etc.).
+
+<center>
+<img src="./assets/P02L02-031.png" width="300">
+</center>
+
+Other than the critical-section code (which can only be executed by one thread at a time), for the other code in the program (i.e., as denoted with letters `A`, `B`, `C` in the figure shown above),  the threads may execute concurrently without issue.
+  * Therefore, the threads are mutually exclusive with one another with respect to the execution of the critical-section code.
+
+<center>
+<img src="./assets/P02L02-032.png" width="450">
+</center>
+
+In the `Lock()` construct proposed by Birrell, the semantics are such that:
+  * upon first acquiring a mutex, a thread first enters the `Lock()` code block `{ ... }`
+  * upon subsequently exiting the block, the owner of the block releases the mutex (i.e., frees the lock)
+
+When a lock is freed, any of the threads waiting on the lock (or a brand new thread just reaching the lock) can begin executing the `Lock()` operation.
+
+<center>
+<img src="./assets/P02L02-033.png" width="350">
+</center>
+
+Birrell's `Lock()` construct (as shown in the figure above) will be used throughout the lecture, however, be advised that many common APIs provide a set of complementary operations `Lock(m)`/`Unlock(m)` (i.e., *without* an "implicit unlock" at that provided by Birrell's construct)
+
+## 13. Mutex Example
+
+
