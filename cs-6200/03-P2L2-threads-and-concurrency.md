@@ -220,4 +220,90 @@ Both mutual exclusion and waiting are referred to as **synchronization mechanism
 
 ## 9. Threads and Thread Creation
 
+Consider now:
+  * how threads should be represented by an operating system or by a system library that provides multithreading support
+  * what is necessary to perform **thread creation**
+
+N.B. During this lesson, discussion will be based on the **primitives** described and used in Birrell's paper, which do not necessarily correspond to certain interfaces provided by real threading systems or programming languages. Furthermore, the next lesson will discuss **Pthreads (POSIX threads)**, a threading interface supported by most modern operating systems.
+
+<center>
+<img src="./assets/P02L02-017.png" width="400">
+</center>
+
+The **thread type** (a thread data structure proposed by Birrell) contains all of the information that is specific to the thread, e.g.:
+  * thread identifier
+  * registers
+  * program counter
+  * stack pointer
+  * the stack
+  * any other attributes and/or data used by the thread (e.g., used by the thread management systems to determine how to schedule threads, how to debug threads, etc.) 
+
+For new **thread creation**, Birrell proposes the function `Fork(proc, args)`, where `proc` is the procedure that the created thread will begin executing and `args` provides the corresponding arguments to the procedure
+  * Per the figure above, when thread `T0` calls `fork()`, a new thread `T1` is created, along with a corresponding new thread data structure, whose constituent values are initialized accordingly (e.g., its program counter `PC` points to `proc` with `args` available on its own stack).
+  * After the `Fork()` operation completes, the overall process is now running via two threads `T0` (parent thread) and `T1` (child thread), with both executing concurrently.
+    * `T0` proceeds to the subsequent operation immediately following the call to `Fork()`
+    * `T1` commences execution of `proc(args)`
+
+  N.B. Birrell's `Fork()` should *not* be confused with the UNIX system call `fork()` discussed previously, which creates a new process as an exact copy of the calling process
+
+Once `T1` completes execution of `proc(args)` (i.e., and correspondingly returning a result or some other status regarding the computation), it must communicate this information back to the process.
+  * One programming practice is to store the result of the computation in some well-defined location in the mutually accessible address space (i.e., among all of the threads), with a corresponding mechanism to notify either the parent or some other thread that the result is now available.
+  * More generally, however, some **mechanism** is required to determine that the thread has completed execution, and (if necessary) to retrieve its result or to determine the corresponding status of the computation (e.g., success or error).
+
+<center>
+<img src="./assets/P02L02-018.png" width="400">
+</center>
+
+To deal with this issue, Birrell proposes the function `Join(thread)` to terminate a thread
+  * When the parent thread calls `Join()` (e.g., `child_result = Join(T1)` in the figure above), it will be **blocked** until the child thread completes. `Join()` will then return the result of the child thread's computation to the parent thread, at which point the child thread exits the system and its allocated data structure (i.e., state and resources) will be freed and the child thread is consequently terminated.
+
+Observe that other than this mechanism whereby the parent thread is the one `Join()`ing the child, in all other aspects both the parent and child thread are completely equivalent, with both being able to access and share all resources (e.g., hardware, CPU, memory, etc.) and state available to the process as a whole. 
+
+## 10. Thread Creation Example
+
+The following code snippet illustrates **thread creation**:
+
+```c
+Thread thread1;
+Shared_list list;
+thread1 = Fork(safe_insert, 4);
+safe_insert(6);
+Join(thread1); // optional
+```
+
+Two threads are involved in this system:
+  1. the parent thread which executes the code
+  2. the child thread `thread1` created via call to `Fork()`
+
+<center>
+<img src="./assets/P02L02-019.png" width="150">
+</center>
+
+Both threads perform the operation `safe_insert()` on `list` (of type `Shared_list`), which is initially empty.
+
+<center>
+<img src="./assets/P02L02-020.png" width="350">
+</center>
+
+Assume initially that the process begins with one parent thread `T0`, which subsequently calls `Fork()`, resulting in the creation of child thread `T1` (which in turn calls `safe_insert(4)`).
+
+<center>
+<img src="./assets/P02L02-021.png" width="250">
+</center>
+
+`T0` subsequently calls `safe_insert(6)`, however, since both threads execute concurrently (with corresponding context switches on the CPU), the order in which these `safe_insert()` operations are called is ambiguous (i.e., the insertion order into the list is non-deterministic).
+
+<center>
+<img src="./assets/P02L02-022.png" width="350">
+</center>
+
+Therefore, when performing the final `Join()` operation:
+  * if `Join(thread1)` is called when child thread `T1` has already completed, then it will return immediately
+  * if `Join(thread1)` is called when child thread `T1` is still executing, then parent thread `T0` will be ***blocked*** until child thread `T1` completes execution
+
+N.B. In this particular example, the results of the child thread's processing are available via `list`, therefore the `Join()` operation is not strictly necessary here (i.e., the result of the child thread `T1`'s operation is available irrespectively of the call to `Join()`).
+
+## 11. Mutexes
+
+So, then, how is the list updated?
 
