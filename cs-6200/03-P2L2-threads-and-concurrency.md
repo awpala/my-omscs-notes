@@ -123,4 +123,19 @@ In summary, multithreaded applications are more efficient in their resource requ
 
 ## 5. Benefits of Multithreading: Are Threads Useful on a *Single* CPU?
 
+Are threads useful on a single CPU? Or, more generally, are threads useful when `# Threads > # CPUs`?
+
+<center>
+<img src="./assets/P02L02-011.png" width="300">
+</center>
+
+Consider the scenario of a single thread `T1` making a disk request.
+  * Upon receiving the request, the disk requires time `t`<sub>`idle`</sub> to fulfill the request (i.e., time required to move the disk spindle, access the appropriate data, and then respond to the request).
+  * During `t`<sub>`idle`</sub>, thread `T1` cannot perform any useful work and instead must wait for the response (i.e., the CPU is **idle** during this time).
+
+If `t`<sub>`idle`</sub> is longer than the time required to perform a context switch, then it may be sensible to perform a context switch to another thread (e.g., `T2`) during this time instead. In particular, `t`<sub>`idle`</sub> `>=` `2t`<sub>`ctx_switch`</sub> is the critical point at which context switching can "hide" idling time.
+  * This applies to both processes and threads, however, recall that one of the most costly steps during a context switch is the time required to create the new virtual-to-physical memory mapping of the address space for the new process that will be scheduled. However, given that threads ***share*** an address space, when context switching among ***threads*** it is ***not*** necessary to recreate ***new*** virtual-to-physical memory mapping.
+  * Therefore, because this costly step is avoided, in general `t`<sub>`ctx_switch`</sub> is less among threads than among processes. Correspondingly, it is much more likely the critical point will be reached when using threads, and so threads can be effectively used in this manner to **hide latency** (i.e., by being productive during idling time), even on a ***single*** CPU.
+
+  ## 6. Benefits of Multithreading: Applications and Operating Systems Code
 
