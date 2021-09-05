@@ -452,3 +452,25 @@ Therefore, in this sequence, the final state of `list` will be as shown in the f
 
 ## 14. Mutex Quiz and Answers
 
+<center>
+<img src="./assets/P02L02-038.png" width="300">
+</center>
+
+In the diagram shown above, threads `T1` to `T5` are contending for a mutex `m`. `T1` is the first to obtain the mutex. Which thread will get access to `m` after `T1` releases it? (Select all that apply.)
+  * `T2`
+    * `APPLIES`
+  * `T3`
+    * `DOES NOT APPLY`
+  * `T4`
+    * `APPLIES`
+  * `T5`
+    * `APPLIES`
+
+***Explanation***:
+  * Both `T2` and `T4` attempt to lock the mutex while `T1` performs the critical-section code (i.e., *before* `T1` releases the mutex), therefore their requests will be queued in the mutex's pending requests; furthermore, there is no guarantee in the order in which these requests will be fullfilled subsequently to the mutex being freed.
+  * `T3` does not attempt to lock the mutex until `T1` frees it, therefore, it will not be among the first to gain access to the mutex (i.e., will not be ahead of `T2` or `T4`, which are already pending).
+  * `T5` locks the mutex simultaneously as `T1` releases it, therefore `T5` is a viable contender for the mutex (i.e., possibly ahead of `T2` and `T4`, or alternatively added to the queue).
+
+## 15. Producer and Consumer Example
+
+
