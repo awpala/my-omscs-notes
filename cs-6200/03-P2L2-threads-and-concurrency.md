@@ -224,7 +224,7 @@ Consider now:
   * how threads should be represented by an operating system or by a system library that provides multithreading support
   * what is necessary to perform **thread creation**
 
-N.B. During this lesson, discussion will be based on the **primitives** described and used in Birrell's paper, which do not necessarily correspond to certain interfaces provided by real threading systems or programming languages. Furthermore, the next lesson will discuss **Pthreads (POSIX threads)**, a threading interface supported by most modern operating systems.
+N.B. During this lesson, discussion will be based on the **primitives** described and used in Birrell's paper, which do not necessarily correspond to certain interfaces provided by real threading systems or programming languages. Furthermore, the next lesson will discuss **Pthreads (POSIX threads)**, a threading interface supported by most modern operating systems, to serve as a more concrete example.
 
 <center>
 <img src="./assets/P02L02-017.png" width="400">
@@ -239,7 +239,7 @@ The **thread type** (a thread data structure proposed by Birrell) contains all o
   * any other attributes and/or data used by the thread (e.g., used by the thread management systems to determine how to schedule threads, how to debug threads, etc.) 
 
 For new **thread creation**, Birrell proposes the function `Fork(proc, args)`, where `proc` is the procedure that the created thread will begin executing and `args` provides the corresponding arguments to the procedure
-  * Per the figure above, when thread `T0` calls `fork()`, a new thread `T1` is created, along with a corresponding new thread data structure, whose constituent values are initialized accordingly (e.g., its program counter `PC` points to `proc` with `args` available on its own stack).
+  * Per the figure above, when thread `T0` calls `Fork()`, a new thread `T1` is created, along with a corresponding new thread data structure, whose constituent values are initialized accordingly (e.g., its program counter `PC` points to `proc` with `args` available on its own stack).
   * After the `Fork()` operation completes, the overall process is now running via two threads `T0` (parent thread) and `T1` (child thread), with both executing concurrently.
     * `T0` proceeds to the subsequent operation immediately following the call to `Fork()`
     * `T1` commences execution of `proc(args)`
@@ -305,5 +305,55 @@ N.B. In this particular example, the results of the child thread's processing ar
 
 ## 11. Mutexes
 
-So, then, how is the list updated?
+So, then, how is `list` supposed to be updated?
+
+<center>
+<img src="./assets/P02L02-023.png" width="350">
+</center>
+
+An example naive implementation (corresponding to the figure shown above) is as follows:
+
+```
+create new list element e
+set e.value = X
+read list and list.p_next
+set e.p_next = list.p_next
+set list.p_next = e
+```
+
+Here, each list element has two fields:
+  1. `value`
+  2. `p_next`, which points to the next element in the list
+
+<center>
+<img src="./assets/P02L02-024.png" width="450">
+</center>
+
+The first list element `list.head` can be accessed by reading the value of the shared variable `list`. Each thread that needs to insert a new element into the list will do the following (as per the figure shown above):
+  1. create the new element `e` and set its value `e.value` (e.g., `value_x`)
+  2. read the list (i.e., `list.head`) and its value `list.p_next` (e.g., pointer to element containing `value_y`)
+  3. set `e.p_next` to `list.p_next`
+  4. set `list.p_next` to `e`
+
+Therefore, with this process, new elements are inserted at the head of the list.
+
+<center>
+<img src="./assets/P02L02-025.png" width="350">
+</center>
+
+Clearly, there is a **problem** if two threads running concurrently on two separate CPU cores attempt to update `list.p_next` simultaneously; the resulting behavior is non-deterministic.
+
+<center>
+<img src="./assets/P02L02-026.png" width="350">
+</center>
+
+Another **problem** occurs if two threads are running on the CPU simultaneously because their operations are randomly interleaved. For example, both may read the value of `list` and `list.p_next` (e.g., with `list.p_next` having value `NULL` per the figure shown above).
+
+<center>
+<img src="./assets/P02L02-027.png" width="450">
+</center>
+
+In this case, both may set `e.p_next` to `NULL`, and then subsequently take turns setting `list.p_next` to `e`, with only one of them actually being inserted into the list (e.g., the element with value `value_x` in the figure shown above) while the other is not and is consequently simply "lost." 
+
+## 12. Mutual Exclusion
 
