@@ -589,3 +589,33 @@ Instead of using `while`, why did we not simply use `if`? (Select the correct ch
 ***Explanation***: When there are multiple consumer threads waiting, one consumer thread that is waiting wakes up via call `Wait(m, list_full)`, however, before processing `my_list`, newly arriving consumer threads are also able to (re-)acquire the mutex and then perform the action `my_list.print_and_remove_all()`. Therefore, the state of the mutex may have already changed, and it is not guaranteed that the awakened thread will be able to acquire the mutex at that point. Consequently, the value/state of the list `my_list` is therefore also not guaranteed at any given time when the next consumer thread (re-)acquires the mutex.
 
 ## 19. The Readers/Writer Problem
+
+Consider now how mutexes and condition variables can be combined for use in a common scenario in multithreaded systems, multithreaded applications, and operating systems called **the readers/writer problem**. In this scenario, there are multiple threads, each belonging to one of two subsets:
+  1. **readers**, which perform a read operation to access the shared state
+  2. **writers**, which access the shared state to modify it
+
+<center>
+<img src="./assets/P02L02-041.png" width="450">
+</center>
+
+In the readers/writers problem, at any given time, 0 or more of the readers threads can access the resource, but only 0 or 1 writer thread can access the resource concurrently with the readers (however a writer *and* a reader thread cannot access the shared resource simultaneously, only one or the other at any given time).
+
+One naive approach to solving this problem is to protect the entire resource (e.g., a file) with a mutex having a corresponding `Lock()`/`Unlock()` operation (as in the figure shown above). However, this approach is too restrictive for the readers/writer problem, because a mutex allows only *one* thread to access the critical section at any given time (these semantics are appropriate for the writer, however, not for the readers, which should be able to perform the read operation simultaneously at any given time).
+
+Consider enumerating various situations of accessing the resource, as follows:
+
+| condition | read operation | write operation |
+| :--: | :--: | :--: |
+| `if((read_counter == 0) and (write_counter == 0))` | permissible | permissible |
+| `if (read_counter > 0)` | permissible | not permissible |
+| `if (writer_count == 1)` | not permissible | not permissible |
+
+Therefore, given these situations, the **state** of the shared resource (e.g., file) can be described as follows:
+  * **free**: `resource_counter = 0`
+  * **reading**: `resource_counter > 0` (i.e., `resource_counter` is the number of reader threads reading the file in this state)
+  * **writing**: `resource_counter = -1` (i.e., the writer thread is accessing the resource in this state)
+
+  In this manner, the state of the resource is tracked by proxy (i.e., ***indirectly***) via the variable `resource_counter`, rather than tracking directly with the resource itself. Furthermore, a mutex can be used to update the state of `resource_counter` to manage the corresponding behavior of the threads (i.e., readers and writer).
+
+## 20. Readers and Writer Example Part 1
+
