@@ -678,3 +678,27 @@ Subsequently to `Broadcast(read_phase)` from the writer thread, the waiting read
 
 ## 23. Critical Section Structure
 
+<center>
+<img src="./assets/P02L02-042.png" width="600">
+</center>
+
+Consider the shaded coded segments in the figure shown above, corresponding to "*enter the critical section*" and "*exit the critical section*" (respectively), where the operation `read data` is the **critical section** in question (i.e., the intent here is to protect the resource).
+
+Examining these shaded code segments further, they reveal the following **general form** (i.e., for a typical critical section):
+
+```
+Lock(mutex) {
+  while (!predicate_indicating_access_ok)
+    wait (mutex, cond_var)
+  update state => update predicate
+  signal and/or broadcast (cond_var_with_correct_waiting_threads)
+} // unlock
+```
+
+<center>
+<img src="./assets/P02L02-043.png" width="600">
+</center>
+
+Returning to the readers/writer problem, the main critical section (i.e., the one to be controlled and protected) is the operations `read data` (readers) and `write data` (writer). Therefore, the code blocks which precede and follow this critical section are correspondingly called the **enter critical section** and **exit critical section** blocks (respectively). Each of these blocks shares the same mutex (e.g., `counter_mutex`), therefore, only one thread at a time will be able to execute within these blocks, which only manipulate the variable `resource_counter`. Furthermore, observe that the `Enter/Exit Critical Section` pairs constitute a corresponding `Lock()`/`Unlock()` pair with respect to the shared resource, whereby `Unlock()` of the readers complements to the `Lock()` of the writer and vice versa.
+
+## 24. Critical Section Structure with Proxy Variable
