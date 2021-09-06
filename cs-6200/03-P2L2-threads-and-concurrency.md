@@ -617,5 +617,64 @@ Therefore, given these situations, the **state** of the shared resource (e.g., f
 
   In this manner, the state of the resource is tracked by proxy (i.e., ***indirectly***) via the variable `resource_counter`, rather than tracking directly with the resource itself. Furthermore, a mutex can be used to update the state of `resource_counter` to manage the corresponding behavior of the threads (i.e., readers and writer).
 
-## 20. Readers and Writer Example Part 1
+## 20-22. Readers and Writer Example
+
+Consider the following readers/writer problem example:
+
+```c
+/* --- STATE VARIABLES --- */
+Mutex: counter_mutex;
+Condition: read_phase, write_phase;
+int resource_counter = 0; // initial value
+
+
+/* --- READERS --- */
+Lock(counter_mutex) {
+  while (resource_counter == -1)
+    Wait(counter_mutex, read_phase);
+  resource_counter++;
+} // unlock
+
+// ... read data ...
+
+Lock(counter_mutex) {
+  resource_counter--;
+  if (resource_counter == 0)
+    Signal(write_phase);
+} // unlock
+
+
+/* --- WRITERS --- */
+Lock(counter_mutex) {
+  while (resource_counter != 0)
+    Wait(counter_mutex, write_phase);
+  resource_counter = -1;
+} // unlock
+
+// ... write data ...
+
+Lock(counter_mutex) {
+  resource_counter = 0;
+  Broadcast(read_phase);
+  Signal(write_phase);
+}
+```
+
+The access to the shared resource (e.g., file) is performed via the `read data` and `write data` operations, which occur *outside of* the `Lock()` constructs in both the readers and the writer (i.e., access to the resource itself is *not* directly controlled). Correspondingly, the helper variable `resource_counter` (initialized to `0`) is used to perform a controlled operation (via corresponding `Lock()`s) in which `resource_counter` is first updated.
+
+Once use of the shared resource is completed (i.e., via corresponding operations `read data` or `write data`), the `Lock()` constructs are again used to update `resource_counter` to reflect that the resource is now free for subsequent use.
+
+This process is managed via the state variables `counter_mutex` (the mutex) and `read_phase`/`write_phase` (the conditions), which coordinates access by the reader(s) and the writer at any given time.
+
+As the readers finish the `read data` operation, they proceed to the subsequent `Lock()` operation, wherein the mutex `counter_mutex` is locked (N.B. at this point, it is imperative that the writer thread had called the `Wait()` operation to unlock the mutex in its first call to `Lock()`, in order to allow the reader threads to access the resource). In this `Lock()` operation, the check `if (resource_counter == 0)` determines if there are any other readers currently accessing the resource; if there are not (i.e., the condition is `true`), then this signals a potential writer thread via the call `Signal(write_phase)`.
+  * N.B. Since only one writer thread can operate at at time, it is not sensible to use a `Broadcast()` operation here; rather, `Signal()` is more appropriate.
+
+A writer thread that has previously called `Wait()` will now be awakened and will set `resource_counter = -1` after checking if `resource_counter != 0` (i.e., there are no other reader threads or another writer thread currently accessing the resource). This writer thread can then unlock the mutex and proceed with the operation `write data`.
+
+Upon completing the operation `write data`, the writer thread performs the second `Lock()` operation. It first resets `resource_counter = 0` (i.e., there can only be one writer thread at any given time, so `resource_counter--` is not sensible here). Additionally, the writer thread calls `Broadcast(read_phase)` (wakes up all reader threads that are currently waiting) and `Signal(write_phase)` (wakes up another writer thread that is waiting, with only *one* writer thread being able to proceed at any given time).
+  * N.B. The calling order of `Broadcast(read_phase); Signal(write_phase);` vs. `Signal(write_phase); Broadcast(read_phase);` here is arbitrary, inasmuch as the corresponding thread behavior will be dictated by the action of the scheduler.
+
+Subsequently to `Broadcast(read_phase)` from the writer thread, the waiting reader threads will awaken one at time (cf. first readers `Lock()` operation), check for `resource_counter == 1`, increment via `resource_counter++`, and then unlock the mutex and proceed with the operation `read data`. Therefore, in general, there may be multiple reader threads accessing the resource via `read data` at any given time.
+
+## 23. Critical Section Structure
 
