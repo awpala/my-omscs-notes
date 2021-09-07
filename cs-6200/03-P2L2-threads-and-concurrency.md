@@ -617,7 +617,7 @@ Therefore, given these situations, the **state** of the shared resource (e.g., f
 
   In this manner, the state of the resource is tracked by proxy (i.e., ***indirectly***) via the variable `resource_counter`, rather than tracking directly with the resource itself. Furthermore, a mutex can be used to update the state of `resource_counter` to manage the corresponding behavior of the threads (i.e., readers and writer).
 
-## 20-22. Readers and Writer Example
+## 20-22. Readers/Writer Example
 
 Consider the following readers/writer problem example:
 
@@ -689,9 +689,9 @@ Examining these shaded code segments further, they reveal the following **genera
 ```
 Lock(mutex) {
   while (!predicate_indicating_access_ok)
-    wait (mutex, cond_var)
+    wait(mutex, cond_var)
   update state => update predicate
-  signal and/or broadcast (cond_var_with_correct_waiting_threads)
+  signal and/or broadcast(cond_var_with_correct_waiting_threads)
 } // unlock
 ```
 
@@ -702,3 +702,134 @@ Lock(mutex) {
 Returning to the readers/writer problem, the main critical section (i.e., the one to be controlled and protected) is the operations `read data` (readers) and `write data` (writer). Therefore, the code blocks which precede and follow this critical section are correspondingly called the **enter critical section** and **exit critical section** blocks (respectively). Each of these blocks shares the same mutex (e.g., `counter_mutex`), therefore, only one thread at a time will be able to execute within these blocks, which only manipulate the variable `resource_counter`. Furthermore, observe that the `Enter/Exit Critical Section` pairs constitute a corresponding `Lock()`/`Unlock()` pair with respect to the shared resource, whereby `Unlock()` of the readers complements to the `Lock()` of the writer and vice versa.
 
 ## 24. Critical Section Structure with Proxy Variable
+
+The readers/writer problem is therefore typified by the following common blocks:
+
+```
+// ENTER CRITICAL SECTION
+perform critical operation (e.g., read/write shared file)
+// EXIT CRITICAL SECTION
+```
+
+where:
+
+```
+// ENTER CRITICAL SECTION
+Lock(mutex) {
+  while(!predicate_for_access)
+    wait(mutex, cond_var)
+  update predicate
+} // unlock
+```
+
+and
+
+```
+// EXIT CRITICAL SECTION
+Lock(mutex) {
+  update predicate
+  signal/broadcast(cond_var)
+} // unlock
+```
+
+The mutex is only held in `ENTER CRITICAL SECTION` and `EXIT CRITICAL SECTION`, which allows for control of the **proxy variable** while still allowing more than one thread to be performing the critical operation at any given time. Therefore, this scheme (i.e., mutex with a proxy variable) resolves the main limitation of the mutex, which otherwise only allows access to the resource by one thread at a time, thereby allowing for the implementation of more complex sharing scenarios (e.g., multiple readers or one writer can access the resource at any given time).
+
+## 25. Avoiding Common Pitfalls
+
+When writing multithreaded applications, be aware of the following:
+  * Keep track of the mutex and condition variable(s) used with a resource
+    * e.g., `mutex_type m1; // mutex for file1`
+  * Check that you are always (and correctly) using the operations `Lock()` and `Unlock()`
+    * e.g., Did you forget to `Lock()` and/or `Unlock()`?
+    * Compilers may warn about these types of mistakes, however, they should be avoided whenever possible nevertheless
+  * Use a *single* mutex to access a *single* resource
+    * e.g., the following should be avoided:
+    ```
+    /*
+      since `m1` and `m2` are different mutexes, read and write 
+      operations can occur concurrently
+    */
+    Lock(m1) {
+      // read file1
+    } // unlock
+
+    Lock(m2) {
+      // write file1
+    } // unlock
+    ```
+  * Check that you are signaling (or broadcasting) the correct condition, i.e., to ensure that the correct thread(s) is/are notified
+  * Check that you are not using `Signal()` when `Broadcast()` is needed instead
+    * N.B. The opposite is generally *safe* (i.e., the program will behave correctly), however, this can adversely impact performance
+    * Recall that with `Signal()` only 1 thread will proceed, while the remaining threads will continue to wait (possibly ***indefinitely***!)
+  * Ask yourself: Do you need priority guarantees?
+    * Recall that thread execution order is not directly controlled by the order of signals to condition variables, but rather by the scheduler
+  * **Spurious wake-ups** and **deadlocks** are two conditions to be mindful as well; these will be discussed next in this lesson
+
+## 26. Spurious Wake-Ups
+
+One pitfall that does not necessarily affect *correctness* but may impact ***performance*** is called **spurious (or unnecessary) wake-ups**.
+
+Consider the following example:
+
+```c
+// WRITER
+Lock(counter_mutex) {
+  resource_counter = 0;
+  Broadcast(read_phase);
+  Signal(write_phase);
+} // unlock
+
+// READERS
+// elsewhere in the code ...
+Wait(counter_mutex, write/read_phase);
+```
+
+<center>
+<img src="./assets/P02L02-044.png" width="500">
+</center>
+
+Now, consider the current state of the program shown above, wherein the writer thread has locked the mutex `counter_mutex` to perform the `write` operation, while several reader threads are in the wait queue waiting on the condition `read_phase`. When the writer thread issues the `Broadcast()` operation, this commences removal of reader threads from the wait queue (perhaps on another core), which can occur prior to the writer thread completing the remaining operations inside of the `Lock()` construct (e.g., `Signal(write_phase)`).
+
+<center>
+<img src="./assets/P02L02-045.png" width="500">
+</center>
+
+Because the writer thread still holds the mutex, however, the reader threads will not be able to proceed, and will therefore be placed on the waiting queue associated with `counter_mutex`, as in the figure shown above. This scenario is called a **spurious wake-up**, because the threads were awakened, however, this was unnecessary inasamuch as the threads must wait again until the mutex is released. This will not affect the correctness of the program, however, performance is affected to the extent that cycles are expended on unnecessary context switching.
+
+Observe that if an unlock is performed after `Broadcast()`/`Signal()`, then no other thread can access the lock, thereby resulting in a spurious wake-up. The ability of the reader threads to perform the action will therefore depend on the order of the operations.
+
+A natural follow-up question therefore is: Can we unlock the mutex *before* `Broadcast()`/`Signal()`?
+
+Consider the following modification:
+
+```c
+// OLD WRITER
+Lock(counter_mutex) {
+  resource_counter = 0;
+  Broadcast(read_phase);
+  Signal(write_phase);
+} // unlock
+
+// NEW WRITER
+Lock(counter_mutex) {
+  resource_counter = 0;
+} // unlock
+Broadcast(read_phase);
+Signal(write_phase);
+```
+
+This modification will indeed behave correctly, and will also avoid the issue of spurious wake-ups.
+
+However, recall the code for the readers threads:
+
+```c
+Lock(counter_mutex) {
+  resource_counter--;
+  if (counter_resource == 0)
+    Signal(write_phase);
+} // unlock
+```
+
+Because the `if` clause depends on ` counter_resource`, it is *not* permissible to modify this code such that the unlocking is performed *before* commencing with the `Signal()` operation, otherwise the ***correctness*** of the program will be impacted.
+
+## 27. Deadlocks Introduction
