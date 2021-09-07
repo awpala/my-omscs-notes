@@ -880,10 +880,164 @@ In summary:
   * What can we do about it?
     * deadlock **prevention** (e.g., every time a thread is about to issue a request for a lock, it first must be determined whether the operation will generate a cycle in the wait graph, in which case the operation must be delayed [e.g., releasing the resource first prior to performing the `Lock()` operation])'
       * this can be ***expensive***
-  * deadlock **detection** and **recovery** (e.g., via analysis of the wait graph, in order to determine whether any cycles will be generated at some point in time)
-    * this is less expensive than analyzing each `Lock()` operation, however, there is still overhead/expense associated with providing **rollback mechanisms** (e.g., via corresponding state management) to recover execution whenever a deadlock is detected/encountered, which may be further complicated or otherwise become impossible to implement (e.g., if state has external, non-deterministic dependencies)
-  * apply the **Ostrich Algorithm**, which is simply a euphemism for "do nothing" (as in the figure shown above)
-    * if all else fails with this approach, then "just *reboot*" is the consequent contingency
-    * while this may seem rather trite, in practice sophisticated mechanisms such as the aformentioned prevention and rollback are difficult to implement and are typically reserved for performance-critical systems (i.e., at which point such expenditures are necessary by design/requirements)
+    * deadlock **detection** and **recovery** (e.g., via analysis of the wait graph, in order to determine whether any cycles will be generated at some point in time)
+      * this is less expensive than analyzing each `Lock()` operation, however, there is still overhead/expense associated with providing **rollback mechanisms** (e.g., via corresponding state management) to recover execution whenever a deadlock is detected/encountered, which may be further complicated or otherwise become impossible to implement (e.g., if state has external, non-deterministic dependencies)
+    * apply the **Ostrich Algorithm**, which is simply a euphemism for "do nothing" (as in the figure shown above)
+      * if all else fails with this approach, then "just *reboot*" is the consequent contingency
+      * while this may seem rather trite, in practice sophisticated mechanisms such as the aforementioned prevention and rollback are difficult to implement and are typically reserved for performance-critical systems (i.e., at which point such expenditures are necessary by design/requirements)
 
 ## 30. Critical Section Quiz and Answers
+
+A toy shop has the following critical section entry code for new orders:
+
+```
+// toy_shop_entry_for_new_orders
+lock(orders_mutex) {
+  // [INSERT CHECK HERE]
+    wait(orders_mutex, new_cond)
+  new_order++
+}
+```
+
+In this toy shop, there are new toys orders arriving, as well as orders for repairs of toys that have already been processed. Only a certain number of toy shop workers (i.e., threads) will be available in the toy shop at any given time, therefore, the mutex `orders_mutex` controls which workers have access to the toy shop at any given time (i.e., which orders can be processed).
+
+Furthermore, the toy shop has the following **policy**. At any given time:
+  * there can be a maximum of up to 3 new orders processed
+  * if only 1 new order is being processed, then any number of old orders can be processed
+
+Which of the following conditions satisfies this policy? (Select all applicable options.)
+  * `while ((new_order == 3) OR (new_order == 1 AND old_order > 0))`
+    * `APPLIES` - this aligns exactly/explicitly with the policy
+      * N.B. `new_order > 3` is not a reachable condition here, since `new_order` is not updated until exiting from the `wait()` operation
+  * `if ((new_order == 3) OR (new_order == 1 AND old_order > 0))`
+    * `DOES NOT APPLY` - using `if` here creates the problem encountered previously, wherein another thread may update `new_order` (i.e., via `new_order++`), thereby changing the value of the latter predicate (and consequently violating the policy); conversely, the corresponding `while` loop (i.e., in the previous choice) re-checks the predicate prior to proceeding
+  * `while ((new_order >= 3) OR (new_order == 1 AND old_order >= 0))`
+    * `DOES NOT APPLY` - checking `old_order >= 0` will block a new incoming order if there is already a new order in the system (i.e., `new_order == 1 AND old_order == 0` is true), which is inconsistent with the policy
+  * `while ((new_order >= 3) OR (new_order == 1 AND old_order >= 1))`
+    * `APPLIES` - this is equivalent to the first choice, however, in practice the condition `new_order > 3` will not be reached
+
+## 31. Kernel- vs. User-Level Threads
+
+<center>
+<img src="./assets/P02L02-050.png" width="350">
+</center>
+
+Recall, as was discussed previously in this lesson, that threads can exist both at the user level as well as at the kernel level. Now, consider further the distinction between these two.
+  * **kernel-level threads** imply that the operating system itself is multithreaded, whereby the kernel-level threads are visible to the kernel and are correspondingly managed by kernel-level components (e.g., the scheduler)
+    * therefore, it is the operating system scheduler that decides how the kernel-level threads will be mapped onto the underlying physical CPU cores, and which one(s) will execute at any given time
+    * some kernel-level threads may also directly support the applications processes (e.g., directly executing some of the user-level threads), while other kernel-level threads may execute other services (e.g., daemons) 
+  * **user-level threads** correspond to multithreaded processes (i.e., applications)
+    * for a user-level thread to actually execute, it first must be associated with a kernel-level thread, and then the operating system scheduler must schedule that kernel-level thread onto a CPU core
+
+A natural follow-up question is therefore: What is the **relationship** between the user-level and kernel-level threads? This will be discussed next via the corresponding **multithreading models**.
+
+## 32. Multithreading Models
+
+### One-to-One Model
+
+<center>
+<img src="./assets/P02L02-051.png" width="350">
+</center>
+
+In the **one-to-one model**, each user-level thread has an associated kernel-level thread. When the user process creates a new user-level thread, there is a kernel-level thread that is either created or otherwise made available for association with the user-level thread.
+
+The **benefit** of this model is that the operating system sees all of the user-level threads, and accordingly understands what this multithreaded user process's threads need (e.g., synchronization, scheduling, blocking, etc.).
+  * Since the operating system already supports these mechanisms in order to manage its own kernel-level threads, then the user-level processes can in turn benefit directly from the multithreading support already being provided by the operating system kernel
+
+However, the **drawbacks** of this model are as follows:
+  * it is necessary to go to the operating system for *all* operations, which may be ***expensive***
+  * the operating system may have limits on policies, number of available threads, etc.
+  * portability of the user processes can be an issue (i.e., to a non-multithreaded operating system kernel)
+
+### Many-to-One Model
+
+<center>
+<img src="./assets/P02L02-052.png" width="350">
+</center>
+
+In the **many-to-one model**, all of the user-level threads for a given user process are mapped to a *single* kernel-level thread. At the user level, there is a **thread-management library** that decides which of the user-level threads will be mapped onto the kernel-level thread at any given time. Correspondingly, this selected user-level thread will only be run once the corresponding kernel-level thread is scheduled by the operating system scheduler to run on the CPU core.
+
+The **benefit** of this model is that it is totally ***portable***, inasmuch as the user process is not dependent on the operating system's limits and policies.
+  * Furthermore, since all of the thread management is performed at the user level (i.e., via the thread-management library), there is no reliance upon system calls or user-kernel transitions to make decisions regarding scheduling, synchronization, blocking, etc.
+
+However, the **drawbacks** of this model are as follows:
+  * the operating system has no insights into the user application's needs (i.e., it is otherwise unaware that the corresponding user process is multithreaded)
+  * the operating system may block the *entire* process if *one* user-level thread blocks on I/O, thereby preventing any of the other user-level threads from performing useful work while the I/O thread is blocked and correspondingly adversely impacting performance
+
+### Many-to-Many Model
+
+<center>
+<img src="./assets/P02L02-053.png" width="350">
+</center>
+
+The **many-to-many model** is essentially a hybrid of the two aforementioned models. It allows some user-level threads to be associated with one kernel-level thread, wile other user-level threads may have a one-to-one mapping with a corresponding kernel-level thread.
+
+The **benefits** of this model are as follows:
+  * it can provide "the best of both worlds" (e.g., the operating system kernel is aware that the user process is multithreaded due to the assignment to multiple user-level threads, and any blocking operations will not block the entire process)
+  * the user-level threads can be **bound** (a user-level thread is mapped to a dedicated kernel-level thread) or **unbound** (user-level threads are assigned to the corresponding kernel-level threads on an ad hoc basis as the latter become available)
+    * in this manner, bound threads can be treated specially (e.g., higher priority, better responsiveness to certain events, etc.)
+
+However, the main **drawback** of this model are is that it requires coordination between the uer- and kernel-level thread managers, mostly to optimize performance
+    * in the one-to-one model, thread management is generally handled by the operating system kernel's thread manager
+    * in the many-to-one model, thread management is generally handled by the user process's thread manager (e.g., thread management library)
+
+## 33. Scope of Multithreading
+
+The implications of implementation around interactions between the user-level threads and the kernel-level threads will be discussed later, however, for present purposes, it is important to understand that multithreading is supported to varying degrees (i.e., either over the entire system or only within a process), and that  each level affects the **scope** of the thread management system accordingly.
+
+### System Scope
+
+At the operating system kernel level, there is **system scope**, which is ***system-wide*** thread management performed by operating-system-level thread managers (e.g., the CPU scheduler). This means that the operating system kernel's thread managers will assess the *entire* platform when making decisions regarding how to allocate resources to the threads.
+
+### Process Scope
+
+On the other end, at the user level, there is **process scope**, in which a user-level library manages threads within a *single* process (i.e., the management scope is ***process-wide*** only). Therefore, different processes will be managed by different instances of the same library, or different processes may even use entirely *different* user-level libraries to manage their constituent user-level threads.
+
+### Examples
+
+<center>
+<img src="./assets/P02L02-054.png" width="350">
+</center>
+
+Consider a process wherein the webserver process has twice as many threads as the database process, as in the figure shown above. If the user-level threads have a ***process scope***, these user-level threads are *not* visible to the operating system. Therefore, at the operating system level, the available resources (e.g., kernel-level threads and CPU cores) will be managed accordingly, e.g., 50%-50% split between the webserver and database processes. With such a 50%-50% split, the webserver process will effectively have only half of the CPU cycles that are available to the database process.
+
+<center>
+<img src="./assets/P02L02-055.png" width="350">
+</center>
+
+Now consider a scenario having ***system scope***, as in the figure shown above. Here, all of the user-level threads (i.e., in both the webserver and database processes) will be visible to the kernel level, therefore, the kernel will allocate to each of its kernel-level threads (and correspondingly to each of the user-level threads across the two processes), as well as division of the available CPU cores (i.e., based on the policy implemented by the kernel, e.g., 50%-50%).
+
+<center>
+<img src="./assets/P02L02-056.png" width="350">
+</center>
+
+Consequently, if the webserver process involves relatively more user-level threads than the database process, as in the figure shown above, then the former will receive a larger proportion of the resources (e.g., available kernel-level threads and CPU cores) accordingly.
+
+## 34. Multithreading Patterns
+
+<center>
+<img src="./assets/P02L02-057.png" width="250">
+</center>
+
+Before concluding this lesson, we will discuss the following useful **multithreading patterns** for structuring applications that use threads:
+  * boss/workers
+  * pipeline
+  * layered
+
+### Example: Toy Shop Application
+
+<center>
+<img src="./assets/P02L02-058.png" width="200">
+</center>
+
+Before proceeding with discussion, let's examine these patterns in the context of the toy shop application. Here, for each wooden toy order, we...
+  1. accept the order
+  2. parse the order
+  3. cut wooden parts
+  4. paint and add decorations
+  5. assemble the wooden toys
+  6. ship the order
+
+Depending on the multithreading pattern used, these steps will be assigned *differently* to the workers in the toy shop.
+
+## 35. Boss/Workers Pattern
