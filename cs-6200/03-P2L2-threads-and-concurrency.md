@@ -1041,3 +1041,42 @@ Before proceeding with discussion, let's examine these patterns in the context o
 Depending on the multithreading pattern used, these steps will be assigned *differently* to the workers in the toy shop.
 
 ## 35. Boss/Workers Pattern
+
+<center>
+<img src="./assets/P02L02-059.png" width="200">
+</center>
+
+The **boss/workers pattern** is a popular pattern characterized by *one* **boss thread** and several **worker threads**.
+  * the **boss thread** assigns work to the worker threads
+  * the **worker thread** performs an entire **task**
+
+<center>
+<img src="./assets/P02L02-060.png" width="250">
+</center>
+
+With respect to the toy shop example, the corresponding ***steps*** are as labeled in the figure shown above.
+  * in step 1, the boss thread accepts the order, and then immediately passes it onto the worker threads
+  * each of the worker threads will subsequently perform steps 2-6 
+
+The **throughout** of the system is limited by the boss thread, therefore, the boss thread must be kept as ***efficient*** as possible (e.g., the boss thread must execute on every newly arriving order). The throughout is therefore characterized as follows:
+<center>
+<img src="./assets/P02L02-061.gif">
+</center>
+
+The boss thread can assign work to the worker threads by:
+  * directly signaling a *specific* worker thread among the currently available worker threads, requiring more work per order performed by the boss thread (i.e., keeping track of the available workers and waiting for the selected worker thread to accept the order [e.g., via handshake])
+    * the **benefit** of this approach is that the worker threads do not need to synchronize among themselves, as the work is delegated by the boss thread
+    * the **drawback** of this approach is that the boss thread must track what each worker thread is doing, thereby reducing the overall throughput of the system
+
+    <center>
+    <img src="./assets/P02L02-062.png" width="250">
+    </center>
+
+  * placing the work in a **producer/consumer queue** (as in the figure shown above), wherein the boss thread (producer) places the work requests (e.g., toy orders) into the queue, and then the worker threads (consumers) dequeue the corresponding work orders
+    * the **benefit** of this approach is that the boss thread does not need to know the details about the worker threads, nor must the boss thread wait for an explicit acceptance (e.g., a handshake) of the work order by the next-available worker threads
+    * the **drawback** of this approach is that the boss thread and the worker threads are now responsible for **queue synchronization** (i.e., shared access to the queue)
+
+Overall, the producer/consumer queue approach is a net reduction in the throughput, and is therefore a commonly used pattern in multithreaded applications accordingly.
+
+## 36. How Many Workers?
+
