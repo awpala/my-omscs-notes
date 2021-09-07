@@ -800,7 +800,7 @@ Observe that if an unlock is performed after `Broadcast()`/`Signal()`, then no o
 
 A natural follow-up question therefore is: Can we unlock the mutex *before* `Broadcast()`/`Signal()`?
 
-Consider the following modification:
+Consider the following modification to the writer thread:
 
 ```c
 // OLD WRITER
@@ -830,6 +830,60 @@ Lock(counter_mutex) {
 } // unlock
 ```
 
-Because the `if` clause depends on ` counter_resource`, it is *not* permissible to modify this code such that the unlocking is performed *before* commencing with the `Signal()` operation, otherwise the ***correctness*** of the program will be impacted.
+Because the `if` clause depends on ` counter_resource`, it is *not* permissible to modify this code such that the unlocking is performed *before* commencing with the `Signal()` operation, otherwise the ***correctness*** of the program will be adversely impacted.
 
 ## 27. Deadlocks Introduction
+
+A particular issue to multithreading is called **deadlocks**, defined informally as: Two or more competing threads are waiting on each other to complete, but none of them ever do. Therefore, the overall execution of the process is "stuck" (i.e., "deadlocked").
+
+<center>
+<img src="./assets/P02L02-046.png" width="300">
+</center>
+
+Returning to the toyshop analogy, consider the scenario wherein two workers are finishing toy orders involving a train, and each worker requires a soldering iron and solder wire to finish the toy orders. The **problem** that arises in this scenario is that there is only *one* soldering iron and *one* solder wire. If one worker grabs the soldering iron while the other worker grabs the solder wire, with each worker being too stubborn to relinquish their respective instruments, then none of the toy orders can be finished; therefore, the toy building process is **deadlocked**.
+
+## 28. Deadlocks
+
+<center>
+<img src="./assets/P02L02-047.png" width="375">
+</center>
+
+In practice, deadlocks can be explained as per the figure shown above. Here, two threads `T1` and `T2` must perform operations `foo1()` and `foo2()` (i.e., these can be the same or even different operations) involving variables `A` and `B`. Before performing these operations, the respective threads must `lock()` the shared variables `A` and `B` via corresponding mutexes `m_A` and `m_B` (respectively).
+
+In this scenario, assume that thread `T1` locks the mutexes in the order `m_A` then `m_B`, while thread `T2` locks the mutexes in the order `m_B` then `m_A`. Consequently, threads `T1` and `T2` will be locked in a cycle, wherein neither thread is able to proceed to their respective operations (i.e., `foo1()` and `foo2()`) due to the inability to proceed to their respective second `lock()` operations, thereby resulting in a **deadlock**.
+
+<center>
+<img src="./assets/P02L02-048.png" width="375">
+</center>
+
+So, then, how can this situation be **avoided**?
+  * Unlock `A` before locking `B`, called **fine-grained locking**
+    * However, in this scenario, this solution will not work, because both threads `T1` and `T2` require *both* `A` *and* `B` for their respective operations `foo1()` and `foo2()`
+  * Get all locks upfront, and then release at the end
+  * Use *one* "mega" lock
+    * This solution may be adequate for certain applications, however, it is ***restrictive*** due to its limiting of parallelism
+  * Maintain a **lock order** (e.g., first `m_A` then `m_B`, enforced for each thread), as in the figure shown above
+    * This is the most ***common solution*** to the deadlock problem (i.e., by resolving cycles/dependencies in the wait graph), which essentially guarantees correct behavior
+    * One potential **challenge** with this approach, however, is that a complex program involving many shared variables and/or many  synchronization variables (i.e., many mutexes) may involve non-trivial implementation/design to enforce the lock ordering correctly
+
+## 29. Deadlocks Summary
+
+There is more that goes into dealing with deadlocks than what has been presented thus far (e.g., deadlock detection, avoidance, recovery, etc.), however, for purposes of this course, be aware that maintaining a lock order will generally yield a deadlock-proof solution.
+
+<center>
+<img src="./assets/P02L02-049.png" width="150">
+</center>
+
+In summary:
+  * A **cycle** in the **wait graph** is both ***necessary*** *and* ***sufficient*** for a deadlock to occur
+    * This wait graph consists of **edges** from the thread waiting on a resource to the thread owning the same resource
+  * What can we do about it?
+    * deadlock **prevention** (e.g., every time a thread is about to issue a request for a lock, it first must be determined whether the operation will generate a cycle in the wait graph, in which case the operation must be delayed [e.g., releasing the resource first prior to performing the `Lock()` operation])'
+      * this can be ***expensive***
+  * deadlock **detection** and **recovery** (e.g., via analysis of the wait graph, in order to determine whether any cycles will be generated at some point in time)
+    * this is less expensive than analyzing each `Lock()` operation, however, there is still overhead/expense associated with providing **rollback mechanisms** (e.g., via corresponding state management) to recover execution whenever a deadlock is detected/encountered, which may be further complicated or otherwise become impossible to implement (e.g., if state has external, non-deterministic dependencies)
+  * apply the **Ostrich Algorithm**, which is simply a euphemism for "do nothing" (as in the figure shown above)
+    * if all else fails with this approach, then "just *reboot*" is the consequent contingency
+    * while this may seem rather trite, in practice sophisticated mechanisms such as the aformentioned prevention and rollback are difficult to implement and are typically reserved for performance-critical systems (i.e., at which point such expenditures are necessary by design/requirements)
+
+## 30. Critical Section Quiz and Answers
