@@ -1080,3 +1080,125 @@ Overall, the producer/consumer queue approach is a net reduction in the throughp
 
 ## 36. How Many Workers?
 
+When using the producer/consumer queue structure, the overall performance of the system will depend on whether or not the boss thread must wait when inserting new work requests (e.g., toy orders) into the queue
+  * if the queue is full, the boss thread must wait, thereby increasing the overall time per order and decreasing the throughput correspondingly
+
+In general, if there are more worker threads available, then the likelihood of a full queue decreases; however, arbitrarily increasing the number of worker threads will also add additional overhead to the system.
+
+So, then, how many worker threads is "*enough*"? Possible approaches to determine this include:
+  * on demand (i.e., adding worker threads dynamically), which may be inefficient if the arrival time of a new worker thread is long
+  * a more common approach is to use a **pool of worker threads** (called a **thread pool**)
+    * additionally, the size of the pool can be predetermined ***statically***, or (more commonly) set ***dynamically*** over time (i.e., where in general, each dynamic increase will increase the thread pool by several worker threads, rather than just one additional worker thread)
+
+In summary, the boss/workers pattern is characterized by:
+  * a boss thread which assigns work to the worker threads
+  * a worker thread which performs an entire task
+  * communication between the boss thread and the worker threads occurs via the producer/consumer queue
+  * a worker threads pool is used to manage the number of worker threads, which can be set statically or (more commonly) dynamically
+
+The **benefit** of this approach is ***simplicity***: *one* boss thread manages *all* of the worker threads, which in turn perform the *same* task.
+
+The **drawbacks** of this approach include:
+  * the required **thread-pool management**, which adds overhead to the process (e.g., synchronization of the shared buffer/queue)
+  * it ignores **locality**, inasmuch as the boss thread does not keep track of the most recently performed task of the worker threads (i.e., rather than specializing at a particular step, the worker threads perform the entire task instead, with a corresponding loss of efficiency [e.g., hot cache])
+
+## 37. Boss/Worker Pattern Variants
+
+An alternative to having *all* worker threads in the system perform the exact *same* task is to have worker threads which are ***specialized*** for certain tasks (e.g., workers specialized to a particular toy, workers specialized to new vs. repair orders, etc.). An added **stipulation** in this case is that the boss thread occurs some overhead on a per-work-order basis, inasmuch as the boss thread must assess the work order to determine to which worker thread should the task be delegated. However, this overhead is offset by the added efficiency of the specialization in the worker threads, and therefore the net effect will generally ***improve*** overall throughput.
+
+The **benefits** of this approach include:
+  * improved locality via specialized worker threads (which in general must only access a subset of the overall process state, thereby improving cache performance)
+  * improved **quality of service (QoS)** management (e.g., assigning more worker threads to particularly demanding customers)
+
+The main **drawback** of this approach is the challenge of **load balancing**, which is much more complicated here (e.g., how many worker threads to assign to each task)
+
+## 38. Pipeline Pattern
+
+<center>
+<img src="./assets/P02L02-063.png" width="450">
+</center>
+
+A different way to assign work to threads in a multithreaded system is to use the **pipeline pattern**, wherein the overall task (e.g., the processing in the toy shop) is divided into **subtasks**, with each subtask performed by a separate thread. Therefore, the *entire* **task** is correspondingly composed of this **pipeline** of sub-task threads.
+
+For example, in the toy shop, this would correspond to having a different worker assigned to each of the six steps.
+
+With this approach, at any given time, there can be multiple tasks (e.g., multiple toy shop orders) occurring ***concurrently*** in the system, occurring in different pipeline stages at any given time.
+
+Therefore, the overall **throughput** of a pipelined process is the **weakest link** (i.e., the longest-duration subtask in the pipeline).
+  * ideally, each subtask takes the *same* amount of time to complete (with this uniform time constituting the throughput), however, in practice this is seldom the case
+
+<center>
+<img src="./assets/P02L02-064.png" width="450">
+</center>
+
+To resolve a potential "*bottlenecking*" subtask, the previously seen **thread pool** technique can be applied here as well, whereby the rate-limiting subtask is allocated additional threads (as in the figure shown above).
+
+<center>
+<img src="./assets/P02L02-065.png" width="450">
+</center>
+
+The best way to pass work among the pipeline stages is to use a **shared-buffer mechanism** between the stages (e.g., leaving the built pieces from a given stage on the table for the subsequent stage's worker(s) to retrieve/use in the subsequent stage, as in the figure shown above), similarly to producer/consumers queue.
+  * Alternatively, some explicit communication mechanism could be used between stages, however, this would mean that a given thread may have to wait until a thread in the subsequent stage is available. These imbalances are therefore accounted for using the buffer-based approach.
+
+In summary, a pipeline is a sequence of stages where each stage constitutes a subtask (with each stage/subtask performed by an individual thread(s)). To keep the pipeline *balanced*, a given stage can be executed by more than one thread, which in turn can be managed via a thread pool. Furthermore, passing of partial-work product down the pipeline is achieved via buffer-based communication (e.g., inter-stage queues), which provides some elasticity in the implementation and prevents stalls due to transient pipeline-stage imbalances.
+
+A key **benefit** of this approach is that it promotes high specialization and corresponding improved locality.
+
+A **drawback** of this approach is that there is ***overhead*** associated with both the inter-stage balancing and end-to-end synchronization, particularly if the incoming workload balance changes over time, thread performance diminishes at a given stage(s), etc. 
+
+## 39. Layered Pattern
+
+<center>
+<img src="./assets/P02L02-065.png" width="450">
+</center>
+
+Another multithreading pattern is called the **layered pattern**. For example, the overall steps can be organized into associated tasks (e.g., as in the figure shown above, pertaining to the toy shop example). Therefore, in a layered pattern, each **layer** groups related subtasks together, with any group-associated threads performing any of the corresponding group-associated subtasks for that particular group. On an end-to-end basis, however, each task must pass up and down through *all* of the layers.
+
+The **benefits** of this pattern are as follows:
+  * specialization and locality, similarly to the pipeline pattern
+  * less fine-grained than the pipeline pattern (i.e., distribution of threads among layers is more straightforward than distribution among pipeline stages)
+
+The **drawbacks** of this pattern are as follows:
+  * not suitable for all applications (e.g., it may not be sensible to group subtasks into layers in this manner for a particular application)
+  * the required synchronization is more complex, inasmuch as each layer must coordinate with its surrounding layers
+
+## 40. Multithreading Patterns Quiz and Answers
+
+For the six-step toy orders application, we have designed two solutions as follows:
+  1. a boss/workers solution
+  2. a pipeline solution
+
+Both solutions have six threads. Furthermore, the following are assumed:
+  * in the boss/workers solution, a worker processes a toy order in `120 ms`
+  * in the pipeline solution, each of the six stages/steps take `20 ms`
+
+How long will it take for each respective solution to complete `10` toy orders? (Ignore any time required for the shared queues in both solutions, and assume infinite process resources are available, e.g., tools, work areas, etc.)
+  * boss/workers - `240 ms`
+  * pipeline - `300 ms`
+
+What about if there are `11` toy orders?
+  * boss/workers - `360 ms`
+  * pipeline - `320 ms`
+
+**N.B.** The corresponding formulas are as follows:
+  * boss/workers (where *`n`*<sub>`concurrent threads`</sub> *excludes* the boss thread, e.g., only counts the `5` worker threads in this example)
+  <center>
+  <img src="./assets/P02L02-067.gif">
+  </center>
+
+  * pipeline (e.g., where *`t`*<sub>`first order`</sub> `=` `6 * 20 ms` in this example)
+  <center>
+  <img src="./assets/P02L02-068.gif">
+  </center>
+
+As this example demonstrates, the relative efficiency of each pattern will depend on the specific inputs (e.g., in this example, boss/workers is faster for `10` orders but slower for `11` orders). Furthermore, accounting for overhead would require more precise measurement and analysis (this example uses over-simplifying assumptions to make "back-of-the-envelope" calculations).
+
+## 41. Lesson Summary
+
+This lesson covered the following topics:
+  * What are **threads**, and how/why do we use them?
+    * How do operating systems represent threads, and how do they differ from **processes**?
+  * Thread mechanisms
+    * e.g., mutexes and condition variables for synchronization
+  * Using threads
+    * problems, solutions, and design approaches
