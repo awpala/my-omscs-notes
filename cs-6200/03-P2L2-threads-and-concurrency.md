@@ -1183,12 +1183,12 @@ What about if there are `11` toy orders?
 **N.B.** The corresponding formulas are as follows:
   * boss/workers (where *`n`*<sub>`concurrent threads`</sub> *excludes* the boss thread, e.g., only counts the `5` worker threads in this example)
   <center>
-  <img src="./assets/P02L02-067.gif">
+  <img src="./assets/P02L02-067.png" width="175">
   </center>
 
   * pipeline (e.g., where *`t`*<sub>`first order`</sub> `=` `6 * 20 ms` in this example)
   <center>
-  <img src="./assets/P02L02-068.gif">
+  <img src="./assets/P02L02-068.png" width="350">
   </center>
 
 As this example demonstrates, the relative efficiency of each pattern will depend on the specific inputs (e.g., in this example, boss/workers is faster for `10` orders but slower for `11` orders). Furthermore, accounting for overhead would require more precise measurement and analysis (this example uses over-simplifying assumptions to make "back-of-the-envelope" calculations).
