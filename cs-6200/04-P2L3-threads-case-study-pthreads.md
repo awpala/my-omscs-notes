@@ -39,7 +39,7 @@ Within the function `pthread_create()`, the type `pthread_attr_t` (via correspon
   * scope (e.g., system vs. process scope)
   * inheritance of attributes from the calling thread (e.g., whether or not it is joinable)
 
-Passing `NULL` to `pthread_create()`'s for parameter `attr` yields the ***default behavior***. 
+Passing `NULL` to `pthread_create()`'s parameter `attr` yields the ***default behavior***. 
 
 Several functions support PThread attributes, e.g.,:
   * `int pthread_attr_init(pthread_attr_t *attr)` to create and initialize the attributes data structure
@@ -92,12 +92,12 @@ The following is an example of using PThread attributes:
 #include <pthread.h>
 
 /* thread main */
-void *foo (void *arg) {
+void *foo(void *arg) {
   printf("Foobar!\n");
   pthread_exit(NULL);
 }
 
-int main (void) {
+int main(void) {
   int i;
   pthread_t tid;
 
@@ -116,3 +116,232 @@ int main (void) {
 The resulting data structure `attr` is then passed to `pthread_create()`, which runs the procedure `foo()` via the resulting child thread.
 
 ## 3. Compiling PThreads
+
+Before examining some examples, there are a few things to consider when compiling PThread threads:
+  1. `#include <pthread.h>` in the main file is required
+  2. Compile the source with flags `-lpthread` or `-pthread` (preferred on certain platforms) to instruct the compiler to link the PThreads library and to configure the compilation for threads, e.g.,:
+  ```
+  $ gcc -o main main.c -lpthread
+  $ gcc -o main main.c -pthread
+  ```
+  3. Check the return values of common functions (e.g., creating threads, creating variables, initializing certain data structures, etc.), which is a good programming practice in general, as well as in particular when dealing with multithreaded programs
+
+## 4. PThread Creation Example 1
+
+The following is a simple example of creating threads with the PThreads library:
+
+`pthread-creation-quiz-1.c`
+```c
+#include <stdio.h>
+#include <pthread.h>
+#define NUM_THREADS 4
+
+/* thread main */
+void *hello (void *arg) {
+  printf("Hello Thread\n");
+  return 0;
+}
+
+int main (void) {
+  int i;
+  pthread_t tid[NUM_THREADS];
+
+  /* create/fork threads */
+  for (i = 0; i < NUM_THREADS; i++) {
+    pthread_create(&tid[i], NULL, hello, NULL);
+  }
+
+  /* wait/join threads */
+  for (i = 0; i < NUM_THREADS; i++) {
+    pthread_join(tid[i], NULL);
+  }
+
+  return 0;
+}
+```
+
+The `main()` function initially creates `4` threads, each of which executes the function `hello()`; the last argument `NULL` in `pthread_create()` indicates that no arguments are passed (i.e., to the function `hello()`). Furthermore, the second argument `NULL` in `pthread_create()` indicates that the default attributes will be used when creating the threads (e.g., in particular, the threads will be ***joinable***, as per default).
+
+Subsequently, `pthread_join()` is called to join the child threads to commence subsequent execution of the parent thread.
+
+## 5. PThread Creation Quiz 1 and Answers
+
+What is the output of the program in the previous section? Assume that all programs fully execute and exit.
+
+```
+Hello Thread
+Hello Thread
+Hello Thread
+Hello Thread
+```
+
+## 6. PThread Creation Example 2
+
+The following is another example of creating threads with the PThreads library, with some slight variations:
+
+`pthread-creation-quiz-2.c`
+```c
+#include <stdio.h>
+#include <pthread.h>
+#define NUM_THREADS 4
+
+/* thread main */
+void *threadFunc(void *pArg) { 
+  int *p = (int*)pArg;
+  int myNum = *p;
+  printf("Thread number %d\n", myNum);
+  return 0;
+}
+
+int main(void) {
+  int i;
+  pthread_t tid[NUM_THREADS];
+
+  /* create/fork threads */
+  for(i = 0; i < NUM_THREADS; i++) {
+    pthread_create(&tid[i], NULL, threadFunc, &i);
+  }
+
+  /* wait/join threads */
+  for(i = 0; i < NUM_THREADS; i++) {
+    pthread_join(tid[i], NULL);
+  }
+
+  return 0;
+}
+```
+
+This example is a variation on the previous one. Here, the threads execute the function `threadFunc()`, which additionally receives the argument `&i` via call to `pthread_create()`. 
+
+Inside of `threadFunc()`, the variables `p` and `myNum` are private with respect to each given thread (i.e., their scope is limited to that particular thread), which in general will be set to different values.
+
+## 7. PThread Creation Quiz 2 and Answers
+
+What is the output of the program in the previous section? Assume that all programs fully execute and exit. (Select all that apply.)
+  * Output A
+    ```
+    Thread number 0
+    Thread number 1
+    Thread number 2
+    Thread number 3
+    ```
+  * Output B
+    ```
+    Thread number 0
+    Thread number 2
+    Thread number 1
+    Thread number 3
+    ```
+  * Output C
+    ```
+    Thread number 0
+    Thread number 2
+    Thread number 2
+    Thread number 3
+    ```
+
+*All* of these options are possible. Both Outputs A and B are permutations of each other; the thread creation order is non-deterministic due to the actual scheduling order of the threads. Furthermore, Output C is also possible, however; this will be discussed in the next section.
+
+## 8. PThread Creation Example 3
+
+The following is another example of creating threads with the PThreads library, with some slight variations:
+
+```c
+#include <stdio.h>
+#include <pthread.h>
+#define NUM_THREADS 4
+
+/* thread main */
+void *threadFunc(void *pArg) {
+  int *p = (int*)pArg;
+  int myNum = *p;
+  printf("Thread number %d\n", myNum);
+  return 0;
+}
+
+int main(void) {
+  int i;
+  int tid[NUM_THREADS];
+
+  /* create/fork threads */
+  for(i = 0; i < NUM_THREADS; i++) {
+    pthread_create(&tid[i], NULL, threadFunc, &tNum[i]);
+  }
+
+  for(i = 0; i < NUM_THREADS; i++) { /* wait/join threads */
+    pthread_join(tid[i], NULL);
+  }
+
+  return 0;
+}
+```
+
+This example is another variation on the previous ones. As a follow-up to the previous section/quiz (cf. Output C), the issue encountered there is that `i` is defined in `main()`, and is therefore a ***globally visible*** variable; therefore, when its value changes in one thread, all other threads see the new value as well. Therefore, the statement `int *p = (int*)pArg;` inside of function `threadFunc()` may be referencing corresponding value `&i` from the `for` loop of `main()` *after* it has already changed (but *before* `p` has been assigned in the new child thread).
+
+Such a scenario is called a **data race** or **race condition**, i.e., whereby a thread attempts to read a value while another thread modifies it.
+
+Therefore, to correct this issue, the code can be modified as follows:
+
+`pthread-creation-quiz-3.c`
+```c
+#include <stdio.h>
+#include <pthread.h>
+#define NUM_THREADS 4
+
+/* thread main */
+void *threadFunc(void *pArg) {
+  int myNum = *((int*)pArg);
+  printf("Thread number %d\n", myNum);
+  return 0;
+}
+
+int main(void) {
+  int i;
+  pthread_t tid[NUM_THREADS]; 
+  int tNum[NUM_THREADS];// store data in an array `tNum`
+
+  /* create/fork threads */
+  for(i = 0; i < NUM_THREADS; i++) {
+    tNum[i] = i; // use array `tNum` as local/"private" storage for each thread
+    pthread_create(&tid[i], NULL, threadFunc, &tNum[i]);
+  }
+
+  for(i = 0; i < NUM_THREADS; i++) { /* wait/join threads */
+    pthread_join(tid[i], NULL);
+  }
+
+  return 0;
+}
+```
+
+With this approach, there is no execution-order dependency among the threads, because the data is stored in array `tNum` and is specific to each thread.
+
+## 9. PThread Creation Quiz 3 and Answers
+
+What is the output of the program in the previous section? Assume that all programs fully execute and exit. (Select all that apply.)
+  * Output A
+    ```
+    Thread number 0
+    Thread number 0
+    Thread number 2
+    Thread number 3
+    ```
+  * Output B
+    ```
+    Thread number 0
+    Thread number 2
+    Thread number 1
+    Thread number 3
+    ```
+  * Output C
+    ```
+    Thread number 3
+    Thread number 2
+    Thread number 1
+    Thread number 0
+    ```
+
+The correct choices are Outputs B and C. With the race condition fixed, Output A (or similar) is no longer possible. However, as before, the execution order is still non-deterministic (i.e., it depends on how scheduler actually processes the threads at run-time), therefore, Outputs B and C (among other permutations) are the expected outputs.
+
+## 10. PThread Mutexes
+
