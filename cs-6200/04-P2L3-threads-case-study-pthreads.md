@@ -475,7 +475,7 @@ When writing multithreaded programs using the PThreads library involving conditi
   * recall (cf. P2L2) that a mutex is *not* required to perform a signal or broadcast
     * therefore, it may be appropriate to remove the signal/broadcast operation until *after* the mutex is unlocked
 
-## 12-14. Producer/Consumers Example
+## 12-14. Producers/Consumers Example
 
 Consider the following example of the classic producers/consumers problem, implemented using the PThreads library:
 
