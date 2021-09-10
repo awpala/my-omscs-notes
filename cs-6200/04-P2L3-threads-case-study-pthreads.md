@@ -610,6 +610,7 @@ void *consumer(void *param) {
 Examining the section denoted "`GLOBAL SCOPE DECLARATIONS`"
   * `buffer` is a shared buffer of size `BUF_SIZE` (i.e., `3`)
   * `add`, `rem`, and `num` are shared variables which track `buffer`, e.g., as in the following sequence:
+
     <center>
       <img src="./assets/P02L03-006.png" width="150">
       <img src="./assets/P02L03-007.png" width="148">
