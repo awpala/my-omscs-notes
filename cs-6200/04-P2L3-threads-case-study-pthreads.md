@@ -240,7 +240,7 @@ What is the output of the program in the previous section? Assume that all progr
     Thread number 3
     ```
 
-*All* of these options are possible. Both Outputs A and B are permutations of each other; the thread creation order is non-deterministic due to the actual scheduling order of the threads. Furthermore, Output C is also possible, however; this will be discussed in the next section.
+*All* of these options are possible. Both Outputs A and B are permutations of each other; the thread creation order is non-deterministic due to the actual scheduling order of the threads, which in general will vary from run to run of the program. Furthermore, Output C is *also* possible; this apparent "anomaly" will be discussed in the next section.
 
 ## 8. PThread Creation Example 3
 
@@ -345,3 +345,302 @@ The correct choices are Outputs B and C. With the race condition fixed, Output A
 
 ## 10. PThread Mutexes
 
+To deal with the **mutual exclusion problem**, the PThreads library supports **mutexes**. As explained previously in the context of Birrell's paper (cf. P2L2), the purpose of mutexes is "to solve mutual exclusion problems among concurrent threads."
+  * The mechanism of mutual exclusion ensures that threads access shared state in a *controlled* manner, so that only one thread at a time can perform modifications (or otherwise access) the shared state.
+
+The corresponding **mechanisms** provided by the PThreads library are as follows:
+
+| Birrell's Mechanisms | PThreads Library |
+| :-- | :-- |
+| `mutex` | `pthread_mutex_t aMutex; // a mutex type` |
+| `Lock(mutex) {`<br/>&nbsp;&nbsp;&nbsp;&nbsp;`// ... critical section ...`<br/>`} // (implicit) unlock` | `int pthread_mutex_lock(pthread_mutex_t *mutex); // an explicit lock`<br/>`// ... critical section ...`<br/>`int pthread_mutex_unlock(pthread_mutex_t *mutex); // an explicit unlock`  |
+
+With PThreads, any code appearing between the calls to `pthread_mutex_lock()` and to `pthread_mutex_unlock()` constitutes the **critical section** (i.e., an *explicit* lock is required when using PThreads, in contrast to the *implicit* unlock provided by Birrell's `Lock()` construct).
+
+Recall the following example using Birrell's constructs (cf. P2L2):
+
+```cpp
+list<int> my_list;
+Mutex m;
+void safe_insert(int i) {
+  Lock(m) {
+    my_list.insert(i);
+  } // unlock
+}
+```
+
+The corresponding operation using the PThreads library is as follows:
+
+```cpp
+list<int> my_list;
+pthread_mutex_t m;
+void safe_insert(int i) {
+  pthread_mutex_lock(m);
+  my_list.insert(i);
+  pthread_mutex_unlock(m);
+}
+```
+
+### Other Mutex Operations
+
+The PThreads library additionally supports other **mutex operations** (i.e., beyond those described by Birrell). The following highlights a (non-exhaustive) selection of these. (Refer to the corresponding PThreads library documentation for more information.)
+
+#### `pthread_mutex_init()`
+
+```c
+int pthread_mutex_init(pthread_mutex_t *mutex, const pthread_mutexattr_t *attr)
+```
+
+In the PThreads library, mutexes must be explicitly initialized via function `pthread_mutex_init()`. This operation allocates a mutex structure and specifies its behavior (i.e., when the mutex is shared among processes) via the parameter `attr`. If passing `NULL` as the second argument, this specifies default behavior.
+
+#### `pthread_mutex_trylock()`
+
+```c
+int pthread_mutex_trylock(pthread_mutex_t *mutex)
+```
+
+Unlike the operation `pthread_mutex_lock()`, which blocks the calling thread if the mutex is in use, `pthread_mutex_trylock()` instead first *checks* the mutex, and if the mutex in use, then the function call will return immediately *without* blocking the calling thread and will notify the calling thread that the mutex is unavailable, otherwise if the mutex is free/available, then the mutex will be successfully locked by the calling thread.
+
+#### `pthread_mutex_destroy()`
+
+```c
+int pthread_mutex_destroy(pthread_mutex_t *mutex)
+```
+
+Once no longer in use, any PThread mutex data structures should be freed from memory via `pthread_mutex_destroy()`.
+
+### Mutex Safety Tips
+
+<center>
+<img src="./assets/P02L03-004.png" width="550">
+</center>
+
+When writing multithreaded programs using the PThreads library involving mutexes, be advised of the following:
+  * shared data should always be accessed via a *single* mutex
+  * mutex scope must be visible to *all* threads
+    * a mutex *cannot* be defined as a private variable to a single thread (e.g., `main()`), but rather all mutexes must be defined as ***global variables***
+  * order locks *globally* to prevent deadlocks
+    * once an order is established for all of the threads, lock the mutexes in the corresponding order
+  * always *unlock* a mutex, and in particular the *correct*/*intended* mutex
+    * compilers will not generally be able to correctly/reliably detect semantic ordering of `lock`/`unlock` operations
+
+## 11. PThread Condition Variables
+
+As described by Birrell, **condition variables** are synchronization constructs which allow blocked threads to be notified once a specified ***condition*** occurs.
+
+The PThreads library provides the following corresponding **mechanisms**:
+
+| Birrell's Mechanisms | PThreads Library |
+| :-- | :-- |
+| `Condition` | `pthread_cond_t aCond; // a type of cond variable` |
+| `Wait()` | `int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex);`  |
+| `Signal()` | `int pthread_cond_signal(pthread_cond_t *cond);` |
+| `Broadcast()` | `int pthread_cond_broadcast(pthread_cond_t *cond);` |
+
+The semantics of `pthread_cond_wait()` correspond directly to those of `Wait()`, i.e., a thread entering this operation will automatically release mutex `mutex` and place itself on the wait queue associated with condition `cond`, and then once the thread is awakened it will reacquire `mutex` prior to exiting the wait operation.
+
+Similarly, `pthread_cond_signal()` and `pthread_cond_broacast()` correspond directly to Birrell's `Signal()` and `Broadcast()` (respectively), whereby one or all (respectively) waiting thread(s) is/are notified via the condition `cond`.
+
+### Other Condition Variable Operations
+
+The PThreads library additionally supports other **condition variable operations** (i.e., beyond those described by Birrell). The following highlights a (non-exhaustive) selection of these. (Refer to the corresponding PThreads library documentation for more information.)
+
+#### `pthread_cond_init()`
+
+```c
+int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr);
+```
+
+The operation `pthread_cond_init()` is used to allocate the data structure for the condition `cond` and initialize its attributes `attr` (e.g., whether or not it is shared across processes). Providing `NULL` as the second argument will initialize the attributes to their default values (e.g., the condition is private to / unshared by the process).
+
+#### `pthread_cond_destroy()`
+
+```c
+int pthread_cond_destroy(pthread_cond_t *cond);
+```
+
+The operation `pthread_cond_destroy()` is used to explicitly free the memory associated with the PThread condition variable `cond`.
+
+### Condition Variable Safety Tips
+
+<center>
+<img src="./assets/P02L03-005.png" width="350">
+</center>
+
+When writing multithreaded programs using the PThreads library involving condition variables, be advised of the following:
+  * do not forget to *notify* the waiting threads
+    * whenever any aspect of the **predicate** that the threads are waiting on ***changes***, correspondingly signal/broadcast the *correct* condition variable(s) that the threads are waiting on
+  * when in doubt, broadcast
+    * however, this will generally incur a ***performance penalty*** (i.e., relative to a signal); therefore, be sure to use the correct/intended notification mechanism (i.e., signal vs. broadcast) to awaken threads from a condition variable
+  * recall (cf. P2L2) that a mutex is *not* required to perform a signal or broadcast
+    * therefore, it may be appropriate to remove the signal/broadcast operation until *after* the mutex is unlocked
+
+## 12-14. Producer/Consumers Example
+
+Consider the following example of the classic producers/consumers problem, implemented using the PThreads library:
+
+`producer-consumer.c`
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+#define BUF_SIZE 3     // Size of shared buffer
+
+/* --- GLOBAL SCOPE DECLARATIONS --- */
+int buffer[BUF_SIZE];  // shared buffer
+int add = 0;           // place to add next element
+int rem = 0;           // place to remove next element
+int num = 0;           // number elements in buffer
+
+pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;    // mutex lock for buffer
+pthread_cond_t c_cons = PTHREAD_COND_INITIALIZER; // consumer waits on this cond var
+pthread_cond_t c_prod = PTHREAD_COND_INITIALIZER; // producer waits on this cond var
+
+/* --- FUNCTION DECLARATIONS --- */
+void *producer (void *param);
+void *consumer (void *param);
+
+int main(int argc, char *argv[]) {
+  pthread_t tid1, tid2; // thread identifiers
+  int i;
+
+  /* create the threads; may be any number, in general */
+  if (pthread_create(&tid1, NULL, producer, NULL) != 0) {
+    fprintf(stderr, "Unable to create producer thread\n");
+    exit(1);
+  }
+
+  if (pthread_create(&tid2, NULL, consumer, NULL) != 0) {
+    fprintf(stderr, "Unable to create consumer thread\n");
+    exit(1);
+  }
+
+  /* wait for created thread to exit */
+  pthread_join(tid1, NULL);
+  pthread_join(tid2, NULL);
+  printf("Parent quitting\n");
+
+  return 0;
+}
+
+/* Produce value(s) */
+void *producer(void *param) {
+  int i;
+
+  for (i=1; i<=20; i++) {
+    /* Insert into buffer */
+    pthread_mutex_lock (&m);
+
+    /* --- BEGIN CRITICAL SECTION --- */
+
+    /* buffer overflow error check */
+    if (num > BUF_SIZE) {
+      exit(1);
+    }
+
+    /* block if buffer is full */
+    while (num == BUF_SIZE) {
+      pthread_cond_wait(&c_prod, &m);
+    }
+
+    /* if executing here, buffer not full so add element */
+    buffer[add] = i;
+    add = (add+1) % BUF_SIZE; // "wraparound" the buffer array via operator %
+    num++;
+
+    /* --- END CRITICAL SECTION --- */
+
+    pthread_mutex_unlock(&m);
+
+    pthread_cond_signal(&c_cons);
+
+    /* additional output for monitoring/debugging */
+    printf("producer: inserted %d\n", i);
+    fflush(stdout);
+  }
+
+  /* additional output for monitoring/debugging */
+  printf("producer quitting\n");
+  fflush(stdout);
+
+  return 0;
+}
+
+/* Consume value(s); Note the consumer never terminates */
+void *consumer(void *param) {
+  int i;
+
+  /* N.B. while(1) { ... } here prevents the consumer from ever terminating */
+  while (1) {
+    pthread_mutex_lock(&m);
+
+    /* --- BEGIN CRITICAL SECTION --- */
+
+    /* buffer underflow error check */
+    if (num < 0) {
+      exit(1);
+    }
+
+    /* block if buffer empty */
+    while (num == 0) {
+      pthread_cond_wait(&c_cons, &m);
+    }
+
+    /* if executing here, buffer not empty so remove element */
+    i = buffer[rem];
+    rem = (rem+1) % BUF_SIZE; // "wraparound" the buffer array via `%`
+    num--;
+
+    /* --- END CRITICAL SECTION --- */
+
+    pthread_mutex_unlock(&m);
+
+    pthread_cond_signal(&c_prod);
+
+    /* additional output for monitoring/debugging */
+    printf("Consume value %d\n", i);
+    fflush(stdout);
+  }
+
+  return 0;
+}
+```
+
+Examining the section denoted "`GLOBAL SCOPE DECLARATIONS`"
+  * `buffer` is a shared buffer of size `BUF_SIZE` (i.e., `3`)
+  * `add`, `rem`, and `num` are shared variables which track `buffer`, e.g., as in the following sequence:
+    <center>
+      <img src="./assets/P02L03-006.png" width="150">
+      <img src="./assets/P02L03-007.png" width="148">
+      <img src="./assets/P02L03-008.png" width="151.5">
+      <img src="./assets/P02L03-009.png" width="148.5">
+    </center>
+  * mutex `m` is automatically initialized via macro `PTHREAD_MUTEX_INITIALIZER`
+  * condition variables `c_cons` and `c_prod` are used by the consumers and the producers (respectively)
+
+Furthermore, the operations `producer()` and `consumer()` are performed by the producer and consumer threads (respectively).
+
+The function `main()` creates two threads `tid1` (executes `producer()`) and `tid2` (executes `consumer()`). Since the default behavior (e.g., non-detaching threads) is used when creating the corresponding threads (i.e., via second argument `NULL` to function `pthread_create()`), the threads must be subsequently joined via `pthread_join()`. Furthermore, neither `producer()` nor `consumer()` require arguments, therefore the corresponding calls to `pthread_create()` are given `NULL` as the last argument accordingly. Additionally, basic error checking of the return value from `pthread_create()` is performed to facilitate debugging.
+
+The function `producer()` executes a loop twenty times, wherein it attempts to produce an element for the shared buffer `buffer`, updating the shared variables `add` and `num` in the process. The critical-section code is therefore flanked by calls to `pthread_mutex_lock()` and `pthread_mutex_unlock()` accordingly.
+  * If the buffer is full via the `while` loop, `pthread_cond_wait()` is called with corresponding condition `c_prod` and mutex `m`
+  * Once the producer leaves the wait operation (i.e., exits the `while` loop) when the buffer is no longer full (i.e., a consumer has consumed an element from the buffer), the producer subsequently adds an element to the buffer and increments `num` accordingly
+  * Furthermore, if the buffer is empty while performing the insert operation within the critical section, `pthread_cond_signal()` is subsequently called to signal the (next-available) consumer thread that an element is available in the buffer
+    * Here, since only one element is added at a time, it is more sensible to signal than to broadcast
+
+The function `consumer()` is executed by the consumer threads. In a continuous loop, the threads attempt to remove elements from the shared buffer `buffer`. In each pass through the `while` loop, the consumer thread attempts to remove an element from the buffer, and correspondingly update the shared variables `rem` and `num`.
+  * Analogously to `producer()`, the buffer is checked to determine whether it is empty, and if so, the consumer thread calls `pthread_cond_wait()` with corresponding condition `c_cons` and mutex `m`
+  * Once the buffer receives a new element (i.e., as signaled/notified by the producer), the consumer thread is awakened (i.e., exits the inner `while` loop) and proceeds to remove an element from the buffer and decrements `num` accordingly
+  * Furthermore, upon removing an element from the shared buffer and leaving the critical section, the consumer thread signals the producer thread via `pthread_cond_signal()` to notify that an element has been removed from the buffer
+    * Here, since only one element is removed at a time, it is more sensible to signal than to broadcast
+    * Observe that since `pthread_cond_signal()` is called after `pthread_mutex_unlock()` (i.e., outside of the critical section), and therefore not dependent on any specific values of the shared data structure (e.g., `num`, `rem`, or `add`), the mutex `m` can be released and the corresponding signal can be sent, thereby avoiding a spurious wake-up
+
+## 15. Lesson Summary
+
+This lesson took an in-depth look into the PThread library, particularly in comparison/contrast to the model described by Birrell
+  * threads, mutexes, and condition variables
+
+This lesson also considered best practices and safety tips when using the PThread library
+
+Lastly, this lesson provided compilation tips when using the PThread library, as well as representative example programs
