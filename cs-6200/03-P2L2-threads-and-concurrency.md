@@ -978,8 +978,8 @@ The **benefits** of this model are as follows:
     * in this manner, bound threads can be treated specially (e.g., higher priority, better responsiveness to certain events, etc.)
 
 However, the main **drawback** of this model are is that it requires coordination between the uer- and kernel-level thread managers, mostly to optimize performance
-    * in the one-to-one model, thread management is generally handled by the operating system kernel's thread manager
-    * in the many-to-one model, thread management is generally handled by the user process's thread manager (e.g., thread management library)
+  * in the one-to-one model, thread management is generally handled by the operating system kernel's thread manager
+  * in the many-to-one model, thread management is generally handled by the user process's thread manager (e.g., thread management library)
 
 ## 33. Scope of Multithreading
 
@@ -1149,7 +1149,7 @@ A **drawback** of this approach is that there is ***overhead*** associated with 
 ## 39. Layered Pattern
 
 <center>
-<img src="./assets/P02L02-065.png" width="450">
+<img src="./assets/P02L02-066.png" width="350">
 </center>
 
 Another multithreading pattern is called the **layered pattern**. For example, the overall steps can be organized into associated tasks (e.g., as in the figure shown above, pertaining to the toy shop example). Therefore, in a layered pattern, each **layer** groups related subtasks together, with any group-associated threads performing any of the corresponding group-associated subtasks for that particular group. On an end-to-end basis, however, each task must pass up and down through *all* of the layers.
