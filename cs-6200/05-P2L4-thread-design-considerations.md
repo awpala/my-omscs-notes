@@ -207,7 +207,7 @@ For each process, information is maintained about the process via the **process 
   * valid mappings of the virtual address space
   * user credentials (e.g., the user has access to a file during attempted access)
   * signal handlers which are valid for the process (e.g., how to respond to certain events that can occur in the operating system)
-    * ***N.B.*** This topic is discussed later in more detail
+    * ***N.B.*** Signal handling is discussed later in this lesson
 
 The **light-weight process (LWP) data structure** contains information that is relevant to some subset of the process, e.g.,:
   * one or more **user-level threads** that are executing in the context of the process, keeping track of their user-level registers and system call arguments
@@ -247,3 +247,70 @@ The figure shown above describes the relationships between all of the aforementi
 
 ## 10. Basic Thread Management Interactions
 
+Given that there are threads at both the user and kernel levels, consider now the **interactions** between them to manage this efficiently.
+
+<center>
+<img src="./assets/P02L04-014.png" width="450">
+</center>
+
+Consider a multithreaded process having four user-level threads, as shown above. However, the process is such that, at any given time, the actual level of concurrency is just two user-level threads (i.e., the process only requires two corresponding kernel-level threads).
+
+<center>
+<img src="./assets/P02L04-015.png" width="450">
+</center>
+
+When the process starts, the kernel provides a default number of kernel-level threads (e.g., one, as shown above), and the accompanying light-weight thread.
+
+<center>
+<img src="./assets/P02L04-016.png" width="450">
+</center>
+
+Next, the process requests an additional kernel-level thread. This is accomplished via a system called `set_concurrency` supported by the kernel, wherein in response to the request from the process, the kernel allocates an additional kernel-level thread(s) and allocates it to the process.
+
+<center>
+<img src="./assets/P02L04-017.png" width="450">
+</center>
+
+Now, consider the scenario wherein the two user-level threads that were mapped to the underlying kernel-level threads block (e.g., for an I/O operation, which moves them into the corresponding wait queue), thereby blocking the corresponding kernel-level threads as well. In this situation, the process itself is now blocked as well, since the associated kernel-level threads cannot proceed (i.e., are unavailable for the other unblocked user-level threads).
+
+The reason for this occurrence is due to the fact that the user-level library is unaware of what is happening in the kernel (i.e., that the kernel-level threads are also blocked).
+
+<center>
+<img src="./assets/P02L04-018.png" width="450">
+</center>
+
+A more useful configuration would be to have the kernel notify the user-level library immediately prior to blocking the kernel-level threads, and then the user-level library (which assesses its current state to determine that it has available user-level threads in the run queue) can make a system call to request more kernel-level threads (and corresponding light-weight processes) from the kernel.
+
+<center>
+<img src="./assets/P02L04-019.png" width="450">
+</center>
+
+Now, with an extra kernel-level thread allocated, the user-level library can proceed with scheduling the remaining available user-level threads onto the associated light-weight process.
+
+<center>
+<img src="./assets/P02L04-020.png" width="450">
+</center>
+
+At a later time, when the I/O operation completes, at some point the kernel will notice that the additionally allocated kernel-level thread is consistently idle, and correspondingly will notify the user-level library that this kernel-level thread is no longer available.
+
+As this example demonstrates:
+  * The user-level library is unaware of what is happening in the kernel
+  * The kernel is unaware of what is happening in the user-level library
+
+Both of these observations therefore are problematic. To address these issues, in the Solaris threading implementation, certain **system calls** and **special signals** are introduced in order to allow the kernel and the user-level threading library to interact and coordinate.
+
+## 11. PThread Concurrency Quiz and Answers
+
+Consider an example of how the PThreads threading library can interact with the kernel to manage the level of concurrency that a process receives.
+
+In the PThreads library, which **function** sets the concurrency level? (What is the function's name?)
+  * `pthread_setconcurrency()`
+
+Given the above function, which concurrency **value** instructs the implementation to manage the concurrency level as it deems appropriate? (What is the corresponding integer value?)
+  * `0`
+
+*Reference*: [manpage](https://man7.org/linux/man-pages/man3/pthread_getconcurrency.3.html)
+
+## 12. Thread Management Visibility and Design
+
+### Lack of Thread Management Visibility
