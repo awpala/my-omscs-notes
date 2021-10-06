@@ -443,3 +443,61 @@ Therefore, with multiple user-level threads (as managed by the user-level librar
 
 ## 14. Synchronization-Related Issues
 
+Another interesting situation occurring in multi-CPU, multi-user-level-thread systems pertains to **synchronization**.
+
+<center>
+<img src="./assets/P02L04-034.png" width="550">
+</center>
+
+Consider the situation wherein one user-level thread `T1` is running on top of one kernel-level thread (and corresponding CPU), which currently owns the mutex. Consequently, a number of other user-level threads may be blocked. However, on another user-level thread `T4` is scheduled on the other CPU.
+
+Now, `T4` also requires the mutex, which is currently locked by `T1`. The normal behavior in this situation would be to place `T4` into the queue associated with the mutex. However, in a multi-CPU system, such a situation can also occur, wherein the current owner of the mutex is executing the critical-section code on one CPU, but the other thread is currently performing actions to get the mutex (e.g., context switch to the queue); in fact, the former thread may even release the mutex during this time.
+
+<center>
+<img src="./assets/P02L04-035.png" width="350">
+</center>
+
+In such a situation (e.g., if the critical-section code is short and executes quickly), it is better for the waiting thread to **spin** on its currently associated CPU (i.e., wait a few CPU cycles) for the mutex to become available, rather than enqueuing for the mutex.
+
+Otherwise, for long-duration critical sections, the default blocking/enqueueing behavior is more appropriate.
+
+Collectively, this behavior (i.e., spinning vs. blocking/enqueuing) is described as **adaptive mutexes**; this approach is only sensible to use on multi-CPU systems (i.e., spinning on a single-CPU system would be trivial and even counter-productive).
+
+Recall that when mutexes were introduced (cf. P2L2), it is useful to maintain some information on the owner of the mutex. Accordingly, adaptive mutexes are an illustrative example of how such information can be useful (e.g., when attempting to lock a mutex, verify that the current owner of the mutex is running on another CPU, in order to determine whether to spin or to block), in conjunction with information about the critical section (i.e., short vs. long execution duration).
+
+### Destroying Threads
+
+Consider now some final remarks regarding destroying threads.
+
+Once a thread is no longer needed (i.e., once it exits), it should be destroyed, with its corresponding data structure, stack, etc. being freed.
+
+However, since thread creation is a relatively time-intensive operation (e.g., creation and initialization of data structures), it is sensible to **reuse** threads (i.e., the underlying data structures).
+
+<center>
+<img src="./assets/P02L04-036.png" width="250">
+</center>
+
+To accomplish such reuse, upon exit of the thread...
+  * put it on a **"death row"**
+  * *periodically* destroy these (prospective zombie) threads via the **reaper thread** (i.e., rather than *immediately*)
+  * otherwise, thread data structures and stacks are *reused*, resulting in a performance gain due to reduction in overall thread creations
+
+## 15. Number of Threads Quiz and Answers
+
+As we have seen so far, the interactions between the kernel-level threads and the user-level library involve requesting, allocating, and scheduling threads. Thus, it can be assumed that there is some number of threads allocated at startup to get the operating system to boot. (***N.B.*** Each question in this quiz references Linux kernel version 3.17.)
+
+In the Linux kernel's codebase, a **minimum** of how many threads are required to allow a system to boot?
+  * `20` (cf. `fork.c`, function `init_fork()`)
+
+What is the name of the **variable** used to set this limit?
+  * `max_threads`
+
+*References*:
+  * [Free Electrons Linux Cross Reference](https://elixir.bootlin.com/linux/v3.17/source)
+  * [Interactive Linux Kernel Map](https://makelinux.github.io/kernel/map/)
+
+## 16. Interrupts and Signals Introduction
+
+### Interrupts vs. Signals
+
+
