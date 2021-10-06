@@ -314,3 +314,132 @@ Given the above function, which concurrency **value** instructs the implementati
 ## 12. Thread Management Visibility and Design
 
 ### Lack of Thread Management Visibility
+
+The previous section discussed the fact that the kernel and the user-level library do not have mutual insight into each others' activities. Let us consider this point further now.
+
+At the kernel level, the kernel sees:
+  * all of the kernel-level threads
+  * the CPUs
+  * the kernel-level scheduler (which makes the decisions)
+
+At the user level, the user-level library sees:
+  * the constituent user-level threads of the process
+  * the available kernel-level threads that are assigned to the process
+
+If the user-level threads and kernel-level threads are using the 1:1 model, then every user-level thread will have an associated kernel-level thread (i.e., the user-level library will effectively see these kernel-level threads, though they are managed by the kernel).
+
+<center>
+<img src="./assets/P02L04-021.png" width="350">
+</center>
+
+Even if not using a 1:1 model, the user-level library can request that one of its user-level threads be **bound** to a kernel-level thread.
+
+<center>
+<img src="./assets/P02L04-022.png" width="350">
+</center>
+
+This is analogous to what might be done in a multi-CPU system, whereby a particular kernel-level thread is ***permanently*** associated with a particular CPU; in this scenario, this association is called **thread pinning**.
+
+Correspondingly, the analogous term that was introduced in the Solaris threads model is a **"bound" thread**, whereby a user-level thread is associated to a particular kernel-level thread.
+  * Furthermore, in a 1:1 model, every user-level thread is bound to a kernel-level thread in this manner.
+
+<center>
+<img src="./assets/P02L04-023.png" width="350">
+</center>
+
+Now, consider the scenario wherein one of the user-level threads has a lock, and therefore the corresponding kernel-level thread is supporting the execution of the associated critical-section code.
+
+<center>
+<img src="./assets/P02L04-024.png" width="350">
+</center>
+
+Furthermore, the kernel preempts one of the kernel-level threads from the CPU in order to schedule the other kernel-level thread, resulting in suspension of the execution of the critical-section code in the associated user-level thread of the former.
+
+<center>
+<img src="./assets/P02L04-025.png" width="350">
+</center>
+
+Consequently, as the user-level library scheduler cycles among the remaining user-level threads, if any of them require the lock, then they will be unable to proceed.
+
+<center>
+<img src="./assets/P02L04-026.png" width="350">
+</center>
+
+Therefore, only *after* the kernel-level thread is scheduled again will the critical section of the previously locked user-level thread be allowed to proceed, thereby allowing the other user-level threads to execute.
+
+<center>
+<img src="./assets/P02L04-027.png" width="350">
+</center>
+
+To reiterate, the **problem** is the lack of visibility of state and decisions between the kernel and the user-level library. In such a many-to-many model:
+  * at the user level, the user-level library makes scheduling decisions that the kernel is not aware of, thereby changing the user-level threads to kernel-level threads mapping
+  * data structures (e.g., mutexes, wait queues, etc.) are also invisible to the kernel
+
+The 1:1 model helps to address some of these issues.
+
+### How/When Does the User-Level Library Run?
+
+Since the user-level library plays such an imperative role in how the user-level threads are managed, we need to understand exactly *when* the user-level library gets involved in the execution loop.
+
+<center>
+<img src="./assets/P02L04-028.png" width="350">
+</center>
+
+The user-level library is part of the user process (i.e., part of its address space), and occasionally the execution essentially jumps to the appropriate program counter into this address space.
+
+There are multiple reasons why control should be passed to the **user-level library scheduler**, e.g.,:
+  * user-level threads explicitly yield
+  * timer set by user-level library expires
+  * user-level threads call library functions (e.g., lock/unlock to perform synchronization actions)
+  * blocked threads become runnable
+
+***N.B.*** The user-level library scheduler is generally part of the user-level library implementation, not the application/process implementation itself.
+
+In addition to being invoked on certain operations triggered by the user-level threads, the user-level library scheduler is also triggered to run in response to:
+  * user-level thread operations
+  * signals from a timer or directly from the kernel
+
+These interactions will be demonstrated in the next section.
+
+## 13. Issues on Multiple CPUs
+
+Other interesting management interactions between the user-level threading library and the kernel-level thread management occurs in the situation involving multiple CPUs.
+
+In the previously discussed situations, there was only one CPU, and all of the corresponding user-level threads ran on top of this CPU. Furthermore, changes (i.e., in terms of which of the user-level threads will be scheduled by the user-level threading library) were immediately reflected on that particular CPU.
+
+Conversely, in a multi-CPU system, the kernel-level threads that support a single process may be running on multiple CPUs, perhaps even concurrently. Therefore, a situation can occur whereby the user-level library that is operating in the context of one kernel-level thread on one CPU needs to impact what is running on another kernel-level thread on another CPU.
+
+<center>
+<img src="./assets/P02L04-029.png" width="350">
+</center>
+
+Consider the situation wherein there are three user-level threads running, having the thread priority `T3 > T2 > T1`.
+
+<center>
+<img src="./assets/P02L04-030.png" width="350">
+</center>
+
+Furthermore, assume the situation is such that user-level thread `T2` is running in the context of one of the kernel-level threads and is currently holding the mutex. `T3` (the highest priority thread) is waiting on the mutex, and is therefore blocked (i.e., is not currently executing). Therefore, the other user-level thread `T1` is concurrently running on the other CPU (i.e., via corresponding kernel-level thread).
+
+<center>
+<img src="./assets/P02L04-031.png" width="350">
+</center>
+
+Now, at some later point in time, `T2` releases the mutex, and consequently `T3` is now runnable. At this point, all three user-level threads are runnable, and therefore it must be ensured that the thread priority is enforced appropriately; in order to accomplish this, `T1` (the lowest priority thread) must be preempted, however, it is already running on the CPU when this determination is made. Accordingly, the other CPU must be notified to perform a corresponding context switch to execute the higher priority user-level thread.
+
+<center>
+<img src="./assets/P02L04-032.png" width="350">
+</center>
+
+Since it is not possible to directly modify the registers of the other CPU when executing on another CPU, this is instead accomplished via **signal** (e.g., an interrupt) to the other kernel-level thread, informing it to run the user-level library code locally in order to allow the user-level library to make an updated scheduling decision.
+
+<center>
+<img src="./assets/P02L04-033.png" width="350">
+</center>
+
+Once this signaling is performed, the user-level library executing on the second CPU determines that it must schedule the highest priority user-level thread `T3` instead, thereby blocking `T1`.
+
+Therefore, with multiple user-level threads (as managed by the user-level library) and multiple kernel-level threads, the interactions between these threads becomes more complicated in the scenario with multiple CPUs than with only one CPU.
+
+## 14. Synchronization-Related Issues
+
