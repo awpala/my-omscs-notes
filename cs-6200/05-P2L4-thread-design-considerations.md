@@ -602,4 +602,67 @@ The following are representative examples of signals:
 
 ## 20. Why Disable Interrupts or Signals?
 
+There is a **problem** which is common among both interrupts and signals in that both are executed in the context of the thread that was interrupted, meaning that they are handled on the thread's stack and therefore can cause certain issues that will lead us to the answer as to why we should sometimes disable interrupts and/or signals.
+
+<center>
+<img src="./assets/P02L04-040.png" width="350">
+</center>
+
+To demonstrate this problem, consider an arbitrary thread executing an instruction (where `PC` is the program counter, and `SP` is the stack pointer).
+
+<center>
+<img src="./assets/P02L04-041.png" width="500">
+</center>
+
+At some point during execution, an interrupt (or signal) occurs, and consequently the program counter changes to point to the first instruction of the handler. However, the stack pointer remains at the same location.
+  * Furthermore, this can be nested (i.e., multiple interrupts and/or signals executing on the interrupted thread)
+
+<center>
+<img src="./assets/P02L04-042.png" width="500">
+</center>
+
+If the handler code must access some state that is mutually accessible to other threads in the system, this will require the use of a mutex(es).
+
+<center>
+<img src="./assets/P02L04-043.png" width="500">
+</center>
+
+However, if the interrupted thread already owns the same mutex required by the handler, this creates a deadlock (i.e., the interrupted thread will not release the mutex until the handler completes the execution on its stack and returns, but the latter is in turn blocked by the locked mutex).
+
+<center>
+<img src="./assets/P02L04-044.png" width="500">
+</center>
+
+To resolve this issue, one possible **solution** is to keep the handler code simple (e.g., in this example, avoid the use of a mutex within the handler code). However, this approach may be too restrictive (i.e., limits the capabilities of the handler).
+
+<center>
+<img src="./assets/P02L04-045.png" width="500">
+</center>
+
+Alternatively, rather than restricting the capabilities of the handler (e.g., avoiding the use of mutexes), use **interrupt/signal masks**, which allow to dynamically enable or disable whether the handler code can interrupt the executing mutex.
+  * The **mask** is a sequence of bits, where each bit corresponds to a specific interrupt or signal, set via the corresponding value `0`/disabled or `1`/enabled
+  * When an event occurs, first the mask is checked, and if the event is enabled then invocation of the handler proceeds, otherwise if it is disabled, then the signal/interrupt remains pending and will be handled at a later time when the mask value changes
+
+<center>
+<img src="./assets/P02L04-046.png" width="350">
+</center>
+
+Furthermore, to solve the aforementioned deadlock situation, the thread--immediately prior to acquiring the mutex--can disable the interrupt, thereby preventing interruption of the thread's execution.
+
+<center>
+<img src="./assets/P02L04-047.png" width="400">
+</center>
+
+If the mask indicates the the the interrupt is disabled, then the interrupt will remain in a pending status until a later time.
+
+Once the lock is freed (i.e., via corresponding call to `unlock()`), the thread will then reset the appropriate bit field in the mask, thereby enabling the execution of the handler code by the operating system; at this point, it is permissible for the handler to execute the critical-section code, because the thread no longer holds the mutex (i.e., the aforementioned deadlock is now avoided).
+
+<center>
+<img src="./assets/P02L04-048.png" width="400">
+</center>
+
+Note that while an interrupt (or signal) is pending, other instances can also occur, which in turn will also remain pending. Furthermore, once the event is enabled, the handler will typically only execute *once*; therefore, to ensure that the handler is executed *multiple* times, it is insufficient to simply generate multiple interrupts (or signals).
+
+## 21. More on Masks
+
 
