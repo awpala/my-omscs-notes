@@ -665,4 +665,52 @@ Note that while an interrupt (or signal) is pending, other instances can also oc
 
 ## 21. More on Masks
 
+Here are a few more points regarding masks:
+  * Interrupt masks are maintained on a **per-CPU** basis
+    * If the interrupt mask ***disables*** a particular interrupt, then the corresponding hardware support responsible for routing the interrupt will simply avoid delivering that interrupt to the CPU
+  * Signal masks occur on a **per-execution-context** basis (i.e., on what the user-level thread--running on top of a kernel-level thread--is doing at a particular moment)
+    * If the signal mask ***disables*** a particular signal, the kernel sees the mask and avoids interrupting the corresponding thread
+
+## 22. Interrupts on Multicore Systems
+
+There are many details pertaining to interrupt handling that we will not discuss in this course. However, there are some final remarks to be aware with respect to interrupts, specifically their occurrence in the presence of multicore systems (and more generally on multi-CPU systems).
+
+<center>
+<img src="./assets/P02L04-049.png" width="200">
+</center>
+
+On a multi-CPU system, the interrupt-routing logic will direct the interrupt to any one of the CPUs that at a particular point in time has that interrupt enabled. Interrupts can be directed in this manner to *any* CPU(s) that has them enabled.
+
+Furthermore, in such a multi-CPU system, we can specify that only *one* of the CPU cores is designated for dedicated handling of the interrupt (as designated by the crown in the figure shown above). This is the only CPU that has the interrupt enabled.
+  * This consequently avoids overhead and perturbations related to interrupt handling on all of the other cores, with the net effect being an improvement in performance
+
+## 23. Types of Signals
+
+A final point regarding signal handling is that there are two **types** of signals:
+  * **one-shot signals**
+    * given that if there are many instances of a given signal that will occur, then they will be handled at least once
+      * therefore, it is possible that either only 1 signal or `n` signals of that kind will occur, but in either case only *one* execution of the signal handler is performed
+    * consequently, the signal handler must be explicitly re-enabled every time the signal occurs
+      * therefore, if the process installs some custom handler for a particular signal, then it will be invoked on the initial occurrence of the signal, however, subsequent signal(s) will invoke the default handler provided by the operating system, or the operating system can elect to ignore the signal(s) (and they will be consequently lost)
+  * **real-time signals**
+    * if `n` signals are raised, then correspondingly the handler is guaranteed to be called `n` times
+    * supported in the Linux operating system
+
+## 24. Signals Quiz and Answers
+
+The previous section described different types of signals. Using the most recent POSIX standard, indicate the correct signal names for the following events:
+* terminal interrupt signal
+  * `SIGINT`
+* high bandwidth data is available on a socket
+  * `SIGURG`
+* background process attempting write
+  * `SIGTTOU`
+* file size limit exceeded
+  * `SIGXFSZ`
+
+*References*:
+  * [POSIX.1-2017/IEEE Std 1003.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/)
+
+## 25. Interrupts as Threads
+
 
