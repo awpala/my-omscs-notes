@@ -853,6 +853,23 @@ Therefore, an easy **solution** in this case is to have an associated **special 
 <img src="./assets/P02L04-061.png" width="500">
 </center>
 
+In Case 3, the user-level thread currently executing on top of the kernel-level thread where the signal actually occurs has its signal mask bit disabled (i.e., set to `0`). Furthermore, in the overall process, there is another user-level thread which has its signal mask bit enabled (i.e., set to `1`), but--unlike in Case 2 (where this latter user-level thread was on the run queue when the signal was generated)--it is currently running on another CPU/kernel-level thread when the signal is generated.
+
+When the signal is delivered in the context of the corresponding kernel-level thread, the library-handling routine will intervene. The library-handling routine is aware that there is a user-level thread in the overall process that is capable of handling the particular signal in question, and furthermore it detects that the corresponding user-level thread is currently executing on top of another kernel-level thread (or, more precisely, a lightweight process that is managed by the user-level threading library).
+
+<center>
+<img src="./assets/P02L04-062.png" width="500">
+</center>
+
+Consequently, due to this "awareness" of the user-level thread library, it generates a **directed signal** to the other kernel-level thread (i.e., to its associated lightweight process) where the other user-level thread is currently executing.
+
+When the operating system delivers the signal to this particular kernel-level thread, it detects that the signal mask bit is enabled (i.e., set to `1`), and coordinates (via the associated library-handling routine) the execution of the appropriate signal handler. 
+
+## 32. Case 4
+
+<center>
+<img src="./assets/P02L04-063.png" width="500">
+</center>
 
 
 
