@@ -777,8 +777,22 @@ In Linux, these two parts of the interrupt processing are referred to as the **t
 
 ***N.B.*** The paper goes into further detail in describing a specific **policy** for interpreting the priority levels associated with the threads when they are being interrupted, as well as priority levels associated with the devices. These priority levels are used to determine when and how a thread should be used to handle the particular interrupt in question. While this discussion is out of scope for present purposes, the **takeaway** is that if you want to permit arbitrarily complex functionality to be incorporated into the interrupt-handling operations, then it is imperative to ensure that the corresponding handling routine is executed by a dedicated thread (which is able to block) that can be potentially synchronized with if necessary.
 
-## 27. Performance of Threads as Interrupts
+## 27. Performance of Threads as Interrupts: The Bottom Line
 
-### Bottom Line
+<center>
+<img src="./assets/P02L04-055.png" width="500">
+</center>
 
+The **reason** that the paper describes the exercise of creating threads in order to handle interrupts is ultimately motivated by ***performance***.
+
+The operations that are necessary to perform the appropriate checks and (if necessary) to create a separate thread to handle the interrupt incur an **overall cost/overhead** of around 40 SPARC instructions per interrupt-handling operation.
+
+However, consequently, it is not necessary to repeatedly change the interrupt mask whenever a mutex is locked and then switch it back again when the mutex is subsequently unlocked, which saves around 12 instructions per mutex operations.
+
+Because there are many fewer interrupts in the system than mutex lock/unlock operations, this is an overall **net winning** situation (i.e., the incurred amortized cost of the thread creations is outweighed by the relatively sparse occurrence of the interrupts).
+  * This is a exemplary demonstration of ***optimizing for the common case***, an important lesson/concept in system design, with the **common case** here being the mutex lock/unlock operations, which are performed as efficiently as possible. The corresponding tradeoff cost (i.e., in order to prevent compromise of safety/correctness of the system) is incurred by the compensating thread creation.
+
+## 28-32. Threads and Signal Handling
+
+### Case 1
 
