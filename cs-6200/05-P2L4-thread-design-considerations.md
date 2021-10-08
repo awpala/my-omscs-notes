@@ -847,7 +847,7 @@ The user-level thread library is aware of the other user-level thread (with bit 
 Therefore, an easy **solution** in this case is to have an associated **special library-handling routine** (which wrap the signal-handling routines) for all of the signals in the system, so that when a signal occurs, the corresponding library-provided handler begins executing (which in turn has visibility on the signal mask states for *all* of the user-level threads).
   * In this particular situation shown in the above figure, the user library can coordinate the signal (i.e., invoke the corresponding library-handling routine and library scheduler) to execute the *other* user-level thread (which has its signal mask set to `1` at the time that the signal occurs) on the kernel-level thread instead in order to handle the signal.
 
-## 31. Case 3
+### 31. Case 3
 
 <center>
 <img src="./assets/P02L04-061.png" width="500">
@@ -865,7 +865,7 @@ Consequently, due to this "awareness" of the user-level thread library, it gener
 
 When the operating system delivers the signal to this particular kernel-level thread, it detects that the signal mask bit is enabled (i.e., set to `1`), and coordinates (via the associated library-handling routine) the execution of the appropriate signal handler. 
 
-## 32. Case 4
+### 32. Case 4
 
 <center>
 <img src="./assets/P02L04-063.png" width="500">
@@ -905,7 +905,7 @@ The process will continue in this manner until all of the kernel-level threads h
 
 Another possibility is that one of the user-level threads are ready to enable the signal mask again for the signal. Because the threading library is aware that it has already disabled all of the kernel-level signal masks, it will now need to perform a system call to the kernel in order to update the signal mask to `1` on one of the kernel-level threads to reflect that the user-level process is now capable of handling the signal.
 
-### Optimizing for the Common Case
+#### Optimizing for the Common Case
 
 The **solution** for how signal handling is managed and how interactions occur between the kernel and the user-level library is another exemplar of ***optimizing for the common case***:
   * Signals occur less frequently than do signal mask updates.
