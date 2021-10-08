@@ -913,7 +913,7 @@ The **solution** for how signal handling is managed and how interactions occur b
   * Therefore, to decrease the cost of the common case (i.e., where there is no signal occurring), the relatively cheap signal mask update operation is only performed on the user-level signal masks, while avoiding a corresponding (relatively expensive) system call
     * This makes the signal handling logic more complex (i.e., more expensive), but this cost is justified with the overall improved performance via the corresponding reduction in system calls
 
-## 32. Tasks in Linux
+## 33. Tasks in Linux
 
 Finally, let us consider some aspects of the threading support provided in Linux.
   * Note that the current threading support in Linux is based on many "lessons learned" from earlier experiences with threads (e.g., those presented in the aforementioned Solaris papers)
