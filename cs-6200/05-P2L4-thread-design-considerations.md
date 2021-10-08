@@ -871,5 +871,113 @@ When the operating system delivers the signal to this particular kernel-level th
 <img src="./assets/P02L04-063.png" width="500">
 </center>
 
+In Case 4, all user-level threads have a disabled signal mask bit (i.e., set to `0`) for the particular signal in question. Furthermore, the kernel-level threads are enabled (i.e., set to `1`), and therefore the kernel still thinks that the user process can handle this particular signal.
+
+When the signal occurs in the kernel-level thread, the kernel detects that the kernel-level thread's signal mask bit is set to `1`, and therefore the kernel will interrupt the user-level thread currently executing in the context of the associated kernel-level thread. The library-handling routine is therefore dispatched, and detects that the user-level thread's signal mask bit is set to `0`, and that no other user-level threads are currently capable of handling this particular signal.
+
+<center>
+<img src="./assets/P02L04-064.png" width="500">
+</center>
+
+Consequently, the user-level threading library will perform a system call to request for the signal mask of the underlying kernel-level thread to be reset to `0`. Now, from the execution of one user-level thread, the state of the signal masks that are associated with the other kernel-level threads (which may be executing on other CPUs) can now be be affected.
+
+Here, only the mask associated with the kernel-level thread which has been reset can be changed. Therefore, the user-level threading library will **reissue** the signal for the entire process again.
+
+<center>
+<img src="./assets/P02L04-065.png" width="500">
+</center>
+
+Now, the operating system will find another kernel-level thread associated with the user-level process which originally had its signal mask bit set to `1`, but is now `0` as well.
+
+<center>
+<img src="./assets/P02L04-066.png" width="500">
+</center>
+
+The operating system will consequently find a different kernel-level thread whose signal mask bit is set to `1`, and will signal in the context of this kernel-level thread, thereby interrupting the associated user-level thread (via the user-level threading library and corresponding library-handling routine).
+
+<center>
+<img src="./assets/P02L04-067.png" width="500">
+</center>
+
+Consequently, the kernel-level thread's signal mask bit will be reset to `0` as well.
+
+The process will continue in this manner until all of the kernel-level threads have their signal mask bit set to `0`, i.e., the signal is now cleared/disabled for the overall user process.
+
+Another possibility is that one of the user-level threads are ready to enable the signal mask again for the signal. Because the threading library is aware that it has already disabled all of the kernel-level signal masks, it will now need to perform a system call to the kernel in order to update the signal mask to `1` on one of the kernel-level threads to reflect that the user-level process is now capable of handling the signal.
+
+### Optimizing for the Common Case
+
+The **solution** for how signal handling is managed and how interactions occur between the kernel and the user-level library is another exemplar of ***optimizing for the common case***:
+  * Signals occur less frequently than do signal mask updates.
+    * When entering a critical section of the code, signal mask updates can be performed relatively frequently (i.e., to ensure safety of the executing process/thread), while the corresponding signal occurs relatively infrequently.
+  * Therefore, to decrease the cost of the common case (i.e., where there is no signal occurring), the relatively cheap signal mask update operation is only performed on the user-level signal masks, while avoiding a corresponding (relatively expensive) system call
+    * This makes the signal handling logic more complex (i.e., more expensive), but this cost is justified with the overall improved performance via the corresponding reduction in system calls
+
+## 32. Tasks in Linux
+
+Finally, let us consider some aspects of the threading support provided in Linux.
+  * Note that the current threading support in Linux is based on many "lessons learned" from earlier experiences with threads (e.g., those presented in the aforementioned Solaris papers)
+
+Like most operating systems, Linux has an abstraction to represent processes, however, the main abstraction it uses to represent an execution context is called a **task**, represented by the corresponding structure `task_struct`. A task is essentially the execution context of a kernel-level thread.
+  * A single-threaded process has *one* task
+  * A multi-threaded process has *many* tasks (i.e., one per thread)
 
 
+### `struct task_struct`
+
+<center>
+<img src="./assets/P02L04-068.png" width="350">
+</center>
+
+The figure above shows the key elements of the structure `task_struct`.
+  * `pid` identifies the task (which, for historic reasons, is a slight misnomer via the prefix `p` corresponding to a "process")
+    * In a single-threaded process (i.e., having one task), the `pid` is the same as the process id
+    * In a multi-threaded process (i.e., having many tasks), each task is uniquely identified by `pid`. Furthermore, the process as a whole will be identified by the `pid` of the very first task that was created when the process was created, which in turn is also stored in the field `tgid` (task group id) among all of the tasks.
+  * `tasks` maintains a list of tasks which are linked together via the single, common process (i.e., composed of the associated constituent threads) to which they belong
+    * Therefore, the `pid` for the process can be determined by traversing `tasks`.
+  * Having learned from previous implementation efforts (e.g., the aforementioned Solaris SunOS threads implementation), Linux has never had one, contiguous control block as described at the beginning of this course; instead, the process state has always been represented via a collection of **references** to data structures, which facilitates the ability for tasks in a single process to share some portions of the address space (e.g., virtual address mappings, files, etc.) 
+    * `mm` is a reference to memory management
+    * `files` is a reference to file management
+
+***N.B.*** `task_struct` is a relatively large data structure, comprising a total of around 1.7 KB.
+
+### Task Creation: `Clone()`
+
+To create a new task, Linux supports the operation `clone()`, which resembles the following function signature (with analogous behavior to the previously seen thread creation routines):
+```c
+clone(function, stack_ptr, sharing_flags, arg)
+```
+
+<center>
+<img src="./assets/P02L04-069.png" width="550">
+</center>
+
+The parameter `sharing_flags` is a bitmap that specifies which portion of the task's state will be **shared** between the parent and the child tasks. The figure above shows corresponding argument values that can be used to set this field; in particular, the effects of a given flag depend on whether the flag is being set or cleared.
+  * For instance, when all of the flag bits are set, then a new child thread is being created, which shares *everything* (e.g., the address space) with the parent thread.
+  * Conversely, if all of the sharing flags are cleared, then *nothing* is being shared between the child and parent threads, which is more similar to what occurs when forking a new process.
+  * Otherwise, in some cases it is also sensible to use various combinations of set and unset flags (e.g., sharing only files between the parent and child tasks).
+
+As a related aside, `fork()` is implemented internally in Linux via `clone()` (i.e., with all flags cleared).
+
+Furthermore, in Linux (and POSIX-compliant operating systems in general), `fork()` has distinctly different semantics for multi-threaded vs. single-threaded processes.
+  * In a single-threaded process, when forking, it is expected that the resulting child process is a *full* replica of the parent process.
+  * Conversely, in a multi-threaded process, when forking, the child will be a single-threaded process (i.e., only a portion of the address space will be replicated, specifically that section which is visible from the parent thread/task that called `fork()`). This has many implications pertaining to synchronization (e.g., mutex management), however, this topic is beyond the scope of this course.
+
+### Linux Threads Model
+
+The current implementation of the Linux threads model is called the **Native POSIX Threads Library (NPTL)**, which is a 1:1 model (i.e., there is one kernel-level thread associated with each user-level thread).
+  * ***N.B.*** NPTL replaces an older implementation called **LinuxThreads**, which was more similar to the many-to-many model, which in turn suffered from many of the same issues (e.g., complex signal management, etc.) described in the Solaris reference papers.
+
+In NPTL, by virtue of the underlying 1:1 model, the kernel sees all of the information pertaining to each user-level thread (e.g., blocked/unblocked status for synchronization, signal mask status, etc.). This is made possible for two reasons:
+  1. Kernel traps are much cheaper with a 1:1 model (i.e., the user-level to kernel-level crossing is comparatively faster in a 1:1 model rather than in a M:M model)
+  2. Modern platforms have more resources (e.g., larger memories allowing for a relatively abundant amount of kernel-level threads, larger range of IDs which relaxes restrictions on uniquely identifying processes and tasks, etc.)
+
+Nevertheless, when dealing with thread-management scenarios involving an extremely large number of threads (e.g., exascale computing) or complex platforms (e.g., having many different kinds of processors), it still makes sense to consider user-level library support, providing custom policies for thread management, etc. For practical purposes, however, the current 1:1 model in NPTL is sufficient.
+
+## 34. Lesson Summary
+
+This lesson reviewed two older papers pertaining to the Solaris SunOS operating system
+  * Implementation insights for supporting user- and kernel-level threads
+  * Historic perspective on Linux threading models
+
+This lesson also introduced interrupts and signals, two important notification mechanisms which are supported by most modern operating systems.
