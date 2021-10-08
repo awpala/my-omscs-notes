@@ -794,5 +794,65 @@ Because there are many fewer interrupts in the system than mutex lock/unlock ope
 
 ## 28-32. Threads and Signal Handling
 
-### Case 1
+### 28. Introduction
+
+Consider now the **interplay** between threads and the way in which signals must be handled.
+
+<center>
+<img src="./assets/P02L04-056.png" width="350">
+</center>
+
+In the Solaris threads implementation described in the reference papers, there is a **signal mask** associated with each **user-level thread**, which is part of the user-level process (i.e., is visible at the user-level library level). There is also a **signal mask** associated with the **kernel-level thread** (or, rather, the **light-weight process** that it is attached to); furthermore, this kernel-level mask is only visible at the kernel level.
+
+<center>
+<img src="./assets/P02L04-057.png" width="550">
+</center>
+
+When a user-level thread must disable a signal, it clears the appropriate bit in the signal mask; this occurs at the user level (i.e., this mask is *not* visible to the kernel).
+
+When the signal occurs, the kernel must be informed of what to do with the signal.
+
+<center>
+<img src="./assets/P02L04-058.png" width="350">
+</center>
+
+It is possible that the kernel-visible signal mask has that bit still set as `1`, and therefore the kernel thinks that the signal is *enabled* as far as this particular user process/thread is concerned.
+
+In order to avoid having to make a system call to cross from the user level into the kernel level each time a user-level thread modifies the signal mask, it is necessary to devise a corresponding **policy**. The SunOS paper describing the lightweight user-level threading library proposes a **solution** for handling this situation.
+
+To explain what is happening, let us now consider a sequence of different situations/cases.
+
+### 29. Case 1
+
+<center>
+<img src="./assets/P02L04-059.png" width="500">
+</center>
+
+In Case 1, *both* the user-level signal mask *and* the kernel-level signal mask have the signal ***enabled***, with the user-level thread currently executing on the kernel-level thread.
+
+When the signal occurs, there is no problem: The kernel detects that the signal is enabled, and consequently the kernel will interrupt the  user-level thread currently executing on top of the kernel-level thread. Because the user-level thread also has the signal enabled, the process will therefore be **safe**.
+
+### 30. Case 2
+
+<center>
+<img src="./assets/P02L04-060.png" width="500">
+</center>
+
+In Case 2, kernel-level mask is `1` (i.e., the kernel thinks that the overall user-level process can handle the signal). However, the user-level thread that is currently running on top of the kernel-level thread has the signal *disabled* (i.e., mask bit is `0`). Furthermore, there is *another* user-level thread that is currently in the run queue (i.e., is runnable, but not currently executing) which has its mask *enabled*.
+
+The threading library that manages both of hte user-level threads is aware of *both* threads. Therefore, when a signal occurs at the kernel level, the kernel sees that the overall process knows how to handle this particular signal (and correspondingly has its bit set to `1`). However, it *should* be appropriate for the kernel to interrupt the user-level thread running on it (i.e., the currently running user-level thread with mask bit `0`/disabled).
+
+The user-level thread library is aware of the other user-level thread (with bit `1`), which is capable of handling the signal. Recall that the way signals are handled is that when they interrupt the process (or, more precisely, the thread that is running in the process), the corresponding handling routine that must be executed is specified in the **signal handlers table**.
+
+Therefore, an easy **solution** in this case is to have an associated **special library-handling routine** (which wrap the signal-handling routines) for all of the signals in the system, so that when a signal occurs, the corresponding library-provided handler begins executing (which in turn has visibility on the signal mask states for *all* of the user-level threads).
+  * In this particular situation shown in the above figure, the user library can coordinate the signal (i.e., invoke the corresponding library-handling routine and library scheduler) to execute the *other* user-level thread (which has its signal mask set to `1` at the time that the signal occurs) on the kernel-level thread instead in order to handle the signal.
+
+## 31. Case 3
+
+<center>
+<img src="./assets/P02L04-061.png" width="500">
+</center>
+
+
+
 
