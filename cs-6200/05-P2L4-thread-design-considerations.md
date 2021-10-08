@@ -711,6 +711,74 @@ The previous section described different types of signals. Using the most recent
 *References*:
   * [POSIX.1-2017/IEEE Std 1003.1-2017](https://pubs.opengroup.org/onlinepubs/9699919799/)
 
-## 25. Interrupts as Threads
+## 25. Handling Interrupts as Threads
+
+Now that we have a basic understanding of how interrupts are typically handled, let us now consider the **relationship** between interrupts and threads.
+
+<center>
+<img src="./assets/P02L04-050.png" width="400">
+</center>
+
+Recall from a previous example that when an interrupt occurs, there is the possibility of a deadlock resulting. This can occur if the interrupt-handling routine is attempting to lock a mutex that is already being held by the executing thread that the interrupt was called for. (A similar situation can also occur with respect to the signal-handling routine.)
+
+<center>
+<img src="./assets/P02L04-051.png" width="550">
+</center>
+
+One **solution** to this problem--as illustrated in the SunOS reference paper--is to allow interrupts to become full-fledged **threads** themselves; this should occur *every time* they are potentially performing blocking operations. 
+
+In this case, although the interrupt handler is blocked at this particular point in time, it has its own context (i.e., its own stack) and therefore it can remain blocked. At that point, the thread scheduler can schedule the original thread back onto CPU so that it can proceed with executing.
+
+<center>
+<img src="./assets/P02L04-052.png" width="550">
+</center>
+
+Eventually, the original thread will unlock the mutex, and at that point the thread corresponding to the interrupt-handling routine will be available to execute.
+
+<center>
+<img src="./assets/P02L04-053.png" width="550">
+</center>
+
+The way this occurs is as shown in the figure above.
+  * Whenever an interrupt (or signal) occurs, it interrupts the execution of a thread. By default, that handling routine should start executing in the context in the context of the *interrupted thread* using its stack and registers.
+  * If the handling routine will be performing synchronization operations, in this case the handler code will execute in the context of a *separate* thread.
+  * When the locking operation is reached, if it turns out that it blocks, then the handler code and its thread will be placed in a wait queue associated with the mutex, and instead the originally interrupted thread will be scheduled to run.
+  * When the unlock operation is reached, the sequence returns to handler-code thread, which is consequently dequeued from the wait queue associated with the mutex and the handling code can now be executed to completion.
+
+  ### ...But Dynamic Thread Creation Is *Expensive*! 
+
+While this approach is sensible, one **concern** is that dynamic thread creation is ***expensive***.
+
+Therefore, the key **dynamic decision** to be made is:
+  * if the handler does not lock, then execute on the interrupted thread's stack
+  * otherwise, if the handler can ***block*** (e.g., when attempting to lock a mutex), then turn it into a ***real thread*** (i.e., create a new thread)
+
+***N.B.*** These rules are enumerated in the Solaris paper with respect to the SunOS system.
+
+As a matter of **optimization**, in order to eliminate the need to dynamically create threads (e.g., whenever it is determined that the handler can potentially lock), the kernel can pre-create and pre-initialize a number of **thread structures** for the various interrupt routines that it can support (i.e., the kernel will pre-create a number of threads and their associated data structures, and then initialize the data structures so that they point to the appropriate locations in the appropriate interrupt handling routines so that any interrupt-internal data is appropriately allocated, and so on). Consequently, the creation of a thread is removed from the fast path of the interrupt processing, thereby avoiding incurring of that cost when the interrupt actually occurs, thereby significantly improving (i.e., speeding up) the interrupt-handling time.
+
+## 26. Interrupts: Top vs. Bottom Half
+
+<center>
+<img src="./assets/P02L04-054.png" width="600">
+</center>
+
+Furthermore, when an interrupt first occurs, and the sequence is within the initial part of the interrupt handler, it may be necessary to disable certain interrupts (recall that this is one approach to preventing a deadlock situation).
+
+However, when the interrupt handling is passed to a *separate* thread, we can consequently enable any interrupts that had been originally disabled (i.e., any occurring interrupts can now be handled in the same manner as would be done for any other thread in the system, with no corresponding danger of a similar additional deadlock situation occurring, due to the interrupt-handling routine being isolated to the separate thread). Therefore, it is much safer (i.e., with respect to having external interrupts occurring) when executing the bottom part of the handler code.
+
+The words "***top***" and "***bottom***" in the figure above were chosen here intentionally to describe this situation. This description of how Solaris uses threads to handle interrupts is a very **common technique** for allowing an interrupt-handling routine to have potentially arbitrary complexity without concern for deadlocks. 
+  
+In Linux, these two parts of the interrupt processing are referred to as the **top half** and the **bottom half** (respectively).
+  * The top half performs a minimum amount of processing, and is required to be **non-blocking**. Essentially, it is required to be ***fast***.
+    * The top half executes *immediately* when an interrupt occurs.
+  * The bottom half is allowed to perform processing operations of arbitrary complexity.
+    * The bottom half--like any other thread--can be scheduled for a later time, can block, etc. Therefore, other than perhaps due to certain timeouts associated with the device, there is virtually no restriction on when it actually is allowed to execute.
+
+***N.B.*** The paper goes into further detail in describing a specific **policy** for interpreting the priority levels associated with the threads when they are being interrupted, as well as priority levels associated with the devices. These priority levels are used to determine when and how a thread should be used to handle the particular interrupt in question. While this discussion is out of scope for present purposes, the **takeaway** is that if you want to permit arbitrarily complex functionality to be incorporated into the interrupt-handling operations, then it is imperative to ensure that the corresponding handling routine is executed by a dedicated thread (which is able to block) that can be potentially synchronized with if necessary.
+
+## 27. Performance of Threads as Interrupts
+
+### Bottom Line
 
 
