@@ -303,7 +303,9 @@ Therefore, when performing the final `Join()` operation:
 
 N.B. In this particular example, the results of the child thread's processing are available via `list`, therefore the `Join()` operation is not strictly necessary here (i.e., the result of the child thread `T1`'s operation is available irrespectively of the call to `Join()`).
 
-## 11. Mutexes
+## 11-13. Mutexes
+
+### 11. Example Revisited
 
 So, then, how is `list` supposed to be updated?
 
@@ -355,7 +357,7 @@ Another **problem** occurs if two threads are running on the CPU simultaneously 
 
 In this case, both may set `e.p_next` to `NULL`, and then subsequently take turns setting `list.p_next` to `e`, with only one of them actually being inserted into the list (e.g., the element with value `value_x` in the figure shown above) while the other is not and is consequently simply "lost." 
 
-## 12. Mutual Exclusion
+### 12. Mutual Exclusion
 
 In the previous example, there is a **danger** present wherein the parent and the child thread may attempt to update the shared `list` simultaneously, thereby potentially overwriting the list elements. This illustrates a key **challenge** in multithreading: There is a need for a ***mechanism*** to perform **mutual exclusion** among the execution of concurrent threads.
 
@@ -412,7 +414,7 @@ When a lock is freed, any of the threads waiting on the lock (or a brand new thr
 
 Birrell's `Lock()` construct (as shown in the figure above) will be used throughout the lecture, however, be advised that many common APIs provide a set of complementary operations `Lock(m)`/`Unlock(m)` (i.e., *without* an "implicit unlock" at that provided by Birrell's construct)
 
-## 13. Mutex Example
+### 13. Mutex Example
 
 Returning to the previous example, consider how the operation `safe_insert()` can be made "safe" via a mutex. The corresponding code is as follows:
 
