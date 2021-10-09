@@ -27,7 +27,7 @@ Therefore, for this particular configuration (i.e., 11 toy orders processed by 6
 
 ***N.B.*** Changing the configuration (i.e., different number of threads and/or work orders) can affect these results, i.e., the analysis and conclusion ***depend on the metrics***.
 
-### 3. Are Threads Useful?
+## 3. Are Threads Useful?
 
 At the beginning of P2L2, we asked: are threads useful?
 
@@ -43,7 +43,7 @@ Recall, there are a number of **reasons** why threads are indeed useful, e.g.,:
 
 However, how did we draw these conclusions? (e.g., what resources were available in the system, what metrics were used for comparing implementations with/without threads, etc.)
 
-#### What is *Useful*?
+### What is *Useful*?
 
 To measure whether something is "useful" or not, this differs depending on what exactly is being measured.
 
@@ -140,4 +140,28 @@ Any of these methods represent viable settings whereby one can evaluate a system
 <center>
 <img src="./assets/P02L05-006.png" width="150">
 </center>
+
+Returning to the question "*are threads useful?*" (recall Section 3), we realize now that the answer is not so straightforward; rather, it depends on the **metrics** and on the **workload**!
+
+In the **toy shop** example, depending on the workload (i.e., different number of toy orders) and the corresponding metric, it led to the conclusion that a different implementation of the toy shop (i.e., a different way to organize its workers) was a better one.
+
+In other domains, such as **graphs** and **graphs processing**, depending on the type of the graph in question (e.g., how well-connected it is), it may be suitable to choose a correspondingly different type of shortest-path algorithm. Here, the graph type is equivalent to the "workload."
+  * Some shortest-path algorithms are known to work well on ***densely*** connected graphs
+  * Other shortest-path algorithms work better for ***sparsely*** connected graphs
+
+When comparing **file systems**, an important consideration may be is the **file patterns**, e.g.:
+  * Some file systems may be optimized for predominantly ***read accesses***
+  * Other file systems may be optimized for a mixed workload (e.g., *both* ***reading*** and ***updating***)
+
+The larger **point** that transcends these particular examples is that in order to answer "the" question of whether something is better than an alternative implementation or algorithm is always the same: ***it depends***!
+
+Correspondingly, the answer to the question of whether or not threads are *really* useful is: it depends (i.e., on the context in which we are trying to answer this particular question). Indeed, for practical purposes, this is (almost) *always* the correct answer, particularly when dealing with systems.
+  * In fact, the contrary (i.e., a particular implementation/design is *always better*) is **not** an acceptable one in this course!
+
+For the remainder of this lecture, we will attempt to answer more specifically whether threads *are* indeed useful, and particularly when are threads more or less useful when comparing a ***multithreaded-based implementation*** of a problem to some alternatives. Additionally, guidance will be provided for how to define some useful **metrics**, as well as how to structure **experimental evaluations** so that such metrics can be correctly ***measured***.
+
+## 9. Multi-Process vs. Multi-Threaded
+
+### How to Best Provide Concurrency?
+
 
