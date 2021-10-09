@@ -498,3 +498,23 @@ All of the aforementioned are useful techniques which are now fairly **common op
 
 ## 19. Apache Web Server
 
+Before proceeding further, let us briefly describe the **Apache** Web server, a popular open-source Web server which is one of the technologies compared against by Pai et al. with respect to Flash.
+  * ***N.B.*** The intent here is *not* to give a detailed lecture on Apache, which is beyond the scope of the course, but rather to provide sufficient details regarding the architecture of Apache for comparison with the aforementioned models, and in turn to highlight how the topics discussed in the course are reflected in "real world" designs. 
+
+<center>
+<img src="./assets/P02L05-026.png" width="550">
+</center>
+
+From a high level, the software architecture of Apache is as shown in the figure above.
+  * The **core** component provides the basic server-like capabilities (e.g., accepting connections and managing concurrency).
+  * The different **modules** correspond different types of functionality that is executed on each request. The specific Apache deployment can be configured to include different types of modules (e.g., certain security features, management of dynamic content, basic HTTP request processing, etc.)
+
+The **flow of control** is similar to the event-driven model seen previously, whereby each request passes through all of the modules. As in the event-driven modules, ultimately each request passes through all of the corresponding handlers.
+
+However, Apache is a **combination** of a multi-process and a multi-threaded model.
+  * ***Multi-threaded***: In Apache, a single process (i.e., a single instance) is a multi-threaded **boss/workers** process having a dynamically managed workers thread pool, wherein there is a configurable threshold that can be used to dynamically track when to adjust (i.e., increase or decrease) the number of workers threads in the pool.
+  * ***Multi-process***: Furthermore, the total number of processes can also be adjusted dynamically, based on information such as the number of outstanding connections, the number of pending requests, CPU usage, etc.; these (and other) factors correspondingly determine how to adjust the number of threads per process and/or the total number of processes.
+
+## 20. Experimental Methodology
+
+### Setting Up Performance Comparisons
