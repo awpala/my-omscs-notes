@@ -326,3 +326,114 @@ If there are multiple CPUs available, the event-driven model is still sensible, 
 
 ### 15. Event-Driven Model: How?
 
+Consider now how the event-driven model can be actually implemented.
+
+<center>
+<img src="./assets/P02L05-017.png" width="650">
+</center>
+
+At the lowest level, it is necessary to receive some events from the **network** or from the **disk** (e.g., information about the request to be processed). The operating system uses the **abstractions** of **sockets** and **files** (respectively) for this purpose.
+
+More generally, internally, the actual data structure that is used to represent sockets and files is identical, and is called a **file descriptor**. Therefore, an **event** in the context of the Web server example is simply an input on any of the corresponding file descriptors (e.g., socket and files) associated with that particular event.
+
+To determine which file descriptor has an input (e.g., an event has arrived):
+* The Flash paper describes using the call `select()`, which takes a range of file descriptors as a parameter and returns the first-encountered one which has an input, irrespective of the nature of the file descriptor (e.g., socket vs. file).
+* An alternative approach to this is to use the `poll()` API, which is another system call provided by current operating systems.
+
+The **problem** with both of these approaches is that in general they must scan through a potentially large list of file descriptors before encountering one having an input. Furthermore, it is also very likely that among this long list of file descriptors there will only be a few that have an input, thereby wasting much of the search time.
+
+An alternative to these approaches is a more recent type of API (which is supported by the Linux kernel, for instance) called `epoll()`, which eliminates some of these problems inherent in `select()` and `poll()`. Accordingly, many high-performance servers that require high data rates and low latency use this kind of mechanism today.
+
+#### Benefits of the Event-Driven Model
+
+<center>
+<img src="./assets/P02L05-018.png" width="650">
+</center>
+
+The **benefits** of the event-driven model derive from its inherent design; these are as follows:
+  * A single address space giving rise to a single flow of control
+  * Consequently, the overhead is relatively low:
+    * smaller memory requirement
+    * no context switching
+  * The program is comparatively simpler due to no need for explicit synchronization constructs/primitives (e.g., shared access to variables, etc.)
+
+***N.B.*** In the context of the *single* thread, there is switching among the multiple client connections (and corresponding "jumping around" the code to execute various handlers, accessing different parts of state, etc.) which in turn will affect performance (e.g., loss of locality and cache pollution effects), however,  this performance penalty is offset by the corresponding savings in avoiding (comparatively more expensive) context switching and synchronization.
+
+### 16. Helper Threads and Processes
+
+#### Problem with Event-Driven Model
+
+Note that, despite the aforementioned benefits, the event-driven model is not without its **challenges**.
+
+<center>
+<img src="./assets/P02L05-019.png" width="550">
+</center>
+
+Recall previously when discussing the many-to-one multi-threading model (cf. P2L2 Section 32) that a single **blocking** I/O call originating from one of the user-level threads can **block** the *entire* process, even though there may be other user-level threads that are ready to execute.
+
+A similar **problem** exists in the event-driven model: If one of the event handlers issues a blocking call I/O call (e.g., to read data from the network or from disk), then the *entire* event-driven process can be correspondingly blocked.
+
+#### Asynchronous I/O Operations
+
+<center>
+<img src="./assets/P02L05-020.png" width="550">
+</center>
+
+One way to circumvent this problem is to use **asynchronous I/O operations**.
+
+**Asynchronous system calls** have the **property** that when the system call is made, the kernel captures enough information about the caller and where and how the data should be returned once it becomes available in order to prevent blocking of normal operation.
+
+<center>
+<img src="./assets/P02L05-021.png" width="550">
+</center>
+
+Asynchronous system calls also provide the caller with the opportunity to proceed executing a task, and then return at a later time to check whether the results of the asynchronous operation are already available (e.g., the processor/thread can come back later to check if a file has already been read and the data is available in a buffer in memory).
+
+One **aspect** that makes asynchronous calls possible is that the operating system **kernel** is multi-threaded; therefore, while the caller thread continues execution, *another* kernel thread performs all of the necessary work and the required waiting in order to perform the I/O operation (e.g., retrieve the data) and to ensure that the results become available to the appropriate user-level context.
+
+Furthermore, asynchronous operations can benefit from the actual **I/O devices** themselves.
+  * For example, the caller thread can simply pass a request data structure to the device itself, and in turn the device performs the operation (e.g., dynamic memory allocation). Subsequently, the thread can come back at a later time to check whether the device has completed the operation.
+
+***N.B.*** We will return to asynchronous I/O operations in a later lecture. For present purposes, note that when using asynchronous I/O operations, the process will *not* be blocked in the kernel when performing I/O.
+  * In the event-driven model, if the event handler initiates an asynchronous I/O operation (e.g., for network or for disk), the operating system can simply use a mechanism such as `select()`, `poll()`, or `epoll()` to catch such events.
+
+In summary, asynchronous I/O operations fit very nicely with the event-driven model.
+
+#### What if Asynchronous Calls Are Not Available?
+
+The **problem** that arises with asynchronous calls is that they were not ubiquitously available in the past, and even at present they may not be available for all types of devices.
+
+<center>
+<img src="./assets/P02L05-022.png" width="550">
+</center>
+(adapted from Pai et al. Figure 5)
+
+In a more general case, perhaps the process to be performed by the server is not to read data from a file (where asynchronous calls *are* available), but rather is to call processing on some other device (e.g., accelerator) that only the server has access to.
+
+To deal with this problem, Pai et al. proposed to use **helpers**.
+  * When the event handler must issue an I/O operation that can block, it passes it to the helper and then returns to the event dispatcher. The helper will be responsible for handling the blocking I/O operation, as well as interacting with the event dispatcher as necessary.
+  * The communication with the helper can be performed via a socket-based interface or via a **pipe** (another messaging interface that is available on most operating systems), both of which expose a file-descriptor-like interface, thereby allowing similar `select()`, `poll()`, etc. mechanisms for use with the event dispatcher (i.e., to keep track of the various events occurring in the system)
+    * This system interface can be used to track whether the helpers are providing any events to the event dispatcher at any given time
+  * With this helper in place, the synchronous I/O call is handled by the helper, with the helper performing the **block** operation while the main event loop/dispatcher (an corresponding main process) does *not* block
+
+In operating in this manner, while there are no asynchronous I/O calls, the helpers allow to achieve analogous behavior as if there were asynchronous calls being made.
+
+At the time of the writing of the paper, another **limitation** was that not all kernels were multi-threaded, and therefore not all kernels supported the aforementioned one-to-one model (cf. P2L2 Section 32). In order to deal with this limitation, the decision made by the authors was to make the helper entities processes; accordingly, they called this model the **Asymmetric Multi-Process Event-Driven Model (AMPED)** (i.e., an event-driven model comprised of multiple processes, wherein the processes are asymmetric--the helper processes only deal with blocking I/O operations, while the main process performs everything else).
+  * ***N.B.*** In principle, the same idea would apply to a multi-threaded scenario (i.e., where the helpers are threads rather than processes) giving rise to an analogous **Asymmetric Multi-Threaded Event-Driven Model (AMTED)**; in fact, there exists a follow up to the Flash paper that does just this.
+
+<center>
+<img src="./assets/P02L05-023.png" width="550">
+</center>
+
+The key **benefit** of the asymmetric model is that it resolves some of the limitations of the pure event-driven model pertaining to the requirements of the operating system, e.g.,:
+  * Eliminates the dependence on asynchronous I/O calls and threading support
+  * Better portability
+  * Achieves concurrency with a relatively smaller memory footprint than a regular worker thread in a multi-process or multi-threaded model
+    * In the latter case, the worker must perform *everything* for a full request, therefore its memory requirements are comparatively larger than a comparable helper entity
+    * Additionally, in the AMPEG model, there is only a helper entity for each concurrent *blocking* I/o operation, whereas the multi-threaded and multi-process models require as many concurrent entities, processes, or threads as there are actual concurrent requests, irrespectively of whether or not they block
+
+The key **drawbacks** of the asymmetric model include:
+  * Although it works well with such a server application, it is not necessarily as generally applicable to arbitrary applications.
+  * Additionally, there are complexities associated with the event routing of events in multi-CPU systems.
+
+## 17. Models and Memory Quiz and Answers
