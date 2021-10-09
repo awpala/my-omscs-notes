@@ -202,12 +202,16 @@ Now, consider the kernel-level data structures.
 <img src="./assets/P02L04-012.png" width="650">
 </center>
 
+### Process
+
 For each process, information is maintained about the process via the **process data structure**, e.g.,:
   * the list of **kernel-level threads** that execute within the process's address space
   * valid mappings of the virtual address space
   * user credentials (e.g., the user has access to a file during attempted access)
   * signal handlers which are valid for the process (e.g., how to respond to certain events that can occur in the operating system)
     * ***N.B.*** Signal handling is discussed later in this lesson
+
+### Light-Weight Process (LWP)
 
 The **light-weight process (LWP) data structure** contains information that is relevant to some subset of the process, e.g.,:
   * one or more **user-level threads** that are executing in the context of the process, keeping track of their user-level registers and system call arguments
@@ -217,6 +221,8 @@ The **light-weight process (LWP) data structure** contains information that is r
 
 ***N.B.*** The information maintained in the LWP data structure is similar to that maintained at the user-level via the user-level thread data structure, however, the LWP data structure exposes the information that is visible to the kernel (e.g., as used by the operating system for scheduling). 
 
+### Kernel-Level Threads
+
 The **kernel-level threads data structure** contains information about the kernel-level threads, e.g.,:
   * kernel-level registers
   * stack pointer
@@ -225,6 +231,8 @@ The **kernel-level threads data structure** contains information about the kerne
 
 ***N.B.*** Note that the kernel-level threads data structure contains information about an execution context (i.e., for the kernel-level thread) that is always needed (e.g., operating-system-level services that must access kernel-level thread information, even when the thread is not active, such as scheduling information). Therefore, unlike the LWP data structure, the information contained in the kernel-level threads data structure is ***not swappable*** (i.e., it must *always* be present in memory); conversely, the information maintained in the LWT data structure does not need to be persistently present in memory, but rather can be swapped out if necessary (e.g., when memory becomes limited). This in turn allows the system to support a larger number of threads in a smaller memory footprint than would be otherwise possible if it were necessary to persist *all* of the aforementioned in memory.
 
+### CPU
+
 The **CPU data structure** contains information pertaining to the CPU, e.g.,:
   * the currently executing/scheduled thread
   * a list of the other kernel-level threads
@@ -232,6 +240,8 @@ The **CPU data structure** contains information pertaining to the CPU, e.g.,:
 
 ***N.B.*** Once the current thread is known, it is possible to determine (via corresponding relationships) information about all of the associated data structures required to rebuild the entire process state.
   * On the SPARC architecture (as mentioned in the Solaris papers/references), many registers are provided, and in particular there is a dedicated register used to identify the current thread at any given point in time (i.e., it is updated accordingly during a context switch). Therefore, the pointer relationships can be followed accordingly to determine the state from this stored information, rather than using more expensive operations to make this determination.
+
+### Relationships Among the Data Structures
 
 <center>
 <img src="./assets/P02L04-013.png" width="350">
