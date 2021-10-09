@@ -292,7 +292,7 @@ Conversely, the event-driven model achieves concurrency by **interleaving** mult
 
 Consider a client request `C1` entering the system. It starts with the "Accept Connection" event, and proceeds through the events sequence. Once it reaches the event pertaining to reading the file from the server, I/O is initiated. At this point, `C1`'s request is waiting on the disk I/O operation to complete on the server side.
 
-In the meantime, two additional client requests `C2` and `C3` are received. If `C2` was received first, it will eventually wait on `recv()` (i.e., an event from the network) to receive the HTTP response header from the server. At this point, if `C3` is received, it will begin at the "Accept COnnections" handler.
+In the meantime, two additional client requests `C2` and `C3` are received. If `C2` was received first, it will eventually wait on `recv()` (i.e., an event from the network) to receive the HTTP response header from the server. At this point, if `C3` is received, it will begin at the "Accept Connections" handler.
 
 <center>
 <img src="./assets/P02L05-015.png" width="400">
@@ -305,5 +305,24 @@ At some later time point, the processing of all three requests will have proceed
 
 Therefore, as this example demonstrates, while there is only *one* execution context (i.e., a single thread), it is able to service multiple client requests concurrently in an interleaved manner.
 
-### Event-Driven Model: Why?
+### 14. Event-Driven Model: Why?
+
+An immediately arising question is: *Why* does the event-driven model work? And, what is the benefit of having only a *single* thread that switches between different requests, rather than simply assigning different requests to different execution contexts (i.e., to different threads or to different processes).
+
+<center>
+<img src="./assets/P02L05-016.png" width="650">
+</center>
+
+Recall from the introductory lecture on threads (cf. P2L2) that even on one CPU, threads **hide latency**.
+  * The main takeaway from that discussion (cf. P2L2 Section 5) is that if a thread will wait more than twice the amount of time that it takes to perform a context switch (i.e., if `t_idle > 2 * t_ctx_switch`), then it makes sense to perform the context switch to another thread that will perform some useful work in the meantime, thereby hiding latency.
+  * Conversely, if there truly is no idle time (i.e., if `t_idle == 0`, such as if the processing of the request does not result in some type of blocking operation [e.g., I/O] on which it must wait), then context switching simply wastes cycles that otherwise could have been use for processing the requests, and therefore it is not sensible to perform the context switch in the first place.
+
+Therefore, in the event-driven model, the request is processed (in the context of a single thread) until it is necessary to wait, and then it switches to another request.
+
+If there are multiple CPUs available, the event-driven model is still sensible, especially when it is necessary to handle more concurrent requests than the number of available CPUs.
+  * For example, each CPU can host a single event-driven process, and then handle multiple concurrent requests within that one context. Furthermore, this could be done with less overhead than if each of the CPUs otherwise had to context switch among multiple processes (or multiple threads), where each is handling a separate request.
+  * There is one **caveat** here, however: It is important to have **mechanisms** in place that will direct the correct set of events to the appropriate CPU (i.e., at the appropriate instance of the event-driven process), otherwise the operation will be incorrect.
+    * ***N.B.*** There are mechanisms available to achieve this, as well as current support in networking hardware, however, this is beyond the scope of the present discussion.
+
+### 15. Event-Driven Model: How?
 
