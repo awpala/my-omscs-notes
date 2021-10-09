@@ -242,5 +242,68 @@ The **drawback** of this approach is that it is not simple/straightforward to im
   * Requires explicit synchronization among the threads (e.g., during access and update of the shared state)
   * There is a reliance on the underlying operating system for it to support threads in the first place. While this is less of an issue with modern operating systems (many of which are multi-threaded already), this was indeed a non-trivial issue contemporaneously with the time period in which the Flash paper (Pai et al.) was written, and is therefore nevertheless an argument to be addressed in the present discussion.
 
-## 12. Event-Driven Model
+## 12-16. Event-Driven Model
+
+### 12. Introduction
+
+Consider now an alternative model for structuring Web server applications that perform concurrent processing, called the **event-driven model**.
+
+<center>
+<img src="./assets/P02L05-012.png" width="600">
+</center>
+(adapted from Pai et al. Figure 4)
+
+An event-driven application can be characterized as shown in the figure above. The application is implemented in a single address space, having a single process, and only a single thread of control.
+
+The main part of the process is an **event dispatcher** that continuously (i.e., in a loop) looks for incoming **events**, and then based on those events the event dispatcher invokes one or more 
+of the registered **event handlers**.
+
+Examples of **events** include:
+  * Receipt of the request from the client/browser
+  * Completion of the send operation
+  * Completion of the disk read operation
+
+The event dispatcher has the ability accept any of these types of event notifications, and then based on their notification type it can invoke the appropriate event handler. In this respect, the event handler operates much like a **state machine** responding to external events.
+
+Since (as described here) this model pertains to a single-threaded process, invoking an event handler is tantamount to jumping to the appropriate location in the process's address space where the event handler is implemented, at which point the event-handler execution can proceed.
+  * For example, if the process is notified that there is a pending connection request on the network (i.e., via the corresponding network port), the event dispatcher will pass that event to the "Accept Connection" event handler.
+  * Similarly, if the event is the receipt of a data message on an already established connection, then the event dispatcher will pass that to the "Read Request" event handler.
+  * Once the file name is extracted from the request and it is confirmed that the file is present, the process will send out the file in chunks, and then once there is a confirmation that the chunks/portions of the file have been successfully sent, it will proceed iteratively in this manner (i.e., via the corresponding event handler responsible for the send operation) until the entire file is sent, or until an error is encountered and a corresponding error message is sent to the client
+
+Therefore, whenever events occurs, the event handlers are the sequence of code that executes in response to the corresponding events.
+
+A **key feature** of the event handlers is that they run to completion. Furthermore, if the handler must perform a **blocking** operation, it initiates the blocking operation and then immediately passes control back to the event dispatcher (i.e., the process is no longer in the handler), at which point the event dispatcher is now free to service other events or to call other event handlers.
+
+### 13. Concurrent Execution in the Event-Driven Model
+
+At this point, it may seem that if the event-driven model has just *one* thread, then it is  unreasonable to expect to achieve concurrency.
+
+<center>
+<img src="./assets/P02L05-013.png" width="550">
+</center>
+
+Recall that in the multi-process and multi-threaded models, *each* execution context (i.e., process or thread, respectively) handles only *one* request at a time, and therefore to achieve concurrency, *multiple* execution contexts are used accordingly. Furthermore, if there are fewer CPUs than available threads, then there must be context switching among the threads.
+
+Conversely, the event-driven model achieves concurrency by **interleaving** multiple requests within the *same* execution context. Accordingly, in the event-driven model, the single thread switches its execution for the required processing among the different requests at any given time.
+
+<center>
+<img src="./assets/P02L05-014.png" width="400">
+</center>
+
+Consider a client request `C1` entering the system. It starts with the "Accept Connection" event, and proceeds through the events sequence. Once it reaches the event pertaining to reading the file from the server, I/O is initiated. At this point, `C1`'s request is waiting on the disk I/O operation to complete on the server side.
+
+In the meantime, two additional client requests `C2` and `C3` are received. If `C2` was received first, it will eventually wait on `recv()` (i.e., an event from the network) to receive the HTTP response header from the server. At this point, if `C3` is received, it will begin at the "Accept COnnections" handler.
+
+<center>
+<img src="./assets/P02L05-015.png" width="400">
+</center>
+
+At some later time point, the processing of all three requests will have proceeded along the sequence of events, e.g.,:
+  * `C3`'s connection was accepted, and now it is waiting on `recv()` for the server response header
+  * `C2` is now waiting on disk I/O on the server side (i.e., reading the file to send the data)
+  * `C1` is now waiting on `send()`, receiving the file from the server in chunks
+
+Therefore, as this example demonstrates, while there is only *one* execution context (i.e., a single thread), it is able to service multiple client requests concurrently in an interleaved manner.
+
+### Event-Driven Model: Why?
 
