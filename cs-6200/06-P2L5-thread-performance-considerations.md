@@ -5,7 +5,7 @@
 This lecture will contrast several approaches for structuring applications that require concurrency
   * This will include a comparison between multi-process vs. multi-threaded vs. event-driven approaches
 
-Additionally, this lesson's discussion will be based on the **event-driven models/architectures**, specifically Flash vs. Apache
+Additionally, this lectures's discussion will be based on the **event-driven models/architectures**, specifically Flash vs. Apache
   * Reference: Pai et al. "*Flash: An Efficient and Portable Web Server*." This paper describes the event-driven architecture Flash, and also includes detailed performance comparisons between multi-process, multi-threaded, and event-driven implementations of a Web server application
   * Additionally, Apache is a popular open source Web server that will be discussed towards the end of this lecture.
 
@@ -164,4 +164,83 @@ For the remainder of this lecture, we will attempt to answer more specifically w
 
 ### How to Best Provide Concurrency?
 
+To understand when threads *are* useful, let us consider the different ways to provide concurrency, as well as the tradeoffs among those implementations.
+
+<center>
+<img src="./assets/P02L05-007.png" width="450">
+</center>
+
+So far, discussion has focused around **multi-threaded** applications. Additionally, an application can be implemented by having multiple concurrently running processes (i.e., **multi-process**). (***N.B.*** This was also noted briefly in P2L2.)
+
+<center>
+<img src="./assets/P02L05-008.png" width="150">
+</center>
+
+To make the discussion of the comparison between these two models more concrete, we will perform this analysis in the context of a **Web server**. For a Web server, a **key feature** is the ability to concurrently process client requests.
+
+### Example: Web Server
+
+Before proceeding, let us consider the steps involved in the operation of a *simple* Web server.
+
+<center>
+<img src="./assets/P02L05-009.png" width="550">
+</center>
+
+1. The client (or browser) needs to send a request that the Web server will accept (e.g., to `www.gatech.edu`)
+
+2. The Web server (e.g., `www.gatech.edu`) accepts the request
+
+3. After the Web server accepts the request, there are a number of **processing steps** it must perform before finally providing the response (e.g., a **file**)
+    * Read and parse an HTTP request
+    * Find the file in the local file system (i.e., on the server side)
+    * Compute the header
+    * Send the header
+    * Send the file, or potentially send an error message (e.g., "file not found") via the header
+
+***N.B.*** The remainder of this lecture will focus on these processing steps. Also, note that there are differences among these steps, e.g.,:
+  * Some of them are more computationally expensive, with most of the work being performed by the CPU (e.g., parsing the request and computing the header)
+  * Others require interaction with the network (e.g., accepting the connection, reading the request, and sending the data) or with the disk (e.g., finding the file and reading the file)
+  * Furthermore, some of these steps may potentially **block**; whether or not they block depends on the state of the system at a particular point in time (e.g., the connection may be already pending, the data for the file may already be cached in memory due to a previous request, etc.)
+    * In these cases, this will not result in an actual call to the device (i.e., an invocation to the network or disk, respectively), and consequently will be serviced much more quickly
+
+4. The Web server responds by sending the file or corresponding error message, thereby completing the overall process
+
+## 10. Multi-Process Web Server
+
+<center>
+<img src="./assets/P02L05-010.png" width="600">
+</center>
+(adapted from Pai et al. Figure 2)
+
+One easy way to achieve **concurrency** is to have *multiple instances* of the *same* process, i.e., a **multi-process** implementation.
+
+The **benefit** of this approach is that it is ***simple***: Once the sequence of steps has been correctly developed for *one* process, this is generalized by simply spawning *multiple* processes of this same sequence.
+
+There are some **drawbacks** to this approach of running multiple processes in a platform, however.
+  * Each process requires memory allocation, thereby adding a high load on the memory sub-system and a consequent adverse impact on performance.
+  * Given that these are processes, there is an associated cost with performing context switches among the processes.
+  * It can be expensive to maintain **shared state** across the processes, because the communication mechanisms and the synchronization mechanisms that are available across processes are relatively higher in overhead.
+  * In some cases, it may be tricky to perform certain tasks (e.g., forcing multiple processes to be able to respond to a single address and to share a single socket port)
+
+## 11. Multi-Threaded Web Server
+
+<center>
+<img src="./assets/P02L05-011.png" width="550">
+</center>
+(adapted from Pai et al. Figure 3)
+
+An alternative to the multi-process model is to develop a Web server as a **multi-threaded** application, having multiple execution contexts (i.e., multiple threads within the same address space, with every single one of them processing a request).
+  * In the figure shown above, every single one of the threads executes *all* of the steps, starting with the "Accept Connection" operation all the way down to actually sending the file.
+  * Another possibility is to have the Web server implemented as a boss/workers model, wherein a single boss thread performs the "Accept Connection" operation, and then subsequently every single one of the workers performs the remaining operations (i.e., from reading of the HTTP requests that comes in on that connection all the way down to sending the file).
+
+The **benefits** of the multi-threaded approach are as follows:
+  * The threads share the **address space** (i.e., everything within it), thereby precluding the necessity to perform system calls in order to coordinate with other threads (unlike in the multi-process model).
+  * Context switching between the threads is relatively cheap, because it can be done at the user level (i.e., via the user-level threading library).
+  * Since a lot of the per-thread **state** is shared among the threads, it is not necessary to allocate memory for *everything* that is required for each of their respective execution contexts (i.e., due to the shared address space). Consequently, the memory requirements are relatively lower in this approach.
+
+The **drawback** of this approach is that it is not simple/straightforward to implement the multi-threaded program, i.e.,:
+  * Requires explicit synchronization among the threads (e.g., during access and update of the shared state)
+  * There is a reliance on the underlying operating system for it to support threads in the first place. While this is less of an issue with modern operating systems (many of which are multi-threaded already), this was indeed a non-trivial issue contemporaneously with the time period in which the Flash paper (Pai et al.) was written, and is therefore nevertheless an argument to be addressed in the present discussion.
+
+## 12. Event-Driven Model
 
