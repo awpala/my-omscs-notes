@@ -437,3 +437,20 @@ The key **drawbacks** of the asymmetric model include:
   * Additionally, there are complexities associated with the event routing of events in multi-CPU systems.
 
 ## 17. Models and Memory Quiz and Answers
+
+Consider now an analysis of the three concurrency models discussed thus far in this lecture.
+
+Of the three models mentioned, which model likely requires the *least* amount of memory?
+  * Boss/Worker Model
+    * `INCORRECT`
+  * Pipeline Model
+    * `INCORRECT`
+  * Event-Driven Model
+    * `CORRECT`
+
+Why do you think this model requires the least amount of memory?
+  * In the other models, a *separate* (worker) thread is required for each request or for each pipeline stage (respectively), whereas in the event-driven model, there are handlers (which are just procedures in the same address space) and helper threads (which only occur for blocking operations). Correspondingly, for the event-driven model, extra main memory is only required for helper threads for currently blocking I/O operations, but otherwise not for *all* other concurrent requests (as is the case in the other two models). Therefore, for the same configuration, it is most likely that the event-driven model will have the smallest memory footprint.
+
+## 18. Flash Web Server
+
+### Flash: An Event-Driven Web Server
