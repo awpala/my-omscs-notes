@@ -454,3 +454,47 @@ Why do you think this model requires the least amount of memory?
 ## 18. Flash Web Server
 
 ### Flash: An Event-Driven Web Server
+
+<center>
+<img src="./assets/P02L05-024.png" width="550">
+</center>
+
+Given the background information given on the event-driven model, discussion will now focus on Flash (as described in Pai et al.). **Flash** is an event-driven web server following the AMPED model, with asymmetric helper processes to deal with blocking I/O operations.
+
+In the discussion thus far, we have essentially described the architecture of Flash, which consists of the following (familiar) components:
+  * **helper** processes to handle blocking I/O operations
+  * everything else is implemented via an **event dispatcher**, with **handlers** performing different portions of the Web servicing tasks
+
+Given that we are discussing a Web server--and particularly, the older Web 1.0 model, the contemporary of the Flash server (wherein the server simply returns static files)--the primary blocking I/O operations that occur in the system are **disk reads** (i.e., reading the files that the client requests).
+
+The communication from the helpers to the event dispatcher is performed via **pipes**.
+
+The helper reads files in memory via the call `mmap()`.
+
+The dispatcher checks (via operation `mincore()`) if the pages are in main memory in order to determine whether to call one of the local handlers or to call the helper.
+  * As long as the file is in main memory, reading the file will result in a blocking I/O operation, and therefore passing it to the local handlers is an acceptable solution.
+  * Because of this "extra check" immediately prior to performing the (relatively expensive) file read operation, this nets large savings due to prevention of blocking the entire process in the case where it is unnecessary (i.e., when a local handler is sufficient instead).
+
+### Flash: Additional Optimizations
+
+Now, consider an outline of some additional details regarding the performance optimizations applied by Flash, which later will help to understand the performance comparisons. The **important point** to note is that these optimizations are particularly relevant to any Web server.
+
+<center>
+<img src="./assets/P02L05-025.png" width="550">
+</center>
+
+Flash performs **application-level caching** at multiple levels, and it does this for both data and computations.
+  * Caching of files is referred to as **data caching**.
+  * Additionally, in some cases it is also sensible to cache **computations**. 
+      * In the case of a Web server, the requests are made for files, which in turn must be repeatedly searched (e.g., file location, directory traversal, reading directory data structures, etc.); this processing will compute results (e.g., file pathnames), which can be cached (i.e., rather than re-computed repeatedly for each new request).
+      * Similarly, the HTTP header that is sent as a response from the server to the browser/client will depend on the file itself (e.g., a lot of the corresponding fields are file-dependent); therefore, given that the file does not change, correspondingly the header does not need to change these parts either, and therefore similar 
+      application-level computational caching can be applied.
+
+Additionally, Flash performs other optimizations that take advantage of the network hardware (i.e., the network interface card), e.g.,:
+  * All of the data structures are aligned to facilitate dynamic memory allocation operations without superfluous copying of data
+  * Dynamic memory allocation operations with **scatter-gather** support are also used to relax the requirement of the response header and file data needing to be aligned adjacently in memory (i.e., they can be sent from *different* memory locations instead), similarly avoiding a superfluous copy operation
+
+All of the aforementioned are useful techniques which are now fairly **common optimizations**, however, at the time of the paper's release, these were relatively novel features which were largely absent in the systems against which the Flash server was compared at the time.
+
+## 19. Apache Web Server
+
