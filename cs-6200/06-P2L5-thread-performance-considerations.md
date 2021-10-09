@@ -80,7 +80,64 @@ Let us now consider a visual metaphor for our discussion regarding metrics as fo
 
 Therefore, metrics exist in virtually all systems, and accordingly it is imperative to have them be well-defined when attempting analyze the behavior of systems and how it compares to alternative solutions.
 
-## 5. Performance Metrics Introduction
+## 5-7. Performance Metrics
 
+### 5. Introduction
 
+As has been emphasized, performance considerations are focused on the metrics that we choose.
+
+Ideally, **metrics** should be represented with values that we can ***measure*** and ***quantify***, preferably in a ***standardized*** manner. Correspondingly, the metric should be a measurable and/or quantifiable property.
+  * A quantifiable metric allows to evaluate the system's behavior and/or to compare it to other systems
+    * e.g., execution time
+  * The metric itself should ***pertain*** to the **system** of interest
+    * e.g., software implementation of a problem
+  * The metric should be able to evaluate the system ***behavior***
+    * e.g., improvement of the system compared to other implementations (i.e., over a range of meaningful parameters/dimensions such as varied workload, varied allocated resources, etc.)
+
+### 6. Other Performance Metrics
+
+<center>
+<img src="./assets/P02L05-004.png" width="550">
+</center>
+
+So far, this lecture has mentioned several useful metrics (e.g., **execution time**, **throughput**, **response time/request rate**, and **CPU utilization**). Additionally, there are many other useful metrics to consider, e.g.,:
+  * **wait time** - the user may not just care about when they *receive* a response, but also about when their request actually *begins* to execute
+    * With a request/job involving many interactions, the sooner it starts, the sooner the user can proceed with these interactions
+    * With a long-running request/job, the sooner it starts, the sooner the user is able to diagnose issues that can occur (e.g., to stop, re-configure, and re-launch)
+  * **throughput** - how many tasks are completed per-unit time
+    * In addition to helping to evaluate the utility of a platform, throughput can be relevant in the context of both a single machine (e.g., server) as well as a collection of machines (e.g., an entire data center)
+  * **platform efficiency** - a combination of how well resources are utilized and how well they deliver the corresponding throughput
+    * This is an additional metric (i.e., in addition to throughput) that is useful to assess large, complex systems (e.g., an entire data center)
+    * There is a ***trade-off*** between throughput (i.e., revenue generation) and resource usage (i.e., incurred cost for additional machines, personnel, etc.)
+  * A corollary to platform efficiency is assessing performance with respect to a ***particular resource***, e.g.,:
+    * **performance per-unit cost** (e.g., per $) - operating cost
+    * **performance per-unit power** (e.g., per Watt) - energy consumption
+  * **percentage of service level agreement (SLA) violations** - determine if customer requirements are being met adequately
+    * Service level agreements (e.g., guaranteed response within 3 seconds, guaranteed 95% accuracy of quotes, etc.) are typically used in enterprise applications to fulfill customer requirements 
+  * **client-perceived performance** - assessing the customer experience
+    * For certain applications, there is some "slack" in the requirements, e.g., in a regular video application, humans can only perceive up to 30 frames per second, therefore improving performance beyond this frame rate is unnecessary for this use case--rather, it is sufficient to simply ensure a frame rate of *at least* 30 frames per second is maintained
+  * Furthermore, it may be useful to consider more ***holistic assessments***, e.g.,:
+    * **aggregate performance** - Rather than focusing on the performance of an *individual* application, a more complex system may require assessment of average/aggregate performance across the system (e.g., average task time, weighted averages based on priorties of tasks, etc.)
+    * **average resource usage** - In addition to CPU utilization, it may be useful to measure other resources (e.g., memory, file system, storage sub-system, etc.)
+
+### 7. Summary
+
+<center>
+<img src="./assets/P02L05-005.png" width="300">
+</center>
+
+In summary, a **metric** is some ***measurable quantity*** that we can use to reason about the behavior of the system. Ideally, these metrics are obtained from:
+  * **experiments** with real software deployment, real machines, real workloads, etc.
+    * However, sometimes this is not an option (e.g., we cannot wait to actually deploy the software to before we begin measuring something about it and/or analyzing its behavior)
+  * **'toy' experiments** using ***representative, realistic*** settings/configurations that mimic the real behavior of the system as much as possible (e.g., similar access patterns, similar types of machines, etc.)
+  * supplemental **simulation** if necessary (e.g.,, if using toy experiments), such as creating an environment that mimics a larger system that is feasible to achieve with a smaller experiment/simulation
+
+Any of these methods represent viable settings whereby one can evaluate a system and gather some performance metrics about it. Such experimental settings are referred to as a **testbed**.
+  * A testbed indicates where the experiments were carried out and what were the relevant metrics that were measured
+
+## 8. Are Threads *Really* Useful?
+
+<center>
+<img src="./assets/P02L05-006.png" width="150">
+</center>
 
