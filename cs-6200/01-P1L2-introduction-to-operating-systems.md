@@ -32,7 +32,7 @@ An operating system is like a *toy shop manager*:
 ## 3. What Is an Operating Systems?
 
 <center>
-<img src="./assets/P01L02-002.png" height="300">
+<img src="./assets/P01L02-002.png" height="450">
 </center>
 
 A **computing system** is comprised of several hardware **components**:

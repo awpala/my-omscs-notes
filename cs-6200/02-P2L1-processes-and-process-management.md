@@ -47,7 +47,7 @@ A **process** is therefore the state of a program when loaded in memory and exec
 If the same program is launched more than once, then correspondingly ***multiple*** processes are active (i.e., executing the *same* program, but in general with each process being in a different **state** at any given time).
 
 <center>
-<img src="./assets/P02L01-005.png" width="350">
+<img src="./assets/P02L01-005.png" width="550">
 </center>
 
 Therefore, a process represents the **execution state** of an *active* application. It does not necessarily mean that the application is currently running (e.g., may be *waiting* on user input, may be *waiting* on another currently running process in a one-CPU system, etc.)
@@ -55,7 +55,7 @@ Therefore, a process represents the **execution state** of an *active* applicati
 ## 4. What Does a Process Look Like?
 
 <center>
-<img src="./assets/P02L01-006.png" width="200">
+<img src="./assets/P02L01-006.png" width="300">
 </center>
 
 A process encapsulates the ***entire state*** of a running application, including the code, data, all variables allocated by the application, etc.
@@ -82,19 +82,19 @@ If a procedure (e.g., `Y`) is called in the stack during process execution, the 
 ## 5. Process Address Space
 
 <center>
-<img src="./assets/P02L01-008.png" width="200">
+<img src="./assets/P02L01-008.png" width="300">
 </center>
 
 Collectively, this "in memory" representation of a process is called an **address space**, wherein the potential range of addresses (i.e., `V`<sub>`0`</sub> to `V`<sub>`max`</sub>) constitute the **virtual addresses** used by the process to reference the relevant parts of its state.
 
 <center>
-<img src="./assets/P02L01-009.png" width="100">
+<img src="./assets/P02L01-009.png" width="150">
 </center>
 
 The term "virtual" in this context is in contrast to **physical addresses**, which are *actual* locations in physical memory (i.e., DRAM).
 
 <center>
-<img src="./assets/P02L01-010.png" width="350">
+<img src="./assets/P02L01-010.png" width="500">
 </center>
 
 In the case of a process, the memory management hardware and the operating system components responsible for memory management (e.g., **page tables**) maintain a mapping between the virtual addresses and the physical addresses. This decouples the layout of the data in the virtual address space (which may be complex and dependent on application specifics, build tools, etc.) from the layout in physical memory.
@@ -105,7 +105,7 @@ In the case of a process, the memory management hardware and the operating syste
 Recall that not all addresses require the *entire* virtual address space; there may be portions which are ***not*** allocated. Furthermore, there may be insufficient physical memory available to store the entire virtual address space that is occupied/allocated (e.g., a virtual address space comprised of 32-bit addresses can occupy up to 2<sup>32</sup> or over 4 GB of physical memory *per process*).
 
 <center>
-<img src="./assets/P02L01-011.png" width="250">
+<img src="./assets/P02L01-011.png" width="350">
 </center>
 
 To deal with this, the operating system dynamically decides which portion of which executing processes' (e.g., `P1` and `P2` in the figure above) respective virtual address spaces will be present at a particular location in physical memory. Furthermore, one (or more) of the processes may have some portion of their address space not present in memory/DRAM, but rather temporarily **swapped** to the disk, the latter being restored to memory/DRAM when it is needed.
@@ -115,7 +115,7 @@ Therefore, the operating system must track the address space across virtual memo
 ## 7. Virtual Addresses Quiz and Answers
 
 <center>
-<img src="./assets/P02L01-012.png" width="300">
+<img src="./assets/P02L01-012.png" width="450">
 </center>
 
 If two processes `P1` and `P2` are running at the same time, what are the ***virtual address space*** ranges that they will have? (Select one choice.)
@@ -133,7 +133,7 @@ The correct choice is `B`. The operating system will map these virtual addresses
 For an operating system to manage processes, it must have some understanding of what the processes are doing (e.g., if the operating system stops a processes, it must know the process's state immediately prior to stopping it in order to restore that exact same process state later).
 
 <center>
-<img src="./assets/P02L01-013.png" width="450">
+<img src="./assets/P02L01-013.png" width="650">
 </center>
 
 Consider how a CPU executes an application:
@@ -148,7 +148,7 @@ To maintain all of this useful information for every single process, the operati
 ## 9. What Is a Process Control Block (PCB)?
 
 <center>
-<img src="./assets/P02L01-014.png" width="150">
+<img src="./assets/P02L01-014.png" width="250">
 </center>
 
 A **process control block (PCB)** is a data structure that the operating system maintains for *each* process that it manages. It consists of the information shown in the figure above.
@@ -164,19 +164,19 @@ Other fields change too frequently to manage via the process control block (e.g.
 Let's assume that the operating system manages two processes `P1` and `P2`, which have already been created along with their respective process control blocks stored in main memory.
 
 <center>
-<img src="./assets/P02L01-015.png" width="350">
+<img src="./assets/P02L01-015.png" width="500">
 </center>
 
 With `P1` currently running and `P2` idle, the CPU's registers currently hold `PCB_P1` (i.e., the state of process `P1`), which must ultimately be transferred to/stored in the process control block for `P1`.
 
 <center>
-<img src="./assets/P02L01-016.png" width="350">
+<img src="./assets/P02L01-016.png" width="500">
 </center>
 
 Subsequently, the operating system must interrupt `P1`, making it idle. To do this, the operating system must save the state information of process `P1` immediately prior to the interrupt (including the CPU registers) into the process control block for `P1`.
 
 <center>
-<img src="./assets/P02L01-017.png" width="350">
+<img src="./assets/P02L01-017.png" width="500">
 </center>
 
 Next, the operating system must restore the state of process `P2` via its corresponding process control block, which also includes updating the CPU registers with the corresponding information.
@@ -184,7 +184,7 @@ Next, the operating system must restore the state of process `P2` via its corres
 If at some point process `P2` requires more physical memory, it will make a request (e.g., via call to function `malloc()`), and then the operating system will allocate the memory, establish a new virtual-physical address map, and make the corresponding update to the process control block for process `P2`.
 
 <center>
-<img src="./assets/P02L01-018.png" width="350">
+<img src="./assets/P02L01-018.png" width="500">
 </center>
 
 When process `P2` completes execution or when the operating system decides to interrupt `P2`, the operating system will save all of the state information regarding process `P2` in the corresponding process control block for process `P2`, and then it will restore the process control block for process `P1`.
@@ -205,13 +205,13 @@ These context switch operations are ***expensive***
     * described in the following two figures below
 
 <center>
-<img src="./assets/P02L01-019.png" width="300">
+<img src="./assets/P02L01-019.png" width="350">
 </center>
 
 When process `P1` is running on the CPU, a lot of its data will be stored in the CPU cache. As long as process `P1` is executing, a lot of its data will likely be present in the processor cache hierarchy (i.e., L1-L3) already, which can be accessed much faster (on the order of cycles) by the processor than access via main memory (on the order of hundreds of cycles). Such a cache (i.e., already containing pertinent process data) is called a **hot cache**.
 
 <center>
-<img src="./assets/P02L01-020.png" width="300">
+<img src="./assets/P02L01-020.png" width="350">
 </center>
 
 Conversely, when a context switch to process `P2` occurs, some or all of the data in the cache belonging to process `P1` will be replaced to make room for the data required by process `P2`. Therefore, next time process `P1` is scheduled to execute, its data will not be present in the cache, but rather more time will be expended to read its data from main memory, thereby incurring **cache misses**. Such a cache (i.e., not having the pertinent process data available, but rather requiring to retrieve it from main memory) is called a **cold cache**.
@@ -233,7 +233,7 @@ For the following sentence, check all options that correctly complete it.
 ## 13. Process Life Cycle: Process States
 
 <center>
-<img src="./assets/P02L01-021.png" width="250">
+<img src="./assets/P02L01-021.png" width="350">
 </center>
 
 Recall that during context switching, processes can be either **running** or **idle**.
@@ -247,19 +247,19 @@ With respect to process states:
 The various **process states** that a process undergoes throughout its life cycle will now be discussed via the following figures below.
 
 <center>
-<img src="./assets/P02L01-022.png" width="350">
+<img src="./assets/P02L01-022.png" width="500">
 </center>
 
 Initially, when a process is created, it enters the **new state**. At this point, the operating system performs admission control, and if the operating system determines that the process is admissible, then the operating system will allocate and initiate a process control block and some initial resources for the process.
 
 <center>
-<img src="./assets/P02L01-023.png" width="350">
+<img src="./assets/P02L01-023.png" width="500">
 </center>
 
 Provided that there are some minimum available resources, the process is **admitted**, and at that point the process is ready to begin execution. However, the process is still not executing on the CPU here; in this **ready state**, the process must wait until the scheduler is ready to move it into a **running state** upon scheduling the process to run on the CPU.
 
 <center>
-<img src="./assets/P02L01-024.png" width="350">
+<img src="./assets/P02L01-024.png" width="500">
 </center>
 
 Once the scheduler assigns the ready-state process to the CPU, that process is now in the **running state**. From here, several transitions can occur:
@@ -270,7 +270,7 @@ Once the scheduler assigns the ready-state process to the CPU, that process is n
 ## 14. Process State Quiz and Answers
 
 <center>
-<img src="./assets/P02L01-025.png" width="350">
+<img src="./assets/P02L01-025.png" width="500">
 </center>
 
 Per the process life cycle diagram, the CPU is able to execute a process when the process is in which state(s)? (Select all choices that apply.)
@@ -289,13 +289,13 @@ Per the process life cycle diagram, the CPU is able to execute a process when th
 It is reasonable to ask at this point: how is a process created in the first place?
 
 <center>
-<img src="./assets/P02L01-026.png" width="250">
+<img src="./assets/P02L01-026.png" width="350">
 </center>
 
 In an operating system, a given process can create **child processes**. As shown in the figure above, all processes originate from a single root process, having various relationships to one another (e.g., the creating process is the **parent process**).
 
 <center>
-<img src="./assets/P02L01-027.png" width="275">
+<img src="./assets/P02L01-027.png" width="350">
 </center>
 
 Certain of these processes are **privileged processes** (or **root processes**). In fact, this is how most operating systems work: once the initial boot process is completed and the operating system is loaded onto the machine hardware, it will create these initial processes.
@@ -307,7 +307,7 @@ Subsequently, when a user logs into the system, a user shell process is created 
     * copies the parent process control block into the new child's process control block
     * subsequently, both the parent and the child continue execution at the instruction immediately following the `fork` operation (due to the common values in their respective process control blocks, including the program counter)
   * **`exec`**
-    * replaces the child image, thereby loading a new program (i.e., overwriting the child's origin process control block) and making the child process start from the (new) first instruction per the (new) program counter
+    * replaces the child image, thereby loading a new program (i.e., overwriting the child's original process control block) and making the child process start from the (new) first instruction per the (new) program counter
 
 ## 16. Parent Process Quiz and Answers
 
@@ -322,7 +322,7 @@ Extra credit: On the Android operating system, which process is regarded as the 
 Now, consider **process scheduling**.
 
 <center>
-<img src="./assets/P02L01-028.png" width="250">
+<img src="./assets/P02L01-028.png" width="400">
 </center>
 
 In order for the CPU to begin executing a process, the process must first be in the ready state. However, in general, several processes may be in the ready state at any given time; such processes "on standby" wait in the **ready queue**.
@@ -347,7 +347,7 @@ Equivalently:
 As these questions imply, the longer a process runs, the less frequently the scheduler is invoked to execute.
 
 <center>
-<img src="./assets/P02L01-029.png" width="450">
+<img src="./assets/P02L01-029.png" width="550">
 </center>
 
 Consider the scenario in the figure shown above, wherein a process runs for an elapsed time of *`T`*<sub>`p`</sub>, and the scheduler spends time *`t`*<sub>`sched`</sub> to execute.
@@ -361,13 +361,13 @@ To quantify how well the CPU is utilized, this can be computed as follows:
 Therefore, if *`T`*<sub>`P`</sub> `=` *`t`*<sub>`sched`</sub>, only 50% of the CPU time is spent on useful work.
 
 <center>
-<img src="./assets/P02L01-031.png" width="450">
+<img src="./assets/P02L01-031.png" width="550">
 </center>
 
 Now consider the case where *`T`*<sub>`P`</sub> `>>` *`t`*<sub>`sched`</sub> (e.g., *`T`*<sub>`P`</sub> `=` `10`*`t`*<sub>`sched`</sub>). In this case, the useful CPU work is much higher (e.g., `91%` when *`T`*<sub>`P`</sub> `=` `10`*`t`*<sub>`sched`</sub>).
 
 <center>
-<img src="./assets/P02L01-032.png" width="450">
+<img src="./assets/P02L01-032.png" width="550">
 </center>
 
 In these examples, time *`T`*<sub>`P`</sub> (the **timeslice**) refers to the time allocated to a process on the CPU.
@@ -379,37 +379,37 @@ As is apparent from these examples, there are many **tradeoffs** in making **des
 ## 19. What about I/O?
 
 <center>
-<img src="./assets/P02L01-033.png" width="400">
+<img src="./assets/P02L01-033.png" width="550">
 </center>
 
 Before proceeding further, consider how **I/O operations** affect scheduling. So far, it is apparent that the operating system manages how processes access resources on the hardware platform (which, in addition to the CPU and memory, includes I/O devices and peripherals e.g., keyboards, networking cards, disks, etc.).
 
 <center>
-<img src="./assets/P02L01-034.png" width="400">
+<img src="./assets/P02L01-034.png" width="550">
 </center>
 
 Now, consider a process that has made an I/O request (e.g., request to read from disk), which is consequently delivered by the operating system.
 
 <center>
-<img src="./assets/P02L01-035.png" width="400">
+<img src="./assets/P02L01-035.png" width="550">
 </center>
 
 The operating system then moves the process to the **I/O queue** (e.g., that associated with the particular disk device for which the I/O request was generated), where the process is now in a **waiting state**.
 
 <center>
-<img src="./assets/P02L01-036.png" width="400">
+<img src="./assets/P02L01-036.png" width="550">
 </center>
 
 The process remains in the waiting queue until the device completes the requested I/O operations (i.e., until the I/O event completes) and responds to that particular request. 
 
 <center>
-<img src="./assets/P02L01-037.png" width="400">
+<img src="./assets/P02L01-037.png" width="550">
 </center>
 
 Once the I/O request is met, the process is again in the **ready state** and ready to run again on the CPU. Depending on the current workload of the CPU, the process may be scheduled directly to the CPU, or it may be placed in the **ready queue**.
 
 <center>
-<img src="./assets/P02L01-038.png" width="450">
+<img src="./assets/P02L01-038.png" width="550">
 </center>
 
 To summarize, a process can enter the ready queue in a variety of ways, including:
@@ -436,7 +436,7 @@ Which of the following are ***not*** a responsibility of the CPU scheduler? (Sel
 Another naturally arising question is: Can processes ***interact***? The simple answer is ***yes***. However, in order to accomplish this, the operating system must provide **mechanisms** to allow processes to interact with one another. In the modern landscape, increasingly more applications are in fact structured in such a manner, having multiple interacting processes.
 
 <center>
-<img src="./assets/P02L01-039.png" width="300">
+<img src="./assets/P02L01-039.png" width="350">
 </center>
 
 For example, consider a **Web application** consisting of two processes on the *same* machine: a Web server (`P1`) and a database (`P2`).
@@ -452,7 +452,7 @@ Such mechanisms are called **Interprocess Communication (IPC)** mechanisms, whic
 ### Message Passing IPC
 
 <center>
-<img src="./assets/P02L01-040.png" width="300">
+<img src="./assets/P02L01-040.png" width="350">
 </center>
 
 One mechanism that interprocess communication systems support is **message passing**, in which:
@@ -468,7 +468,7 @@ Conversely, the **drawback** of this approach is that there is incurred ***overh
 ### Shared Memory IPC
 
 <center>
-<img src="./assets/P02L01-041.png" width="300">
+<img src="./assets/P02L01-041.png" width="350">
 </center>
 
 Another mechanism that interprocess communication systems support is **shared memory**, in which:
