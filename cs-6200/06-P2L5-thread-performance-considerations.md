@@ -814,4 +814,19 @@ Finally, also consider comparing with **extreme conditions** (i.e., best/worst c
 
 ## 25. Advice on Running Experiments
 
+### I Have Designed the Experiments...Now What?
+
+<center>
+<img src="./assets/P02L05-044.png" width="500">
+</center>
+
+Once the experiment is properly ***designed***, it can be **performed** as follows:
+  * Run the **test cases** `n` times, using the various ranges of the selected experimental factors
+  * Compute the relevant **metrics** (e.g., averages over the `n` experimental runs)
+  * Represent the **results** appropriately
+    * Best practices for this are beyond the scope of current discussion, however, keep in mind that the appropriately selected visual representation can help to strengthen the arguments. Furthermore, reference other works/papers, online documentation, courses, etc. to gain insight into these best practices as well.
+
+Lastly, do not forget to **make conclusions** about the results (i.e., demonstrate how the experimental results support the claims being made).
+
+## 26. Experimental Design Quiz and Answers
 
