@@ -674,3 +674,39 @@ Therefore, this gives rise to two **conclusions**:
 
 ## 22. Summary of Performance Results
 
+<center>
+<img src="./assets/P02L05-036.png" width="600">
+</center>
+
+To summarize, the performance results for Flash suggest the following:
+* When the data is in cache, **SPED** performs much better than **AMPED Flash**, because it does not require the test for memory presence (which *is* necessary in the latter)
+* Both **SPED** and **AMPED Flash** perform better than the **multi-threaded (MT)** and **multi-process (MP)** models due to the overhead associated with synchronization and context switching in the latter two
+* However, when the workload is disk-bound, **AMPED Flash** significantly outperformed **SPED** because the latter blocks due to no support for asynchronous I/O
+* **AMPED Flash** performs better than both the **multi-threaded** and **multi-process** models due to better memory efficiency and less context switching required
+  * In AMPED Flash, only the number of *concurrent* I/O-bound requests result in concurrent processes/threads
+
+The AMPED Flash model is not necessarily suitable for every single type of server process, as there are certain **challenges** with event-driven architecture (e.g., requires taking advantage of multiple cores, which in turn requires the ability to route events to the appropriate core; in other cases, perhaps the processing itself is not as suitable for this type of architecture; etc.). However, in examining some of the high-performance server implementations in common use today, many of them do indeed use an event-driven model combined with asynchronous I/O support.
+
+## 23. Performance Observation Quiz and Answers
+
+Let us consider one last look at the experimental results from the Flash paper, this time as a quiz.
+
+<center>
+<img src="./assets/P02L05-037.png" width="450">
+</center>
+
+Shown above is another figure from the Flash paper. Focusing on the red (**SPED**) and green (**Flash**) curves, at an input of around 100 MB, Flash becomes ***better*** than SPED. Why? (Check all that apply.)
+  * Flash can handle I/O operations without blocking
+    * `APPLIES`
+  * SPED starts receiving more requests
+    * `DOES NOT APPLY` - This is nonsensical--both processes receive the *same* number of requests in these experiments
+  * The workload becomes I/O-bound
+    * `APPLIES` - At 100 MB, the size of the workload increases, and consequently it cannot fit in the cache as much as before and therefore it becomes more I/O-bound (i.e., there are more I/O requests required beyond this point).
+      * For SPED, the problem at this point (i.e., once the workload becomes more I/O-bound) is that a single blocking I/O operation will block the *entire* process, and therefore none of the other requests can make progress, thereby adversely impacting its performance.
+  * Flash can cache more files
+    * `DOES NOT APPLY` - This is incorrect. Both SPED and Flash have comparable memory footprints, and therefore it is not the case that one can handle more files in the memory cache than the other; if anything, Flash has the helper processes available, which if created, then they will interfere with the other available memory, thereby adversely impacting the available cache (i.e., *less* cache would be available rather than *more*). Therefore, this does not explain Flash's comparably *better* performance.
+
+## 24. Advice on Designing Experiments
+
+
+
