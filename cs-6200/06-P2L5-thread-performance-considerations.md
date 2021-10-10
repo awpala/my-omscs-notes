@@ -392,7 +392,7 @@ Asynchronous system calls also provide the caller with the opportunity to procee
 One **aspect** that makes asynchronous calls possible is that the operating system **kernel** is multi-threaded; therefore, while the caller thread continues execution, *another* kernel thread performs all of the necessary work and the required waiting in order to perform the I/O operation (e.g., retrieve the data) and to ensure that the results become available to the appropriate user-level context.
 
 Furthermore, asynchronous operations can benefit from the actual **I/O devices** themselves.
-  * For example, the caller thread can simply pass a request data structure to the device itself, and in turn the device performs the operation (e.g., dynamic memory allocation). Subsequently, the thread can come back at a later time to check whether the device has completed the operation.
+  * For example, the caller thread can simply pass a request data structure to the device itself, and in turn the device performs the operation (e.g., direct memory access). Subsequently, the thread can come back at a later time to check whether the device has completed the operation.
 
 ***N.B.*** We will return to asynchronous I/O operations in a later lecture. For present purposes, note that when using asynchronous I/O operations, the process will *not* be blocked in the kernel when performing I/O.
   * In the event-driven model, if the event handler initiates an asynchronous I/O operation (e.g., for network or for disk), the operating system can simply use a mechanism such as `select()`, `poll()`, or `epoll()` to catch such events.
@@ -491,8 +491,8 @@ Flash performs **application-level caching** at multiple levels, and it does thi
       application-level computational caching can be applied.
 
 Additionally, Flash performs other optimizations that take advantage of the network hardware (i.e., the network interface card), e.g.,:
-  * All of the data structures are aligned to facilitate dynamic memory allocation operations without superfluous copying of data
-  * Dynamic memory allocation operations with **scatter-gather** support are also used to relax the requirement of the response header and file data needing to be aligned adjacently in memory (i.e., they can be sent from *different* memory locations instead), similarly avoiding a superfluous copy operation
+  * All of the data structures are aligned to facilitate direct memory access operations without superfluous copying of data
+  * direct memory access operations with **scatter-gather** support are also used to relax the requirement of the response header and file data needing to be aligned adjacently in memory (i.e., they can be sent from *different* memory locations instead), similarly avoiding a superfluous copy operation
 
 All of the aforementioned are useful techniques which are now fairly **common optimizations**, however, at the time of the paper's release, these were relatively novel features which were largely absent in the systems against which the Flash server was compared at the time.
 
@@ -585,4 +585,92 @@ Both of these metrics were evaluated as a function of the **file size**, therefo
 Therefore, it was determined that file size is a useful parameter to vary in order to observe the impact on the metrics (bandwidth and connection rate) for the various implementations.
 
 ## 21. Experimental Results
+
+Let us now consider the experimental results of the Apache paper.
+
+### Best-Case Numbers
+
+<center>
+<img src="./assets/P02L05-031.png" width="600">
+</center>
+
+To gather the best-case numbers, the authors used a **synthetic load**, in which they varied the number of requests that are issued against the Web server, with every request being for the exact *same* file (e.g., `index.html`).
+  * This is the **best case**, because in reality clients will likely be asking for *different* files.
+  * Furthermore, in this "pathological" best case, it is very likely that the file will be in the cache, so that every one of the requests are serviced as quickly as possible.
+
+For these best-case experiments, the authors measured the **bandwidth** by varying the file size over the range of `0` to `200` kilobytes (KB), and they ***measured*** the bandwidth as follows:
+```
+BW = N * bytes(F)/t
+```
+where `N` is the number of requests, `bytes(F)` is the file size, and `t` is the time required to process the `N` requests for the given file size.
+
+Therefore, by varying the file size, they varied the work that *both* the Web server performed per request *and* also the amount of bytes that were generated per request. Correspondingly, with this setup, as the file size is increased, the bandwidth generally increases.
+
+<center>
+<img src="./assets/P02L05-032.png" width="600">
+</center>
+
+The **results** curves indicate that for every one of the cases, they are all comparable. Accordingly, the following **observations** can be made:
+  * All exhibit similar results.
+  * **SPED** has the best performance overall, as expected.
+    * The SPED model does not have any threads or processes among which it needs to context switch.
+  * **Flash AMPED** has similar performance to SPED, however, it performs an extra check for the memory presence.
+    * In this case, it is a single-file tree, therefore, every request is for this single file, and therefore there is no need blocking I/O and consequently no need for the helper processes to be invoked; however, nevertheless, the check *is* performed here, resulting in a slight performance penalty, as observed in the result curve.
+  * **Zeus** has a performance anomaly wherein it begins to "dip" starting around 150 KB, due to misalignment for some of the direct memory access operations. Therefore, not all of the optimizations are bug-proof in the Zeus implementation.
+  * For the **multi-threaded (MT)** and **multi-process (MP)** models, the performance is slower due to the associated overhead required for context switching and extra synchronization.
+  * The performance of **Apache** is the worst, due to the lack of optimizations as implemented in the other models.
+
+### Traces
+
+Since real clients do not behave as synthetic ones, the authors additionally assessed what happens with some realistic traces.
+
+#### Owlnet Trace
+
+<center>
+<img src="./assets/P02L05-033.png" width="600">
+</center>
+
+The Owlnet trace yielded the following **observations**:
+  * The performance is very similar to the best case, with **SPED** and **Flash** being the best, and then the **multi-threaded**, **multi-process**, and **Apache** implementations dropping down below that.
+    * Because this is only a small trace, most of it will fit in the cache, giving rise to similar behavior as for the best case, wherein all of the requests are serviced from the cache.
+    * Sometimes, however, blocking I/O *is* required here, i.e., it *mostly* fits in the cache (but not *always*). Given this (albeit remote) possibility, **SPED** did occasionally block, whereas in **Flash** the helper processes were able to resolve this issue.
+  * Note that **Zeus**'s performance is not considered in this analysis.
+
+#### CS Trace
+
+<center>
+<img src="./assets/P02L05-034.png" width="600">
+</center>
+
+The CS trace yielded the following **observations**:
+  * Since this is the larger trace, it mostly required I/O (i.e., generally, the requests will *not* fit in the system's cache).
+  * **SPED** was the worst-performing due to the lack of asynchronous I/O operations
+  * The **multi-threaded** model performed better than the **multi-process** model, due to the former having:
+    * a smaller memory footprint (i.e., more memory available to cache files and in turn leading to less I/O operations, all else equal)
+    * cheaper (faster) synchronization and coordination (e.g., context switching) between threads
+  * In *all* cases, **Flash** performs the best due to:
+    * a smaller memory footprint (even compared to the multi-threaded and multi-process models), and consequently more memory available for caching files and headers and fewer requests lead to a blocking I/O operation (which additionally speeds up performance)
+    * no explicit synchronization required due to the shared address space
+
+### Impact of Optimizations
+
+In both traces, **Apache** performed the ***worst***. Therefore, let us now consider if there is really an impact from the optimizations performed in Flash.
+
+<center>
+<img src="./assets/P02L05-035.png" width="600">
+</center>
+
+In the figure shown above, the result curves represent the different **optimizations** performed by Flash:
+* `no opts` - no optimizations performed
+* `path only` - only the directory lookup caching (i.e., computational caching)
+* `path & mmap` - caching both of the directory lookup and of the file
+* `all` - all of the optimizations (i.e., directory lookup, file caching, and the header computations of the file)
+
+As is apparent from the figure, as incremental optimizations are added, this did indeed **impact** the connection rates (i.e., the performance) that can be achieved by the Web Server with a significant improvement (i.e., for a given file size, it is possible to sustain a higher connection rate as the optimizations are added).
+
+Therefore, this gives rise to two **conclusions**:
+  1. These optimizations are indeed important
+  2. Apache would also have benefitted from these optimizations
+
+## 22. Summary of Performance Results
 
