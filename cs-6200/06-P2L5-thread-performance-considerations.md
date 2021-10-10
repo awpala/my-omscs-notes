@@ -830,3 +830,28 @@ Lastly, do not forget to **make conclusions** about the results (i.e., demonstra
 
 ## 26. Experimental Design Quiz and Answers
 
+Consider a hypothetical experiment for which we will determine if the experiments that are planning to be conducted will allow to make meaningful conclusions.
+
+A toy shop manage wants to determine how many workers to hire to be able to handle the **worst case** scenario (in terms of orders coming into the shop).
+  * Orders range in **difficulty** from `blocks` (simplest) to `teddy bears` to `trains` (most complex).
+  * The shop has `3` separate **working areas**, each with tools for *any* toy. Each work area can be shared by multiple workers.
+
+Which of the following **experiments** `(types of orders, number of workers)` will allow us to make meaningful conclusions about the manager's question? (Select one.)
+  * Configuration 1: `{(train, 3), (train, 4), (train, 5)}`
+    * `INCORRECT` - This option correctly identifies the most difficult order `trains` (i.e., the worst case scenario), however, the variation in the number of workers is inappropriate: In the first case, there is one worker per working area (i.e., 1+1+1), in the second case there is one per working area but with an extra assigned to another working area (i.e., 1+1+2), and in the third case there is one per working area but with two extras assigned to other work areas (i.e., 1+2+2). Therefore, the workload is unevenly distributed among the cases, and accordingly useful conclusions cannot be made.
+  * Configuration 2: `{(blocks, 3), (bears, 6), (trains, 9)}`
+    * `INCORRECT` - This option varies the order difficulties, which does not provide information about the worst case capacity of the system (i.e., it is not relevant to the manager's question).
+  * Configuration 3: `{(mixed, 3), (mixed, 6), (mixed, 9)}`
+    * `INCORRECT` - With a mixed workload, this could provide useful information about the average throughput of the toy shop (i.e., given a mixed workload, presumably representative of typical orders), however, this is not relevant to the manager's question (i.e., how is the *worst case* impacted by adding more workers to the toy shop).
+  * Configuration 4: `{(train, 3), (train, 6), (train, 9)}`
+    * `CORRECT` - This configuration both identifies the relevant order difficulty (i.e., `train`, the worst case), as well as appropriately varies the number of workers (i.e., 1 per working area, 2 per working area, and 3 per working area, respectively) to address the manager's question regarding the workers' handling of the worst case scenario as more workers are added. As a corollary, this configuration can also provide insight into the capacity of each individual working area (e.g., a follow-up experiment may be to add condition `(train, 12)`, `(train, 15)`, etc. to further investigate this and to determine if there is an optimal point beyond which adding more workers does not improve overall throughput).
+
+***Rationale***: Given that the most complex case (i.e., worst case) of toy orders includes `trains`, then each of the trials should include a set of orders for trains. Furthermore, given that the toy shop has 3 working areas (which can be used to create any toy order and are shared by the workers), therefore to assess the incremental benefit of adding more workers to the working area (and correspondingly how many more toy orders can be processed), we should add as many more workers per working area as reasonably possible.
+
+## 27. Lesson Summary
+
+This lesson introduced the **event-driven model** for achieving concurrency in applications.
+
+We performed **comparisons** between **multi-process**, **multi-threaded**, and **event-driven** designs/approaches for implementing a Web server application.
+
+Additionally, we discussed in more general terms how to properly structure experiments (i.e., experimental evaluation and methodology)
