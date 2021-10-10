@@ -708,5 +708,110 @@ Shown above is another figure from the Flash paper. Focusing on the red (**SPED*
 
 ## 24. Advice on Designing Experiments
 
+Before concluding this lecture, let us consider the **design of experiments**.
+
+### Design Relevant Experiments
+
+<center>
+<img src="./assets/P02L05-038.png" width="500">
+</center>
+
+It sounds simple enough: Just run the test cases, gather metrics, and show the results. However, it is not quite so simple, after all.
+
+There is a lot of planning and thoughtfulness required in planning **relevant experiments**, i.e., those leading to statements about a solution that are ***credible*** (i.e., others believe) and ***relevant*** (i.e., others care for).
+  * For example, the Flash paper has many relevant experiments. There, the authors provided detail descriptions of all experiments so that the reader can understand them and believe the results were realistic. Furthermore, given the authors results, it is possible to make well-founded statements about Flash and the AMPED model vs. all of the other implementations.
+
+### Purpose of Relevant Experiments
+
+<center>
+<img src="./assets/P02L05-039.png" width="500">
+</center>
+
+Consider again the Web server as an example for which we can justify what makes certain experiments **relevant**.
+
+The **clients** using the Web server are concerned with **response time** (i.e., how quickly the Web page is returned).
+
+The **operators** of the Web server are concerned with **throughput** (i.e., how many total client requests can see the Web page over a period of time).
+
+Therefore, this illustrates that it is most likely necessary to justify the solution using criteria that are pertinent to these stakeholder. Possible **goals** include:
+  * Demonstrating that the solution improves both response time and throughput wil have a great impact.
+  * Demonstrating that the solution only improves response time will still have a good impact (e.g., for clients).
+  * Demonstrating that the response time is improved but the throughput is adversely impacted, this may still be useful (e.g., for clients).
+  * Demonstrating that the response time is maintained when the request rate increases is a useful result (e.g., for operators).
+
+By understanding the **stakeholders** and the **goals** (i.e., of the stakeholders), it is possible to define relevant metrics, which in turn informs the configuration of the experiments.
+
+### Picking the Right Metrics
+
+<center>
+<img src="./assets/P02L05-040.png" width="500">
+</center>
+
+When selecting metrics, a **rule of thumb** is to select **standard metrics** (i.e., those which are widely recognized in the target domain).
+  * For example, in Web servers, it is sensible to discuss the client request rate, the client response time, etc.
+
+Using standard metrics promotes reaching a broader audience, since more prospective stakeholders will have a better understanding of the experiment, even if the particular results are not the most impactful.
+
+It is imperative to include **metrics** which answer the questions "Why? What? Who?," e.g.,:
+  * Why am I doing this work?
+  * What is it that I want to improve or understand by doing these experiments?
+  * Who is it that cares about this?
+  * etc.
+
+Answering these questions implies the relevant questions to address, e.g.,:
+  * To assess **client performance**, use metrics such as response time, number of timed-out requests, etc.
+  * To assess the reduction of **operator costs**, use metrics such as throughput, operating costs (e.g., power), etc.
+
+### Picking the Right Configuration Space
+
+<center>
+<img src="./assets/P02L05-041.png" width="500">
+</center>
+
+Once the relevant metrics are understood, it is imperative to understand the relevant **system factors** that affect those metrics, e.g.,:
+  * **System Resources**
+    * hardware (e.g., number and type of CPU(s), amount of main memory available on the server machines, etc.)
+    * software (e.g., number of threads, sizes of the queues and buffer structures available in the program, etc.)
+  * **Workload**
+    * For a Web server, sensible workload factors include the request rate, number of concurrent requests, file size, access pattern, etc.
+
+Once the **configuration space** is better understood, it is necessary to make judicious **choices**.
+  * Select a subset of the **configuration parameters** that are most impactful with respect to changes in the metrics being observed.
+  * Select **ranges for** each variable parameter. In particular, these ranges should be *relevant* (i.e., representative of actual use).
+    * For example, do not simply vary the threads count between 1, 2, and 3 when Web servers that are actually deployed use thread counts in the hundreds.
+    * Similarly, do not vary the file sizes to have sizes of 1 KB, 10 KB, and 100 KB when Web servers that are actually deployed serve files of sizes ranging from 10s of bytes up to 10s-100s of MBs and beyond.
+  * Select a relevant **workload** (otherwise, unrealistic/hypothetical results will not be particularly impactful).
+  * Include **best/worst case scenarios**
+    * While these may not be representative of actual use, the value this bring is by virtue of demonstrating **limitations** and/or **opportunities** that are present in the proposed system.
+
+### Are You Comparing Apples toApples?
+
+<center>
+<img src="./assets/P02L05-042.png" width="500">
+</center>
+
+For the various factors being considered, pick **useful combinations** of these factors. Many experimental results will simply reiterate the *same* point; therefore, it is not sensible to demonstrate such results ad nauseam. However, showing a few representative such results is indeed useful (i.e., to demonstrate that the results are valid).
+
+Furthermore, it is imperative to make **"apples-to-apples" comparisons** (i.e., making valid comparisons using appropriate factors and controls). An example of a ***bad*** experimental design is as follows:
+  * Combination 1: large workload, small resource size
+  * Combination 2: small workload, large resource size
+  * Result: better performance in Combination 2 compared to Combination 1
+  * Conclusion: performance improves when resources are increased
+
+This conclusion is ***incorrect***: The experimental design does not address the variation in workload, therefore the conclusion based on this design is tenuous at best.
+
+### What about the Competition? What about the Baseline?
+
+<center>
+<img src="./assets/P02L05-043.png" width="500">
+</center>
+
+When designing an experiment, it should demonstrate that system being designed (or solution being proposed) in some way improves upon the **state-of-the-art**; otherwise, it is not clear why one would use it in the first place.
+
+If a comparison/benchmark against the state-of-the-art is not feasible or practical (or it is not as valuable of a comparison for the particular experiment in question), then consider comparing against the **most common practice**.
+
+Finally, also consider comparing with **extreme conditions** (i.e., best/worst case scenarios), which will provide insights into the properties of the system/solution under review (e.g., how does it scale as the workload increases).
+
+## 25. Advice on Running Experiments
 
 
