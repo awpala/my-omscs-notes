@@ -96,7 +96,7 @@ For the following options, indicate if they are examples of *abstraction* (B) or
 ## 7. Operating Systems Examples
 
 <center>
-<img src="./assets/P01L02-003.png" width="350">
+<img src="./assets/P01L02-003.png" width="450">
 </center>
 
 To understand what an operating system is, consider some examples of actual operating systems. These examples depend on the specific environment they are targeting, e.g.,:
@@ -136,7 +136,7 @@ Operating systems may also integrate specific **policies** to determine how thes
 ## 9. OS Elements: Memory Management Example
 
 <center>
-<img src="./assets/P01L02-004.png" width="250">
+<img src="./assets/P01L02-004.png" width="350">
 </center>
 
 ***Abstractions***:
@@ -170,7 +170,7 @@ Consider some guiding principles when designing an operating system as follows:
 To achieve its role of controlling and managing hardware resources on behalf of applications, the operating system must have ***special privileges*** to have direct access to the hardware.
 
 <center>
-<img src="./assets/P01L02-005.png" width="325">
+<img src="./assets/P01L02-005.png" width="500">
 </center>
 
 (***N.B.*** in the figure `Mm` denotes ***main memory*** and `CPU` denotes the ***processor***. This convention will be used throughout the course.)
@@ -192,13 +192,10 @@ Computer platforms distinguish between at least two modes:
   * **signals**
     * A **signal** is a mechanism whereby the operating system can pass messages to the application. This will be discussed in a later lesson.
 
-
-
-
 ## 12. System Call Flowchart
 
 <center>
-<img src="./assets/P01L02-006annotated.png" width="400">
+<img src="./assets/P01L02-006annotated.png" width="550">
 </center>
 
 During a **system call**, data and control are exchanged between the user process and the operating system kernel.
@@ -216,17 +213,13 @@ To make a system call, an application must...
   * make the system call (i.e., using the specific system call number)
 
 <center>
-<img src="./assets/P01L02-007.png" width="350">
+<img src="./assets/P01L02-007.png" width="500">
 </center>
 
 The **arguments** can be passed either directly between the user program and the operating system, or they can be passed indirectly via **registers** per specified address.
 
 In **synchronous mode**, the process waits until the system call is completed.
   * Asynchronous call will be discussed later.
-
-
-
-
 
 ## 13. Crossing the User/Kernel Protection Boundary
 
@@ -271,8 +264,10 @@ In summary, an operating system must incorporate a number of services in order t
   * security
   * etc.
 
+### System Calls
+
 <center>
-<img src="./assets/P01L02-010.png" width="500">
+<img src="./assets/P01L02-010.png" width="550">
 </center>
 
 Operating systems make these services available via system calls. The figure above shows examples of system calls in two popular operating systems, Windows and Unix. Notice that despite being two different operating systems, the types of system calls and the abstractions around them are remarkably similar between the two.
@@ -294,7 +289,7 @@ On a 64-bit Linux-based OS, which system call is used to...
 We've seen so far some rough indications of how the operating system is laid out. Let's now consider more explicitly the different types of operating-system organizational schemes.
 
 <center>
-<img src="./assets/P01L02-011.png" width="400">
+<img src="./assets/P01L02-011.png" width="550">
 </center>
 
 Historically, the operating system has had a **monolithic operating system** design, whereby every possible service that any one of the applications can require or that any type of hardware will demand is already part of the operating system.
@@ -311,7 +306,7 @@ Conversely, the **drawbacks** are:
 ## 17. Modular OS
 
 <center>
-<img src="./assets/P01L02-012.png" width="350">
+<img src="./assets/P01L02-012.png" width="450">
 </center>
 
 A more common approach today is a **modular operating system** (e.g., Linux).
@@ -332,7 +327,7 @@ Overall, the modular design delivers significant improvements over the monolithi
 ## 18. Microkernel
 
 <center>
-<img src="./assets/P01L02-013.png" width="350">
+<img src="./assets/P01L02-013.png" width="450">
 </center>
 
 Another example of operating system design is the **microkernel**. Microkernels require only the most basic primitives at the operating system level (e.g., representing an executing application's **address space** and its execution context [i.e., **threads**]), while all other software components (e.g., database, file system, disk driver, etc.) runs outside of the operating system's kernel at the (unprivileged) user level.
@@ -351,7 +346,7 @@ Conversely, the **drawbacks** are:
 ## 19. Linux and macOS Architectures
 
 <center>
-<img src="./assets/P01L02-014.png" width="500">
+<img src="./assets/P01L02-014.png" width="550">
 </center>
 
 The **Linux** operating system environment is shown above.
@@ -367,7 +362,7 @@ The Linux **kernel** itself consists of several logical components (e.g., I/O ma
   * Each individual component can be independently modified or replaced, making the modular approach possible in Linux.
 
 <center>
-<img src="./assets/P01L02-016.png" width="450">
+<img src="./assets/P01L02-016.png" width="500">
 </center>
 
 The **Apple macOS** operating system architecture is shown above.
