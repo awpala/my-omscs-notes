@@ -518,3 +518,71 @@ However, Apache is a **combination** of a multi-process and a multi-threaded mod
 ## 20. Experimental Methodology
 
 ### Setting Up Performance Comparisons
+
+Consider now the experimental approach used by Pai et al. in the Flash paper. The experiments were designed so that they can make stronger arguments about the contributions that the authors claim regarding Flash; in general, this is always something to consider when designing experiments and drawing such conclusions/inferences.
+
+<center>
+<img src="./assets/P02L05-027.png" width="500">
+</center>
+
+To achieve this, it is imperative to answer several **important questions**, e.g.,:
+  * Define **comparison points**: *What* **systems** are you actually comparing?
+    * If comparing two software implementations, keep the hardware the same, and similarly if comparing two hardware platforms, keep the software the same.
+  * Define **inputs**: *What* **workloads** will be used for evaluation?
+    * Does the input data resemble "real world" data, will synthetic traces be used, etc. These are all important questions to be resolved.
+  * Define **metrics**: *How* will you **measure** performance?
+    * What is the relevant metric(s) for the system, stakeholders, and resources used (e.g., execution time, throughput, response time, etc., as discussed previously in this lecture).
+
+### Flash Performance Comparisons
+
+Let us now consider how these questions are addressed in the Flash paper.
+
+#### Define Comparison Points
+
+<center>
+<img src="./assets/P02L05-028.png" width="500">
+</center>
+
+Regarding the comparison of **systems** in the Flash paper:
+  * Used a **multi-process** system using the same kind of Flash processing (i.e., a Web server with the exact same optimizations that were applied in Flash), however, in a multi-process, single-threaded configuration
+  * Again, using the same optimizations as Flash, they developed a **multi-threaded** Web server following the boss/workers model.
+  * They compared Flash with a **Single-Process Event-Driven (SPED)** model, similar to the basic event-driven model discussed first in this lecture (cf. Section 12).
+  * Furthermore, they compared two existing Web server implementations:
+    * **Zeus**, a research implementation that follows the SPED model, however, which uses two processes in order to deal with blocking I/O.
+    * **Apache**, the open-source Web server, which at the time (v. 1.3.1) was implemented with a multi-process configuration
+
+With the exception of Apache, each of these compared implementations integrated many of the **optimizations** that Flash had already introduced.
+
+Furthermore, each of these implementations was compared against Flash (i.e., the **AMPED** model), given that the other implementations otherwise used the exact same code with the same/equivalent optimizations.
+
+#### Define Inputs
+
+<center>
+<img src="./assets/P02L05-029.png" width="500">
+</center>
+
+Regarding the comparison of **workloads**/**inputs** in the Flash paper, to define useful inputs, they wanted workloads that:
+  * Represented a realistic sequence of requests in order to capture the distribution of Web page accesses over time
+  * Were controlled and reproducible (i.e., using the *same* access patterns), which prompted the authors to use a **trace-based** approach, wherein they gathered traces from real Web servers and subsequently replayed those traces in order to be able to repeat the experiment with the different implementations (i.e., with all of them being evaluated against the *same* traces). This resulted in the following **traces**:
+    * CS Web Server trace (Rice University), representing Rice University's Web server for the CS department, which included a large number of files which do not all fit in memory
+    * Owlnet trace (Rice University), derived from a Web server that hosted a number of student Web pages, which was comparatively smaller and consequently capable of fitting in the memory of a common server.
+  * Additionally, the authors used a **synthetic workload generator** (i.e., rather than replaying traces), which allowed to perform some best- and worst-case analysis, as well as running "*what if?*" queries (e.g., *"What if the distribution of the Web page accesses had a certain pattern, then would something change about the observation?"*).
+
+#### Define Metrics
+
+<center>
+<img src="./assets/P02L05-030.png" width="500">
+</center>
+
+Regarding the comparison of **performance**/**metrics** in the Flash paper:
+  * When evaluating Web servers, a common metric to use is **bandwidth** (units of `bytes/time`, e.g., `MB/s`), i.e., the total amount of useful bytes transferred from files over the time period elapsed when making the transfer.
+  * Because the authors were particularly concerned with Flash's ability to deal with concurrent processing, they evaluated the impact on the **connection rate** (units of `requests/time`), i.e., the total number of client connections serviced over a period of time.
+
+Both of these metrics were evaluated as a function of the **file size**, therefore, the understanding the authors were attempting to gain was regarding how the workload property of requests (which were made for different file sizes) impact either of these metrics?\
+  * The general **intuition** was that with a larger file size, the connection cost can be ***amortized** while simultaneously increasing the bandwidth (i.e., transmitting more bytes per-unit time)
+  * However, at the same time, the larger file size also introduces more work per connection (i.e., reading and sending more bytes, all else equal), thereby adversely impacting the connection rate
+
+Therefore, it was determined that file size is a useful parameter to vary in order to observe the impact on the metrics (bandwidth and connection rate) for the various implementations.
+
+## 21. Experimental Results
+
