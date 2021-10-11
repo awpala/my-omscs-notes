@@ -213,7 +213,7 @@ To deal with these concurrency issues, mechanisms are required to enforce execut
 
 Additionally, it is also useful for concurrently executing threads to have a mechanism to **wait** on one another, and to exactly specify the necessary **condition** required before proceeding.
   * For example, a thread dealing with shipment processing must wait on all of the items in the shipping order to be processed before the order can be shipped.
-  * Birrell discusses the use of **conditional variables** to handle this kind of inter-thread coordination.
+  * Birrell discusses the use of **condition variables** to handle this kind of inter-thread coordination.
 
 Both mutual exclusion and waiting are referred to as **synchronization mechanisms**.
   * Additionally, Birrell describes another such mechanism involving waking up other threads from a **wait state**. (This will be discussed more in a later lesson.)
@@ -569,7 +569,7 @@ Wait(mutex, cond) {
 
 Note that on removal from the wait queue (e.g., via `Signal()` or `Broadcast()`), the immediately subsequent task performed by the thread is to re-acquire the mutex. Therefore, on `Broadcast()`, while all threads are woken up, only one thread will re-acquire the mutex and consequently exit the operation `Wait()`; this suggests for a tenuous use of the operation `Broadcast()` in the multithreading situations where this can occur.
 
-## 18. Conditional Variable Quiz and Answers
+## 18. Condition Variable Quiz and Answers
 
 Recall the consumer code from the previous example for condition variables, repeated here as follows:
 
