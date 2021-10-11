@@ -7,13 +7,13 @@ The previous lecture described processes and process management. Recall that a p
 ### What if Multiple CPUs?
 
 <center>
-<img src="./assets/P02L02-001.png" width="350">
+<img src="./assets/P02L02-001.png" width="500">
 </center>
 
 However, when represented this way, such a process can only execute at one CPU at any given point in time.
 
 <center>
-<img src="./assets/P02L02-002.png" width="400">
+<img src="./assets/P02L02-002.png" width="550">
 </center>
 
 Conversely, in order for the process to execute on multiple CPUs simultaneously (i.e., taking advantage of modern multi-CPU/multi-core systems), such a process requires ***multiple*** execution contexts; such multiple execution contexts within a single process are called **threads**.
@@ -38,7 +38,7 @@ N.B. A later lesson will discuss a concrete multithreading system called **Pthre
 
 This lesson will discuss threads and concurrency. As an analogy, a **thread** is like a worker in a toy shop, which has the following characteristics:
 
-| Characteristic | Toy Shop Metaphor | Operating System |
+| Characteristic | Toy Shop Worker | Thread |
 | :--: | :--: | :--: |
 | is an active entity | executing a unit of work required for a toy order | executing a unit of work on behalf of a process |
 | works simultaneously with others | many workers completing toy orders | many threads executing (i.e., **concurrency**, which can occur on multicore systems in which multiple threads execute at the exact same time) |
@@ -77,7 +77,7 @@ The operating system representation of such a **multithreaded process** will the
 Consider a **multi-processor** (or **multi-core**) system as a representative example. At any given time, when running a given process, there may be multiple threads (`T1`, `T2`, `T3`, `T4`) belonging to the process running concurrently on a different processor.
 
 <center>
-<img src="./assets/P02L02-006.png" width="450">
+<img src="./assets/P02L02-006.png" width="550">
 </center>
 
 One possibility is that each thread executes the ***same*** code, but for a different subset of the input (e.g., a different portion of an input array or an input matrix).
@@ -86,7 +86,7 @@ One possibility is that each thread executes the ***same*** code, but for a diff
 **Parallelization** of the program in this manner achieves **speedup**: the input can be processed much faster than via the corresponding counterpart of a single thread running on a single CPU.
 
 <center>
-<img src="./assets/P02L02-007.png" width="450">
+<img src="./assets/P02L02-007.png" width="550">
 </center>
 
 Additionally, threads can also execute completely ***different*** portions of the program.
@@ -98,20 +98,20 @@ This type of **specialization** (whereby different threads run different tasks o
   * For example, higher priority can be given to those threads which handle more important tasks, more important customers, etc.
 
 <center>
-<img src="./assets/P02L02-008.png" width="350">
+<img src="./assets/P02L02-008.png" width="450">
 </center>
 
 Another important benefit of partitioning the exact operations performed by each thread on each CPU derives from the fact that performance is dependent on how much state information can be stored/present in the **hardware cache**.
   * Since each thread running on a separate CPU core has access to its own processor cache (denote `$` in the figure above). Therefore, if the thread repeatedly executes a smaller portion of the code (e.g., one task), more of the relevant program state and information will be present in the corresponding cache, thereby improving the operation of each thread on a **hot cache**.
 
 <center>
-<img src="./assets/P02L02-009.png" width="350">
+<img src="./assets/P02L02-009.png" width="450">
 </center>
 
 While the natural conclusion may be to write a **multiprocess** application wherein every CPU core runs a separate process, since the processes do not share an address space, each context must be allocated a ***separate*** address space and execution context. Therefore, such a multiprocess implementation would require separate allocations of address spaces and execution contexts.
 
 <center>
-<img src="./assets/P02L02-010.png" width="350">
+<img src="./assets/P02L02-010.png" width="450">
 </center>
 
 Conversely, a **multithreaded** implementation consists of threads ***sharing*** an address space (thereby obviating the requirement to allocate the address space to *each* execution context), which is much more memory-efficient than its multiprocess counterpart. Consequently, such a multithreaded application is more likely to fit in memory and not require as many swaps with the disk compared to the multiprocess alternative.

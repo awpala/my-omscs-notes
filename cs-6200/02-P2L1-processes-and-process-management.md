@@ -19,7 +19,7 @@ Before proceeding, consider a simple definition of a **process**:
 
 Continuing with the visual metaphor of a toy shop (cf. P1L2), a **process** is like an order of toys, which is characterized by the following:
 
-| Characteristic | Toy Shop Metaphor | Operating System |
+| Characteristic | Toys Order | Process |
 | :--: | :--: | :--: |
 | state of execution | completed toys, and those waiting to be built | program counter, stack pointer|
 | parts and temporary holding area | plastic pieces, containers, etc.| data, register state occupies state in memory | 

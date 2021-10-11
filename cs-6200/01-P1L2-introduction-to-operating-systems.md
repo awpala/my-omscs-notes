@@ -23,7 +23,7 @@ An operating system is like a *toy shop manager*:
 <img src="./assets/P01L02-001.png" width="400">
 </center>
 
-| Characteristic | Toy Shop Manager Metaphor | Operating System |
+| Characteristic | Toy Shop Manager | Operating System |
 | :--: | :--: | :--: |
 | Directing operational resources | control use of employee time, parts, tools, etc. | control use of CPU, memory, peripheral devices, etc. and deciding their use by applications |
 | Enforcing working policies | fairness, safety, clean-up, etc. | fair access to shared resources, limits to resource usage (e.g., number of files opened per process, established threshold to initiate memory-managing daemons, etc.), etc. |
