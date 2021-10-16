@@ -169,21 +169,21 @@ Calculate the throughput, average completion time, and average wait time via the
 Reference equations:
 * throughput
 <center>
-<img src="./assets/P03L01-008.png" width="175">
+<img src="./assets/P03L01-008.png" width="200">
 </center>
 
 * average completion time
 <center>
-<img src="./assets/P03L01-009.png" width="225">
+<img src="./assets/P03L01-009.png" width="200">
 </center>
 
 * average wait time
 <center>
-<img src="./assets/P03L01-010.png" width="350">
+<img src="./assets/P03L01-010.png" width="425">
 </center>
 
-where *`n`*<sub>`tasks`</sub> is the number of tasks, *`t`*<sub>`e`</sub> is an execution time for a task, and *`t`*<sub>`w`</sub> is a wait time for a task.
-  * ***N.B.*** *`i`* and *`j`* are indices denoting specific tasks, where both *`i`* and *`j`* are indexed in the ***order*** of the tasks' executions (e.g., *`i`* and *`j`* represent indices `1`, `2`, and `3` for tasks `T1`, `T3`, and `T2` (respectively) in this quiz's example).
+where *`n`*<sub>`tasks`</sub> is the number of tasks, *`t`*<sub>`e`</sub> is the total (cumulative) execution time for a task (i.e., relative to time `t = 0`), and *`t`*<sub>`w`</sub> is a wait time for a task.
+  * ***N.B.*** *`i`* and *`j`* are indices denoting specific tasks, where both *`i`* and *`j`* are indexed in the ***order*** of the tasks' executions (e.g., *`i`* and *`j`* represent indices `1`, `2`, and `3` for tasks `T1`, `T3`, and `T2` (respectively) in this quiz's example). Correspondingly, index variables *`t`*<sub>*`i`*</sub> and *`t`*<sub>*`j`*</sub> denote these tasks' single-task execution times (e.g., `1s`, `1s`, and `10s` for tasks `T1`, `T3`, and `T2` (respectively) in this quiz's example).
 
 ## 6. Preemptive Scheduling: SJF + Preempt
 
