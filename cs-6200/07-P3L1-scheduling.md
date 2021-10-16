@@ -123,11 +123,14 @@ A useful way to organize the tasks is to use a first-in, first-out (FIFO) queue 
 Consider a scenario where tasks `T1`, `T2`, and `T3` have the execution times `1s`, `10s`, and `1s` (respectively). Furthermore, the tasks arrive in the order `T1 (first) -> T2 -> T3 (last)` (i.e., the order in which the tasks are placed in the runqueue).
 
 Evaluating the corresponding metrics gives the following:
-  * ***throughput***: `3 tasks / (1 + 10 + 1) s = 0.25 tasks/s`
-  * ***average completion time***: `(1 + 11 + 12) s / 3 tasks = 8 s/task`
-    * `T1` completes in `1s`, which is immediately followed by execution of `T2` taking `10s` to complete (for a total completion time of `1 + 10 = 11s`, including the prior execution time of `T1`), and then finally `T3` completes execution in `1s` (in total `1 + 10 + 1 = 12s`, including the prior execution times of `T1` and `T2`)
-  * ***average wait time***: `(0 + 1 + 11) s / 3 tasks = 4 s/task`
-    * `T2` waits `1s` for `T1` to complete in order to proceed with execution, and similarly `T3` waits `10s` for `T2`
+  * ***throughput***
+    * `3 tasks / (1 + 10 + 1) s = 0.25 tasks/s`
+  * ***average completion time***
+    * `(1 + 11 + 12) s / 3 tasks = 8 s/task`
+      * `T1` completes in `1s`, which is immediately followed by execution of `T2` taking `10s` to complete (for a total completion time of `1 + 10 = 11s`, including the prior execution time of `T1`), and then finally `T3` completes execution in `1s` (in total `1 + 10 + 1 = 12s`, including the prior execution times of `T1` and `T2`)
+  * ***average wait time***
+    * `(0 + 1 + 11) s / 3 tasks = 4 s/task`
+      * `T2` waits `1s` for `T1` to complete in order to proceed with execution, and similarly `T3` waits `10s` for `T2`
 
 Given this simple scheduling algorithm, we can achieve better performance with respect to these metrics using other algorithms, as discussed next.
 
@@ -158,13 +161,16 @@ Consider an analysis of the performance of the shortest job first (SJF) scheduli
 
 Calculate the throughput, average completion time, and average wait time via the SJF algorithm.
   * **throughput**
-    * `3 tasks / (1 + 1 + 10) s = 0.25 tasks/s` (via ordering `T1 (first) -> T3 -> T2 (last)`)
+    * `3 tasks / (1 + 1 + 10) s = 0.25 tasks/s`
+      * via ordering `T1 (first) -> T3 -> T2 (last)`
   * **average completion time**
-    * `(1 + 2 + 12) s / 3 tasks = 5 s/task` (via ordering `T1 (first) -> T3 -> T2 (last)`)
+    * `(1 + 2 + 12) s / 3 tasks = 5 s/task`
+      * via ordering `T1 (first) -> T3 -> T2 (last)`
   * **average wait time**
-    * `(0 + 1 + 2) s / 3 tasks = 1 s/task` (via ordering `T1 (first) -> T3 -> T2 (last)`)
+    * `(0 + 1 + 2) s / 3 tasks = 1 s/task`
+      * via ordering `T1 (first) -> T3 -> T2 (last)`
 
-***N.B.*** Observe that the average completion time and average wait time are shorter compared to the first-come, first serve scheduling algorithm (cf. Section L4).
+***N.B.*** Observe that the average completion time and average wait time are shorter compared to the first-come, first serve scheduling algorithm (cf. Section 4).
 
 Reference equations:
 * throughput
@@ -185,5 +191,93 @@ Reference equations:
 where *`n`*<sub>`tasks`</sub> is the number of tasks, *`t`*<sub>`e`</sub> is the total (cumulative) execution time for a task (i.e., relative to time `t = 0`), and *`t`*<sub>`w`</sub> is a wait time for a task.
   * ***N.B.*** *`i`* and *`j`* are indices denoting specific tasks, where both *`i`* and *`j`* are indexed in the ***order*** of the tasks' executions (e.g., *`i`* and *`j`* represent indices `1`, `2`, and `3` for tasks `T1`, `T3`, and `T2` (respectively) in this quiz's example). Correspondingly, index variables *`t`*<sub>*`i`*</sub> and *`t`*<sub>*`j`*</sub> denote these tasks' single-task execution times (e.g., `1s`, `1s`, and `10s` for tasks `T1`, `T3`, and `T2` (respectively) in this quiz's example).
 
-## 6. Preemptive Scheduling: SJF + Preempt
+## 6-7. Preemptive Scheduling
+
+Up to this point, the discussion has assumed that the currently executing task on the CPU *cannot* be interrupted (i.e., cannot be preempted). Let us now *relax* this assumption/requirement and consider **preemptive scheduling**, wherein tasks do not have exclusive use of the CPU for the entire duration of their execution (i.e., they *can* be interrupted).
+
+### 6. Shortest Job First (SJF) + Preempt
+
+<center>
+<img src="./assets/P03L01-011.png" width="650">
+</center>
+
+First, consider preemption in conjunction with the shortest job first (SJF) scheduling algorithm.
+
+Here, let us additionally relax the assumption that all tasks arrive at the same time (i.e., time `t = 0 s`), but rather the tasks can **arrive** at ***arbitrarily different*** times. Furthermore, the initial assumption that the tasks' respective execution times are known still holds.
+
+In the figure shown above, task `T2` arrives first (i.e., at time `t = 0s`). Therefore, upon arrival, the CPU scheduler detects `T2` and schedules it to run on the CPU immediately.
+
+Upon arrival of tasks `T1` and `T3` at time `t = 2s`, `T2` is preempted due to the shortest job first scheduling algorithm (i.e., `T2`'s execution time is comparatively larger than both `T1` and `T3`).
+
+The subsequent execution therefore occurs as in the time plot in the figure shown above. To achieve this behavior, whenever a new task(s) enter the runqueue (e.g., `T1` and `T3` at time `t = 2s`), the CPU scheduler must be invoked in order to inspect the execution times of the tasks and consequently decide whether or not to preempt the currently executing task (e.g., `T2` immediately prior to time `t = 2s`).
+
+While it is assumed here that the execution time for each task is known, in practice it is difficult to determine this a priori, as this is influenced by many factors (e.g., input dependencies for the task, presence/absent of the task's data in the cache, which other tasks are running in the system, etc.).
+
+Therefore, in principle, it is necessary to employ certain **heuristics** based on the task's history in order to estimate the execution time for the task in question. With respect to the *future* execution time of the task, a useful heuristic is to use the task's **past running time**, e.g.,:
+  * How long did a task run in the most recent execution?
+  * How long did a task run for the last `n` executions?
+    * This can be used to to determine an average over a period of time, over a number of past executions, etc. Such an averaging over a defined time interval is called a **windowed average**.
+
+### 7. Priority Scheduling
+
+<center>
+<img src="./assets/P03L01-012.png" width="650">
+</center>
+
+While the shortest job first (SJF) scheduling algorithm considers the task(s) with the shortest execution time(s) in order to determine tasks scheduling (i.e., by appropriate preemption as necessary), another key **criterion** for making these decisions involves whether the tasks have different **priorities**.
+
+Tasks having different **priority levels** is a common scenario in scheduling problems (e.g., certain operating system kernel-level threads may have tasks with higher priority than other threads supporting user-level processes; within a user-level process, threads which monitor user input events may have relatively higher priority compared to other threads performing background processing or long-running simulations; etc.).
+
+In such scenarios, the CPU scheduler must be able to run the **highest priority** task next, including capability for potential preemption of the currently running task if necessary.
+
+Returning to the previous example, consider now the scenario which includes priority scheduling as in the figure shown above, whereby tasks `T1`, `T2`, and `T3` have priorities `P1`, `P2`, and `P3` (respectively) such that `P1 (lowest) < P2 < P3 (highest)`.
+
+As before, the process begins with task `T2` executing immediately upon arrival at time `t = 0s`. Upon arrival of tasks `T1` and `T3` at time `t = 2s`, based on the relative priorities of these tasks, `T2` is preempted to permit the higher-priority task `T3` to execute.
+
+Once `T3` completes execution, `T2` is now of relatively highest priority and proceed with completing execution, followed by `T1` (which executes last).
+
+<center>
+<img src="./assets/P03L01-013.png" width="650">
+</center>
+
+In practice, the CPU scheduler must be able to quickly assess not just the current group of runnable tasks, but also their respective relative priorities (i.e., for determination of which task to run at any given time).
+  * This can be achieved via **multiple priority queues** as the runqueue, with one per priority level. Consequently, the CPU scheduler can select a task from the runqueue at the highest priority level first, followed by the next highest priority level, etc.
+  * Alternatively, this can also be achieved via an **ordered data structure** (e.g., tree) as the runqueue, whereby the ordering is with respect to the priorities (rather than with respect to the execution time, as in the tree data structure for the shortest job first scheduling algorithm [cf. Section 4])
+
+<center>
+<img src="./assets/P03L01-014.png" width="650">
+</center>
+
+One **danger** with priority scheduling is a condition called **starvation**, whereby the low priority task(s) is stuck in the runqueue indefinitely due to persistent arrival of relatively higher priority tasks to the runqueue.
+
+One **mechanism** to mitigate starvation is called **priority aging**, whereby the priority of the task itself is not fixed, but rather is a function of both its intrinsic priority level as well as the elapsed time spent in the runqueue, with the latter factor increasing in weight/importance as time progresses.
+
+## 8. Preemptive Scheduling Quiz and Answers
+
+Consider now the performance metrics for a preemptive CPU scheduler.
+
+<center>
+<img src="./assets/P03L01-015.png" width="400">
+</center>
+
+An operating system scheduler uses a priority-based scheduling algorithm with preemption to schedule tasks. Given the values shown in the table above, determine the finishing times of each task. Assume that the priorities are `P3 (lowest) < P2 < P1 (highest)`.
+  * `T1` finishes at:
+    * `t = 8s`
+  * `T2` finishes at:
+    * `t = 10s`
+  * `T3` finishes at:
+    * `t = 11s`
+
+<center>
+<img src="./assets/P03L01-016.png" width="400">
+</center>
+
+The time plot for these tasks is as shown in the figure above, which is described by the following sequence of events:
+  1. `T3` arrives first, and executes for `3s` (`1s` remaining to complete `T3`).
+  2. At time `t = 3s` `T2` arrives, and `T3` is preempted to allow `T2` to run. `T2` runs for `2s` (`2s` remaining to complete `T2`).
+  * At time `t = 5s` `T1` arrives, and `T2` is preempted to allow `T1` to run. `T1` runs for `3s` to completion.
+  * At time `t = 8s` (upon completion of `T1`), `T2` and `T3` remain in the runqueue. Since `T2` has relatively higher priority, it is scheduled to run, and subsequently runs to completion.
+  * Finally, at `t = 10s`, `T3` is scheduled to run, and subsequently runs to completion.
+
+## 9. Priority Inversion
 
