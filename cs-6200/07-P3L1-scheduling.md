@@ -179,10 +179,11 @@ Reference equations:
 
 * average wait time
 <center>
-<img src="./assets/P03L01-010.png" width="325">
+<img src="./assets/P03L01-010.png" width="350">
 </center>
 
-where `n`<sub>`tasks`</sub> is the number of tasks, `t`<sub>`e`</sub> is an execution time for a task, and `t`<sub>`w`</sub> is a wait time for a task (`i` and `j` are indices denoting tasks).
+where *`n`*<sub>`tasks`</sub> is the number of tasks, *`t`*<sub>`e`</sub> is an execution time for a task, and *`t`*<sub>`w`</sub> is a wait time for a task.
+  * ***N.B.*** *`i`* and *`j`* are indices denoting specific tasks, where both *`i`* and *`j`* are indexed in the ***order*** of the tasks' executions (e.g., *`i`* and *`j`* represent indices `1`, `2`, and `3` for tasks `T1`, `T3`, and `T2` (respectively) in this quiz's example).
 
 ## 6. Preemptive Scheduling: SJF + Preempt
 
