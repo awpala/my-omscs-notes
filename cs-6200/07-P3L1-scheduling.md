@@ -357,3 +357,82 @@ Timeslicing will now be discussed in more detail in the following sections.
 ## 11-16. Timesharing and Timeslices
 
 ### 11. Introduction
+
+#### Timeslice
+
+<center>
+<img src="./assets/P03L01-024.png" width="550">
+</center>
+
+Timeslices were introduced briefly previously (cf. P2L1). As a more formal definition, a **timeslice** is the maximum amount of ***uninterrupted time*** that can be assigned to a given task. A timeslice is also referred to as a **time quantum**.
+
+Inasmuch as a timeslice defines a *maximum* amount of time, this also implies that a task may run for ***less*** time than the specified timeslice.
+  * For example, if a task must wait on an I/O operation, synchronization (e.g., coordinating the locking/unlocking of a mutex), etc., then it will be removed from the CPU and placed on a queue, which may occur prior to expiration of the timeslice.
+  * Furthermore, in a priority-based scheduling system, a higher priority task will preempt a relatively lower priority task, therefore in general a lower priority task will account for a smaller portion of a given timeslice.
+
+Irrespectively of the particular system configuration, the use of timeslices allows to achieve the **interleaving** of tasks, i.e., the tasks can participate in **timesharing** of the CPU.
+  * This is not particularly critical for **I/O-bound-tasks**, since they are waiting for the I/O operation to complete, externally to the system.
+  * Conversely, for **CPU-bound tasks**, the timeslice is the primary mechanism by which timesharing of the CPU is achieved in the first place. This occurs by virtue of the fact that after the timeslice expires, the current task is preempted and the next task is scheduled onto the CPU.
+
+#### Timeslice Scheduling
+
+<center>
+<img src="./assets/P03L01-025.png" width="650">
+</center>
+
+Consider an example derived from that seen previously in the lecture, as in the figure shown above.
+  * Note that here the metrics (i.e., throughput, average wait time, and average completion time) computed with respect to the first-come, first-serve (FCFS) scheduling algorithm also apply to the round robin (RR) without timeslices scheduling algorithm. As given, the tasks `T1`, `T2`, and `T3` would be scheduled in the usual manner via the runqueue (i.e., in order of position within the queue).
+
+For the round robin (RR) scheduling algorithm with a timeslice *`t`*<sub>`s`</sub> of `1s`, the execution for the tasks is as shown in the figure above, corresponding to the following sequence:
+  1. Tasks `T1`, `T2`, and `T3` each execute for `1s` per the timeslice (in that order), thereby completing the execution of both `T1` and `T3`.
+  2. At time `t = 3s`, since `T2` is the only remaining runnable task, it is scheduled an proceeds to execute until completion.
+
+Regarding the corresponding metrics (relative to time `t = 0s`, as before):
+  * **throughput** - by inspection, this is identical to that of the first-come, first-serve (FCFS) scheduling algorithm (i.e., the three tasks are completed over the course of `12s`)
+  * **average wait time** - `(0 + 1 + 2) s / 3 tasks = 1 s/task`
+  * **average completion time** - `(1 + 12 + 3) s / 3 tasks = 5.33 s/task`
+
+Therefore, by simply using a round robin scheduling algorithm with a timeslice, a comparable performance to that of the shortest job first (SJF) scheduling algorithm is achieved with respect to the average completion time. Furthermore, this is achieved by maintaining the simplicity of the first-come, first-serve (FCFS) scheduling algorithm (i.e., without the additional complexity of managing the runqueue, as in SJF).
+
+<center>
+<img src="./assets/P03L01-026.png" width="250">
+</center>
+
+Accordingly, the **benefits** of timeslice scheduling (particularly with a relatively *short* timeslice) include:
+  * Relatively short tasks (e.g., `T1` and `T3`) generally finish sooner.
+  * Scheduling is more responsive.
+  * Lengthy I/O operations can be initiated sooner, which improves the user experience (e.g., the wait operation can be made in an early timeslice, which in turn allows for other tasks to complete in the meantime).
+
+<center>
+<img src="./assets/P03L01-027.png" width="650">
+</center>
+
+Conversely, a key **drawback** is the **overhead** associated with performing the task changes (e.g., interrupts, scheduling, and context switches).
+  * In practice, these are not instantaneous events, and can add non-trivial overhead in terms of run-time (i.e., relative to the timeslice's time scale), memory, and performance, etc. Furthermore, there is no useful application processing occurring during this overhead "downtime."
+  * Also, note that, in principle, this "pure overhead" is incurred at each timeslice interval even when the *same* task is running (e.g., `T2` performs these overhead operations at *each* interval `t = 4s`, `t = 5s`, etc. until it completes). However, in practice, these timeouts are handled by the operating system in a more efficient manner (e.g., avoiding re-schedules and context switches for the *same* task, with those being among the two most expensive overhead operations) than this "naive" approach in such a case; the details of this are beyond the present scope.
+
+Therefore, relative to the "ideal" metrics as computed (i.e., assuming *no* overhead), the dominant overhead operations will impact the performance accordingly:
+  * The **throughput** will be lower than that computed.
+  * The tasks will begin slightly later (i.e., rather than *immediately* following the previous time slice), thereby increasing the average wait time and the average completion time due to this overhead time delay.
+
+The exact impact of overhead on these metrics will depend on the exact time duration of the overhead operations relative to that of the timeslice. In general, it is ideal to maintain *`t`*<sub>`s`</sub>`  >>  `*`t`*<sub>`context_switch`</sub> to maximize performance accordingly (i.e., to minimize the impact of overheads on performance).
+
+Therefore, in general, consider both the nature of the tasks as well as intrinsic overheads in the system when **determining** meaningful values for the timeslice.
+
+### 12. How Long Should a Timeslice Be?
+
+<center>
+<img src="./assets/P03L01-028.png" width="450">
+</center>
+
+As described in the previous section, the use of timeslices delivers certain **benefits** (e.g., the ability to begin the execution of tasks sooner, which in turn enables the achievement of an overall schedule for the task that is more responsive). However, this is accompanied by **overheads** as well. Therefore, the **balance** between these benefits and drawbacks has **implications** for the particular **length** of the timeslice that is selected.
+
+To answer the question "*How long should a timeslice be?*," the corresponding **balance** differs for...
+  * I/O-bound tasks (those tasks that perform I/O operations), vs.
+  * CPU-bound tasks (those tasks that are mostly executing on the CPU and perform little-to-no I/O operations)
+
+These two scenarios are discussed in turn next.
+
+### 13. CPU-Bound Timeslice Length
+
+
