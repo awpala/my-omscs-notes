@@ -281,3 +281,79 @@ The time plot for these tasks is as shown in the figure above, which is describe
 
 ## 9. Priority Inversion
 
+An interesting phenomenon called **priority inversion** occurs when priorities are introduced into the scheduling.
+
+<center>
+<img src="./assets/P03L01-017.png" width="650">
+</center>
+
+Consider the configuration described in the figure shown above, which assumes a shortest job first (SJF) scheduling algorithm. Here, the priorities are: `P3 (lowest) < P2 < P1 (highest)`. For simplicity, the execution times are omitted, but can be assumed to have some finite duration extending beyond the time scale of the shown time plot.
+
+The sequence of events is as follows:
+  1. Initially, `T3` is the only task present in the system. At time `t = 3s`, `T3` acquires a lock.
+  2. At time `t = 3s`, `T2` arrives, and since `T2` has a higher priority than `T1`, `T3` is preempted to allow for `T2`'s execution.
+  3. At time `t = 5s`, `T1` arrives, and since `T1` has a higher priority than `T2`, `T2` is preempted to allow for `T1`'s execution.
+  4. `T1` executes for `2s`, at which point it reaches a point in its execution where it must acquire the lock held by `T3`.
+  5. Since the lock is not accessible by `T1`, `T1` is put on a wait queue associated with the lock, and the next highest priority task `T2` is consequently scheduled to execute.
+  6. At time `t = 9s`, `T2` completes execution, and since `T3` is the only *runnable* task at this point, `T3` proceeds with execution.
+  7. At time `t = 11s`, `T3` releases the lock, thereby allowing for the higher priority `T1` to proceed with execution; consequently, `T3` is preempted, and `T1` acquires the lock and executes.
+
+Based on this sequence, the ***expected priority*** is `T1 (highest) > T2 > T3 (lowest)`. However, the ***actual order of execution*** that occurs is `T2`, `T3`, `T1`. Therefore, the priorities of the tasks are **inverted**.
+
+A **solution** to this inversion problem is to temporarily **boost** the priority of the mutex owner (e.g., at time `t = 7s`, rather than executing `T2`, boost the priority of `T3` to the level of `T1` in order to allow `T3` to execute and eventually free the lock so that `T1` can proceed, rather than performing the intermediate switch to `T2` first instead).
+  * This technique in particular demonstrates the importance of tracking the current owner of the mutex (e.g., in the corresponding mutex data structure), as this information allows to perform such coordination in the first place.
+  * Furthermore, note that such boosting generally should only be performed ***temporarily*** (e.g., after `T3` releases the lock, it should be restored to its original low priority level).
+
+***N.B.*** This boosting technique is used commonly in many operating systems today.
+
+## 10. Round Robin Scheduling
+
+When it comes to running tasks that have the ***same*** priority level, there are other options available in addition to the first-come, first-serve (FCFS) or shortest job first (SJF) scheduling algorithms discussed so far.
+
+<center>
+<img src="./assets/P03L01-018.png" width="650">
+</center>
+
+A popular option is the so-called **round robin scheduling** algorithm, as demonstrated in the figure shown above. Here, there are three tasks `T1`, `T2`, and `T3`, with all three having the *same* priority and entering the system at the same time (i.e., time `t = 0s`), and consequently entering the runqueue.
+
+With round robin scheduling, the first task is selected from the head of the queue (e.g., `T1`), similarly to the first-come, first serve (FCFS) scheduling algorithm.
+
+<center>
+<img src="./assets/P03L01-019.png" width="650">
+</center>
+
+However, unlike in first-come, first-serve (FCFS) scheduling (where it is assumed that each task executes to completion), there is the possibility of a task being interrupted (e.g., `T1` yields to wait on an I/O operation at time `t = 1s`). If this occurs, the blocked task either completes or is placed at the tail of the queue, and the next task in the queue (e.g., `T2`) is selected to run. This process then proceeds in this manner until the queue is empty.
+
+<center>
+<img src="./assets/P03L01-020.png" width="650">
+</center>
+
+Conversely, if there were no I/O operation to interrupt `T1`, execution of the tasks would proceed as shown in the figure above (i.e., via the ordered placement in the runqueue).
+
+<center>
+<img src="./assets/P03L01-021.png" width="650">
+</center>
+
+Round robin scheduling can also be generalized to include **priorities**. Consider, for example (as in the figure shown above), tha the tasks arrive at different times having different priorities such that `P1 (lowest) < P2 < P3 (highest)`. In this case, if a higher priority task arrives (e.g., when `T2` arrives at time `t = 1s`), then the currently running task (e.g., `T1` immediately prior to time `t = 1s`) is preempted to proceed with execution of the former.
+
+<center>
+<img src="./assets/P03L01-022.png" width="650">
+</center>
+
+Furthermore, as shown in the figure above, if two of the tasks have equal priorities (e.g., `T2` and `T3`, both of which are higher than `T1`), then tie breaking is achieved in the usual round-robin manner (i.e., via the runqueue order for the tasks in question).
+
+Therefore, in order to include priorities with round robin scheduling, it is necessary to also include **preemption**, but otherwise the tasks are scheduled from the runqueue (i.e., similarly to first-come, first-serve (FCFS)).
+
+<center>
+<img src="./assets/P03L01-023.png" width="650">
+</center>
+
+A further **modification** that is sensible for round robin scheduling is rather than to wait for tasks to yield explicitly, instead to interrupt them so that they are **interleaved** (i.e., such that the tasks currently in the system are "mixed" together). Such a mechanism is called **timeslicing**.
+
+For example, in the the figure shown above, each task is assigned a timeslice of one time unit (e.g., `1s`), and operates over this fixed interval and then the system proceeds onto the next task in a round-robin manner via the runqueue (with a corresponding interruption of the current task, if necessary), and thus the system proceeds in this manner until all tasks complete execution.
+
+Timeslicing will now be discussed in more detail in the following sections.
+
+## 11-16. Timesharing and Timeslices
+
+### 11. Introduction
