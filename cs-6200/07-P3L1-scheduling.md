@@ -354,7 +354,7 @@ For example, in the the figure shown above, each task is assigned a timeslice of
 
 Timeslicing will now be discussed in more detail in the following sections.
 
-## 11-16. Timesharing and Timeslices
+## 11-15. Timesharing and Timeslices
 
 ### 11. Introduction
 
@@ -435,4 +435,96 @@ These two scenarios are discussed in turn next.
 
 ### 13. CPU-Bound Timeslice Length
 
+<center>
+<img src="./assets/P03L01-029.png" width="650">
+</center>
+
+(***N.B.*** There are **errata** in the metrics calculations in the table shown above. See the in-text table below for the correct values.)
+
+Now consider an example consisting of two **CPU-bound tasks** both having an execution time of `10s` and a context switching time of `0.1s` (i.e., to switch between the two tasks), as shown in the figure above. Furthermore, consider two different timeslice values (*`t`*<sub>`s`</sub>): `1s` and `5s`.
+  * **N.B.** In the time plot of the figure, the "thick" vertical bars encompass the corresponding context switching time.
+
+As demonstrated in the time plot, the context switches are more frequent with a shorter timeslice (`1s`).
+
+The corresponding metrics are calculated as follows:
+
+| Scheduling Algorithm | Throughput (tasks/s) | Average Wait Time (s) | Average Completion Time (s) |
+| :---: | :---: | :---: | :---: |
+| round robin<br/>(*`t`*<sub>`s`</sub>` = 1s`) | `2 / (10 + 10 + 19*0.1)`<br/>`= 0.091` | `[0 + (1 + 0.1)] / 2`<br/>`= 0.55` | `[(19*1 + 18*0.1) + (1.1 + 19*1 + 18*0.1)] / 2`<br/>`= 21.35` |
+| round robin<br/>(*`t`*<sub>`s`</sub>` = 5s`) | `2 / (10 + 10 + 3*0.1)`<br/>`= 0.098` | `[0 + (5 + 0.1)] / 2`<br/>`= 2.55` | `[(5*3 + 2*0.1) + (5.1 + 5*3 + 2*0.1)] / 2`<br/>`= 17.75` |
+
+As these metrics suggest:
+  * A higher timeslice value (e.g., *`t`*<sub>`s`</sub>` = 5s`) is more advantageous for higher throughput and for a shorter average completion time
+  * Conversely, a lower timeslice value (e.g., *`t`*<sub>`s`</sub>` = 1s`) is more advantageous for a shorter average wait time
+
+However, since these are CPU-bound tasks, the wait time is not particular concern here, but rather, the user is more interested in throughput and completion times, therefore, in general a ***longer*** timeslice is more advantageous here.
+
+In particular, for CPU-bound tasks, the theoretical limit for this example/configuration is as follows:
+
+<center>
+<img src="./assets/P03L01-030.png" width="500">
+</center>
+
+| Scheduling Algorithm | Throughput (tasks/s) | Average Wait Time (s) | Average Completion Time (s) |
+| :---: | :---: | :---: | :---: |
+| round robin<br/>(*`t`*<sub>`s`</sub>` → ∞`) | `2 / (10 + 10)`<br/>`= 0.1` | `[0 + (10)] / 2`<br/>`= 5` | `[(10) + (20)] / 2`<br/>`= 15` |
+
+Therefore, in summary, in general a CPU-bound task prefers a **large timeslice**.
+
+### 14. I/O-Bound Timeslice Length
+
+<center>
+<img src="./assets/P03L01-031.png" width="650">
+</center>
+
+Now consider an example consisting of two **I/O-bound tasks** both having an execution time of `10s` and a context switching time of `0.1s` (i.e., to switch between the two tasks), as shown in the figure above. Furthermore, consider two different timeslice values (*`t`*<sub>`s`</sub>): `1s` and `5s`. The nature of the I/O calls is such that the task issues an I/O operation every `1s`, and each such I/O operation completes in `0.5s`.
+
+As shown above in the figure, the resulting time plot is identical to that of the CPU-bound tasks with for a timeslice of `1s`. However, in this scenario, rather than being preempted, the tasks issue the I/O operation and subsequently yield of their own volition (i.e., irrespectively of the timeslice length).
+
+Furthermore, with a timeslice `5s`, the resulting timeslice is also equivalent, since the I/O operations' frequency (once per `1s`) is higher than that of the timeslice duration (`5s`).
+
+
+The corresponding metrics are calculated as follows:
+
+| Scheduling Algorithm | Throughput (tasks/s) | Average Wait Time (s) | Average Completion Time (s) |
+| :---: | :---: | :---: | :---: |
+| round robin<br/>(*`t`*<sub>`s`</sub>` = 1s`) | `2 / (10 + 10 + 19*0.1)`<br/>`= 0.091` | `[0 + (1 + 0.1)] / 2`<br/>`= 0.55` | `[(19*1 + 18*0.1) + (1.1 + 19*1 + 18*0.1)] / 2`<br/>`= 21.35` |
+| round robin<br/>(*`t`*<sub>`s`</sub>` = 5s`) | `2 / (10 + 10 + 19*0.1)`<br/>`= 0.091` | `[0 + (1 + 0.1)] / 2`<br/>`= 0.55` | `[(19*1 + 18*0.1) + (1.1 + 19*1 + 18*0.1)] / 2`<br/>`= 21.35` |
+
+Therefore, it can be concluded here that for I/O-bound tasks, the value of the timeslice is not relevant.
+
+<center>
+<img src="./assets/P03L01-032.png" width="650">
+</center>
+
+However, as demonstrated by the figure shown above, this is not a correct conclusion. Here, consider the case where *only* `T2` is I/O-bound (with characteristic times as given previously), while `T1` is not (i.e., `T1` is strictly CPU-bound).
+  * In this case, the time plots are identical for `T1` and `T2` for a timeslice of `1s`, with the difference that for `T1` there is preemption after each `1s` timeslice, whereas for `T2` there is a voluntary yield off of the CPU to wait the I/O operation.
+  * However, for the timeslice of `5s`, at time `t = 5s`, `T1` is preempted, and then `T2` is scheduled for `1s` until it yields due to the I/O operation, and then `T1` is scheduled again and executes to completion. Lastly, `T2` is the last remaining task from time `t = 11s` onwards.
+
+For the latter case (i.e., a timeslice of `5s` with only `T2` being I/O-bound), the performance metrics are as follows:
+
+| Scheduling Algorithm | Throughput (tasks/s) | Average Wait Time (s) | Average Completion Time (s) |
+| :---: | :---: | :---: | :---: |
+| round robin<br/>(*`t`*<sub>`s`</sub>` = 5s`)* | `2 / (10 + 10 + 3*0.1 + 8*0.5)`<br/>`= 0.082` | `[0 + (5 + 0.1)] / 2`<br/>`= 2.55` | `[(11 + 2*0.1) + (11 + 9 + 3*0.1 + 8*0.5)] / 2`<br/>`= 17.75` |
+
+Therefore, in the I/O-bound case, a decreased timeslice (i.e., `1s`) both increases throughput and decreases the average wait time. With respect to the average completion time, this is increased in the smaller timeslice due to the large variance in the completion times of `T1` and `T2` (i.e., `t = 11s` and `t = 20s`, respectively). However, overall, it can be concluded that for I/O-bound tasks, a **smaller** timeslice is generally more advantageous.
+  * With a smaller timeslice, an I/O-bound task is more likely to run sooner, to issue an I/O request, or to respond to a user.
+  * Furthermore, with a smaller timeslice, it is possible to keep both the CPU and the I/O devices busy, thereby maximizing the use of the system resources.
+
+### 15. Summarizing Timeslice Length
+
+<center>
+<img src="./assets/P03L01-033.png" width="500">
+</center>
+
+Revisiting the question of "*How long should a timeslice be?*"...
+  * CPU-bound tasks prefer ***longer*** timeslices
+    * Longer timeslices give rise to less frequent context switches, and correspondingly a reduction in overheads from associated operations
+    * Longer timeslices maintain high CPU utilization and throughput by maximizing the useful application processing (and correspondingly minimizing "non-useful" overhead)
+  * I/O-bound tasks prefer ***shorter*** timeslices
+    * With shorter timeslices, I/O-bound tasks can issue I/O operations sooner/earlier
+    * Shorter timeslices maintain high CPU utilization and device utilization
+    * Shorter timeslices promote better user-perceived performance (i.e., the system appears "more responsive" to the user with respect to user inputs and corresponding outputs to the user)
+
+## 16. Timeslice Quiz and Answers
 
