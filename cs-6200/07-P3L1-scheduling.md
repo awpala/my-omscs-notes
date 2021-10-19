@@ -528,3 +528,39 @@ Revisiting the question of "*How long should a timeslice be?*"...
 
 ## 16. Timeslice Quiz and Answers
 
+On a single-CPU system, consider the following workload and conditions:
+  * `10` I/O-bound tasks and `1` CPU-bound task
+  * The I/O-bound tasks issue an I/O operation every `1ms` of CPU computing time
+  * I/O operations always take `10ms` to complete
+  * The overhead for context switching is `0.1ms`
+  * All tasks are long-running (i.e., assume *large* execution times relative to the other aforementioned times)
+
+Given these parameters, what is the CPU utilization (%) for a round robin scheduler where the timeslice is:
+  * `1ms`?
+    * `91%`
+      * Every `1ms`, there is either a preemption of the CPU-bound task, or the I/O-bound task will intrinsically stop to perform the I/O operation.
+      * Therefore, over a timeslice of `1ms`, the CPU utilization is `1ms / (1ms + 0.1ms) = 0.91`.
+  * `10ms`?
+    * `95%`
+      * Each of the ten I/O-bound tasks run for `1ms` apiece, with an immediately succeeding context switch of `0.1ms` after each. After this, the CPU-bound task is scheduled and then runs for `10ms` (i.e., the full timeslice).
+      * Therefore, over a timeslice of `10ms`, the (aggregate) CPU utilization is `(10*1 + 1*10) / [(10*1 + 10*0.1) + (1*10 + 1*0.1)] = 0.95`. This is represented diagrammatically as follows:
+      <center>
+      <img src="./assets/P03L01-034.png" width="200">
+      </center>
+
+As this example demonstrates, from the CPU's perspective (i.e., with respect to maximizing CPU utilization), having a larger timeslice (which favors the CPU-bound task) increases CPU utilization.
+  * Though not computed explicitly in the example, from the perspective of the I/O device, the opposite will be true: Having a smaller timeslice will favor more frequent operation of the I/O device, inasmuch as the I/O device is otherwise idle while the system is running the CPU-bound task.
+
+Reference equation:
+<center>
+<img src="./assets/P03L01-035.png" width="200">
+</center>
+
+Tips to solve:
+  1. Determine a ***consistent, recurring interval***.
+  2. In the interval, each task should be given an opportunity to run.
+  3. During that interval, how much time is spent computing? This is the ***CPU running time*** (*`t`*<sub>`CPU`</sub>).
+  4. During that interval, how much time is spent context switching? This is the ***context switching overheads*** (*`t`*<sub>`cso`</sub>).
+  5. Calculate based on (1)-(4).
+
+## 17. Runqueue Data Structure
