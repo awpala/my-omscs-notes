@@ -813,4 +813,40 @@ What was the **main reason** that the Linux O(1) scheduler was replaced by the C
 
 ## 21. Scheduling on Multi-Processor (i.e., Multi-CPU) Systems
 
+Consider now scheduling on multi-CPU systems.
+
+### Architecture Overview
+
+<center>
+<img src="./assets/P03L01-055.png" width="600">
+</center>
+
+Before proceeding, consider the **architecture details** in such a system, as shown in the figure above.
+
+First consider a **shared memory multiprocessor (SMP)** (later, we will examine and compare this to multi-core architectures). A shared memory (SMP) is characterized by:
+  * Multiple CPUs, each having their own ***private*** caches (e.g., L1, L2, etc.), which are *not* shared.
+  * Last-level caches (LLCs), which may or may not be shared among the CPUs.
+  * A system memory (DRAM) that is ***shared*** across all of the CPUs.
+    * ***N.B.*** For simplicity, the figure above shows only *one* main memory (Mm) component, however, in general there may be multiple such physical components in a system. Nevertheless, in either case, the memory is ***shared*** among the CPUs.
+
+### Multi-CPU Systems
+
+<center>
+<img src="./assets/P03L01-056.png" width="600">
+</center>
+
+In current multicore (i.e., multi-CPU) systems (e.g., a dual-core processor, as shown in the figure above), each CPU can have multiple internal **cores** (i.e., multiple internal CPUs), each of which has a private cache, with the overall multi-core CPU having a shared last-level cache (LLC) and shared system memory (DRAM).
+  * In current consumer/client devices (e.g., laptops and smartphones), dual-core processors are common, whereas in server-end platforms it is more common to have six- or eight-core CPUs and to have multiple such CPUs (i.e., multiple multi-core CPUs).
+
+As far as the operating system is concerned, it sees all of the CPUs (i.e., in *both* shared memory multiprocessor *and* multi-core processor systems) as **entities** onto which it can schedule an execution contexts (i.e., a threads). and therefore all of these entities are target candidate CPUs for scheduling the operating system's workload.
+
+To make discussion more concrete, we will first examine scheduling on multi-CPU systems in the context of shared memory multiprocessor (SMP) systems; correspondingly, many of these principles also apply to multicore processors as well. Furthermore, multicore systems will be compared and contrasted to this as well towards the end of the lecture.
+
+### Scheduling on Shared Memory Multiprocessor (SMP) Systems
+
+<center>
+<img src="./assets/P03L01-057.png" width="250">
+</center>
+
+
 
