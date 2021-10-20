@@ -748,7 +748,7 @@ There are several critical **issues** with the O(1) scheduler:
 Recall that the **Completely Fair Scheduler (CFS)** (proposed by Ingo Molnár and subsequently adopted as the default scheduler in the Linux kernel start from version 2.6.23) was developed to address the problems with the O(1) scheduler.
   * ***N.B.*** The CFS scheduler is the default scheduler for all non-real-time tasks, whereas the real-time tasks are scheduled by a separate real-time scheduler.
 
-#### Structure Overview
+#### Runqueue Overview
 
 <center>
 <img src="./assets/P03L01-051.png" width="650">
@@ -798,4 +798,19 @@ In summary, the **performance** of the Completely Fair Scheduler (CFS) is as fol
     * Given current systems' load levels, this run-time performance is acceptable, however, as the computer's capacity of the nodes continues to increase and systems are able to support more and more tasks, it is possible that at some point the Completely Fair Scheduler (CFS) will be replaced by something else that will be more performant with respect to this performance criterion (i.e., adding a new task).
 
 ## 20. Linux Scheduler Quiz and Answers
+
+What was the **main reason** that the Linux O(1) scheduler was replaced by the CFS scheduler? (Select the correct answer.)
+  * Scheduling a task under high loads takes an unpredictable amount of time.
+    * `INCORRECT`
+      * The Linux O(1) scheduler takes constant time (i.e., O(1)) to select and schedule a task, regardless of the load.
+  * Low-priority tasks can wait indefinitely and starve.
+    * `INCORRECT`
+      * While not completely incorrect (in the sense that as long as there are continuously arriving higher-priority tasks in the system, then it *is* possible for lower-priority tasks to starve), this is not the *main* reason why the O(1) scheduler was replaced.
+  * Interactive tasks can wait unpredictable amounts of time to be scheduled to run.
+    * `CORRECT`
+      * Common workloads have become increasingly interactive, and therefore demanded higher predictability. In the O(1) scheduler, with the active and expired lists, once a task is moved to the expired list, it must wait there until *all* of the low-priority tasks consume their entire time quanta.
+      * ***N.B.*** For a long time, Linus Torvalds resisted integrating a scheduler that would address the needs of these more-interactive tasks in the Linux kernel, his rationale being that Linux was intended to be a general-purpose operating system, which should not address the particular needs of some more-real-time or more-interactive tasks, and consequently he preferred the relative simplicity of the O(1) scheduler. However, as the general-purpose workloads began to change, it became necessary for Linux as a general-purpose operating system to incorporate a scheduler that would address these evolving needs; this was therefore accomplished by adopting the Completely Fair Scheduler (CFS).
+
+## 21. Scheduling on Multi-Processor (i.e., Multi-CPU) Systems
+
 
