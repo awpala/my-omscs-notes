@@ -564,3 +564,107 @@ Tips to solve:
   5. Calculate based on (1)-(4).
 
 ## 17. Runqueue Data Structure
+
+### Introduction
+
+<center>
+<img src="./assets/P03L01-036.png" width="600">
+</center>
+
+Recall that the runqueue is only logically a "queue," but in fact can be represented by multiple data structures, as shown above in the figure. Example configurations include:
+  * a *single* queue
+  * *multiple* queues, each with a distinct priority
+  * a tree
+  * etc.
+
+Regardless of the data structure used in the actual implementation, an **important feature** is that it should be easy for the CPU scheduler to determine the next thread to run, given the scheduling criteria.
+
+Therefore, in order to have I/O- and CPU-bound tasks to have *different* timeslice values, then there are two main options:
+  1. Maintain a *single* runqueue structure, in a manner which facilitates easy determination by the CPU scheduler for the type of the task being scheduled (i.e., so that it can apply the appropriate policy).
+  2. Maintain two *different* runqueue structures (i.e., one for CPU-bound tasks, and the other for I/O-bound tasks), with corresponding policies for each runqueue structure.
+
+### Dealing with Different Timeslice Values
+
+<center>
+<img src="./assets/P03L01-037.png" width="600">
+</center>
+
+One solution for the latter approach (i.e., separate/distinct runqueues) is to use the data structure as in the figure shown above. This is a **multi-queue** data structure having the following queues (i.e., for incoming tasks):
+  1. The most I/O-intensive tasks are assigned to the first runqueue, with a corresponding short timeslice (e.g., `8ms`).
+  2. Medium I/O-intensive tasks (i.e., those having a mix of I/O-bound and CPU-bound processing), with a corresponding medium-length timeslice (e.g., `16ms`).
+  3. Strictly CPU-intensive tasks, with a corresponding "infinite" timeslice (i.e., having the equivalent behavior of first-come, first-serve (FCFS)).
+
+From the scheduler's perspective, the relative priorities of these runqueues are: `1 (highest) > 2 > 3 (lowest)`. Therefore, it generally favors I/O-bound tasks over CPU-bound tasks.
+
+The **benefits** of this multi-queue configurations are:
+  * Timeslicing benfits are *provided* to those tasks which benefit from them (i.e., I/O-bound tasks).
+  * Timeslicing overheads are also *avoided* for CPU-bound tasks.
+
+<center>
+<img src="./assets/P03L01-038.png" width="600">
+</center>
+
+However, this begs several questions:
+  * How do we know if a task is CPU- or I/O-intensive?
+  * How do we know how I/O-intensive a task is?
+    * This can be determined using history-based heuristics, similarly to that discussed in the context of shortest job first (SJF), however, this approach is still inconclusive when considering the following:
+      * What about *new* tasks?
+      * What about tasks that dynamically *change* phases in their behavior?
+
+#### Multi-Level Feedback Queue (MLFQ)
+
+<center>
+<img src="./assets/P03L01-039.png" width="300">
+</center>
+
+To deal with these issues, these queues can be treated *not* as three *separate* runqueues, but rather a ***single*** multi-queue data structure, as shown in the figure above.
+
+This data structure can be used as demonstrated in the following sequence of figures.
+
+<center>
+<img src="./assets/P03L01-040.png" width="600">
+</center>
+
+When a newly created task first enters the system, it enters in the top-most queue (having the shortest timeslice), i.e., the **initial assumption** is that the incoming task is of the most intensive variety (i.e., will context switch often).
+
+<center>
+<img src="./assets/P03L01-041.png" width="600">
+</center>
+
+If the task stops executing (e.g., by yielding voluntarily, or to wait for an I/O operation) before expiration of the timeslice (i.e., before `8ms` have elapsed), then this assumption is *correct*, and therefore it is appropriate to keep the task at this level/queue. Therefore, when the task becomes runnable again, it will be returned to this level/queue.
+
+<center>
+<img src="./assets/P03L01-042.png" width="600">
+</center>
+
+<center>
+<img src="./assets/P03L01-043.png" width="600">
+</center>
+
+Conversely, if the task executes for the entire initial timeslice (i.e., `8ms`), then it is pushed down to a lower level (i.e., the fundamental assumption is *incorrect*--the task is more CPU-intensive than initially thought).
+  * The task is subsequently preempted and scheduled via the next queue (having timeslice `16ms`).
+  * Similarly, if necessary, the task can again be preempted on the middle queue (having timeslice `16ms`) and then scheduled via the final queue.
+
+Therefore, this configuration provides a **mechanism** whereby the queue placement is dictated by historic information of the task's behavior within the overall runqueue, starting with the initial assumption that the task is mostly I/O-intensive (rather than CPU-intensive), which is subsequently refined (i.e., it may turn out to be more CPU-intensive than initially assumed).
+
+<center>
+<img src="./assets/P03L01-044.png" width="600">
+</center>
+
+Note that if a task in one of the lower-level queues exhibits sustained "anomalous" behavior over time for that particular level (i.e., persistently releasing the CPU earlier than the alotted timeslice, such as due to waiting on I/O operations), this notifies the scheduler to perform a **priority boost** on the task, thereby increasing its priority level to a more appropriately suited queue (i.e., one at a higher priority level than the task is currently in).
+
+<center>
+<img src="./assets/P03L01-045.png" width="600">
+</center>
+
+Collectively, this resulting data structure is called a **Multi-Level Feedback Queue (MLFQ)**.
+  * In fact, for the design of this data structure (along with related work on timesharing systems), its author Fernando Corbato received the prestigious ACM Turing Award (the equivalent to the "Nobel Prize in Computer Science").
+
+As a **cautionary note**, beware not to trivialize the MLFQ data structure as simply the equivalent to "multiple priority queues."
+  * In the MLFQ data structure, there are different scheduling policies associated with each different priority level (i.e., among the "sub-queues" in the overall data structure), which is distinctly different from a priority queue data structure.
+  * Furthermore, even more uniquely, the MLFQ data structure incorporates its characteristic **feedback mechanism** that allows to dynamically adjust over time into which level the tasks are placed, thereby optimizing the overall timesharing schedule for the constitutent tasks within the system.
+
+***N.B.*** The so-called "O(1) scheduler" used in Linux (discussed next) uses some of the mechanisms derived from this data structure. Furthermore, while the Solaris scheduling mechanism is not covered in the course, it is essentially a MLFQ with sixty such levels/queues, as well as some sophisticated feedback rules for determining how and when a thread/task is moved up and down the levels.
+
+## 18. Linux O(1) Scheduler
+
