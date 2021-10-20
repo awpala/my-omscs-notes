@@ -724,9 +724,9 @@ The two arrays are called **active** and **expired**.
 <img src="./assets/P03L01-049.png" width="650">
 </center>
 
-The O(1) scheduler was introduced in the version 2.5 Linux kernel by Ingo Molnar. Despite this efficient O(1) design, it ultimately adversely impacted the performance of interactive tasks significantly. Furthermore, as the workloads changed (particularly as typical applications in the Linux environment were becoming more time-sensitive, e.g., Skype, movie streaming, gaming, etc.), the resulting "jitter" introduced by the O(1) scheduler had become unacceptable by that point.
+The O(1) scheduler was introduced in the version 2.5 Linux kernel by Ingo Molnár. Despite this efficient O(1) design, it ultimately adversely impacted the performance of interactive tasks significantly. Furthermore, as the workloads changed (particularly as typical applications in the Linux environment were becoming more time-sensitive, e.g., Skype, movie streaming, gaming, etc.), the resulting "jitter" introduced by the O(1) scheduler had become unacceptable by that point.
 
-Consequently, the O(1) scheduler was replaced by the **Completely Fair Scheduler (CFS)** (discussed next) as the default scheduler starting from version 2.6.23 Linux kernel, which was also devised by Ingo Molnar.
+Consequently, the O(1) scheduler was replaced by the **Completely Fair Scheduler (CFS)** (discussed next) as the default scheduler starting from version 2.6.23 Linux kernel, which was also devised by Ingo Molnár.
 
 ***N.B.*** Both the O(1) and CFS schedulers are part of the standard Linux distribution, with CFS being the default (however, it is possible to switch back to the O(1) scheduler to execute tasks as well).
 
@@ -734,4 +734,68 @@ Consequently, the O(1) scheduler was replaced by the **Completely Fair Scheduler
 
 ### Problems with the O(1) Scheduler
 
+<center>
+<img src="./assets/P03L01-050.png" width="450">
+</center>
+
+There are several critical **issues** with the O(1) scheduler:
+  * Once tasks are placed on the expired list, they are not scheduled until all of the remaining tasks from the active list have had a chance to execute for their alloted timeslice. Consequently, the performance of **interactive tasks** is affected (e.g., there is a lot of "jitter").
+  * Additionally, the scheduler generally does *not* make any ***fairness guarantees***.
+    * While there are multiple definitions of "***fairness"***," here we can consider intuitively that in a given time interval, all of the tasks should be able to run for an amount of time that is proportional to their priority. However, for the O(1) scheduler, it is difficult to substantiate any claims that it makes such a fairness guarantee.
+
+### Linux Completely Fair Scheduler (CFS)
+
+Recall that the **Completely Fair Scheduler (CFS)** (proposed by Ingo Molnár and subsequently adopted as the default scheduler in the Linux kernel start from version 2.6.23) was developed to address the problems with the O(1) scheduler.
+  * ***N.B.*** The CFS scheduler is the default scheduler for all non-real-time tasks, whereas the real-time tasks are scheduled by a separate real-time scheduler.
+
+#### Structure Overview
+
+<center>
+<img src="./assets/P03L01-051.png" width="650">
+</center>
+
+The main idea behind the Completely Fair Scheduler (CFS) is that it uses a **red-black tree** data structure for its **runqueue**.
+  * Red-black trees belong to the family of dynamic tree structures that have a **special property** such that as nodes are added or removed from the tree, the tree will subsequently re-balance itself such that all of the paths from the root node to the leaf nodes are all approximately the same size.
+    * ***Reference***: [Sedgewick and Wayne, Section 3.3](https://algs4.cs.princeton.edu/33balanced/)
+
+Tasks are **ordered** in the runqueue based on the amount of time that they spend running on the CPU, called the **virtual run-time (vruntime)**. The Completely Fair Scheduler (CFS) tracks the vruntime in a granularity of nanoseconds.
+
+As demonstrated by the figure shown above, the tree structure is described as follows:
+  * Each ***internal node*** in the tree corresponds to a task.
+  * Nodes toward the **left** of the tree corresponds to those tasks having ***less*** time on the CPU (i.e., having lower vruntimes), and therefore must be scheduled sooner.
+  * Conversely, nodes toward the **right** of the tree correspond to those tasks having consumed ***more*** time on the CPU (i.e., having higher vruntimes), and therefore they do not have to be scheduled as quickly the nodes/tasks to their left.
+  * The **leaf nodes** do not contribute a direct role in the scheduler.
+
+#### CFS Scheduling Algorithm
+
+<center>
+<img src="./assets/P03L01-052.png" width="650">
+</center>
+
+The Completely Fair Scheduler (CFS) **scheduling algorithm** can be summarized as in the figure shown above.
+  * The Completely Fair Scheduler (CFS) always schedules the task which has the least amount of time on the CPU (i.e., the ***left-most node*** in the tree).
+  * The Completely Fair Scheduler (CFS) periodically adjusts (i.e., increments) the vruntime of the task that is currently executing on the CPU, at which point it compares the vruntime of the currently running task with that of the left-most task in the tree.
+    * If the vruntime of the currently running task is smaller, then continue running the task.
+    * Otherwise, if the vruntime of the currently running task is larger, then preempt the currently running task and place it appropriately in the tree. Then, the new leftmost node will be selected to run next.
+
+<center>
+<img src="./assets/P03L01-053.png" width="650">
+</center>
+
+To account for differences in task priorities or in niceness values, the Completely Fair Scheduler (CFS) changes the **effective rate** at which the tasks' vruntimes progress.
+  * For ***lower-priority tasks***, time passes "more quickly," i.e., the vruntime progresses ***faster***, and therefore these tasks are more likely to lose their CPU more quickly (due to their vruntimes increasing more quickly relative to other tasks in the system).
+  * Conversely, for ***higher-priority tasks***, time passes "more slowly," i.e., the runtime progresses ***more slowly***, and therefore these tasks will be able to execute on the CPU longer.
+
+Note that the Completely Fair Scheduler (CFS) uses *one* tree data structure for *all* of the priority levels, unlike what was seen previously in other schedulers examples.
+
+<center>
+<img src="./assets/P03L01-054.png" width="650">
+</center>
+
+In summary, the **performance** of the Completely Fair Scheduler (CFS) is as follows:
+  * ***Selecting*** a task to execute from the runqueue takes `O(1)` run-time (i.e., typically a trivially simple access of the left-most node in the tree).
+  * ***Adding*** a new task to the runqueue takes `O(log N)` run-time (where `N` is the total number of tasks in the system).
+    * Given current systems' load levels, this run-time performance is acceptable, however, as the computer's capacity of the nodes continues to increase and systems are able to support more and more tasks, it is possible that at some point the Completely Fair Scheduler (CFS) will be replaced by something else that will be more performant with respect to this performance criterion (i.e., adding a new task).
+
+## 20. Linux Scheduler Quiz and Answers
 
