@@ -668,3 +668,70 @@ As a **cautionary note**, beware not to trivialize the MLFQ data structure as si
 
 ## 18. Linux O(1) Scheduler
 
+Consider now some concrete examples of schedulers that are part of an actual operating system.
+
+<center>
+<img src="./assets/P03L01-046.png" width="600">
+</center>
+
+The first such example is the **Linux O(1) scheduler**, as shown in the figure above.
+
+The O(1) scheduler is so called because it is able to perform task management operations (e.g., selecting or adding a task to/from the runqueue) in constant time (i.e., `O(1)` run-time operation), regardless of the total number of active tasks in the system at any given time.
+
+The O(1) scheduler is a preemptive and priority-based scheduler, with a total of `140` **priority levels**, with `0` being the highest and `139` being the lowest.
+
+Furthermore, these priority levels are organized into different **classes**, as follows:
+  * Tasks `0` to `99` are part of the **real-time tasks** class
+  * Tasks `100` to `139` are part of the **timesharing** class
+
+All **user processes** fall under this latter class (i.e., timesharing), having a default priority level of `120`, which can be adjusted via corresponding system call to set the so-called **nice value** (which ranges from `-20` to `19`, thereby spanning the set of timesharing priorities).
+
+<center>
+<img src="./assets/P03L01-047.png" width="600">
+</center>
+
+The O(1) scheduler borrows from the Multi-Level Feedback Queue (MLFQ) in that it associates different **timeslice values** with different priority levels, and it also uses **feedback** from how the tasks behave in the past to determine how to adjust their future priority levels.
+
+However, the O(1) scheduler differs in how it assigns the timeslice values to priorities as well as in how it uses the feedback.
+  * Regarding the **timeslice** value assignment:
+    * It depends on the priority level of the task, similarly as is done in the Multi-Level Feedback Queue (MLFQ).
+    * However, it assigns the ***shorter*** timeslice values to the ***lower*** priority CPU-bound tasks, and it assigns the ***longer*** timeslice values to ***higher*** priority more-interactive tasks.
+  * Regarding the **feedback** mechanism:
+    * The time is based on the **sleep time** (i.e., the time that the task spends wating/idling), rather than the execution time.
+      * A ***longer*** sleep time suggests that the task is **interactive** (e.g., spending more time waiting on user input or similar events), and therefore in this case it is necessary to ***increase*** (i.e., **boost**) the priority of the task; this is accomplished by subtracting `5` from the current priority level, which takes effect the next time that the task is executed.
+      * Conversely, a ***shorter*** sleep time suggests that the task is **compute-intensive**, and therefore in this case it is necessary to ***decrease*** the priority of the task; this is accomplished by adding `5` (up to a maximum) to the current priority level.
+
+<center>
+<img src="./assets/P03L01-048.png" width="650">
+</center>
+
+The **runqueue** in the O(1) scheduler is organized as two arrays of tasks queues, as shown in the figure above. Each array element points to the first runnable task at the corresponding priority level.
+
+The two arrays are called **active** and **expired**.
+  * The **active** array:
+    * Is the primary list that the scheduler uses to select the next task to run.
+    * Takes constant time to **add** a task, since this can be computed simply by using the array index to find the appropriate priority level, and then following the pointer to the end of the task list at that priority level to enqueue the task that is present there.
+      * Similarly, it takes constant time to **select** the task, because the scheduler relies on certain instructions that return the position of the first set bit in a sequence of bits, where the sequence of bits corresponds to the priority levels (with a bit value of `1` indicating tha there *are* tasks present at that priority level). Therefore, it takes constant time to run the instructions to determine what is the first priority level that has certain tasks on it; once this position is known, it also subsequently takes constant time to index into this array and then select the first task from the runqueue that is associated with that priority level.
+    * Maintains tasks that are remaining in the queue (i.e., tasks that yield the CPU in order to wait for an event, or tasks that are preempted due to a higher priority task becoming runnable) in the **active array** until their timeslice expires.
+      * The time that these tasks spend on the CPU is subtracted from the total amount of time, and if it is less than the timeslice, then they are still placed on the corresponding queue in the active list. Only *after* a task consumes its *entire* timeslice will it then be removed from the active list and placed on the appropriate queue within the expired array.
+  * The **expired** array:
+    * Contains the list of inactive tasks (i.e., those tasks that are not currently active in the sense that the scheduler will *not* select them as long as there are any tasks remaining in the active array).
+    * Swaps (i.e., exchanges the pointers of) the active and expired arrays when there are no more tasks present in the active array.
+      * This also explains why in the O(1) scheduler, the low-priority tasks are given short timeslices (e.g., `10ms`), while high-priority tasks are given long timeslices (e.g., `200ms`); therefore, as long as any of the high-priority tasks have remaining time in their timeslice, they will continue to be scheduled (i.e., they will remain in one of the active-array queues) until they are placed on the expired array (at which point they are no longer being scheduled), thereby allowing lower priority tasks having a shorter timeslice the opportunity to run without also disrupting (i.e., without excessively delaying) the high-priority tasks.
+      * Furthermore, note that having such a two-array setup provides an **aging mechanism**, whereby the high-priority tasks ultimately consume their timeslice, are placed on the expired array, and allow the low-priority tasks to run (for their relatively shorter timeslice amount).
+
+<center>
+<img src="./assets/P03L01-049.png" width="650">
+</center>
+
+The O(1) scheduler was introduced in the version 2.5 Linux kernel by Ingo Molnar. Despite this efficient O(1) design, it ultimately adversely impacted the performance of interactive tasks significantly. Furthermore, as the workloads changed (particularly as typical applications in the Linux environment were becoming more time-sensitive, e.g., Skype, movie streaming, gaming, etc.), the resulting "jitter" introduced by the O(1) scheduler had become unacceptable by that point.
+
+Consequently, the O(1) scheduler was replaced by the **Completely Fair Scheduler (CFS)** (discussed next) as the default scheduler starting from version 2.6.23 Linux kernel, which was also devised by Ingo Molnar.
+
+***N.B.*** Both the O(1) and CFS schedulers are part of the standard Linux distribution, with CFS being the default (however, it is possible to switch back to the O(1) scheduler to execute tasks as well).
+
+## 19. Linux CFS Scheduler
+
+### Problems with the O(1) Scheduler
+
+
