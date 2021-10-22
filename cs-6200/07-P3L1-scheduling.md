@@ -1040,3 +1040,45 @@ Nevertheless, hardware counters are indeed useful in enabling the scheduler to m
 
 ### Is Cycles Per Instruction (CPI) Useful?
 
+<center>
+<img src="./assets/P03L01-075.png" width="500">
+</center>
+
+As a more concrete example, Fedorova et al. speculated that a useful **metric** to detect "CPU-ness" vs. "memory-ness" is **cycles per instruction (CPI)**. They made the following **observations**:
+  * A **memory-bound thread** takes many cycles to complete an instruction (i.e., it has a ***high*** CPI).
+  * Conversely, **CPU-bound thread** completes an instruction in only 1 (or perhaps a few) cycle(s) (i.e., it has a ***low*** CPI).
+
+Consequently, the authors speculated that it would be useful to gather this type of information (i.e., metrics regarding the cycles per instruction (CPI)) as a suitable **metric** for scheduling threads on hyperthreaded platforms.
+
+Given that there were no "CPI counters" present on the processors used by the authors, and furthermore given that computing a quantity such as `1/IPC` would require software computations (which is not acceptable for performance reasons), the authors elected to use a **simulator** (i.e., which simulates the notion of a CPI counter) to determine whether a scheduler can use this information to make good decisions. The authors therefore propose that if CPI can be demonstrated to be a suitable metric in this manner, then hardware engineers could add this type of IPC measurement directly (e.g., as a hardware counter) in future architecture designs.
+
+### Experimental Methodology
+
+<center>
+<img src="./assets/P03L01-076.png" width="600">
+</center>
+
+To explore this question, the authors simulated a system (i.e., an experimental **testbed**) consisting of `4` cores, with each core having four-way simultaneous multithreading (SMT), resulting in a total of `16` hardware contexts.
+
+To vary the threads that are assigned to these hardware contexts based on their respective CPIs, the authors developed a **synthetic workload** comprised of the following:
+  * Threads having CPIs of `1` (most CPU-intensive), `6`, `11`, and `16` (most memory-intensive)
+  * An overall workload mix having four threads of each kind (i.e., CPI level)
+
+Given this testbed and workload, the authors evaluated the overall performance when a specific mix of threads (i.e., the workload) is assigned to each of these `16` hardware contexts. To understand the performance impact of such potentially different scheduling decisions, the authors used the **metric** of **instructions per cycle (IPC)**.
+  * Since the system has `4` cores in total, accordingly the maximum achievable performance (i.e., ***best-case scenario***) for this system is `IPC = 4` (i.e., each of the four cores performs an instruction in each cycle).
+
+### Actual Experiments
+
+<center>
+<img src="./assets/P03L01-077.png" width="750">
+</center>
+
+The authors conducted several experiments, as shown in the figure above. In each experiment, the authors manually and statically changed how the workload was distributed across the cores (e.g., on `Core 0` with workload `(a)`, the four hardware threads are assigned software threads having CPIs of `1`, `6`, `11`, and `16`).
+  * In the first table row, each core (i.e., each hardware thread) runs a task with a *different* CPI.
+  * In the last table row, each core runs tasks having the *same* CPI, varying from CPU-intensive (`Core 0` via `1`, `1`, `1`, `1`) to memory-intensive (`Core 3` via `16`, `16`, `16`, `16`) 
+  * The remaining combinations/rows vary between these two extremes.
+
+The **objective** of this experimental setup is to make some static decisions reminiscent of those that would be made by a scheduler; in doing this, the authors attempted to understand whether it is even sensible to build a scheduler that uses cycles per instruction (CPI) (e.g., via corresponding hardware counter) as a metric in the first place.
+
+## 26. CPI Experiment Quiz and Answers
+
