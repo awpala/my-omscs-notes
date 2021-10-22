@@ -989,4 +989,54 @@ A **drawback** of this approach is that there is still a level of degradation th
 
 ## 24. CPU-Bound or Memory-Bound?
 
+<center>
+<img src="./assets/P03L01-071.png" width="650">
+</center>
+
+While the previous example provides some intuition about what type of scheduler to use (i.e., the scheduler should mix CPU- and memory-bound tasks), a key **question** still remains: How to ***determine*** whether a given thread is CPU-bound or memory-bound?
+
+To answer this question, use **historic information** (i.e., the past behavior of the thread), similarly to what was done in order to determine whether a thread is interactive (i.e., I/O-bound) vs. CPU-bound. Previously "sleep time" was used for this purpose, however, that approach is not suitable here for the following reasons:
+  * A memory-bound thread is not "*sleeping*" while waiting on main memory (i.e., it is still *active*, but is waiting in some stage within the processor pipeline rather than waiting in some type of software queue).
+  * Furthermore, to keep track of "sleep time," this was achieved (as described previously) via software-based methods, however, this is not an acceptable approach here (i.e., the corresponding computation takes more cycles to perform than is justified by the relatively shorter context switch operation it would potentially otherwise eliminate).
+
+Therefore, **hardware-level information** is required here to effectively make this determination.
+
+<center>
+<img src="./assets/P03L01-072.png" width="650">
+</center>
+
+Fortunately, modern hardware provides so called **hardware counters**, which are updated as the processor is executing and maintain information about various aspects of execution, including:
+  * Cache uses (e.g., L1, L2, ..., last-level cache (LLC) cache misses/hits)
+  * The number of instructions that were retired (i.e., to determine the instructions per cycle)
+  * The power and energy usage by the CPU and/or particular components of the system
+    * This is typically available on newer platforms
+
+Furthermore, there are a number of **interfaces** and **tools** that can be used to ***access*** the hardware counters via **software** (e.g., oprofile, Linux `perf` tool profiler, etc.).
+  * ***N.B.*** The oprofile [website](https://oprofile.sourceforge.io/docs/) lists available hardware counters for different architectures, since not all hardware counters are available on all platforms.
+
+How can hardware counters assist a scheduler in making scheduling decisions?
+
+<center>
+<img src="./assets/P03L01-073.png" width="650">
+</center>
+
+Many practical (as well as research-based) **techniques** rely on the use of hardware counters to understand *something* about the requirements of the threads in terms of the *kinds* of resources that they need (e.g., CPUs and/or memory). Consequently, the  scheduler can use this information to determine a suitable mix of threads that are currently available in the runqueue to schedule on the system to achieve the desired scheduling policy (i.e., such that all of the constituent components of the system are well-utilized, the threads do not interfere with one another, etc.).
+
+For example, the scheduler can examine a hardware counter for the last-level cache (LLC) misses to determine that the thread is memory-bound (i.e., its memory footprint does not fit in the cache), or the same hardware counter can also inform the scheduler that something changed in the execution of the thread, such that now it is executing with some different data in a different execution phase (i.e., it is now running with a cold cache).
+
+Therefore, *one* hardware counter can provide many *different* types of information about a given thread; accordingly, since there is no *unique* way to interpret the information provided by the hardware counters, it is necessary to (gu)es(s)timate what it is that the hardware counters are indicating regarding the threads' resource use.
+
+<center>
+<img src="./assets/P03L01-074.png" width="650">
+</center>
+
+Nevertheless, hardware counters are indeed useful in enabling the scheduler to make **informed decisions** regarding the workload mix that they must select.
+  * Schedulers typically use some **combination** of hardware counters that are available on the CPUs (i.e., not just one hardware counter) in order to build a more accurate picture of the thread's resource needs.
+  * Schedulers also rely on some **models** that have been built for the particular hardware platform in question, which in turn have been trained based on some well-understood workloads (e.g., running a workload that is known to be memory-intensive, and making observations on the resulting hardware counters' values to enable interpretations of these values for other types of workloads).
+
+***N.B.*** These types of techniques fall into more advanced types of research problems, which are beyond the scope of this course. However, it is important to be aware of the existence of these hardware counters, particularly with respect to their synergistic role in CPU scheduling (and more generally in resource management).
+
+## 25. Scheduling with Hardware Counters
+
+### Is Cycles Per Instruction (CPI) Useful?
 
