@@ -893,3 +893,55 @@ One way in which the memory nodes can be configured is such that a memory node c
 Therefore, from a scheduling perspective, it is sensible for the scheduler to divide the tasks in such a way that tasks are bound to those CPUs that are closer to the memory node where the state of those tasks is most-closely located; accordingly, this type of scheduling is called **NUMA-aware scheduling**.
 
 ## 22. Hyperthreading
+
+<center>
+<img src="./assets/P03L01-063.png" width="175">
+</center>
+
+The reason why it is necessary to context switch among threads is because the CPU has *one* set of **registers** to describe the active **execution context** (i.e., for the thread that is *currently* executing on the CPU).
+  * In particular, these registers include the **stack pointer** and the **program counter**.
+
+Over time, however, hardware architects have recognized that they can perform certain **design optimizations** to "hide" some of the overheads associated with such context switching.
+
+<center>
+<img src="./assets/P03L01-064.png" width="650">
+</center>
+
+One way this has been achieved is to have multiple sets of registers, with each set of registers describing the context of a *separate* thread (i.e., a *separate* execution entity); a term that is used to described this scheme is called **hyperthreading**, which is characterized by:
+  * Multiple hardware-supported execution contexts (i.e., "hyperthreads")
+  * There is only *one* physical CPU, on which only one such thread can execute at any given time
+  * The **context switching** operations (i.e., among the threads) are ***very fast***, however
+    * This essentially involves the CPU switching from using one set of registers to another, without requiring anything to be saved or restored.
+
+***N.B.*** This mechanism is referred to by multiple names (i.e., in addition to "hyperthreading"), including the following:
+  * hardware multithreading
+  * chip multithreading (CMT)
+  * simultaneous multithreading (SMT)
+    * "hyperthreading" and "SMT" are the most common usages, and will be used accordingly in this lecture.
+
+Hardware today frequently supports two hardware threads, however, there are multiple higher-end server designs that support up to eight hardware threads. Furthermore, one of the features of today's hardware is the ability to enable or disable such hardware multithreading at boot time, given that there are trade-offs associated with this feature (as usual!).
+  * If ***enabled***, from the operating system's perspective, each of the hardware contexts appears to the operating system's scheduler as a *separate* context (i.e., a separate virtual CPU) onto which it can schedule threads, given that it can load the registers with the thread's context concurrently.
+
+<center>
+<img src="./assets/P03L01-065.png" width="650">
+</center>
+
+For example, in the figure shown above, the scheduler has the impression that it has two available CPUs, and consequently the scheduler will load the corresponding registers with the contexts of the respective threads. Therefore, one of the key **decisions** that the scheduler must make is to determine which particular two threads to schedule at the same time to run on these hardware contexts.
+
+Recall (cf. P2L2) that if *`t`*<sub>`idle`</sub>` > 2*`*`t`*<sub>`ctx_switch`</sub>, then the context switch among the threads will hide idling latency. In simultaneous multithreading (SMT) systems:
+  * *`t`*<sub>`ctx_switch`</sub> (i.e., between the two hardware threads) is on the order of cycles (i.e., `O(cycles)`)
+  * The time to perform a memory access operation (e.g., memory load) remains on the order of 100s of cycles (i.e., `O(10`<sup>`2`</sup>` cycles)`), which is much greater
+
+Therefore, hyperthreading can **hide** memory access latency (i.e., it *is* sensible to perform context switches among the threads).
+
+<center>
+<img src="./assets/P03L01-066.png" width="650">
+</center>
+
+Hyperthreading does have **implications** for scheduling, inasmuch as it raises some other **requirements** when deciding what ***kinds*** of threads should be **co-scheduled** on the hardware threads of the CPU.
+  * This topic will be discussed in the context of the paper "*Chip Multithreaded Processors Need a New OS Scheduler*" by Fedorova et al.
+
+## 23. Scheduling for Hyperthreading Platforms
+
+### Threads and Simultaneous Multithreading (SMT)
+
