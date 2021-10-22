@@ -1082,3 +1082,19 @@ The **objective** of this experimental setup is to make some static decisions re
 
 ## 26. CPI Experiment Quiz and Answers
 
+<center>
+<img src="./assets/P03L01-079.png" width="450">
+</center>
+
+***N.B.*** For reference, the experimental setup is shown above.
+
+<center>
+<img src="./assets/P03L01-078.png" width="400">
+</center>
+
+The figure shown above summarizes the results of the aforementioned experiments performed by Fedorova et al. What do these results indicate about the use of cycles per instruction (CPI) for scheduling?
+  * See next section for a discussion of the results.
+
+## 27. CPI Experiment Results
+
+
