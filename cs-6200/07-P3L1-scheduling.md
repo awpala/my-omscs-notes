@@ -848,5 +848,48 @@ To make discussion more concrete, we will first examine scheduling on multi-CPU 
 <img src="./assets/P03L01-057.png" width="250">
 </center>
 
+Recall from previous lectures (cf. P2L2 and P2L3) that the performance of threads and processes is highly dependent on whether the required state is present in the cache or in main memory.
 
+<center>
+<img src="./assets/P03L01-058.png" width="250">
+</center>
 
+For example, consider a thread executing on one of the CPUs, as shown in the figure above.
+
+<center>
+<img src="./assets/P03L01-059.png" width="250">
+</center>
+
+Over time, the thread is able to bring a lot of its required state both into the last-level cache that is associated with the CPU as well as into the private caches that are available on the CPU itself. In this case, the caches are ***hot***, thereby greatly improving performance of the thread.
+
+<center>
+<img src="./assets/P03L01-060.png" width="300">
+</center>
+
+In the next pass-through, if the thread is scheduled to execute on the *other* CPU, none of the thread's state will be present in the corresponding new cache, and therefore it will be operating with a ***cold*** cache. Consequently, all of the state must be brought back in, thereby adversely impacting performance.
+
+<center>
+<img src="./assets/P03L01-061.png" width="650">
+</center>
+
+Therefore, with respect to multi-CPU systems, the **objective** is to schedule the thread onto the *same* CPU where it executed previously, because it is more likely that the cache will be hot; this principle is called **cache-affinity**, which is clearly an important feature for maximizing performance of the system.
+
+To achieve cache-affinity, this can be implemented via a **hierarchical scheduler architecture**, which involves:
+  * A **load balancing component** to divide tasks among the CPUs.
+  * A per-CPU **scheduler** (each having a corresponding per-CPU **runqueue**) to repeatedly schedule tasks on a given CPU as much as possible.
+
+To balance the load across the CPUs (and correspondingly across their respective per-CPU runqueues), the top-level entity in the scheduler (i.e., the load balancer) can examine relevant information such as:
+  * The current length of each queue (i.e., to determine how to balance tasks across them).
+  * Whether the CPU is idle, at which point it can examine the other CPUs to determine if there are other pending tasks among them which can be redistributed to the idle CPU(s).
+
+<center>
+<img src="./assets/P03L01-062.png" width="650">
+</center>
+
+In addition to having multiple processors, it is also possible to have multiple main memory modules/nodes. In this case, the CPUs and the memory nodes are interconnected via some type of **interconnect** mechanism (e.g., on modern Intel platforms, there is an interconnect called **QuickPath Interconnect (QPI)**).
+
+One way in which the memory nodes can be configured is such that a memory node can be technically connected to some subset of the CPUs (e.g., to a socket that has *multiple* processors). In this case, the access from this set CPUs will be comparatively ***faster** than to a memory node that is associated with another subset of CPUs. Both types of accesses are made possible via the interconnect that is connecting all of these components, however, there will be a disparity in the access times among them. Such types of platforms are called **Non-Uniform Memory Access (NUMA)**.
+
+Therefore, from a scheduling perspective, it is sensible for the scheduler to divide the tasks in such a way that tasks are bound to those CPUs that are closer to the memory node where the state of those tasks is most-closely located; accordingly, this type of scheduling is called **NUMA-aware scheduling**.
+
+## 22. Hyperthreading
