@@ -945,3 +945,48 @@ Hyperthreading does have **implications** for scheduling, inasmuch as it raises 
 
 ### Threads and Simultaneous Multithreading (SMT)
 
+<center>
+<img src="./assets/P03L01-067.png" width="650">
+</center>
+
+To understand what is required from a scheduler in a simultaneous multithreading system, let us first make some **assumptions**:
+  1. A thread can issue an instruction on each cycle (`c`)
+      * Therefore, a **CPU-bound thread** (i.e., a thread which issues instructions that *only* need to run on the CPU) will be able to achieve a *maximum* **instructions-per-cycle (IPC)** metric of `1 IPC` (i.e., given there is only one CPU, it is not possible to exceed this limit of `1 IPC`).
+  2. A memory access operation requires `4` cycles.
+      * Therefore, a **memory-bound thread** (`M`) will experience some **idle cycles** (`.`) while waiting for the memory access operations to return/complete.
+  3. The time required to context switch among the various hardware threads is ***instantaneous*** (i.e., overheads are considered *negligible*).
+  4. The system consists of a simultaneous multithreading (SMT) processor having `2` constituent hardware threads.
+
+***N.B.*** These assumptions and associated figures are based on those made in the paper by Fedorova et al.
+
+<center>
+<img src="./assets/P03L01-068.png" width="650">
+</center>
+
+First, consider what would happen when there is **co-scheduling** of two **CPU-bound threads** on the two respective hardware contexts, as shown in the figure above. In this case, both of the threads are ready to issue a CPU instruction on *every* single CPU cycle, however, given that there is only *one* **CPU pipeline** (i.e., *one* fetch-decode-issue ALU logic), consequently only *one* of the threads can execute at any given point of time.
+
+Therefore, the threads will **interfere** with each other, i.e., they will **contend** for the CPU pipeline resources, and in the ***best case*** each thread will spend one cycle idling (`x`) while the other issues its instruction. Consequently, the **performance** of *each* thread degrades by a factor of `2`.
+
+Furthermore, examining the entire platform, observe that in this particular case the memory controller component is ***idle*** (i.e., nothing that is scheduled is performing memory access operations), which is another inefficiency.
+
+<center>
+<img src="./assets/P03L01-069.png" width="650">
+</center>
+
+Alternatively, consider the co-scheduling of two **memory-bound threads**, as shown in the figure above. In this case, there are resulting **idle cycles** because *both* threads issue memory operations and consequently *both* threads wait a few cycles for their memory operations to complete, thereby resulting in ***wasted CPU cycles***, as before.
+
+<center>
+<img src="./assets/P03L01-070.png" width="650">
+</center>
+
+Therefore, a final option is to ***mix*** (i.e., co-schedule) CPU- and memory-bound threads, resulting in a more desirable scheduling scheme, as shown in the figure above. In this case, there is full utilization of *each* CPU cycle, with context switching to the memory-bound thread occurring when it is necessary to perform a memory operation, which in turn is followed by a context switch back to the CPU-bound thread to perform CPU operations while the memory operations occur.
+
+This approach provides the following **benefits**:
+  * Avoids (or at least limits) contention on the processor pipeline.
+  * All components (i.e., the CPU and memory) are well-utilized.
+
+A **drawback** of this approach is that there is still a level of degradation that occurs due to the interference between the threads (e.g., the CPU-bound thread can only execute on 3 of every 4 cycles in the figure shown above vs. 4 out of 4 when running by itself). However, in practice, this level of degradation will be minimized given the properties and corresponding design of the particular system in question.
+
+## 24. CPU-Bound or Memory-Bound?
+
+
