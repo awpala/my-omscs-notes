@@ -1097,4 +1097,69 @@ The figure shown above summarizes the results of the aforementioned experiments 
 
 ## 27. CPI Experiment Results
 
+### Results
 
+<center>
+<img src="./assets/P03L01-080.png" width="650">
+</center>
+
+The following **conclusions** can be drawn from the experimental results:
+  * With a ***mixed*** cycles per instruction (CPI) workload on each core (i.e., conditions `(a)` and `(b)`), the processor pipeline was well-utilized, resulting in a relatively ***high*** instructions per cycle (IPC).
+    * While the maximum IPC of `4` was not achieved, these conditions approached `3.5`, which was fairly high.
+  * Conversely, with the ***same*** cycles per instruction (CPI) workload on each core, the resulting performance was a relatively ***low*** instructions per cycle (IPC).
+    * On some cores (e.g., `Core 0` and `Core 1`, having CPU-intensive tasks), there is a lot of contention for the CPU pipeline.
+    * Furthermore, the other cores (`Core 2` and `Core 3`, having memory-intensive tasks) contributed relatively little to the aggregate IPC metric (i.e., they performed relatively few IPCs), due to wasted cycles as a result of performing memory-intensive tasks/operations.
+
+Therefore, by running these experiments, the authors **concluded** that indeed (as initially hypothesized) running tasks having a mixed CPI maximizes overall system performance (i.e., with respect to IPC).
+
+<center>
+<img src="./assets/P03L01-081.png" width="650">
+</center>
+
+Based on these results, it appears that CPI is a useful metric, and therefore it is appropriate to build hardware (e.g., hardware counters) that tracks CPI and consequently to also build a CPU scheduler that uses CPI (i.e., which can coordinate scheduling via these hardware counters using an appropriate mixed workload).
+
+However, this is *not* an appropriate conclusion!
+
+### Realistic Workloads
+
+<center>
+<img src="./assets/P03L01-082.png" width="300">
+</center>
+
+In the discussion so far regarding the experimental analysis, workloads consisting of CPIs of 1, 6, 11, and/or 16 were used, and furthermore the results showed that if using such a workload having such distinct and widely-spread-out CPI values, then indeed the scheduler can be effective.
+
+However this begs the question: Do ***realistic*** workloads have CPI values exhibiting something reminiscent of those used in the aforementioned synthetic workload? 
+
+<center>
+<img src="./assets/P03L01-083.png" width="750">
+</center>
+
+To address this concern, the authors **profiled** a number of applications from several **benchmark suites**, which are widely recognized in industry and in academia and which include workloads that are ***representative*** of real-world, relevant applications.
+
+The resulting CPI values for these benchmarks were fairly ***clustered*** (i.e., they are not *distinct* as in the synthetic workload). This indicates that while ***in theory*** the use of cycles per instruction (CPI) as a scheduling metric is useful in hyperthreaded platforms (i.e., based on the synthetic workload), ***in practice*** real workloads do not exhibit significant differences in their corresponding behavior (i.e., with respect to their CPI values). Therefore, CPI is not a particularly useful metric in this situation.
+
+### Post Mortem
+
+<center>
+<img src="./assets/P03L01-084.png" width="600">
+</center>
+
+While (in perhaps anti-climatic fashion) this paper demonstrates something "ineffective," there are still some important **takewaways**:
+  * Resource contention for the processor pipeline is a key consideration in **simultaneous multithreaded (SMT)** systems.
+  * **Hardware counters** can be used to characterize the workload (i.e., to better inform the operating system regarding resource management).
+  * It is important to design schedulers with consideration for **resource contention**, and not just **load balancing**.
+    * For example, the scheduler should consider selecting a set of tasks that will not cause resource contention with respect to the processor pipeline, the hardware cache, the memory controller, some type of I/O device, etc. (i.e., these principles ***generalize*** to other types of resources as well, not just the processor pipeline in hardware multithreaded platforms).
+
+***N.B.*** In Fedorova's follow-up work, as well as in several other efforts, it has been subsequently established that a particularly **important contributor** to performance degradation when running multiple tasks on a single-hardware-multithreaded or multi-core platform is the use of the cache resource (in particular the last-level cache (LLC)). For instance, this suggests to keep track of how a set of threads is using the cache as a resource and to consequently select a workload mix that avoids contention on the usage of the last-level cache (LLC). However, this topic is beyond the scope of this course and is included here for informational purposes only.
+
+## 28. Lesson Summary
+
+It is now apparent how **CPU scheduling** works in an operating system (i.e., from simple to complex considerations).
+
+Several **scheduling algorithms** were discussed, along with the corresponding **runqueue** data structures that they used.
+
+Two of the default schedulers used in the Linux kernel were also described:
+  1. O(1) Scheduler (predecessor)
+  2. Completely Fair Scheduler (CFS) (current default)
+
+Finally, the lecture discussed some of the issues arising in scheduling with respect to multiple-CPU platforms, including platforms with multiple CPUs (e.g., **shared memory multiprocessors (SMPs)**) as well as those with hardware-level multithreading (e.g., **hyperthreading**/**simultaneous multithreaded (SMT)** systems)
