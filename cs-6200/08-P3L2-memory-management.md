@@ -95,7 +95,7 @@ As was already suggested, memory management is *not* performed solely by the ope
 
 There are other aspects of memory management that are more flexible with respect to their design, since they are performed by the software (e.g., the actual memory allocation of the processes to the main memory's address space, the replacement policy to determine which portion of state will be present in main memory vs. on disk, etc.). The discussion will focus on these **software-oriented aspects** of memory management, since that is most relevant from the perspective of an operating systems course.
 
-### 5. Page Tables
+## 5. Page Tables
 
 <center>
 <img src="./assets/P03L02-006.png" width="350">
@@ -172,6 +172,52 @@ Therefore, on **context switch**, the operating system must ensure that it corre
 
 Furthermore, recall that hardware assists with page table accesses by maintaining a **register** to point to the active page table (e.g., on x86 platforms, register `CR3` performs this role, maintaining the address for the page table of the *currently* running process, including following a context switch).
 
-### 6. Page Table Entry
+## 6. Page Table Entry
 
+<center>
+<img src="./assets/P03L02-013.png" width="500">
+</center>
+
+Recall that every page table **entry** contains the **page frame number (PFN)** of the corresponding physical address, as well as (at least one) valid bit; this bit is called the **present bit (P)**, since it indicates whether or not the contents of the virtual memory are actually present in physical memory.
+
+Additionally, there are a number of fields/**flags** that are part of each page table entry used by the operating system during memory management operations, which in turn are also understood and interpreted by the hardware. These include:
+  * The **dirty bit (D)**, which is set whenever a page is written to.
+    * For instance, this is useful in file systems, where files are cached in memory. Here, the dirty bit can be used to detect which files have been written to and therefore must be updated on disk.
+  * The **accessed bit (A)**, which tracks whether the page has been accessed in general (i.e., either for reading or for writing).
+  * Other useful information maintained by the page table entry include **protection bits**, i.e., whether a page can be only read (**R**), only written to (**W**), and other similar operations (**X**).
+
+### Page Table Entry on x86
+
+<center>
+<img src="./assets/P03L02-014.png" width="550">
+</center>
+
+As a more concrete/practical example of a page table entry, consider that of an Pentium x86 system, as shown in the figure above, having the following **flags**:
+  * The bits/flags **Present (P)**, **Dirty (D)**, and **Accesses (A)** have identical meanings as for that described more generically in the previous section.
+  * The **Read/Write (R/W)** bit is a single bit indicating a permission.
+    * The value `0` indicates a read-only-access page.
+    * The value `1` indicates that both read and write accesses are permissible for the page.
+  * The **U/S** bit is another type of permission bit indicating the access level.
+    * The value `0` indicates that the page can only be accessed from `user` mode.
+    * The value `1` indicates that the page can only be accessed from `supervisor` (i.e., kernel) mode.
+  * The other bits/flags indicate the behavior of the caching system present on the hardware (e.g., whether or not caching is disabled, write-through enabled, etc.).
+  * Furthermore, there is a region of **unused** bits/flags which are reserved for future use.
+
+### Page Fault
+
+<center>
+<img src="./assets/P03L02-015.png" width="600">
+</center>
+
+The **memory management unit (MMU)** uses the page table entry not only to perform the virtual-address-to-physical-address translation, but also relies on the aforementioned bits to establish the **validity** of the memory access operation.
+
+If the hardware (i.e., memory management unit (mmu)) determines that a requested memory access operation cannot be performed, it generates a **page fault**; in this case, the CPU places an **error code** on the kernel stack and the generates a **trap** into the operating system kernel.
+
+Consequently, this generates a **page fault handler**, which determines the appropriate action to perform based on the error code and the faulting address that generated the error. The key **information** included in the error code are the following:
+  * Whether or not the fault was caused due to the page not being ***present***, and therefore requiring a corresponding transfer from the disk into main memory.
+  * There was an attempt to access memory which violated a permission protection, resulting in a **protection error** (e.g., `SIGSEGV`).
+
+***N.B.*** On an x86 system, the error code information is generated from the page table entry flags, and the faulting address (as required by the page fault handler) is stored in register `CR2`.
+
+## 7. Page Table Size
 
