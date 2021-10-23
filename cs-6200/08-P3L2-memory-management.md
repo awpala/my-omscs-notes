@@ -221,3 +221,35 @@ Consequently, this generates a **page fault handler**, which determines the appr
 
 ## 7. Page Table Size
 
+<center>
+<img src="./assets/P03L02-016.png" width="600">
+</center>
+
+To calculate the **size** of a page table, note that a page table contains the *same* number of entries as is equal to the number of **virtual page numbers(VPNs)** existing in the virtual address space. Furthermore, each of these entries contains the page frame number (corresponding to the locatin in the physical address space) as well as other information (e.g., permission bits).
+
+For example, on a **32-bit architecture** (as in the figure shown above), a sensible sizing would be as follows:
+  * Each **page table entry (PTE)** consists of `4 bytes`, which includes the page frame number (PFN) and corresponding flags.
+  * Therefore, the **total number** of page table entries (PTEs) depends on the total number of **virtual page numbers (VPNs)**, which in turn is dictated by both the size of the virtual addresses and by the size of the page itself.
+  * In the case of a 32-bit architecture (for *both* the physical memory as well as the virtual address space), this amounts to a total number of page table entries (PTEs) of `2`<sup>`32`</sup>`/page size`.
+
+Different hardware platforms support different page sizes. For the sake of argument, taking a page size of `4 KB` (a commonly used page size), on a 32-bit architecture, this results in `[(2`<sup>`32`</sup>` total addressable bits) / (4 * 2`<sup>`10`</sup>` bits/page)] * (4 KB / 1 PTE) = 4 MB/page` for *each* process. With many active processes in a modern operating system, this can quickly become a large quantity.
+  * ***N.B.*** Other common page sizes include `8 KB`, `2 MB`, `4 MB`, and `1 GB`
+
+<center>
+<img src="./assets/P03L02-017.png" width="600">
+</center>
+
+Consider similar analysis for a **64-bit architecture** having a page table entry (PTE) size of `8 bytes` and a `4 KB` page size (as before), as in the figure shown above. This gives a total number of page table entries (PTEs) of `[(2`<sup>`64`</sup>` total addressable bits) / (4 * 2`<sup>`10`</sup>` bits/page)] * (8 B / 1 PTE) = 32 PB/page` for *each* process, an astronomically large number. A natural question is therefore: Where is all of this memory stored?
+
+<center>
+<img src="./assets/P03L02-018.png" width="600">
+</center>
+
+Before answering this question, note that a given process generally does *not* use the ***entire*** virtual memory address space that is theoretically available; even on 32-bit architectures, a typical process does not use all of the available `4 GB` of virtual-address-space memory.
+
+However, the **issue** that arises here is that the **page table** (as described so far) assumes an entry for *each* virtual page number (VPN), regardless of whether or not the corresponding virtual-memory region is needed by the process. Therefore, such a page table design "explodes" the requirements for the page table size.
+
+The following sections will therefore explore alternative methods to represent the page table size in a more practical manner.
+
+## 8. Hierarchical (Multi-Level) Page Tables
+
