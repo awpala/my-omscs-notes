@@ -253,3 +253,69 @@ The following sections will therefore explore alternative methods to represent t
 
 ## 8. Hierarchical (Multi-Level) Page Tables
 
+As suggested in the preceding discussion, a "flat" page table design is no longer tenable given current memory usage demands.
+
+<center>
+<img src="./assets/P03L02-019.png" width="600">
+</center>
+
+Instead, page tables have evolved from a flat page map to a more ***hierarchical, multi-level*** structure, as in the figure shown above (which shows a **two-level page table**).
+
+In a two-level page table:
+  * The **outer page table** (or **top page table**) is referred to as a **page table directory**, whose elements are not *direct* pointers to physical memory pages but rather are pointers to page tables.
+  * The **internal page table** has proper page tables as its elements, which themselves point to actual physical memory pages. Their entries have the page-frame number and corresponding protection bits for the physical addresses referenced by the corresponding virtual addresses.
+    * An **important aspect** of the internal page table is that its elements (i.e., the actual page tables) *only* exist for **valid** virtual-memory regions (i.e., "holes" in the virtual-memory address space result in a corresponding "lack" of an entry in the internal page table).
+
+If a process requests memory (e.g., via call to `malloc()`), additional virtual memory can be allocated to the process. In this case, the operating system will examine the internal page table, and if necessary will allocate an additional page table element in the internal page table and correspondingly set the appropriate page table directory to point to this new entry in the internal page table. This new internal page table entry will in turn correspond to some portion of the newly allocated virtual memory region that the process has requested.
+
+<center>
+<img src="./assets/P03L02-020.png" width="300">
+</center>
+
+To find the correct element within the internal page table, the **virtual address** is ***split*** into yet another component, having the **address format** as shown in the figure above.
+
+<center>
+<img src="./assets/P03L02-021.png" width="450">
+</center>
+
+Using this address format, the correct physical address can be determined by the sequence shown in the figure above.
+  * The last portion of the address (`d`) is the offset (as before), which is used to compute the offset within the actual physical page frame.
+  * The first two components of the address (`p1` and `p2`) are indices into the respective page tables, which in combination produce the physical frame number (PFN) constituting the starting address of the physical-memory region.
+    * `p1` is used as an index into the outer page table (which determines the page table directory entry, i.e., pointing to the actual page table in question).
+    * `p2` is used as an index into the internal page table to produce the page table entry consisting of the physical frame number (PFN), which in turn is added to the offset (as before) to compute the actual physical address.
+
+<center>
+<img src="./assets/P03L02-022.png" width="600">
+</center>
+
+In the figure shown above, the example shows an address format having `10 bits` for the internal page table offset (i.e., `p2`), or a page size of `2`<sup>`10`</sup> pages. Therefore, given a page offset (i.e., `d`) of `10 bits` (i.e., a corresponding **page size** of `2`<sup>`10`</sup> bits/page), each internal page table can address `(2`<sup>`10`</sup>` pages/internal page table) * (2`<sup>`10`</sup>` page size) = 1 MB / inner-page-table page element`. This indicates that whenever there is a "**gap**" in the virtual memory of size `1 MB`, it is unnecessary to allocate the corresponding page table entry in the internal page table; this correspondingly ***reduces*** the overall size of the internal page table required for a given process.
+
+In contrast, with a single-level page table design, the page table must translate *every* single virtual address, with corresponding entries for *every* virtual page number (VPN).
+
+Therefore, it is evident that the hierarchical page table model greatly promotes the reduction in the required size for the page table.
+
+<center>
+<img src="./assets/P03L02-023.png" width="600">
+</center>
+
+This scheme can be further ***extended*** to use **additional layers** by generalizing the same principle, as in the figure shown above.
+
+For instance, a third level can be added, consisting of pointers to page table directories.
+
+Similarly, adding a fourth level consists of a map of pointers to page table directories.
+
+This technique is particularly important on 64-bit architectures, where the page tables are both much ***larger*** as well as much more ***sparse*** (i.e., there are more "holes" in the virtual address space for the processes).
+  * Due to this sparseness, there are larger gaps in the virtual address space region, and correspondingly there are larger gaps in the constituent page tables components which are otherwise unnecessary.
+  * In fact, with four-level addressing, it is possible to save/omit entire page table directories as a result of certain gaps in the virtual address space.
+
+<center>
+<img src="./assets/P03L02-024.png" width="600">
+</center>
+
+Consider an example of such a four-level address (using 64-bit addresses), as shown in the figure above. As before, a 64-bit virtual address can be interpreted to determine which indices are used to access the various levels of the page table hierarchy. In both the two-level and four-level addresses, the last region is the offset (`d`), representing the index into the actual physical page table.
+
+There is a **trade-off** in supporting multiple levels in the page table hierarchy.
+  * As a **benefit**, as multiple levels are added, the internal page tables and page table directories consequently cover increasingly smaller regions of the virtual address space, thereby potentially ***reducing*** the **page table size** (due to the resulting "gaps" increasingly matching the appropriate level of granularity).
+  * Conversely, as a **drawback**, there are more memory access operations required to perform address translation (i.e., increasing proportionally to the number of levels of addressing) in order to reach the ultimate physical address, which results in an ***increased*** **translation latency**.
+
+## 9. Multi-Level Page Table Quiz and Answers
