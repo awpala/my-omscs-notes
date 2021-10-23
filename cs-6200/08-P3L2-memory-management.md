@@ -23,7 +23,7 @@ Returning to the toy shop analogy, **operating systems** and **toy shops** each 
 | Not all parts/memory are needed at once | Toy orders are completed in stages, and not all toy orders are completed at the same time (e.g., teddy bears may require fabric and threads vs. other toys requiring wooden parts, etc.) | Executing tasks/processes on a computing system only operate on a ***subset*** of the entire memory at any given time, and therefore do not require *all* of the memory simultaneously (i.e., some subset of the memory state can be brought in/out of memory at any given time to meet the demands of the currently executing task) |
 | The process is optimized for achieving high performance | Reduce the wait time for parts (i.e., reduce the time required to move the parts in/out of containers) in order to make more toys | Reduce the time to **access** state in memory (i.e., transferring state from main memory to/from memory pages and segments) in order to improve performance (i.e., to achieve ***faster*** memory access) |
 
-To achieve performance improvements with respect to memory access optimization, operating systems' memory management subsystems rely on **hardware support** (e.g., **translation lookaside buffers (TLBs)**, caches, and **software algorithms** (e.g., for pages, for memory allocation, etc.)).
+To achieve performance improvements with respect to memory access optimization, operating systems' memory management subsystems rely on **hardware support**,e.g., **translation lookaside buffers (TLBs)**, caches, and **software algorithms** (e.g., for pages, for memory allocation, etc.).
 
 ## 3-4. Memory Management
 
@@ -96,4 +96,82 @@ As was already suggested, memory management is *not* performed solely by the ope
 There are other aspects of memory management that are more flexible with respect to their design, since they are performed by the software (e.g., the actual memory allocation of the processes to the main memory's address space, the replacement policy to determine which portion of state will be present in main memory vs. on disk, etc.). The discussion will focus on these **software-oriented aspects** of memory management, since that is most relevant from the perspective of an operating systems course.
 
 ### 5. Page Tables
+
+<center>
+<img src="./assets/P03L02-006.png" width="350">
+</center>
+
+As was mentioned, paging is currently the more popular approach to memory management, as shown in the figure above.
+
+<center>
+<img src="./assets/P03L02-007.png" width="650">
+</center>
+
+Now, consider one of the major components that allows page-based memory management: **page tables**. Page tables alow to translate virtual memory addresses to physical memory addresses, as shown in the figure above.
+
+For each virtual address, an **entry** in the page table is used to determine the actual physical location corresponding to the virtual address in the physical memory (DRAM). Therefore, in this manner, the page table serves a "**map**" which instructs the operating system (as well as the hardware itself) where to find specific virtual memory references.
+
+While the relative sizes in the figure shown above are not strictly to scale, note that the **sizes** of the **pages** in virtual memory are ***identical*** to the sizes of the corresponding **page frames** in physical memory.
+  * By maintaining this 1:1 relationship between the sizes, this obviates the requirement to maintain the translation of *every* individual virtual address in the page table, but rather it is only necessary to translate the ***first*** address of a virtual-address page to the ***first*** address of the corresponding physical-address page frame (and consequently, the subsequent addresses will similarly correspond directly between the two via appropriate offsets relative to the first address).
+  * Consequently, the number of entries that must be maintained in the page table is ***reduced*** substantially.
+
+<center>
+<img src="./assets/P03L02-008.png" width="650">
+</center>
+
+Therefore, only the first portion of the **virtual address** is used to ***index*** into the page table; this part of the virtual address is called the **virtual page number (VPN)**, while the remaining portion of the virtual address is the actual **offset**.
+
+The virtual page number (VPN) is used as an offset into the page table itself, which in turn produces the **physical frame number (PFN)** (the corresponding physical address of the page frame itself, located in DRAM/physical memory).
+
+In order to complete the full translation of the virtual address, the physical frame number (PFN) is **combined** with the offset portion specified in the latter portion of the virtual address to produce the actual **physical address**.
+
+The resulting physical address can then ultimately reference the appropriate location in physical memory (i.e., DRAM).
+
+<center>
+<img src="./assets/P03L02-009.png" width="650">
+</center>
+
+Consider an example, as shown in the figure above. Here, there is an attempt to access the data structure `array_addr` to initialize it (via function call `init_array(&array_addr)`).
+
+The memory for `array_addr` has already been allocated in the virtual address space for the process, however, it has not yet been accessed prior to this point in the process. Consequently, the operating system has not yet allocated memory for `array_addr`.
+
+Therefore, on first access of this memory location in the virtual address space, the operating system determines that there is no physical memory corresponding to the range of virtual memory addresses corresponding to `array_addr`, therefore, the operating system will allocate a page frame `P2` from physical memory via corresponding mapping in the page table to virtual address `V_k` (with corresponding offset).
+
+Note that the physical memory for `array_addr` is only physically allocated when the process ***first*** attempts to access it (i.e., during initialization in this particular case); this is referred to as ***allocation on first touch***. This ensures that physical memory is *only* allocated when it is actually needed (e.g., to avoid allocating physical memory for data structures that programmers create but never use in the program/process).
+
+<center>
+<img src="./assets/P03L02-010.png" width="650">
+</center>
+
+Consequently, if the process does not use some of its memory pages for an extended time period, it is likely that those pages will be **reclaimed** (i.e., the contents will no longer be present in physical memory, but rather they will be moved to disk and replaced with other memory content which is relevant to currently running processes). 
+
+In order to detect this, page-table **entries**  consist of both the physical frame number (PFN) *and* a **valid bit**, with the latter informing the memory management system regarding the (in)validity of the attempted memory access.
+  * For example, if the page frame *is* present in physical memory and the mapping *is* valid, then the valid bit is `1`.
+  * Conversely, if the page frame is *not* present in physical memory, then the valid bit is `0`.
+
+If the hardware's **memory management unit (MMU)** detects that the valid bit is set to `0` in the page-table entry, then it will raise a **fault** (i.e., it will trap to the operating system). In this case, control is passed to the operating system, at which point the operating system must determine the following:
+  * Should the access be permitted?
+  * Where exactly is the page located in the physical memory (i.e, the corresponding page frame)?
+  * Where should the page be brought into the physical memory?
+
+<center>
+<img src="./assets/P03L02-011.png" width="650">
+</center>
+
+As long as a ***valid*** address is being accessed by the process, on the occurrence of a fault, ultimately there will be a **restablished** mapping between a valid virtual address (e.g., `&array_addr`) and a valid location in physical memory.
+
+However, it is likely that if a page frame was moved to disk and is now being brought back into physical memory, then it will be placed in a different location of physical memory (e.g., `P3`) than that at which it was present originally (e.g., `P2`). Accordingly, the corresponding page-table entry is updated to reflect this.
+
+<center>
+<img src="./assets/P03L02-012.png" width="500">
+</center>
+
+As a final note, to summarize, the operating system creates a page table on a ***per-process*** basis. The operating system maintains such a page table for *every* single running process that exists in the system.
+
+Therefore, on **context switch**, the operating system must ensure that it correspondingly switches to the appropriate (i.e., valid) page table for the switched-to process.
+
+Furthermore, recall that hardware assists with page table accesses by maintaining a **register** to point to the active page table (e.g., on x86 platforms, register `CR3` performs this role, maintaining the address for the page table of the *currently* running process, including following a context switch).
+
+### 6. Page Table Entry
+
 
