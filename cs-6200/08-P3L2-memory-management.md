@@ -508,3 +508,106 @@ Memory allocators can exist at both the kernel level and user level.
 
 ## 16. Memory Allocation Challenges
 
+### Example 1: External Fragmentation
+
+<center>
+<img src="./assets/P03L02-034.png" width="300">
+</center>
+
+Before discussing kernel-level allocators, first consider a particular memory allocation **challenge** that must be addressed. Consider a page-based memory manager that must manage 16 physical page frames, as in the figure shown above.
+
+<center>
+<img src="./assets/P03L02-035.png" width="550">
+</center>
+
+Assume the memory manager takes requests of sizes `2` or `4` page frames, and receives the following sequence of requests/calls (as in the figure shown above): `alloc(2)`, `alloc(4)`, `alloc(4)`, `alloc(4)`.
+
+Assuming the allocator takes these requests in this order and correspondingly allocates them sequentially/contiguously in the page, as in the figure shown above.
+
+<center>
+<img src="./assets/P03L02-036.png" width="550">
+</center>
+
+Next, the two pages that were initially allocated are freed via call `free(2)`.
+
+<center>
+<img src="./assets/P03L02-037.png" width="550">
+</center>
+
+Now, if the allocator receives the request `alloc(4)`, a **problem** arises: While there are four free pages available in the system, this particular allocator cannot satisfy this request due to the lack of four *contiguous* free pages.
+
+This example illustrates a problem known as **external fragmentation**, whereby multiple interleaved `alloc()` and `free()` operations result in "holes" of non-contiguous free memory, thereby precluding the memory allocator's ability to satisfy all memory requests in a manner that fully utilizes the page frames.
+
+### Example 2: Coalescing of Free Regions
+
+<center>
+<img src="./assets/P03L02-038.png" width="550">
+</center>
+
+Now consider an alternative allocator, as in the figure shown above.
+
+In the previous example, the allocator had a policy whereby the free memory was allocated to consecutive requests on a first-come, first-serve basis.
+
+Conversely, in this example, the allocator is aware of the incoming requests, particularly with respect to their pending allocations (i.e., requested page frames sizes). Consequently, when receiving the request sequence (as in the previous example) of `alloc(2)`, `alloc(4)`, `alloc(4)`, `alloc(4)`, rather than allocating these requests strictly in order, the allocator leaves a gap (having a granularity of `2` page frames) after the initial request `alloc(2)`, with the subsequent requests (i.e., `alloc(4)`s) being allocated in the remaining page frames. 
+
+<center>
+<img src="./assets/P03L02-039.png" width="550">
+</center>
+
+Now, when the allocator receives the request `free(2)`, it frees the first two page frames, resulting in four consecutive free page frames. Consequently, when receiving a subsequent request `alloc(4)`, it can now be satisfied by the system.
+
+As this example demonstrates, when a `free()` operation is performed, the allocator is able to **coalesce**/**aggregate** adjacent free-page-frames regions into one, larger free region. Consequently, it is more likely for the allocator to satisfy future larger requests.
+
+This example therefore demonstrates some of the **issues** that an **allocation algorithm** must be concerned with (e.g., to avoid/limit the extent of fragmentation, and to allow for the coalescing/aggregation of free regions).
+
+## 17. Allocators in the Linux Kernel
+
+<center>
+<img src="./assets/P03L02-040.png" width="350">
+</center>
+
+To address the issues of free-space fragmentation and aggregation discussed in the previous section, the Linux kernel relies on two basic **allocation mechanisms**:
+  1. Buddy allocator
+  2. Slab allocator
+
+### Buddy Allocator
+
+<center>
+<img src="./assets/P03L02-041.png" width="650">
+</center>
+
+The Buddy Allocator starts with some consecutive memory region that is free and has a size of `2`<sup>`x`</sup>.
+
+Whenever a **request** arrives, the allocator subdivides the initial large area into **chunks**, such that each chunk is also `2`<sup>`x`</sup>. It continues to subdivide the chunks in this manner until it finds the ***smallest*** chunk of size `2`<sup>`x`</sup> that can satisfy the request.
+  * For example, in the figure shown above, when the first request of `8` pages is received, the Buddy Allocator subdivides the initial `64`-page region into two `32`-page chunks, then subdivides one of these into two `16`-page chunks, and then subdivides one of these into two `8`-page chunks, using one of these to satisfy the request.
+  * Subsequently, when another request for `8` pages is received, the other `8`-page free chunk is allocated accordingly.
+  * Subsequently, when another request for `4` pages is received, the other `16`-page chunk is subdivided into two `8`-page chunks, one of which is subdivided into two `4`-page chunks, which provides a free chunk to satisfy the request.
+  * When one of the allocated `8`-page chunk is subsequently freed, fragmentation results. However, when the other allocated `8`-page chunk is freed, the algorithm quickly combines the now-free adjacent `8`-page chunks into one free `16`-page chunk.
+
+Therefore, fragmentation still occurs in the Buddy Allocator, however, a key **benefit** is that when a request to free is received, it can quickly determine how/when to aggregate adjacent free regions into a consolidated, larger free region. Furthermore, this aggregation is performed ***well*** and ***fast***.
+
+Furthermore, the checking of the free areas can be propagated further up the tree to check the other "buddies" (i.e., those having larger sizes than the initial chunk in question at the time of the request to free).
+
+***N.B.*** The use of regions of size `2`<sup>`x`</sup> ensures alignment of the "buddies" regions such that they only differ by one bit, making it easier to perform the necessary checks when combining or splitting chunks.
+
+### Slab Allocator
+
+<center>
+<img src="./assets/P03L02-042.png" width="650">
+</center>
+
+Inasmuch as allocations using the Buddy algorithm must be made strictly at a granularity of `2`<sup>`x`</sup>, this means that there will be some **internal fragmentation** when using the Buddy Allocator. This is particularly problematic because there are a lot of data structures used commonly in the Linux kernel that are not of a size close to `2`<sup>`x`</sup> (e.g., the task data structure `task_struct` is 1.7 KB).
+
+To resolve this issue, Linux also uses the **Slab Allocator** in the Linux kernel. The Slab Allocator build custom object **caches** on top of **slabs**, with the slabs themselves representing contiguously-allocated physical memory. 
+  * When the kernel starts, it pre-creates caches for the different object types (e.g., a cache for `task_struct`, for the directory entries objects, etc.).
+  * Subsequently, when an allocation request arrives for a particular object type, the request goes straight to the corresponding cache and uses one of the elements in this cache. If none of the entries are available, then the kernel creates another slab and will correspondingly allocate an additional portion of contiguous physical memory to be managed by the Slab Allocator via the new slab.
+
+The key **benefits** of the Slab Allocator include:
+  * It avoid internal fragmentation.
+    * The entities allocated within the slabs are of the *exact* same size as the common kernel objects.
+  * Furthermore, external fragmentation is also not really an issue.
+    * Even if objects are freed within the object cache, future requests will still be of matching size, and therefore can be made to fit in the resulting gaps accordingly.
+
+Therefore, the combination of the Slab Allocator with the Buddy Allocator that is used in the Linux kernel provide an effective means by which to deal with *both* fragmentation *and* free memory management challenges inherent with memory management in operating systems.
+
+## 18. Demand Paging
