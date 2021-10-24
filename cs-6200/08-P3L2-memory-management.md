@@ -471,3 +471,21 @@ Conversely, a **drawback** of using larger pages is the large page size itself. 
 
 ## 14. Page Table Size Quiz and Answers
 
+<center>
+<img src="./assets/P03L02-032.png" width="300">
+</center>
+
+On a **12-bit architecture**, what are the number of entries in the page table if the page size is the following (assume a single-level page table):
+  * `32 bytes` page size?
+    * `128` entries
+  * `512 bytes` page size?
+    * `8` entries
+
+***Explanation***: If the architecture is 12-bit, then the addresses are 12 bits long.
+  * For a 32-byte page size, this requires `log`<sub>`2`</sub>`32 = 5` bits for the offset into the page, leaving `12 - 5 = 7` bits for the virtual page number (VPN), or `2`<sup>`7`</sup>` = 128` entries.
+  * Similarly, for a 512-byte page size, this requires `log`<sub>`2`</sub>`512 = 9` bits for the offset into the page, leaving `12 - 9 = 3` bits for the virtual page number (VPN), or `2`<sup>`3`</sup>` = 8` entries.
+
+Therefore, the impact of using a larger page size is a corresponding decrease in the number of page table entries (i.e., a smaller page table size).
+
+## 15. Memory Allocation
+
