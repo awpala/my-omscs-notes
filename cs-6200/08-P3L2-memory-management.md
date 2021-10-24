@@ -211,7 +211,7 @@ As a more concrete/practical example of a page table entry, consider that of an 
 
 The **memory management unit (MMU)** uses the page table entry not only to perform the virtual-address-to-physical-address translation, but also relies on the aforementioned bits to establish the **validity** of the memory access operation.
 
-If the hardware (i.e., memory management unit (mmu)) determines that a requested memory access operation cannot be performed, it generates a **page fault**; in this case, the CPU places an **error code** on the kernel stack and the generates a **trap** into the operating system kernel.
+If the hardware (i.e., memory management unit (MMU)) determines that a requested memory access operation cannot be performed, it generates a **page fault**; in this case, the CPU places an **error code** on the kernel stack and the generates a **trap** into the operating system kernel.
 
 Consequently, this generates a **page fault handler**, which determines the appropriate action to perform based on the error code and the faulting address that generated the error. The key **information** included in the error code are the following:
   * Whether or not the fault was caused due to the page not being ***present***, and therefore requiring a corresponding transfer from the disk into main memory.
@@ -611,3 +611,88 @@ The key **benefits** of the Slab Allocator include:
 Therefore, the combination of the Slab Allocator with the Buddy Allocator that is used in the Linux kernel provide an effective means by which to deal with *both* fragmentation *and* free memory management challenges inherent with memory management in operating systems.
 
 ## 18. Demand Paging
+
+<center>
+<img src="./assets/P03L02-043.png" width="450">
+</center>
+
+Since the physical memory is much smaller than the addressable virtual memory, it is not strictly necessary for allocated pages to be present in physical memory. Instead, the underlying **physical page frame** can be repeatedly saved and restored to/from some **secondary storage** (e.g., disk). This process is referred to as **demand paging** (or simply **paging**).
+
+Traditionally, demand paging involved the movement of pages between main memory and a storage device (e.g., disk) where a **swap partition** resides. In addition to disk, the swap partition can also be on another type of storage medium (e.g., a flash device), or it can even reside in the memory of another node.
+
+<center>
+<img src="./assets/P03L02-044.png" width="700">
+</center>
+
+Now, consider how paging works, as in the figure shown above.
+  1. When a page is not present in memory, it has is present bit `i` set to `0` in its corresponding page table entry.
+  2. Consequently, when there is a reference to that page, then the hardware memory management unit (MMU) raises an exception, which causes a **trap** in the operating system kernel.
+      * In particular, on a **memory access** attempt, the memory management unit (MMU) will raise an exception called a **page fault** which is trapped into the operating system.
+  3. At this point, the operating system can determine that the exception is a page fault, and furthermore the operating system can determine that it had previously swapped out this memory page (i.e., `M`) onto disk, establish what is the correct disk access operation to be performed, and consequently issue an I/O operation to retrieve the page in question.
+  4. Once the page is brought into physical memory, the operating system determines a **free frame** (called the **feel frame**) where this page can be placed.
+  5. Correspondingly, the operating system can use the **page frame number (PFN)** for this page to appropriately update the page table entry (i.e., set the present bit `i` to `1`) corresponding to the virtual address of the page.
+  6. At this point, control is restored to the process that cause the exception (via use of reference `M`), and the program counter is restarted with the same instruction, with the corresponding instruction now being again (but now the page table will encounter a ***valid*** entry with a corresponding reference to the particular physical-memory location).
+
+Note that the original physical address of the requested page in general will be ***different*** than the new physical address that is established subsequently by the demand paging process. If it is necessary for a given page to be persistently present in memory (or to otherwise maintain the *same* physical address during its lifetime in the process's execution), then the page must be **pinned**, which effectively ***disables*** the ability to swap the page. Pinning in this manner is particularly useful when the CPU is interacting with devices that support **direct memory access (DMA)**.
+
+## 19. Page Replacement
+
+### Freeing Up Physical Memory
+
+<center>
+<img src="./assets/P03L02-045.png" width="400">
+</center>
+
+Moving pages between physical memory and secondary storage raises some obvious **questions**:
+  * *When* should pages be swapped out of physical memory and onto disk?
+  * *Which* particular pages should be swapped out?
+
+#### *When* Should Pages Be Swapped Out?
+
+<center>
+<img src="./assets/P03L02-046.png" width="500">
+</center>
+
+The first question is relatively simpler to address. Periodically, when the occupied memory reaches a particular **threshold**, the operating system will run a **page(out) daemon** which will look for pages that can be freed.
+
+Therefore, a sensible answer to this question would be along the lines that the pages should be swapped out when:
+  * **Memory usage** is above the threshold (**high watermark**).
+  * **CPU usage** is below a certain threshold (**low watermark**) (i.e., to avoid the excessive disruption of executing applications).
+
+#### *When* Should Pages Be Swapped Out?
+
+<center>
+<img src="./assets/P03L02-047.png" width="500">
+</center>
+
+To answer the second question, an obvious answer would be to swap out the pages that will not be used in the future. However, the issue here is how to determine which pages will vs. will not be used in the future?
+
+<center>
+<img src="./assets/P03L02-048.png" width="500">
+</center>
+
+To make some **predictions** regarding page usage, operating systems use some **historic information**. For instance, one common set of algorithms examine how recently or how frequently a page has been used in order to inform a prediction regarding the page's future use; such a policy is called **least-recently used (LRU) policy**. 
+  * The **intuition** here is that a page that has been used most recently is more likely to be required in the immediate future, whereas a page that has not been accessed in a relatively long time is less likely needed.
+
+The least recently used (LRU) policy uses the **access bit** (which is available on most modern hardware) to keep track of information regarding whether or not the page is referenced.
+
+Other useful **candidates** for pages that should be freed from physical memory are those pages that do not need to be written out to secondary storage (e.g., disk). Because the process of writing out to secondary storage takes time and consumes cycles, it is therefore desirable to avoid this memory-management overhead. To assist with making this decision (i.e., whether a given page should or should not be written out), the operating system can rely on the **dirty bit** (which is maintained by the hardware memory management unit (MMU)) to keep track of whether or not a given page has been ***modified*** (i.e., rather than simply accessed or referenced) over a particular period of time.
+
+Additionally, there may be certain pages (particularly those containing important kernel state, those used for I/O operations, etc.) that should ***never*** be swapped out. Therefore, ensuring that these pages are not considered by the incumbent **replacement algorithms** being executed by the operating system is an important consideration.
+
+### Page Replacement in Linux
+
+<center>
+<img src="./assets/P03L02-049.png" width="500">
+</center>
+
+In Linux (as well as most modern operating systems), a number of **parameters** are available to allow the system administrator to configure the swapping nature of the system. These parameters include tunable **thresholds** (e.g., targeting page count).
+
+Furthermore, Linux categorizes the **pages** into different **types** (e.g., claimable, swappable, etc.), which in turn narrows down the decision-making process when deciding which pages should be replaced.
+
+In Linux, the **default replacement algorithm** is a variation of the least recently used (LRU) policy which gives a "**second chance**" (i.e., it performs *two* scans of a set of pages before determining which ones are the ones which must swapped out and reclaimed).
+
+***N.B.*** Similar types of decisions can be made in other operating systems as well.
+
+## 20. Least Recently Used (LRU) Quiz and Answers
+
