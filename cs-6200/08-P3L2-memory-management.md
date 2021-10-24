@@ -319,3 +319,65 @@ There is a **trade-off** in supporting multiple levels in the page table hierarc
   * Conversely, as a **drawback**, there are more memory access operations required to perform address translation (i.e., increasing proportionally to the number of levels of addressing) in order to reach the ultimate physical address, which results in an ***increased*** **translation latency**.
 
 ## 9. Multi-Level Page Table Quiz and Answers
+
+<center>
+<img src="./assets/P03L02-025.png" width="300">
+</center>
+
+A process using `12 bit` addresses has an address space where only the first `2 KB` and the last `1 KB` are allocated and used.
+
+How many total entries are there in a **single-level page table** that uses **Address Format 1** per the figure shown above?
+  * `64`
+
+How many entries are there in the inner page tables of the **2-level page table** that uses **Address Format 2**?
+  * `48`
+
+***Explanation***: In both formats, the page offset is `6` bits, therefore each page is `2`<sup>`6`</sup> or `64 bytes`. Furthermore:
+  * In **Address Format 1**, `6 bits` are used for the virtual page number (VPN) (i.e., `p`). Therefore, there are a total of `2`<sup>`6`</sup> or `64` different pages. Furthermore, in a single-level page table, there is an entry for *each* of these `64` pages, giving a total of `64` page table entries.
+  * In **Address Format 2**, the first two bits provide the index into the outer page table (i.e., `p`<sub>`1`</sub>), and the next four bits provide the index into to the inner page tables (i.e., `p`<sub>`2`</sub>). The bits of `p`<sub>`1`</sub> address `2`<sup>`4 + 6`</sup>` = 2`<sup>`10`</sup> virtual addresses from the virtual address space. This means that every element of the outer page table can be used to hold the translations for `1 KB` of the virtual addresses. Given that the process is such that only the first `2 KB` and the last `1 KB` of the virtual address space are allocated, then one of the entries of the outer page table will not need to be populated with a corresponding inner page table; therefore, the four-bit memory required for the inner page table (i.e., `p`<sub>`2`</sub>) can be saved and consequently reused for indexing into the inner page table, giving `2`<sup>`4`</sup>` = 16` possible entries per inner page table element. Therefore, the total number of entries that are needed across the remaining inner page tables will be `64 - 16 = 48` total page table entries, a 25% reduction in the page table size relative to the single-level page table format.
+
+## 10. Speeding Up Translation Lookaside Buffers (TLBs)
+
+### Overhead of Address Translation
+
+<center>
+<img src="./assets/P03L02-026.png" width="500">
+</center>
+
+Recall that it was demonstrated that adding levels to the address translation process reduces the size of the page table but with an incurred overhead to achieve this.
+
+A comparison of the relative **overheads** is as follows, for *each* memory reference:
+  * For a **single-level page table**, a memory reference will require *two* memory accesses:
+    1. One to access the page table entry (to determine the physical frame number (PFN))
+    2. Another to perform the actual memory access operation at the correct physical address.
+  * For a **four-level page table**, a memory reference will require five memory accesses:
+    1. Four to access access *each* level of the page table hierarchy prior to producing the actual physical frame number (PFN).
+    2. Another to perform the actual access of the correct physical memory location.
+
+Therefore, in the multi-level (e.g., four-level) page table, such nested memory accesses can be costly from a performance standpoint, resulting in a ***slowdown***.
+
+### Page Table Cache
+
+<center>
+<img src="./assets/P03L02-027.png" width="500">
+</center>
+
+The **standard technique** to avoid such repeated memory access operations is to use a **page table cache**.
+
+On most architectures, the hardware **memory management unit (MMU)** integrates a **hardware cache** that is ***dedicated*** for caching address translations; this cache is called the **translation lookaside buffer (TLB)**.
+
+On each address translation, the translation lookaside buffer (TLB) cache is first quickly referenced.
+  * If the address can be generated from the translation lookaside buffer (TLB) contents, then there is **TLB hit**, which consequently ***bypasses*** all of the other otherwise required memory access operations in order to perform the translation.
+  * Conversely, if there is a **TLB miss** (i.e., the address is *not* present in the TLB cache), then it is necessary to perform all of the address translation steps via access of the page tables from memory.
+
+In addition to the proper address translation, the translation lookaside buffer (TLB) entries also contain all of the necessary protection and validity bits to **verify** that the access operation is ***correct***, or (if necessary) to generate a **fault**.
+
+As it turns out, even a ***small*** number of entries in the translation lookaside buffer (TLB) can result in a ***high*** TLB hit rate, by virtue of the associated high temporal and spatial **locality** via the corresponding memory references.
+
+For example, on recent x86 platforms (e.g., x86 Intel Core i7):
+  * There are *per-core* separate translation lookaside buffers (TLBs) for data (`64` entries) and for instructions (`128` entries).
+  * Additionally, there is a *shared* (i.e., across *all* cores) second-level translation lookaside buffer (TLB) (having `512` entries).
+
+Even with relatively small/modest sizes, these translation lookaside buffers (TLBs) were determined to be sufficiently effective to address typical memory access needs for modern processes running on this modern processor.
+
+## 11. Inverted Page Tables
