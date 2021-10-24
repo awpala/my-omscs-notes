@@ -412,8 +412,62 @@ To address the linear search issue of inverted page tables, they are supplemente
 In the most general terms, a hashing page table operates as follows:
   1. A **hash function** is used to compute a **hash** based on a portion of the address (i.e., `p`).
   2. The resulting hash is an entry in the **hash table**, which points to a **linked list** of possible matches for the corresponding portion (i.e., `p`) of the **logical address**.
-    * This correspondingly increases the speed of the linear search (and therefore the overall address translation operation), inasmuch as it narrows the search candidates to the relatively few entries into the inverted page table that are present in the linked list (i.e., as opposed to searching the entire page table itself).
+      * This correspondingly increases the speed of the linear search (and therefore the overall address translation operation), inasmuch as it narrows the search candidates to the relatively few entries into the inverted page table that are present in the linked list (i.e., as opposed to searching the entire page table itself).
   3. When a match is found on the linked list, the **physical address** can be produced from the offest (`d`), as before.
 
 ## 12. Segmentation
+
+<center>
+<img src="./assets/P03L02-030.png" width="650">
+</center>
+
+Recall that in addition to paging, virtual-to-physical address memory mapping can be performed using **segments**; this process is referred to as **segmentation**.
+
+With segments, the address space is divided into components of arbitrary granularity (i.e., of arbitrary size), and typically the different segments correspond to logically meaningful components of the address space (e.g., code, heap, data, stack, etc.).
+
+Therefore, a **virtual address** (i.e,. the **logical address** in the figure shown above) in the segmented memory mode includes a segment descriptor (the **selector**) and the **offset**.
+  * The **segment descriptor** is used in combination with the **descriptor table** to produce information regarding the physical address of the segment.
+  * The segment descriptor is ***combined*** with the **offset** to produce the linear address of the memory address.
+
+In its pure form, a segment can be represented with a *contiguous* portion of physical memory. In this case, the **segment size** is defined by its **base address** and its **limit registers** (which imply the segment's size), thereby enabling segments of variable size.
+
+In practice, however, segmentation and paging are used ***together***. This means that address that is produced using this method (called the **linear address**) is passed to the **paging unit** (i.e., a multi-level/hierarchical page table) to ultimately compute the actual **physical address** to locate the appropriate memory location.
+
+The type of address translation that is possible on a particular platform is determined by the hardware. For example:
+  * On the 32-bit x86 Intel Architecture (IA x86_32) hardware platforms, both segmentation and paging are supported.
+    * For these platforms, Linux allows up to `8,000` segments to be available per process, along with another `8,000` global segments.
+  * On the 64-bit x86 Intel Architecture (IA x86_64) platforms, both segmentation and paging are supported for backward compatibility, however, the default mode is to use paging only.
+
+## 13. Page Size
+
+### How Large Is a Page?
+
+<center>
+<img src="./assets/P03L02-031.png" width="650">
+</center>
+
+Up to this point, the matter of selecting an appropriate page size has not been considered. In the examples examined thus far, the address formats used (arbitrarily selected) offsets of `10` or `12` bits (i.e., for demonstration purposes). Correspondingly, this offset determines the total amount of addresses in the page, and therefore the corresponding page size (e.g., `2`<sup>`10`</sup>` = 1 KB` and `2`<sup>`12`</sup>` = 4 KB` addressable page sizes, respectively).
+
+However, in practice, real systems support different page sizes. Linux and x86 platforms support several common page sizes:
+  * `4 KB`, the most common, and the default option on these platforms
+  * `2 MB`, called "**large**" pages
+    * To address `2 MB` of content in a page, this requires `21 bits` for the page offsets (i.e., to compute the physical addresses).
+  * `1 GB`, called "**huge**' pages
+    * To address `1 GB` of content in a page, this requires `30 bits` for the page offsets.
+
+The key **benefit** of using the larger page sizes (e.g., `2 MB` and `1 GB`) is that more bits in the virtual address are used for the offset bits, and consequently fewer bits are used to represent the virtual page numbers (VPNs) and correspondingly fewer necessary entries in the page table. In fact, use of the larger page sizes significantly reduces the size of the page table:
+  * Compared to the `4 KB` page size, the large (`2 MB`) page size reduces the page table size by a factor of `512×`.
+  * Compared to the `4 KB` page size, the huge (`1 GB`) page size reduces the page table size by a factor of `1024×`.
+
+Therefore, in summary, the key **benefits** of larger page sizes include:
+  * Fewer page table entries, resulting in smaller page tables
+  * Increasing the number of translation lookaside buffers (TLBs) hits due to improved translation of the physical memory via the TLB cache.
+
+Conversely, a **drawback** of using larger pages is the large page size itself. Due to the resulting large "gaps" of unused memory addresses (i.e., a sparsely populated virtual address space), this gives rise to the phenomenon called **internal fragmentation** (wasted memory regions in the allocated memory). Due to this issue, smaller pages (e.g., of size `4 KB`, the default size in Linux/x86) are more commonly used.
+
+***N.B.*** There are certain use cases (e.g., databases and in-memory data stores) where such "large" or "huge" page are necessary and therefore sensible to use.
+
+***N.B.*** On different systems, depending on the operating system and the hardware architecture, different page sizes may be supported (e.g., Solaris 10 running on the SPARC architecture supports page sizes of `8 KB`, `4 MB`, and `2 GB`).
+
+## 14. Page Table Size Quiz and Answers
 
