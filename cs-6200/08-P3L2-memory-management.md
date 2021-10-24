@@ -489,3 +489,22 @@ Therefore, the impact of using a larger page size is a corresponding decrease in
 
 ## 15. Memory Allocation
 
+<center>
+<img src="./assets/P03L02-033.png" width="600">
+</center>
+
+So far, the discussion has described how the operating system controls the process's ***access*** to physical memory, however, it is still unclear how the operating system decides how to ***allocate*** a particular portion of the memory to the process in the first place. The latter role is performed by the **memory allocation mechanisms** (e.g., the **memory allocator**) that are part of the memory-management subsystem of the operating system.
+
+The memory allocator performs the following tasks:
+  * Determines the virtual-address-to-physical-address mapping.
+  * Once the mapping is established, the aforementioned mechanisms (e.g., address translation, page tables, etc.) are used by the memory allocator to simply determine the physical address from the virtual address (i.e.,via the virtual address presented by the process to the CPU) and to check the validity/permissions of the memory access request.
+
+Memory allocators can exist at both the kernel level and user level.
+  * **Kernel-level allocators** are responsible for allocating memory regions (e.g., pages) for the kernel (i.e., various components of the kernel state), and are also used for the **static state** of processes upon their creation (e.g., code, stack, and initialized data). Additionally, kernel-level allocators are responsible for tracking **free memory** that is currently available in the system.
+  * **User-level allocators** are used for the **dynamic state** of processes (e.g., heap) during process execution. The **basic interface** for user-level allocators includes `malloc()` and `free()`, which request from the kernel some amount of memory from the kernel's free pages, which they ultimately release when done.
+    * ***N.B.*** Once the kernel allocates memory to the process via `malloc()`, the kernel is no longer involved in the management of that memory space; rather, that space will be used by whatever user-level allocator is being used by the process (e.g., `dlmalloc()`, `jemalloc()`, `Hoard()`, `tcmalloc()`, etc., which have different trade-offs with respect to cache efficiency, multi-threading "friendliness," etc.)
+
+***N.B.*** This course will not discuss the internals of the various user-level allocators, but rather the focus of discussion will be a brief description of the basic mechanisms that are used in the kernel-level allocators; in turn, the same kinds of design principles are used in commonly user-level allocators available today.
+
+## 16. Memory Allocation Challenges
+
