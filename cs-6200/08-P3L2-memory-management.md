@@ -381,3 +381,39 @@ For example, on recent x86 platforms (e.g., x86 Intel Core i7):
 Even with relatively small/modest sizes, these translation lookaside buffers (TLBs) were determined to be sufficiently effective to address typical memory access needs for modern processes running on this modern processor.
 
 ## 11. Inverted Page Tables
+
+<center>
+<img src="./assets/P03L02-028.png" width="650">
+</center>
+
+Another (and completely different) way to organize the address translation process is to create so-called **inverted page tables**, as in the figure shown above.
+
+Here, the **page table entries (PTEs)** contain information, one for each element of the **physical memory** (e.g., in terms of **physical frame numbers (PFNs)**, each of the page table elements correpsond to one such PFN).
+
+On modern platforms, there is physical memory on the order of 10s of terabytes (i.e., `O(10 TB)`), and correspondingly a virtual memory comprising an address space that can reach the order of petabytes and beyond (i.e., `O(PB)`, `O(EB)`, etc.). Therefore, it is much more efficient for a process to have a page table structure that is on the order of the available physical memory, rather than on the order of the virtual memory address space.
+
+Using such inverted page tables, finding the translation occurs as follows:
+1. The page table is searched based on the **process id** (`pid`) and the first part of the virtual address (`p`), as was seen previously. 
+2. When the appropriate entry (i.e., `pid-p` combination) is found in the page table, the corresponding **index** (`i`) (i.e., the element where this information is stored) denotes the **physical frame number (PFN)** of the memory location that is indexed by the **logical address** in question.
+3. Combining this with the actual offset (i.e., combining `pid-p` with `d`) produces the **physical address** that is being referenced from the CPU.
+
+The **problem** with inverted page tables is that they require to perform a **linear search** of the page table to find which entry matches the `pid-p` information that is part of the logical address presented by the CPU. Since the physical memory can be arbitrarily assigned to different processes, the page table generally is *not* ordered (i.e., two adjacent entries in the page table in general will pertain to two unrelated processes), and there is no clever search technique used to speed up this search operation.
+
+However, in practice, the **translation lookaside buffer (TLB)** catches  many of these memory references, and therefore such a detailed linear search is not performed very frequently. However, this search *can* still be performed periodically, and therefore a more efficient solution is desirable.
+
+### Hashing Page Tables
+
+<center>
+<img src="./assets/P03L02-029.png" width="650">
+</center>
+
+To address the linear search issue of inverted page tables, they are supplemented with so-called **hashing page tables**, as in the figure shown above.
+
+In the most general terms, a hashing page table operates as follows:
+  1. A **hash function** is used to compute a **hash** based on a portion of the address (i.e., `p`).
+  2. The resulting hash is an entry in the **hash table**, which points to a **linked list** of possible matches for the corresponding portion (i.e., `p`) of the **logical address**.
+    * This correspondingly increases the speed of the linear search (and therefore the overall address translation operation), inasmuch as it narrows the search candidates to the relatively few entries into the inverted page table that are present in the linked list (i.e., as opposed to searching the entire page table itself).
+  3. When a match is found on the linked list, the **physical address** can be produced from the offest (`d`), as before.
+
+## 12. Segmentation
+
