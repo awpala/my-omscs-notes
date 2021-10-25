@@ -696,3 +696,117 @@ In Linux, the **default replacement algorithm** is a variation of the least rece
 
 ## 20. Least Recently Used (LRU) Quiz and Answers
 
+Suppose you have an array with `11-page-sized` entries that are accessed and then manipulated one-by-one in a loop. Assume the following loop structure:
+```c
+int i = 0;
+int j = 0;
+
+while (1) {
+  for (i = 0; i < 11; ++i) {
+    // access page[i]
+  }
+
+  for (j = 0; j < 11; ++j) {
+    // manipulate page[i]
+  }
+
+  break;
+}
+```
+
+Also, suppose you have a system with `10` pages of physical memory.
+
+What is the percentage of pages that will need to be demand pages using the least recently used (LRU) policy? (Round to the nearest percent.)
+  * `100%`
+    * In this example, initially the first ten pages are loaded into memory one at a time as they are accessed one-by-one.
+      <center>
+      <img src="./assets/P03L02-050.png" width="200">
+      </center>
+    * On access of the eleventh page, the first page (the least recently used page) must be swapped out of memory (because the physical memory only has 10 pages available).
+      <center>
+      <img src="./assets/P03L02-051.png" width="250">
+      </center>
+    * However, upon swapping out the first page, it is also needed on the next operation (i.e., manipulating the first page), which requires a corresponding demand page operation to swap it back in, and in the process this also swaps out the second page (now the current least recently used page).
+      <center>
+      <img src="./assets/P03L02-052.png" width="300">
+      </center>
+    * Proceeding in this manner, this results in a `100%` demand paging of the pages via the least recently used (LRU) policy in this scenario.
+      <center>
+      <img src="./assets/P03L02-053.png" width="350">
+      </center>
+    * This is clearly a *pathological* scenario, however, it demonstrates that even an intuitive policy such as least recently used (LRU) can result in poor performance under certain conditions. For this reason, operating systems can be configured to support different kinds of replacement policies that are used to manage their physical memory.
+
+## 21. Copy-On-Write ("COW")
+
+<center>
+<img src="./assets/P03L02-054.png" width="500">
+</center>
+
+In the discussion on memory management thus far, it has been seen that operating systems rely on the hardware (e.g., the **memory management unit (MMU)** in particular) to perform address translations, as well as to validate the memory accesses in order to enforce protection, and other similar mechanisms.
+
+Additionally, the same hardware can also be used to build a number of other useful **services** and **optimizations** beyond address translation.
+
+One such mechanism is called **copy-on-write ("COW")**, described as follows.
+
+<center>
+<img src="./assets/P03L02-055.png" width="550">
+</center>
+
+Consider what happens during process creation. When creating a new process, it is necessary to recreate the *entire* parent process by copying its entire address space, as in the figure shown above.
+
+However, many of the pages are ***static*** (i.e., they do not change), therefore, it is unclear why it would be necessary to keep multiple copies.
+
+<center>
+<img src="./assets/P03L02-056.png" width="550">
+</center>
+
+Therefore, in order to avoid such unnecessary copying, on process creation, the virtual address space of the new process (or at least portions of it) will point/map to the original page (which has the original address space content). 
+  * The *same* physical address (e.g., `PA1` in the figure shown above) may be referred to by two completely different virtual addresses from the two processes; in such a case, it is necessary to **write protect** the common physical memory in order to effectively track concurrent accesses to it.
+  * Furthermore, if the contents of the page are indeed intended only to be read, then this will save on both memory requirements as well as the time that otherwise would have been required to perform the copy.
+
+<center>
+<img src="./assets/P03L02-057.png" width="550">
+</center>
+
+Conversely, if a write request is issued for the common memory area via either one of the virtual addresses, then the memory management unit (MMU) will detect that the page is write-protected and will consequently generate a page fault. At this point, the operating system will determine the reason for the page fault and accordingly will create the actual copy and correspondingly update the page tables of the respective processes as necessary (i.e., particularly that of the faulting process); only in this case will the copy operation be performed. Furthermore, in this manner, only those pages that require an update will be copied (i.e., ony the minimum necessary copy cost is incurred).
+
+Therefore, this mechanism is called "copy-on-write (COW)" because the copy cost is only incurred when it is necessary to perform a write operation. Furthermore, there may be other references to the write-protected feature, so then whether or not the write protection will be removed once the copy operation is performed depends on what else the page is shared with.
+
+## 22. Failure Management Checkpoint
+
+<center>
+<img src="./assets/P03L02-058.png" width="600">
+</center>
+
+Another useful operating system service that can benefit from the hardware support for memory management is called **checkpointing**. Checkpointing is a technique that is used as part of the failure and recovery management that operating systems (or systems software more generally) support.
+
+The **idea** behind checkpointing is to periodically save the entire process sate. While the **failure** may be unavoidable, with checkpointing it is not necessary to restart the process from the beginning, but rather the process can be restarted from the nearest ***checkpoint***, and consequently the recovery operation will be performed much faster.
+
+<center>
+<img src="./assets/P03L02-059.png" width="600">
+</center>
+
+A **simple approach** to checkpointing is to pause the execution of the process and then to copy the entire state.
+
+A **better approach** takes advantage of the hardware support for memory management to optimize (i.e., minimize) the disruption that checkpointing will impose on the process's execution.
+  * By using the hardware support, the entire address space of the process can be write protected, allowing to copy everything at once.
+  * However, since the process will continue executing (i.e., it is not paused), it will correspondingly continue to "dirty" the pages; therefore, the hardware memory management unit (MMU) can be used to keep track of the "dirtied" pages which in turn can be used to copy only the diffs (i.e., only those pages that have been modified), thereby allowing to create **incremental checkpoints**. However, by checkpointing using such partial diffs (i.e., consisting of only dirty pages), this makes the recovery process more complex (it is necessary to rebuild the full image of the process using potentially multiple such diffs, or to aggregate the diffs in the background to produce more complete checkpoints of the process).
+
+### Other Services
+
+<center>
+<img src="./assets/P03L02-060.png" width="600">
+</center>
+
+The basic mechanisms used in checkpointing can also be used in other services.
+
+For instance, **debugging** often relies on a technique called **rewind-replay (RR)**.
+  * Here, **rewind** means that the execution of the process is restarted from some earlier checkpoint, and then proceeds forward from there in order to determine whether the error can be established.
+  * This can be performed iteratively, whereby the process is rewound gradually to older and older checkpoints until the error is found.
+
+**Migration** is another service that can benefit from similar kinds of memory management mechanisms that are useful for checkpointing.
+  * With migration, there is an analogous checkpointing of the process to another machine, with the process being restarted on the new machine. The process then continues to execute on the other machine as usual.
+  * This is particularly useful in areas such as **disaster recovery** (i.e., continue the process on another machine where it does not crash) or **consolidation** (commonly performed in today's datacenters when attempting to migrate processes and loads onto as few machines as possible in order to save on power/energy or to better utilize resources).
+  * One way in which migration can be implemented is as though repeated checkpoints are performed in a fast loop until ultimately there is such a dirtied state from the process that something like the **pause-and-copy** approach becomes acceptable (or otherwise unavoidable at that point due to lack of a suitable alternative, inasmuch as the process has dirtied enough pages to warrant stopping the process in order to copy the remaining contents).
+
+## 23. Checkpointing Quiz and Answers
