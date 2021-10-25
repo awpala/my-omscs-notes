@@ -80,5 +80,48 @@ However, message-passing inter-process communication (IPC) provides the key **be
 
 ### 5. Forms of Message Passing
 
+In practice, there are several **methods** of message-passing-based inter-process communication (IPC), as discussed in the following subsections.
+
+#### Pipes
+
+<center>
+<img src="./assets/P03L03-006.png" width="550">
+</center>
+
+The first (and simplest) form of message-passing inter-process communication (IPC) (which is also part of the POSIX standard) is called **pipes**. Pipes are characterized by *two* **endpoints** (i.e., only two processes can communicate in this manner).
+
+With pipes, there is no notion of a "message" per se, but rather there is simply a **stream** of bytes that is pushed into the pipe from one process and then received into the other.
+
+One popular use of pipes is to connect the output from one process to the input of another process (i.e., the entire byte stream of process `P1` is delivered as input to process `P2`--rather than typing it in manually, for instance).
+
+#### Message Queues
+
+<center>
+<img src="./assets/P03L03-007.png" width="550">
+</center>
+
+A more complex form of message-passing inter-process communication (IPC) is **message queues**. As the name suggests, message queues understand the notion of "messages" that they transfer among the processes. The sending process must submit a **properly-formatted message** to the channel, amd then the channel delivers the corresponding properly-formatted message to the receiving process.
+
+The operating-system-level **functionality** regarding message queues also includes the understanding of priorities of messages, scheduling the manner in which messages are delivered, etc.
+
+The use of message queues is supported via different APIs. In UNIX-based systems, these include the **POSIX API** and the **System V (SysV) API**.
+
+#### Sockets
+
+<center>
+<img src="./assets/P03L03-008.png" width="550">
+</center>
+
+The message-passing API that is likely most familiar is the **socket API**. With this socket form of inter-process communication (IPC), the notion of "*ports*" that is required in message-passing inter-process communication (IPC) mechanisms is itself the **socket abstraction** that is supported by the operating system.
+
+With sockets, processes send or receive messages via an API (e.g., system calls `send()` and `recv()`, respectively). The socket API supports send and receive operations that allow processes to send **message buffers** into and out of the in-kernel **communication buffer** (i.e., the **channel**).
+
+The system call to `socket()` itself creates a kernel-level socket buffer. Additionally, it will associate any necessary **kernel-level processing** that must be performed along with the message's movement (e.g., TCP/IP for a network socket, in which the entire TCP/IP protocol stack is associated with the data movement in the kernel).
+
+***N.B.*** Sockets do not need to be used for processes that are on a *single* machine; rather, if the two processes are on *different* machines, then the channel exists essentially between the (local) process and a network device that will actually send the data externally. Additionally, the operating system is sufficiently "smart" to determine that if two processes are on the *same* machine, then it can **bypass** execution of the full protocol stack (e.g., it will bypass sending the data out on the network just to receive it back and push it into the recipient process). This remains hidden from the programmer, but can be detected via corresponding performance measurements.
+
+## 6. Shared-Memory Inter-Process Communication (IPC)
+
+
 
 
