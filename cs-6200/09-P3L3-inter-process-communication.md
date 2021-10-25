@@ -353,7 +353,7 @@ Once these data structures have been properly created and allocated, they can su
 <img src="./assets/P03L03-021.png" width="550">
 </center>
 
-To reiterate, the **key point** is to ensure that the synchronization variable is allocated within the ***shared-memory region*** that is shared among the processes.
+To reiterate, the **key point** is to ensure that the synchronization variable is allocated within the ***shared-memory region*** that is shared among the processes, as annotated in the figure shown above.
 
 ## 14. Other Inter-Process Communication (IPC) Synchronization Constructs
 
@@ -400,3 +400,18 @@ For message queues, what are the Linux system calls that are used for...
 
 ## 16. Inter-Process Communication (IPC) Command-Line Tools
 
+<center>
+<img src="./assets/P03L03-023.png" width="450">
+</center>
+
+As you proceed to use inter-process communication (IPC) methods, it is useful to know that Linux provides some **command-line utilities** for using inter-process communication (IPC) in shared memory in general.
+
+The utility `ipcs` lists all of the inter-process communication (IPC) facilities/constructs that exist in the system (e.g., message queues, semaphores, etc.).
+  * Passing the flag `-m` displays *only* the shared-memory inter-process communication (IPC).
+
+The utility `ipcrm` deletes an inter-process communication (IPC) facility/construct.
+  * For shared memory, passing the flag `-m[shmid]` deletes the segment `shm` with id `shmid`.
+
+***N.B.*** Review the man pages for these commands for a full set of options/flags.
+
+## 17. Shared Memory Design Considerations
