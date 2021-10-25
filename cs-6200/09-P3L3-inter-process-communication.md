@@ -314,7 +314,7 @@ typedef struct {
 } shm_data_struct, *shm_data_struct_t;
 
 // create shm segment
-seg = shmget(ftok(arg[0], 120), 1024, IPC_CREATE|IPC_EXCL));
+seg = shmget(ftok(arg[0], 120), 1024, IPC_CREATE|IPC_EXCL);
 shm_address = shmat(seg, (void *)0, 0);
 shm_ptr = (shm_data_struct_t)shm_address;
 
@@ -357,8 +357,46 @@ To reiterate, the **key point** is to ensure that the synchronization variable i
 
 ## 14. Other Inter-Process Communication (IPC) Synchronization Constructs
 
+Additionally, shared-memory accesses can be synchronized using **mechanisms** provided by the operating system for performing inter-process communication (IPC) interactions. This is particularly important because the "process shared" option (e.g., `PTHREAD_PROCESS_SHARED`) for the mutex is not necessarily always supported on every single platform.
+
 <center>
 <img src="./assets/P03L03-022.png" width="550">
 </center>
 
+Instead, we rely on **other forms** of inter-process communication (IPC) for synchronization, such as message queues or semaphores.
+
+**Message queues** allow to implement mutual exclusion via send/receive operations. An example protocol for this is as follows:
+  * Two processes `P1` and `P2` are communicating via shared memory, and they use message queues to synchronize.
+  * The first process `P1` writes to the data that is in shared memory (i.e., `shmem`), and then sends a "*ready*" message on the message queue.
+  * The second process `P2` receives the "*ready*" message, knows that it is permissible to read the data from this shared memory, and then sends back an "*okay*" message response back to `P1`.
+
+Another option is to use **semaphores**. Semaphores are an operating-system-supported synchronization construct. A **binary semaphore** can have two values (i.e., `0` or `1`), and therefore can achieve similar behavior to that which is exhibited by a mutex (i.e., depending on the value of the semaphore, the process is either *allowed* to proceed or is *stopped* at the semaphore pending a change).
+
+For example, given a binary semaphore:
+  * If `value == 0`, then the process is stopped/blocked.
+  * If `value == 1`, then the semantics of the semaphore construct is such that the process will automatically decrement the value (i.e., down to `0`) and consequently the process will go/proceed.
+    * Therefore, this decrement operation is equivalent to obtaining a lock for a mutex.
+
+***N.B.*** The System V (SysV) API for the message queues and semaphores inter-process communication (IPC) mechanisms is similar to those that were seen for shared memory (i.e., in terms of creating, closing, etc. message queues and/or semaphores). Furthermore, for both constructs, there are also equivalent POSIX APIs.
+
+***References***:
+  * [SysV IPC Tutorials](https://tldp.org/LDP/lpg/node21.html)
+    * This code example uses shared memory with message queues, and semaphores for synchronization. This example uses the System V (SysV) API.
+  * [mq_notify() man page](https://man7.org/linux/man-pages/man3/mq_notify.3.html)
+  * [sem_wait() man page](https://man7.org/linux/man-pages/man3/sem_wait.3.html)
+  * [shm_overview man page](https://man7.org/linux/man-pages/man7/shm_overview.7.html)
+
+## 15. Message Queue Quiz
+
+For message queues, what are the Linux system calls that are used for...
+  * sending a message to a message queue
+    * `msgsnd()`
+  * receiving a message from a message queue
+    * `msgrcv()`
+  * performing a message control operation
+    * `msgctl()`
+  * getting a message identifier
+    * `msgget()`
+
+## 16. Inter-Process Communication (IPC) Command-Line Tools
 
