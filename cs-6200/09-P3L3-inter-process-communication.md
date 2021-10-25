@@ -190,7 +190,47 @@ Conversely, in **shared memory**, this goal requires that (at a minimum) there a
   * Furthermore, even for a single use, the memory-mapped approach can still perform quite well. In particular, when it is necessary to move large amounts of data from one address space into another, the CPU time that is required to perform the copy operation can greatly exceed the CPU time required to perform the map operation (i.e., *`t`*`(copy) >> `*`t`*`(map)`).
     * In fact, Windows systems internally leverage the fact that there exists this difference with respect to the communication mechanisms they support between processes (i.e., if the data to be transferred is smaller than a certain threshold, then the data is copied in/out of a communication channel via a port-like interface, otherwise the data is potentially copied at least *once* to ensure that it is in a page-aligned area and then that area is mapped into the address space of the target process). This mechanism supported by the Windows kernel is called **"Local" Procedure Calls (LPCs)"**.
 
-## 9-10. SysV Shared Memory
+## 9-10. System V (SysV) Shared Memory
 
 ### 9. SysV Shared Memory Overview
+
+Now that the shared-memory mechanisms have been described in a general way, consider the specific details of the **System V (SysV)** UNIX API.
+
+<center>
+<img src="./assets/P03L03-013.png" width="550">
+</center>
+
+Firstly, the operating system supports **segments** of shared memory, which need not necessarily correspond to *contiguous* physical pages.
+
+Furthermore, the operating system treats **shared memory** as a ***system-wide*** resource, using system-wide policies. This means that there is a **limit** on the total number of segments (and correspondingly on the total size) of the shared memory.
+  * ***N.B.*** Presently, imposing such limits is not as much of an issue (e.g., in Linux, currently the limit is `4000` segments). However, in the past, this limit was much more significant, being set to even as few as `6` segments in certain operating systems. Even more recent version of Linux had a limit of `128` segments.
+  * The operating system may also impose other limits with respect to the system-wide shared memory.
+
+<center>
+<img src="./assets/P03L03-014.png" width="550">
+</center>
+
+When a process requests for a shared-memory segment to be **created**, the operating system allocates the required amount of physical memory (provided that certain limits are met), and then assigns a **unique key** to the process. This key is used to uniquely identify the segment within the operating system; any other process can refer to this particular segment via the key.
+
+If the creating process wants to communicate with other processes using shared memory, then it will ensure that they "learn" this key in some manner (e.g., by using some other form of inter-process communication (IPC), passing it as a file or as a command-line argument, etc.).
+
+<center>
+<img src="./assets/P03L03-015.png" width="550">
+</center>
+
+Using the key, the shared-memory segment can be **attached** by a process (e.g., `P1`). This means that the operating system establishes **valid mappings** between the virtual addresses that are part of the processes' virtual address space (e.g., `VA 1`) and the corresponding physical memory (i.e., main memory) that backs the segment.
+
+Furthermore, **multiple processes** (e.g., `P1` and `P2`) can attach to the *same* memory segment, in which case each process shares access to the *same* physical pages. Consequently, read and write operations from/to these pages will be visible across *all* processes, analogously to when threads share access to memory that is part of the same address space. Additionally, the shared-memory segment in physical memory in turn can be mapped to different virtual addresses in different processes (e.g., `VA 1` and `VA 2`).
+
+<center>
+<img src="./assets/P03L03-016.png" width="550">
+</center>
+
+**Detaching** a segment means **invalidating** the address mappings for the virtual address region (e.g., `VA 1`) that corresponded to the segment within the process (e.g., `P1`). In other words, the page table entries for those virtual addresses will no longer be valid.
+
+However, note that a segment is *not* actually **destroyed** once it is detached; in fact, a segment may be attached, detached, and then re-attached multiple times by different processes over the lifetime of the segment. This means that once a segment is created, it is a **persistent entity** until there is an *explicit* request for it to be destroyed, similarly to what occurs with a file (i.e., the file is created and then the file persists until it is explicitly deleted; in the meantime, the file can be opened, closed, read from, written to, etc. and the file will still be present in the system).
+  * ***N.B.*** This **property** of shared memory (i.e., to be removed only when it is explicitly deleted or when there is a system reboot) distinguishes it from regular, non-shared memory (which is `malloc()`d and then subsequently disappears as soon as the process exits).
+
+### 10. SysV Shared Memory API
+
 
