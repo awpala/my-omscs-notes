@@ -68,7 +68,7 @@ The **operating system kernel** is required to both establish the communication 
   * In the case of the **send operation**, this involves copying from the sender process's address space to the communication channel.
   * In the case of the **receive operation**, this involves copying from the channel to the recipient process's address space.
 
-This means that a simple **request-response interaction** among two processes requires `4` user/kernel crossing and `4` data-copying operations.
+This means that a simple **request-response interaction** among two processes requires `4` user/kernel crossing and `4` data-copying operations (i.e., send request, receive request, send response, and receive response).
 
 <center>
 <img src="./assets/P03L03-005.png" width="550">
