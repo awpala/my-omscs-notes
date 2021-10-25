@@ -160,3 +160,15 @@ The remainder of this lecture will focus on briefly describing the UNIX-based sh
 
 ## 7. Inter-Process Communication (IPC) Comparison Quiz and Answers
 
+Consider using inter-process communication (IPC) to communicate between processes. You can either use a **message-passing** or a **memory-based** API. Which one do you think will perform better? (Select one option.)
+  * message passing
+  * shared memory
+  * neither; it depends
+    * `CORRECT`
+      * Message passing must perform multiple copies between the communicating processes and the kernel, resulting in corresponding overhead.
+      * Shared-memory inter-process communication (IPC) incurs cost associated with the kernel establishing valid mappings among the processes' address spaces and the shared-memory pages, also resulting in corresponding overhead.
+      * Therefore, there are drawbacks with both approaches, and therefore the performance will depend on the relative costs incurred by these respective overheads.
+
+The next section will discuss trade-offs between these two inter-process communication (IPC) mechanisms.
+
+## 8. Copy vs. Map
