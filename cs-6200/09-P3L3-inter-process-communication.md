@@ -46,8 +46,39 @@ Finally, communication and coordination also implies **synchronization**.
   * When processes send and receive **messages** among each other, they effectively synchronize with each other as well.
   * Similarly, when processes synchronize (e.g., via a mutex-like data structure), they also communicate something about the point in their execution. From this perspective, **synchronization primitives** also fall under the category of inter-process communication (IPC) mechanisms; however, a separate lecture will be dedicated to discussing specifically regarding synchronization (this lecture will instead focus on message-passing and memory-based IPC mechanisms).
 
-## 4. Message-Based Inter-Process Communication (IPC)
+## 4-5. Message-Based Inter-Process Communication (IPC)
 
-### Message-Passing
+### 4. Message Passing
+
+<center>
+<img src="./assets/P03L03-003.png" width="550">
+</center>
+
+One mode of inter-process communication (IPC) that operating systems support is called **message passing**. As the name implies, processes create **messages** and the send or receive them.
+
+The operating system is responsible for creating and maintaining the **channel** that will be used to pass messages among processes. This can be thought of as type of buffer, first-in, first-out (FIFO) queue, or other similar data structure.
+
+The operating system also provides some **interface** to the processes to enable them to pass messages via the channel. The processes then **send** (or **write**) messages to a **port**, and on the other end the processes **receive** (or **read**) messages from the associated port. The channel in turn is responsible for **passing** the message from one port to the other.
+
+<center>
+<img src="./assets/P03L03-004.png" width="550">
+</center>
+
+The **operating system kernel** is required to both establish the communication channel as well as to perform every single inter-process communication (IPC) operation. This means that both the **send operation** and the **receive operation** *each* require a system call and a copy of the data.
+  * In the case of the **send operation**, this involves copying from the sender process's address space to the communication channel.
+  * In the case of the **receive operation**, this involves copying from the channel to the recipient process's address space.
+
+This means that a simple **request-response interaction** among two processes requires `4` user/kernel crossing and `4` data-copying operations.
+
+<center>
+<img src="./assets/P03L03-005.png" width="550">
+</center>
+
+Consequently, a key **drawback** of message-passing inter-process communication (IPC) is that there is an associated **overhead** (i.e., the aforementioned user/kernel crossings and data-copying operations).
+
+However, message-passing inter-process communication (IPC) provides the key **benefit** that it is relatively **simple**, inasmuch as the operating system kernel is able to handle all of the necessary operations and synchronization (e.g., channel management, synchronization, ensuring the data is not overwritten or corrupted as the processes send/receive messages, etc.).
+
+### 5. Forms of Message Passing
+
 
 
