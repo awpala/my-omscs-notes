@@ -233,4 +233,132 @@ However, note that a segment is *not* actually **destroyed** once it is detached
 
 ### 10. SysV Shared Memory API
 
+<center>
+<img src="./assets/P03L03-017.png" width="550">
+</center>
+
+System V (SysV) uses the shared-memory API corresponding to the aforementioned high-level operations as in the figure shown above.
+
+`shmget(shmid, size, flag)` is used to **create** or **open** a segment of the appropriate size.
+  * The `flag`s include various options (e.g., permissions).
+  * The unique identifier `shmid` is the **key**, which is not actually created by the operating system, but rather is explicitly passed to the operating system by the application itself.
+    * To **generate** such a unique identifier, the API relies on the operation `ftok(pathname, proj_id)`, which generates a token based on its arguments. Therefore, given the *same* arguments during two (or more) calls to this operation, it will *always* return the *same* key (i.e., its behavior is similar to that of a hash function). In this manner, different processes can agree upon how to obtain a unique key for the shared-memory segment that they will use to mutually communicate.
+
+`shmat(shmid, addr, flags)` **attaches** the shared-memory segments into the virtual address space of the process (i.e., it maps them into the user address space).
+  * The programmer has the option to provide the specific virtual addresses where the segment should be mapped via parameter `addr`, otherwise if `NULL` is passed then the operating system will select and return some arbitrary suitable addresses that are available in the process's address space.
+  * The ***returned*** virtual memory can be interpreted in arbitrary ways. Therefore, it is the programmer's responsibility to appropriately **cast** the return value (i.e., the memory region) to the appropriate type.
+
+`shmdt(shmid)` **detaches** the segment identified by the identifier `shmid`, and consequently this renders invalid the virtual-to-physical memory mappings.
+
+`shmctl(shmid, cmd, buf)` is used to pass certain commands related to the shared-memory-segment management to the operating system. In particular, the command `IPC_RMID` is used to **remove** the segment `shmid`.
+
+## 11. POSIX Shared Memory API
+
+<center>
+<img src="./assets/P03L03-018.png" width="550">
+</center>
+
+There is also the complementary **POSIX API** for shared memory, as in the figure shown above.
+  * **N.B.** On Linux systems, this API has been supported since the v.2.4 kernel.
+  * Although intended to be *the* standard, the POSIX API is not as widely supported as, for instance, the System V API.
+
+The most notable **difference** in the POSIX API is that the POSIX shared-memory standard does *not* use segments, but rather uses **files**. These are not "real" files (i.e., existing on a file system that is otherwise used by the operating system), but rather these files only exist in the so-called **tmpfs** (the temporary file system), which is intended to look and feel like a file system (i.e., the operating system can reuse the same types of mechanisms that are used for file systems), but in essence constitutes a bunch of state that is present in physical and volatile memory.
+
+Therefore, the operating system simply uses the same representation (i.e., via the same corresponding data structures) as is used for representing a file in order to represent the pages in memory corresponding to a shared-memory region. For this reason, there is no longer the need for an otherwise awkward key generation process, but rather **shared-memory segments** can be referenced by the corresponding **file descriptor**; consequently, the operations provided by the API for files are otherwise analogous to those existing for segments.
+
+
+`shm_open()` returns a file descriptor in **tmpfs**, and `shm_close()` closes the file descriptor.
+  * ***N.B.*** While these `shm_...` are used explicitly for shared-memory file operations, in fact the regular file operations `open()` and `close()` (respectively) can also be used for this purpose, as the operating system will understand how to perform the necessary operations accordingly in this manner.
+
+To **attach** or **detach** shared memory, the POSIX API relies on the operations `mmap()` and `unmmap()` (respectively), which perform the mapping/unmapping (respectively) of the virtual-to-physical addresses for the process via the corresponding file descriptor.
+
+To **destroy** a shared-memory segment, there is an explicit operation `shm_unlink()` to perform this operation.
+  * Similarly, `shm_close()` will remove the file descriptor from the address space of the process, but in order to instruct the operating system delete all of the shared-memory-related data structures and to subsequently free that shared-memory segment, `shm_unlink()` must be explicitly called.
+
+***Reference***: [POSIX Shared Memory API](https://man7.org/linux/man-pages/man7/shm_overview.7.html)
+
+## 12. Shared Memory and Synchronization
+
+<center>
+<img src="./assets/P03L03-019.png" width="550">
+</center>
+
+When data is placed in shared memory, it can be accessed ***concurrently*** by *all* processes that have access to that shared-memory region. Therefore, such accesses must be **synchronized** in order to avoid **race conditions**. This is analogous to the manner in which threads are synchronized (i.e., when they share a single address space), however, here this must be done for the **processes** as well. Therefore, it is still necessary to use **synchronization constructs** (e.g., mutexes and condition variables) in order for processes to properly synchronize when accessing shared data.
+
+There are a couple of available **options** for handling this entire process synchronization.
+  1. The exact same mechanisms that are supported by the threading libraries can be used with processes (e.g., two PThreads processes can synchronize amongst each other using corresponding PThreads mutexes and condition variables that have been appropriately set).
+  2. Additionally, the operating system itself supports certain mechanisms for synchronization that are available for inter-process communication (IPC) interactions.
+
+Regardless of the method that is chosen, there must be corresponding mechanisms to **coordinate** the following:
+  * The number of **concurrent accesses** to the shared-memory region (e.g., for mutual exclusion support, as provided by mutexes).
+  * When **data** is available and ready for consumption by the peer processes via appropriate notification or signaling mechanism (e.g., condition variables are a construct that provides this functionality).
+
+## 13. PThreads Synchronization for Inter-Process Communication (IPC)
+
+<center>
+<img src="./assets/P03L03-020.png" width="500">
+</center>
+
+When discussing PThreads previously (cf. P2L3), recall that one of the **attributes** that is used to specify the properties of the mutex (`pthread_mutexattr_t`) or of the condition variable (`pthread_condattr_t`) upon its creation is whether or not that synchronization construct is private to the process or shared among the processes. Correspondingly, the keyword/macro to specify this shared property is `PTHREAD_PROCESS_SHARED`, i.e., when synchronizing shared-memory access among two multi-threaded processes which are synchronized via PThreads, it is possible to use mutexes and condition variables that have been correctly initialized in this manner to be shared processes.
+
+However, an **important note** is that the synchronization variables themselves *also* must be shared.
+  * Recall that in multi-threaded programs, the mutex and/or condition variables must be globally visible to *all* threads to be shared among them; along the same lines, such global sharing is also necessary among communicating processes. Therefore, in order to achieve this, it must be ensured that the data structures for the synchronization constructs (e.g., `pthread_mutexattr_t` and `pthread_condattr_t`) are allocated from the shared-memory region that is visible to both processes.
+
+For example:
+
+```c
+// make shm data structure
+typedef struct {
+  pthread_mutex_t mutex;
+  char *data;
+} shm_data_struct, *shm_data_struct_t;
+
+// create shm segment
+seg = shmget(ftok(arg[0], 120), 1024, IPC_CREATE|IPC_EXCL));
+shm_address = shmat(seg, (void *)0, 0);
+shm_ptr = (shm_data_struct_t)shm_address;
+
+// create and initialize mutex
+pthread_mutexattr_t(&m_attr);
+pthread_mutexattr_set_pshared(&m_attr, PTHREAD_PROCESS_SHARED);
+pthread_mutex_init(&shm_prt.mutex, &m_attr);
+```
+***N.B.*** This example uses the System V API.
+
+In the section denoted "*create shm segment*":
+  * In the operation `shmget()`:
+    * The shared memory identifier is uniquely created via the operation `shmget()`, which uses `arg[0]` from the command line (i.e., the path to the executable) and the integer argument `120`.
+    * The argument `1024` indicates to create a segment of size `1 KB`.
+    * The argument `IPC_CREATE|IPC_EXCL` sets permissions for the segment.
+  * Using the resulting segment identifier `seg` returned from `shmget()`, the operation `shmat()` attaches this segment, which returns the shared memory address that is then stored in `shm_address`.
+    * `shm_address` is the virtual-memory address in this particular instance of the process (i.e., that which is executing in the code snippet shown above), which points to the physically shared memory.
+  * The address `shm_address` is then ***casted*** to point to type `shm_data_struct` (i.e., via corresponding pointer type `shm_data_struct_t`), which is stored in pointer `shm_ptr`.
+  
+The data type `shm_data_struct`is the data structure representing the shared-memory region that is shared among the processes, as defined in the section denoted "*make shm data structure*".
+  * `char *data;` is the actual byte stream corresponding to the data.
+  * `pthread_mutex_t mutex;` is the synchronization variable (i.e., the mutex that will be used among the processes when they are accessing the shared-memory area, which in turn avoids concurrent writes, race conditions, and similar issues).
+
+Therefore, `shm_data_struct` provides an interpretation for what is laid out in the shared-memory region.
+
+Finally, the mutex is created and initialized, as in the section denoted "*create and initialize mutex*".
+  * Before creating the mutex, it must be initialized with the corresponding attributes; this is accomplished via the operation `pthread_mutexattr_t(&m_attr)` with respect to mutex attributes data structure `m_attr` (not explicitly defined in the code snippet for simplicity).
+  * Regarding the mutex attributes, these are set via operation `pthread_mutexattr_set_pshared()`, which provides the keyword macro `PTHREAD_PROCESS_SHARED` as the second argument to indicate that this particular attribute data structure (i.e., `m_attr`) is shared among the processes.
+  * Finally, the mutex itself is initialized via operation `pthread_mutex_init()` via the initialized attributes data structure `m_attr`. Furthermore, observe that the location of the mutex passed to this initialization call (i.e., `shm_prt.mutex`) is not simply an arbitrary mutex in the process address space, but rather it is the particular mutex element of the shared-memory data structure `shm_data_struct`.
+
+The aforementioned set of operations will properly allocate and initialize a mutex that is ***shared*** among the processes. Accordingly, a similar set of operations should also be used to allocate and initialize any condition variables that are intended for shared use among processes.
+
+Once these data structures have been properly created and allocated, they can subsequently be used just as regular mutexes would be in a PThreads multi-threaded process (i.e., there is no functional difference otherwise in their actual usage, given that they are used across processes).
+
+<center>
+<img src="./assets/P03L03-021.png" width="550">
+</center>
+
+To reiterate, the **key point** is to ensure that the synchronization variable is allocated within the ***shared-memory region*** that is shared among the processes.
+
+## 14. Other Inter-Process Communication (IPC) Synchronization Constructs
+
+<center>
+<img src="./assets/P03L03-022.png" width="550">
+</center>
+
 
