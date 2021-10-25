@@ -172,3 +172,25 @@ Consider using inter-process communication (IPC) to communicate between processe
 The next section will discuss trade-offs between these two inter-process communication (IPC) mechanisms.
 
 ## 8. Copy vs. Map
+
+<center>
+<img src="./assets/P03L03-011.png" width="550">
+</center>
+
+Before proceeding with further discussion, there is an important **contrast** to consider regarding message-based vs. shared-memory approaches to inter-process communication (IPC). The end **goal** of both of these approaches is to transfer some data from one address space into the other target address space.
+
+<center>
+<img src="./assets/P03L03-012.png" width="550">
+</center>
+
+In **message passing**, this goal requires that the CPU be involved in the **copying** of data. Accordingly, this requires some number of CPU cycles to copy the data into the channel (via the port) and then from the port into the target address space.
+
+Conversely, in **shared memory**, this goal requires that (at a minimum) there are CPU cycles expended to **map** the physical memory into the appropriate address spaces. Furthermore, the CPU is also used to copy the data into the channel whenever necessary (however, in this case there are no user-to-kernel switches required).
+  * The memory mapping itself is a costly operation, however, once the channel is established once and then subsequently used many times, this results in a **good payoff** (i.e., the setup cost is amortized appropriately).
+  * Furthermore, even for a single use, the memory-mapped approach can still perform quite well. In particular, when it is necessary to move large amounts of data from one address space into another, the CPU time that is required to perform the copy operation can greatly exceed the CPU time required to perform the map operation (i.e., *`t`*`(copy) >> `*`t`*`(map)`).
+    * In fact, Windows systems internally leverage the fact that there exists this difference with respect to the communication mechanisms they support between processes (i.e., if the data to be transferred is smaller than a certain threshold, then the data is copied in/out of a communication channel via a port-like interface, otherwise the data is potentially copied at least *once* to ensure that it is in a page-aligned area and then that area is mapped into the address space of the target process). This mechanism supported by the Windows kernel is called **"Local" Procedure Calls (LPCs)"**.
+
+## 9-10. SysV Shared Memory
+
+### 9. SysV Shared Memory Overview
+
