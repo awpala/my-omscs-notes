@@ -774,6 +774,8 @@ Therefore, this mechanism is called "copy-on-write (COW)" because the copy cost 
 
 ## 22. Failure Management Checkpoint
 
+### Checkpointing
+
 <center>
 <img src="./assets/P03L02-058.png" width="600">
 </center>
@@ -810,3 +812,29 @@ For instance, **debugging** often relies on a technique called **rewind-replay (
   * One way in which migration can be implemented is as though repeated checkpoints are performed in a fast loop until ultimately there is such a dirtied state from the process that something like the **pause-and-copy** approach becomes acceptable (or otherwise unavoidable at that point due to lack of a suitable alternative, inasmuch as the process has dirtied enough pages to warrant stopping the process in order to copy the remaining contents).
 
 ## 23. Checkpointing Quiz and Answers
+
+Choose which of the endings correctly completes the following statement: "*The more frequently you checkpoint, ...*."
+  * the more state you will checkpoint
+  * the higher the overheads of the checkpointing process
+  * the faster you will be able to recover from a fault
+  * all of the above
+    * `CORRECT`
+
+***Explanation***:
+  * "*the more state you will checkpoint*" - This is true, because with more frequent checkpointing, it is more likely this will catch every single one of the references of the write updates to a particular page. Spreading out the checkpoints over time in this manner, consequently it is possible there will be repeated write operations to a particular page that will appear as a "single" dirty page, thereby amortizing the checkpointing cost over multiple writes. With frequent checkpointing, both the amount of state stored per checkpoint and the associated overheads of the process will therefore be higher than if checkpointing less frequently.
+  * *the higher the overheads of the checkpointing process* - This is self-evident; the more frequently you checkpoint, the higher the overhead will be. Furthermore, with frequent checkpoints, it is more likely to capture every single write operation to a particular page; therefore, by spreading out the checkpoints in this manner, it is more probable that a single page will be written multiple times (i.e., dirtied multiple times).
+  * "*the faster you will be able to recover from a fault*" - This is true, because with a frequent checkpoint, you will have a relatively recent checkpoint compared to the point of execution when the fault occurred. Therefore, it will be necessary to replay (i.e., re-execute) the process's execution for a smaller amount of time.
+
+Therefore, there is a **trade-off** between fast recovery from a fault vs. added overhead to perform more frequent checkpointing.
+
+## 29. Lesson Summary
+
+To summarize, this lecture examined virtual and physical memory management mechanisms in operating systems.
+
+It should now be apparent what are the data structures, mechanisms, and hardware-level support that the operating system relies on when it attempts to map the process's address space (which uses virtual memory) onto the underlying physical memory (i.e., **virtual memory** ***abstracts*** a process's view of **physical memory**). This involves:
+  * **pages** and **segments**
+  * address translation
+  * page allocation
+  * page replacement algorithms
+
+The lecture also examined how these memory management mechanisms (which are part of the operating system) can be used by some higher level services (e.g., **allocation**, **replacement** strategies, and **checkpointing**).  
