@@ -122,6 +122,41 @@ The system call to `socket()` itself creates a kernel-level socket buffer. Addit
 
 ## 6. Shared-Memory Inter-Process Communication (IPC)
 
+<center>
+<img src="./assets/P03L03-009.png" width="550">
+</center>
 
+In **shard-memory inter-process communication (IPC)**, processes read and write from/to a **shared memory region**.
 
+The operating system is involved in establishing this **shared-memory channel/buffer** between the processes. 
+  * This means that the operating system will **map** certain physical pages of memory into the virtual address spaces of both processes (e.g., the virtual addresses in `P1` and the virtual addresses in `P2` will map to the *same* physical addresses in main memory).
+  * At the same time, the virtual-address regions corresponding to the shared-memory buffer in the two processes, i.e., they do not have to have the same virtual addresses (e.g., `VA(P1) ≠ VA(P2)` in general).
+  * Furthermore, the physical memory that is backing the shared-memory buffer need not be a contiguous portion of the physical memory.
+
+***N.B.*** All of these features leverage the memory management support that is available in operating systems running on modern hardware.
+
+<center>
+<img src="./assets/P03L03-010.png" width="550">
+</center>
+
+A key **benefit** of this approach is that once the physical memory is mapped into both address spaces, the operating system is effectively "out of the way" (i.e., the system calls are only used in the initial setup phase). Furthermore, data copies are potentially reduced.
+  * Data copies are not entirely eliminated, however, inasmuch as in order for data to be visible to *both* processes, it must be explicitly allocated from the virtual addresses belonging to the shared-memory region; if this is not the case and there is no such visibility, then the data within the *same* address space must be copied in/out of the shared-memory region.
+  * However, in some cases, data copying can be reduced. For instance if `P2` needs to compute the sum of two arguments that were passed to it from `P1` via the shared-memory region, then `P2` can only read these arguments but otherwise does not need to actually copy them into other portions of its address space in order to compute the sum and then pass it back.
+
+However, there are also **drawbacks** with this approach.
+  * Since the shared-memory region can be concurrently accessed by *both* processes, this means that the processes must explicitly synchronize their shared-memory operations (i.e., similarly to what is required for threads operating within a single, shared address space).
+  * Furthermore, it is the responsibility of the developer to determine any communication-protocol-related issues, e.g., how to format messages, how to delimit messages, what is the header format, how the shared-memory buffer is allocated (i.e., when will each process be able to use a portion of the shared-memory buffer for its needs), etc.--thereby adding complexity.
+
+UNIX-based system (e.g., Linux) support two popular shared-memory APIs:
+  1. **System V (SysV) API**, which was originally developed as part of System V.
+  2. **POSIX API**
+
+Additionally, shared-memory-based communication can be established between processes using a **file-based interface**. For example:
+  * **Memory-mapped files** in both address spaces, which uses an API that is analogous to the POSIX shared-memory API.
+  * The Android operating system uses a form of shared-memory inter-process communication (IPC) called **ashmem**.
+    * ***N.B.*** There are a number of differences in the details of how ashmem behaves compared to the System V or POSIX APIs, but it is provided here for reference as another "real world" example.
+
+The remainder of this lecture will focus on briefly describing the UNIX-based shared-memory APIs.
+
+## 7. Inter-Process Communication (IPC) Comparison Quiz and Answers
 
