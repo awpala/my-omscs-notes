@@ -453,17 +453,21 @@ Conversely, if the processes use **many, small segments** (i.e., one for *each* 
 
 ### 19. Design Considerations
 
+#### What Size Segments?
+
 <center>
 <img src="./assets/P03L03-028.png" width="550">
 </center>
-
-#### What Size Segments?
 
 Another design question is: How large should a segment be?
 
 `segment size == data size` works very well if the size of the data is known a priori and is ***static*** (i.e., not changing over time).
 
 #### What if Data Does Not Fit?
+
+<center>
+<img src="./assets/P03L03-029.png" width="550">
+</center>
 
 However, in addition to the fact that the data sizes may not actually be static (i.e., but rather may be ***dynamic***), a **drawback** with this approach is that it **limits** the maximum data size that can be transferred between the processes, because typically an operating system will have a limit on the maximum segment size.
 
