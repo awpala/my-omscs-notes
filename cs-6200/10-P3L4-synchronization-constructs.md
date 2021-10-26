@@ -131,4 +131,35 @@ The operations `sem_wait()` and `sem_post()` take as a parameter the semaphore v
 
 ## 7. Mutex via Semaphore Quiz and Answers
 
+Complete the following code snippet (i.e., the initialization routine for the semaphore, `sem_init()`) so that the semaphore has behavior identical to a mutex used by threads within a process:
+
+<center>
+<img src="./assets/P03L04-009.png" width="300">
+</center>
+
+Answer:
+```c
+#include <semaphore.h>
+// ...
+sem_t m;
+sem_init(&m, 0, 1); // answer
+// ...
+sem_wait(&m);
+  // critical section
+sem_post(&m);
+```
+
+***Explanation***:
+  * The second argument (`0`) indicates that the semaphore is a *non*-process-sharing semaphore.
+  * The third argument (`1`) for the counter makes this a binary semaphore, whose behavior resembles that of a mutex.
+    * When the operation `sem_wait()` is reached, it will decrement this counter and consequently will allow exactly *one* thread at a time to enter the critical section.
+    * Similarly, the operation `sem_post()` will increment the counter, which is the equivalent of a mutex being freed.
+
+***Reference***: [`sem_init()` man page](https://linux.die.net/man/3/sem_init)
+
+***N.B.*** Most operating systems textbooks include some examples on how to implement one synchronization construct with another (e.g., mutexes and/or condition variables via semaphores). Therefore, they can be referenced accordingly for this purpose.
+
+## 8. Reader/Writer Locks
+
+
 
