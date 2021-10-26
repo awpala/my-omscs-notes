@@ -231,3 +231,50 @@ Due to these features, monitors are therefore referred to as a **high-level sync
 
 ## 11. More Synchronization Constructs
 
+<center>
+<img src="./assets/P03L04-014.png" width="550">
+</center>
+
+In addition to the multiple synchronization constructs encountered thus far, there are many other options available as well.
+
+<center>
+<img src="./assets/P03L04-015.png" width="550">
+</center>
+
+Some (e.g., **serializers**) make it easier to define **priorities** while also ***hiding*** the need for explicit signaling and the explicit use of condition variables from the programmer.
+
+Others (e.g., **path expressions**) requires that the programmer specify the **regular expression** that captures the correct synchronization behavior.
+  * As opposed to using locks or other constructs, the programmer would specify something like "*many reads or a single write*," and accordingly the run-time ensures that the operations that access the shared resource are interleaved in such a manner that satisfies the particular regular expression provided.
+
+Another useful construct includes **barriers**, which behave as a "*reverse* of a semaphore" (i.e., if a semaphore allows `n` threads to proceed before it blows, then correspondingly a barrier blocks all threads until `n` threads arrive at this particular point protected by the barrier).
+
+**Rendezvous points** is a synchronization construct that waits for *multiple* threads to meet at that particular point of the execution.
+
+For ***scalability*** and ***efficiency***, there are efforts to achieve concurrency without explicitly locking and waiting; these approaches all fall under a category referred to as **optimistic wait-free synchronization**, which are "optimistic" in the sense that they "bet" on the fact that there will *not* be a conflict due to concurrent writes, and therefore it is safe to allow reads to proceed concurrently.
+  * An example falling into this category is the so-called **read-copy update (RCU) log**, which is part of the Linux kernel.
+
+<center>
+<img src="./assets/P03L04-016.png" width="550">
+</center>
+
+One **essential commonality** among all of these synchronization constructs is that at the lowest level, they *all* require some **support** from the underlying **hardware** in order to make **atomic updates** to the shared-memory region; this is the only manner in which they can actually ***guarantee*** that the **lock** is properly required, and that the **state change** is performed in a ***safe*** manner (e.g., without leading to race conditions, and such that all threads in the system are in agreement as to what exactly is the current state of the synchronization construct).
+
+The remainder of this lesson will discuss how synchronization constructs can be built by directly using the hardware support that is available from the underlying platform, specifically focusing on **spinlocks** as the simplest such construct to provide a representative case study.
+
+## 12. Synchronization Building Block: Spinlock
+
+### Spinlocks Revisited
+
+<center>
+<img src="./assets/P03L04-017.png" width="550">
+</center>
+
+Recall from earlier in this lecture that **spinlocks** are the most basic synchronization construct/primitive, and that they are also used in creating some more-complex synchronization constructs. For this reason, it is sensible to focus the remainder of this lecture on understanding ***how*** exactly spinlocks can be **implemented**, and ***what*** types of opportunities are available for their **efficient imlementation**.
+
+To address these matters, the lecture will follow the paper "*The Performance of Spin Lock Alternatives for Shared Memory Multiprocessors*" (1990) by Thomas E. Anderson, which discusses the following pertinent topics:
+  * Alternative implementations of spinlocks
+    * This is also relevant to other synchronization constructs, which use spinlocks internally.
+  * Generalization of techniques using atomic instructions to other constructs used in other situations.
+
+## 13. Spinlock Quiz 1
+
