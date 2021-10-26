@@ -207,3 +207,27 @@ However, certain aspects of the behavior of the reader/writer locks are **differ
       * For instance, it can block a reader such that a thread that otherwise would have been allowed to proceed is blocked if there is already a writer having higher priority that is waiting on the lock. In this case, the writer is waiting because there are other threads that already have read access to the lock; therefore, if there is a **coupling** between the scheduling policy and the synchronization mechanisms, it is possible that a newly-arriving reader will be blocked (i.e., it will not be allowed to join the other readers in the critical section because the waiting writer has higher priority).
 
 ## 10. Monitors
+
+<center>
+<img src="./assets/P03L04-013.png" width="550">
+</center>
+
+One of the **issues** with the synchronization constructs discussed thus far is that they require developers to pay attention to the use of the pair-wise operations `lock()`/`unlock()`, `wait()`, `signal()`, and others. Accordingly, this is one of the important **causes** of errors.
+
+Conversely, **monitors** are higher-level synchronization constructs that assist with this issue. In an abstract manner, monitors explicitly specify...
+  * What is the **shared resource** being protected.
+  * What are all of the possible **entry procedures** to the shared resource (e.g., differentiating between readers and writers).
+  * What are possible **condition variables** that potentially could be used to wake up different types of waiting threads.
+
+When performing certain types of **access** with monitors...
+  * On **entry** of the thread into the monitor (i.e., when the thread acquires the shared resource), all of the necessary locking and checking operations will occur when the thread is entering the monitor.
+  * On **exit** of the thread from the monitor (i.e., when the thread is finished with the shared resource and consequently exits), all of the necessary unlocking, checking, and signaling (e.g., to the condition variable(s)) operations occurs *automatically*, and is therefore hidden from the programmer.
+
+Due to these features, monitors are therefore referred to as a **high-level synchronization construct**.
+
+***N.B.*** Historically, monitors were included in the MESA language run-time developed by XEROX PARC. Today, Java supports monitors as well. Every single object in Java has an **internal lock**, and methods that are declared to be **synchronized methods** are correspondingly entry points into the monitor. When compiled, the resulting code includes all of the appropriate locking and checking; the only ***caveat*** is that the `notify()` operation must be called explicitly.
+
+***N.B.*** "Monitors" also refers to the **programming style** wherein mutexes and condition variables are used to describe the entry and exit codes from the critical section, as was described in the lecture on threads and concurrency with the corresponding "*enter critical section*" and "*exit critical section*" code regions (cf. P2L2).
+
+## 11. More Synchronization Constructs
+
