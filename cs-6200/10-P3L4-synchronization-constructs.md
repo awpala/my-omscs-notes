@@ -276,5 +276,45 @@ To address these matters, the lecture will follow the paper "*The Performance of
     * This is also relevant to other synchronization constructs, which use spinlocks internally.
   * Generalization of techniques using atomic instructions to other constructs used in other situations.
 
-## 13. Spinlock Quiz 1
+## 13. Spinlock Quiz 1 and Answers
 
+<center>
+<img src="./assets/P03L04-018.png" width="350">
+</center>
+
+Consider the following pseudocode for a possible spinlock implementation:
+```c
+spinlock_init(lock):
+  lock = free; // 0 = free, 1 = busy
+
+spinlock_lock(lock):
+  spin:
+    if (lock == free) { lock = busy; }
+    else { goto spin; }
+
+spinlock_unlock(lock):
+  lock = free;
+```
+
+The corresponding interaction with the spinlock is as follows:
+  1. The **spinlock** `lock` must be initialized to `free` (i.e., `0`).
+  2. To ***lock*** the spinlock `lock`, check if `lock` is `free`...
+    * If `lock` *is* `free`, then we can change its state (i.e., acquire `lock` and change its state to `busy`).
+    * Otherwise if `lock` is *not* `free` (i.e, is `busy`), then we must keep ***spinning*** (i.e., perform the check designated by `spin: ...` repeatedly).
+  3. Finally, we can release the spinlock `lock` by setting it to `free`.
+
+Based on this information, does this spinlock implementation correctly guarantee **mutual exclusion**? And if so, is it **efficient**? (Select one choice per category.)
+  * Mutual exclusion:
+    * Is guaranteed
+    * Is not guaranteed
+      * `CORRECT`
+  * Efficiency:
+    * Is efficient
+    * Is not efficient
+      * `CORRECT`
+
+***Explanation***:
+  * With respect to ***efficiency***, regarding the `goto` statement, as long as `lock` is not `free`, the cycle/check is repeatedly executed, which wastes CPU resources. Therefore, from an efficiency standpoint, this is *not* an efficient implementation.
+  * Furthermore, with respect to ***correctness*** (i.e., ***mutual exclusion***), this implementation is also *incorrect*. In an environment where there are multiple threads (or multiple processes) executing concurrently, it is possible that more than one thread (or process) will simultaneously observe that `lock` is `free`, and therefore they will proceed to perform the operation `lock = busy;` at the same time; however, only *one* of these threads will successfully execute this operation, while the others will simply overwrite it and then proceed thinking that it has correctly acquired the lock. Consequently, *all* processes (or *all* threads) can end up in the critical section, leading to incorrect program behavior.
+
+## 14. Spinlock Quiz 2 and Answers
