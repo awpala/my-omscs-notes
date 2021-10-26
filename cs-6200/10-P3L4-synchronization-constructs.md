@@ -296,12 +296,12 @@ spinlock_unlock(lock):
   lock = free;
 ```
 
-The corresponding interaction with the spinlock is as follows:
-  1. The **spinlock** `lock` must be initialized to `free` (i.e., `0`).
-  2. To ***lock*** the spinlock `lock`, check if `lock` is `free`...
+The corresponding interaction with the **spinlock** `lock` is described as follows:
+  1. `lock` must be initialized to `free` (i.e., `0`).
+  2. To ***lock*** `lock`, check if `lock` is `free`...
     * If `lock` *is* `free`, then we can change its state (i.e., acquire `lock` and change its state to `busy`).
     * Otherwise if `lock` is *not* `free` (i.e, is `busy`), then we must keep ***spinning*** (i.e., perform the check designated by `spin: ...` repeatedly).
-  3. Finally, we can release the spinlock `lock` by setting it to `free`.
+  3. Finally, we can release `lock` by setting it to `free`.
 
 Based on this information, does this spinlock implementation correctly guarantee **mutual exclusion**? And if so, is it **efficient**? (Select one choice per category.)
   * Mutual exclusion:
@@ -318,3 +318,44 @@ Based on this information, does this spinlock implementation correctly guarantee
   * Furthermore, with respect to ***correctness*** (i.e., ***mutual exclusion***), this implementation is also *incorrect*. In an environment where there are multiple threads (or multiple processes) executing concurrently, it is possible that more than one thread (or process) will simultaneously observe that `lock` is `free`, and therefore they will proceed to perform the operation `lock = busy;` at the same time; however, only *one* of these threads will successfully execute this operation, while the others will simply overwrite it and then proceed thinking that it has correctly acquired the lock. Consequently, *all* processes (or *all* threads) can end up in the critical section, leading to incorrect program behavior.
 
 ## 14. Spinlock Quiz 2 and Answers
+
+<center>
+<img src="./assets/P03L04-019.png" width="350">
+</center>
+
+The following is a variation on the implementation from Quiz 1 which avoids the `goto` statement:
+```c
+spinlock_init(lock):
+  lock = free; // 0 = free, 1 = busy
+
+spinlock_lock(lock):
+  while (lock == busy); // spin
+  lock = busy;
+
+spinlock_unlock(lock):
+  lock = free;
+```
+
+The corresponding interaction with the **spinlock** `lock` is described as follows:
+  1. `lock` must be initialized to `free` (i.e., `0`).
+  2. As long as `lock` is `busy`, the thread continues to ***spin*** via the `while` loop.
+      * At some point, when `lock` is set to `free`, the thread will exit from this `while` loop and will set `lock` to `busy` (i.e., to acquire `lock`).
+  3. Finally, we can release `lock` by setting it to `free`.
+
+Based on this information, does this spinlock implementation correctly guarantee **mutual exclusion**? And if so, is it **efficient**? (Select one choice per category.)
+  * Mutual exclusion:
+    * Is guaranteed
+    * Is not guaranteed
+      * `CORRECT`
+  * Efficiency:
+    * Is efficient
+    * Is not efficient
+      * `CORRECT`
+
+***Explanation***:
+  * With respect to ***efficiency***, since there is continuous looping/spinning (via the `while` loop) as long as `lock` is `busy`, this implementation is *inefficient*.
+  * Furthermore, with respect to ***correctness*** (i.e., ***mutual exclusion***), this implementation is also *incorrect*. Even though the `while` check has been added, as before, multiple threads (or processes) will observe that `lock` is `free` once it becomes `free` (i.e., exits the `while` loop), and consequently these threads (or processes) will attempt to set `lock` to `busy`; if the threads (or processes) are allowed to execute concurrently, there is no way to guarantee purely via the software that there will not be some interleaving of exactly how these threads (or processes) perform these checking and setting operations, and that a race condition will not occur here. Therefore, in general the program will behave incorrectly.
+
+In summary, while multiple purely-software-based implementations of a spinlock may be devised, ultimately they all result in the same **conclusion**: Some type of **hardware support** is strictly necessary to ensure that these checking and setting operations on the spinlock occur **atomically** via the **hardware support**, as discussed next.
+
+## 15. Need for Hardware Support
