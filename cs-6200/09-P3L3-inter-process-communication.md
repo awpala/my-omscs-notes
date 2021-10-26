@@ -414,4 +414,62 @@ The utility `ipcrm` deletes an inter-process communication (IPC) facility/constr
 
 ***N.B.*** Review the man pages for these commands for a full set of options/flags.
 
-## 17. Shared Memory Design Considerations
+## 17-19. Shared Memory Design Considerations
+
+### 17. Introduction
+
+<center>
+<img src="./assets/P03L03-024.png" width="500">
+</center>
+
+When using shared memory, the operating system generally does *not* restrict how the memory will be used. However, the choice of the specific APIs and/or mechanisms that is used for synchronization are not the only decisions to consider.
+
+Recall that the operating system provides the shared-memory region, but otherwise is "out of the way." Subsequently, all of the data passing and synchronization protocols are up to the programmer to select, implement, and use.
+
+The upcoming sections will mention a few things to consider to assist with the design process.
+
+### 18. How Many Segments?
+
+<center>
+<img src="./assets/P03L03-025.png" width="500">
+</center>
+
+To make things concrete, consider two multi-threaded processes, `P1` and `P2`, in which the threads must communicate via shared memory.
+
+First, consider how many segments are required for the processes to communicate.
+
+<center>
+<img src="./assets/P03L03-026.png" width="550">
+</center>
+
+If the processes use **one, large segment**, this will require to implement some type of **manager** that will allocate and free this **shared-memory segment** for the respective threads of the two processes.
+
+<center>
+<img src="./assets/P03L03-027.png" width="550">
+</center>
+
+Conversely, if the processes use **many, small segments** (i.e., one for *each* pairwise communication), it is generally a good idea to pre-allocate a **pool of segments** (i.e., to prevent added overhead/slowdown associated with creation of each such individual communication segment/sub-channel). In this case, it is necessary to implement a method (e.g., a queue of segment identifiers) for how the threads will select among the available segments to use for their respective inter-process communication (IPC) actions.
+  * The tricky part with this approach is that if using a **queue** of segment identifiers, this means that a thread does not know a priori which particular segment it is going to use for a communication with a peer thread in the other process. If this is important for the particular application being developed, consider communicating the segment identifier from one process to another via some other type of communication mechanism (e.g., a message queue).
+
+### 19. Design Considerations
+
+<center>
+<img src="./assets/P03L03-028.png" width="550">
+</center>
+
+#### What Size Segments?
+
+Another design question is: How large should a segment be?
+
+`segment size == data size` works very well if the size of the data is known a priori and is ***static*** (i.e., not changing over time).
+
+#### What if Data Does Not Fit?
+
+However, in addition to the fact that the data sizes may not actually be static (i.e., but rather may be ***dynamic***), a **drawback** with this approach is that it **limits** the maximum data size that can be transferred between the processes, because typically an operating system will have a limit on the maximum segment size.
+
+Therefore, in order to support potentially arbitrarily-sized messages, where `segment size < message size` (or perhaps even `segment size << message size`), one option is to transfer the data in **rounds**. With this approach, a **portion** of the data gets written into the segment by the sending process (e.g., `P1`), and then once the receiving process (e.g., `P2`) receives it, the latter is ready to move onto the next round for that data item. However, in this case, the programmer must include a **protocol** to track the progress of the data movement through the rounds; typically, this involves **casting** the shared-memory region as a **data structure** having the following components:
+  * The actual data buffer
+  * Some synchronization construct(s)
+  * Additional flags to track the progress
+
+## 20. Lesson Summary
