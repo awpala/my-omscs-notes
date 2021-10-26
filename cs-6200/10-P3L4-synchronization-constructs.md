@@ -66,7 +66,43 @@ In some ways, spinlocks are similar to mutexes, e.g.,:
 
 However, a key **difference** between a spinlock and mutex is that when the lock is busy, the thread that is suspended in its execution (i.e., suspended at `spinlock_lock(s);`) is *not* blocked (i.e., as in the case of mutexes), but rather it is **spinning** (i.e., it is running on the CPU and repeatedly checking to see whether the lock has been freed, burning CPU cycles in this manner until the lock becomes free or until the thread becomes preempted for some reason [e.g., its timeslice has expired, a higher-priority thread has become runnable, etc.]). Conversely, with mutexes, the thread would have relinquished the CPU and allowed another thread to run.
 
-Because of their relative simplicity, spinlocks are a **basic synhcronization primitive**, which in turn can be used to implement more-complex, more-sophisticated synchronization constructs. Therefore, because they are a basic construct, spinlocks will be revisited later in this lecture; accordingly, the next sections will discuss different **implementation strategies** for spinlocks.
+Because of their relative simplicity, spinlocks are a **basic synhcronization primitive**, which in turn can be used to implement more-complex, more-sophisticated synchronization constructs. Therefore, because they are a basic construct, spinlocks will be revisited later in this lecture to discuss different **implementation strategies** for spinlocks.
 
 ## 5. Semaphores
+
+<center>
+<img src="./assets/P03L04-005.png" width="400">
+</center>
+
+The next synchronization construct to discuss is the **semaphore**. Semaphores are common synchronization constructs that have been part of operating system kernels for a while.
+
+As a first approximation, a semaphore acts like a traffic signal, i.e., it either:
+  * Allows threads to ***go***.
+  * Or ***stops***/***blocks*** threads from proceeding any further.
+
+Therefore, a semaphore is somewhat similar to what was discussed regarding a mutex (which either allows the thread to obtain the lock and proceed with the critical section, or the thread is blocked and must wait for the mutex to become free), however, a semaphore is ***more general*** than the behavior that can be achieved with a mutex.
+
+<center>
+<img src="./assets/P03L04-006.png" width="550">
+</center>
+
+More formally, a semaphore is **represented** by a positive integer value.
+  * On **initialization**, a semaphore is assigned some **maximum value** (a positive integer).
+  * Threads arriving at the semaphore will **try** the semaphore.
+    * If the value of the semaphore is ***non-zero***, then its value is ***decremented*** and the thread will **proceed**.
+    * If the value is ***zero***, then the thread must **wait**.
+    * Therefore, the number of threads that are allowed to proceed equals the maximum value that was used to initialize the semaphore.
+  * On **exit**, threads leaving the critical section will **post** (i.e., signal) to the semaphore, causing the semaphore's counter to ***increment***.
+
+Therefore, as a synchronization construct, one of the key **benefits** of a semaphore is that it allows to express **count-based synchronization requirements** (e.g., `5` producers may be able to produce at the same time, via initialization of the semaphore to the maximum value of `5`).
+
+Furthermore, if a semaphore is initialized with the value `1`, then its behavior is equivalent to that of a mutex; such a semaphore is called a **binary semaphore**. Accordingly, for a binary semaphor, the **post** operation is equivalent to unlocking of a mutex.
+
+<center>
+<img src="./assets/P03L04-007.png" width="550">
+</center>
+
+As a historic aside, semaphores were originally designed by **Edsger W. Dijkstra** (1930-2002), a Dutch computer scientist and Turing award recipient. In Dijkstra's original model, the semaphore operations wait and post were referred to as **P** (*proberen*, Dutch for "*to test out / to try*") and **V (verhogen)** (*verhogen*, Dutch for "*to increase*") (respectively). These operations (i.e., `P` and `V`) are still commonly retained in descriptions and literature regarding semaphores, based on Dijkstra's pioneering work in this area.
+
+## 6. POSIX Semaphores
 
