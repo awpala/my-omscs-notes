@@ -106,3 +106,29 @@ As a historic aside, semaphores were originally designed by **Edsger W. Dijkstra
 
 ## 6. POSIX Semaphores
 
+<center>
+<img src="./assets/P03L04-008.png" width="450">
+</center>
+
+A brief list of some of the semaphore-related operations that are part of the POSIX API are as follows:
+```c
+#include <semaphore.h>
+
+sem_t sem;
+sem_init(sem_t *sem, int pshared, int count);
+sem_wait(sem_t *sem);
+sem_post(sem_t *sem);
+```
+
+The header `semaphore.h` defines the type `sem_t` for the semaphore.
+
+`sem_init()` is used to initialize the semaphore (i.e., of type `sem_t`). Regarding the parameters:
+  * `sem` is a pointer to the semaphore.
+  * `count` is the initialization count.
+  * `pshared` is a flag indicating whether the semaphore is shared by threads within a single process, or across processes.
+
+The operations `sem_wait()` and `sem_post()` take as a parameter the semaphore variable that was previously initialized (e.g., `sem`).
+
+## 7. Mutex via Semaphore Quiz and Answers
+
+
