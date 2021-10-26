@@ -159,7 +159,51 @@ sem_post(&m);
 
 ***N.B.*** Most operating systems textbooks include some examples on how to implement one synchronization construct with another (e.g., mutexes and/or condition variables via semaphores). Therefore, they can be referenced accordingly for this purpose.
 
-## 8. Reader/Writer Locks
+## 8-9. Reader/Writer Locks
 
+### 8. Introduction
 
+<center>
+<img src="./assets/P03L04-010.png" width="550">
+</center>
 
+When specifying synchronization requirements, it is sometimes useful to distinguish among the different **types** of **accesses** that a **resource** can be accessed with.
+
+For instance, it is commonly desirable to distinguish between those accesses that do *not* modify a shared resource (i.e, only **read**) vs. those accesses that *do* modify a shared resource (i.e., always **write**).
+  * For **read** accesses, the resource can be ***shared*** concurrently.
+  * For **write** accesses, this requires ***exclusive*** access of the resource.
+
+Therefore, operating systems and language run-times support so-called **reader/writer locks**. Reader/writer locks can be defined similarly to a mutex, however, it is additionally necessary to specify the type of access (i.e., read vs. write) to be performed, and then the lock will behave accordingly.
+
+### 9. Using Reader/Writer Locks
+
+<center>
+<img src="./assets/P03L04-011.png" width="500">
+</center>
+
+In Linux, a reader/write lock can be **defined** using the corresponding type `rwlock_t`, as provided by the header `linux/spinlock.h`.
+
+To **access** a shared resource using this reader/write lock, use the appropriate interface provided by the operations `read_lock()` or `write_lock()`.
+
+The reader/writer API also provides the corresponding unlock counterparts, `read_unlock()` and `write_unlock()` (respectively).
+
+***N.B.*** A few other operations are supported on the reader/write lock type `rwlock_t`, however, the shown above are the primary ones. To explore more such operations, consult the [source code](https://elixir.bootlin.com/linux/latest/source/include/linux/rwlock.h) for the header file `linux/spinlock.h` accordingly.
+
+<center>
+<img src="./assets/P03L04-012.png" width="500">
+</center>
+
+Reader/writer locks are supported in many operating systems and language run-times (e.g., Windows (.NET), Java, POSIX, etc.). In some of these contexts, the reader/writer operations are referred to as "**shared/exclusive locks**."
+
+However, certain aspects of the behavior of the reader/writer locks are **different** with respect to their **semantics**.
+  * It may be sensible to permit a ***recursive*** `read_lock()` operation to be invoked, but then it can differ across implementations with respect to what exactly occurs when calling the complementary operation `read_unlock()`.
+     * In some implementations, a single `read_lock()`/`read_unlock()` pair may unlock *every* single one of the `read_lock()` operations that have been recursively invoked from within the same thread.
+     * In other implementations, a *separate* `read_unlock()` operation may be required for every single `read_lock()` operation.
+  * With respect to the treatment of **priorities**...
+    * Handling the **upgrade**/**downgrade** of a priority.
+      * In some implementations, a reader (i.e., the owner of a shared lock) may be given a priority to **upgrade** the lock (e.g., conversion from a reader lock to a writer lock), as compared to a newly arriving request for a write/exclusive lock.
+      * In other implementations, the owner of a reader lock first releases the lock and then subsequently attempts to re-acquire the lock with write-access permissions, contending with any other thread that is attempting to perform the same operation at that time.
+    * Interaction between the **state** of the lock, the priority of the thread, and the **scheduling policy** in the overall system.
+      * For instance, it can block a reader such that a thread that otherwise would have been allowed to proceed is blocked if there is already a writer having higher priority that is waiting on the lock. In this case, the writer is waiting because there are other threads that already have read access to the lock; therefore, if there is a **coupling** between the scheduling policy and the synchronization mechanisms, it is possible that a newly-arriving reader will be blocked (i.e., it will not be allowed to join the other readers in the critical section because the waiting writer has higher priority).
+
+## 10. Monitors
