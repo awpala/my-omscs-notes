@@ -473,3 +473,9 @@ Therefore, in order to support potentially arbitrarily-sized messages, where `se
   * Additional flags to track the progress
 
 ## 20. Lesson Summary
+
+This lecture discussed **inter-process communication (IPC)**, including several **mechanisms** that are common in operating systems today (e.g., **pipes**, **messages**/ports, and **shared memory**).
+
+Additionally, this lecture described the use of **shared memory** as an inter-process communication (IPC) mechanism, and contrasted this with **message-based** IPC mechanisms.
+
+This lecture provides sufficient information to incorporate inter-process communication (IPC) mechanisms in projects.
