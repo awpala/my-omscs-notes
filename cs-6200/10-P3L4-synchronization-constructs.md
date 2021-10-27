@@ -450,3 +450,44 @@ When CPUs perform a **write** operation, several things can happen:
 
 ## 18. Cache Coherence
 
+<center>
+<img src="./assets/P03L04-025.png" width="550">
+</center>
+
+One **challenge** to consider is: What happens when multiple CPUs reference the *same* data (e.g., `x`, as in the figure shown above)?
+  * The data appears in multiple caches.
+  * Furthermore, with multiple memory modules, the data is present in *one* of the memory modules, but is referenced by *both* CPUs (and correspondingly is also referenced in their respective caches).
+
+In some architectures, this issue must be resolved purely with software; otherwise, the caches will be **non-coherent**.
+
+<center>
+<img src="./assets/P03L04-026.png" width="600">
+</center>
+
+For instance, if one CPU makes an update (e.g., `x` is updated to `3`), then the hardware does nothing to account for the fact that the value of the data in the cache of the other CPU is different (e.g., `x` is `4` in the other CPU); rather, this discrepancy must be handled by the software. Such architectures/platforms are called **non-cache-coherent (NCC)**.
+
+Conversely, on other platforms, the hardware itself handles all of the necessary steps to ensure that the CPUs' caches are coherent (i.e., contain the same data, even after one CPU makes an update to the data). Accordingly, these architectures/platforms are called **cache-coherent (CC)**.
+
+<center>
+<img src="./assets/P03L04-027.png" width="600">
+</center>
+
+The basic **mechanisms** that are used in cache coherence are called **write-invalidate (WI)** and **write-update (WU)**. Consider what happens with each of these mechanisms when a certain value is present in all of the caches (e.g., `x` in the figure shown above).
+
+<center>
+<img src="./assets/P03L04-028.png" width="600">
+</center>
+
+In the **write-invalidate (WI)** case, if one CPU changes the data value, then the hardware ensures that if any other cache contains that same data-value reference then that reference will be **invalidated**. Subsequent accesses to this invalidated reference(s) via the other CPU(s) result in a **cache miss**, and will consequently push the reference over to memory (in which case the reference is updated via another method, e.g., `write-through` or `write-back`).
+
+In the **write-update (WU) case**, once a CPU changes the data value, then the hardware ensures that if any other cache contains that data-value reference is correspondingly **updated** as well. Subsequent accesses to this reference(s) via the other CPU(s) result in a **cache hit**, thereby returning the correctly updated reference.
+
+The **trade-offs** with these approaches are as follows:
+  * With **write-invalidate (WI)**, the key **benefit** is that there is a lower bandwidth requirement imposed on the system's shared interconnect.
+    * Since it is not necessary to send the *full value* `x`, but rather just its *address* in order to be invalidated in the other caches.
+    * Furthermore, once the cache line is invalidated, future notifications to the same (originally changed reference's) location will not result in subsequent invalidations on the other caches. Therefore, since the data is no longer required on any of the other CPUs in the immediate future, it is possible to **amortize** the cost of the "coherence traffic" over multiple reference-value changes (e.g., `x` can change to `x'` multiple times on the first CPU before it is needed on another CPU, but `x` is only invalidated *once* ).
+  * With **write-update (WU)** architectures, the key **benefit** is that the data is available on the other CPUs that must access it immediately upon update; there is no additional cost incurred (e.g., another memory access) in order to retrieve the latest data value.
+
+***N.B.*** As a programmer, there is effectively *no* choice whether to use write-invalidate (WI) vs. write-update (WU), but rather this will be strictly ***determined by the hardware*** (i.e., this is a property of the hardware architecture and its correspondingly implemented policy).
+
+## 19. Cache Coherence and Atomics
