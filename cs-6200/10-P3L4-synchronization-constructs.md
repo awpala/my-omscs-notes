@@ -409,4 +409,44 @@ For these reasons, software such as **synchronization constructs** that are buil
 
 Anderson's paper presents several alternatives for implementing spinlocks using the atomic instructions provided by the available hardware, which will be discussed in the remainder of this lecture.
 
-## 17. Shared-Memory Multiprocessors
+## 17. Shared-Memory Multi-Processors
+
+Before discussing the alternative spinlock implementations presented in Anderson's paper, consider a refresher on multi-processor systems and their cache-coherence mechanisms; this is necessary in order to understand the design trade-offs and the performance trends discussed in the paper.
+
+### Introduction
+
+<center>
+<img src="./assets/P03L04-023.png" width="550">
+</center>
+
+A **multi-processor system** consists of multiple CPUs (i.e., more than one) and memory that is mutually accessible by all of the CPUs. The **shared memory** can be either a *single* (physical) memory component that is equidistant from all of the CPUs, or there can be multiple memory components.
+
+Regardless of the number of (physical) memory components, they are somehow **interconnected** to the CPUs, e.g.,:
+  * Via an **interconnect-based (i/c-based)** connection (the most common configuration in modern systems).
+  * Via a **bus-based** connection (which was more common in the past).
+
+***N.B.*** In the figure shown above, the bus-based connection shows a single memory module, however, the bus-based configuration can be used with multiple memory modules, and similarly an interconnect-based connection can be used with a single memory module.
+
+A key **difference** between the bus-based and interconnect-based connections is that in interconnect-based connections, there can be *multiple* memory references in flight (i.e., where one memory reference is applied to one memory module, and another memory reference is applied to another memory module), whereas in a bus-based connection only *one* shared-memory reference can be in flight at a given time (i.e., regardless of whether the memory reference is addressing a single memory module or if it is spread out across multiple memory modules, and therefore in a bus-based connection, the **bus** is shared across all of the memory modules).
+
+Because of this **property** whereby the memory is accessible to *all* of the CPUs, these systems are called **Shared Memory Multi-Processors**. Other terms used to refer to shared-memory multi-processors include **symmetric multi-processors** and **SMPs**.
+
+### Shared Memory Multi-Processors and Caches
+
+<center>
+<img src="./assets/P03L04-024.png" width="550">
+</center>
+
+Additionally, each CPU in such a shared-memory multi-processor system can have a **cache**. Access to the cache data is much faster, therefore caches are useful for hiding memory latency.
+
+Furthermore, the issue of memory latency is amplified in shared-memory systems inasmuch as there is **contention** for the shared-memory module. Due to this contention, certain memory references must be delayed, which adds even more to the memory latency, i.e., it is as if the memory were (temporally) "further away" from the CPU due to this contention effect.
+
+Therefore, when data is present in the cache, the CPU reads the data from the cache (i.e., rather than from memory), which in turn has a positive impact on performance.
+
+When CPUs perform a **write** operation, several things can happen:
+  * **no-write** - A CPU write operation to the cache may not be permissible in the first place, and therefore will be rerouted directly to memory, and any cached copy of that particular memory location will be **invalidated**.
+  * **write-through** - A CPU write operation may be applied to *both* the cached location *and* directly to the memory.
+  * **write-back** - On some architectures, the CPU write operation can be applied to the cache, but then the actual update to the appropriate memory location can be *delayed* (i.e., applied later). For example, when a particular cache line is evicted.
+
+## 18. Cache Coherence
+
