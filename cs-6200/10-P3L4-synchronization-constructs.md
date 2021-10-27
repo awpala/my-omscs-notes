@@ -359,3 +359,54 @@ Based on this information, does this spinlock implementation correctly guarantee
 In summary, while multiple purely-software-based implementations of a spinlock may be devised, ultimately they all result in the same **conclusion**: Some type of **hardware support** is strictly necessary to ensure that these checking and setting operations on the spinlock occur **atomically** via the **hardware support**, as discussed next.
 
 ## 15. Need for Hardware Support
+
+<center>
+<img src="./assets/P03L04-020.png" width="500">
+</center>
+
+Returning to the operation `spinlock_lock()` from the previous section (Quiz 2), it is necessary to check and to set the value of `lock` **atomically** (i.e., indivisibly) so that it can be guaranteed that only *one* thread (or process) at a time can successfully `lock`.
+
+The **problem** with the implementation in the figure shown above is that it takes multiple cycles to perform these checking and setting operations, and therefore during these multiple cycles threads (or processes) can be interleaved in arbitrary ways. Furthermore, if the threads (or processes) are running on multiple processors, their execution can completely overlap temporally.
+
+Therefore, to achieve the desired behavior, it is necessary to rely on **hardware-supported atomic instructions**.
+
+## 16. Atomic Instructions
+
+<center>
+<img src="./assets/P03L04-021.png" width="550">
+</center>
+
+Each type of hardware or hardware architecture supports a number of **atomic instructions**, which are typically ***hardware-specific*** (i.e., different instructions may be supported on different hardware platforms, and correspondingly not every platform must support every single instruction). Examples include:
+  * `test_and_set()`
+  * `read_and_increment()`
+  * `compare_and_swap()`
+
+As the names of these example suggest, each such atomic performs some **multi-step, multi-cycle operation**. However, because they are ***atomic*** instructions, the hardware provides the following **guarantees**:
+  * **atomicity** - The operation occur as full, discrete events (i.e., not partially/incompletely).
+  * **mutual exclusion** - The operation occurs such that only *one* instruction is permitted to perform the operation at a time.
+  * **queueing** - All concurrently instructions are queued *except for one*, with the others waiting pending their own turn.
+
+Therefore, atomic instructions specify an **operation** which effectively constitutes the **critical section**, which in turn is assisted by **hardware-supported synchronization mechanisms** for that operation.
+
+<center>
+<img src="./assets/P03L04-022.png" width="350">
+</center>
+
+Returning to the previous spinlock example, using the first atomic operation `test_and_set()`, the spinlock implementation can be modified as in the figure shown above. Here, `test_and_set(lock)` ***automatically*** returns (i.e., ***tests***) the original value and ***sets*** the new value to `1` (i.e., `busy`).
+
+Furthermore, when there are multiple threads contending for `lock` (i.e., via their respective attempts to perform the operation `spinlock_lock()`), only *one* must successfully ***acquire*** the lock.
+  * For the very first thread that arrives and executes the operation `test_and_set()`, this operation will return the value `0` (i.e., `free`), because the original value of `lock` is `0` post-initialization. Therefore, this thread exits the `while` loop, and consequently this thread is the *only* thread that acquires `lock` and then proceeds with execution.
+  * Conversely, all of the remaining threads that attempt the operation `test_and_set()` receive the return value of `1` (i.e., `busy`), because the first thread has already set `lock` to `1`. Therefore, these remaining threads continue to ***spin*** in the `while` loop.
+    * Note that during this time, these threads repeatedly set the value of `lock` to `1` (i.e., via the `while` loop), however, this is *not* problematic. Since the first thread has already set `lock` to `1` when it acquired it, consequently these other threads are effectively unchanging since `lock` is indeed locked already.
+
+Which specific atomic instructions are available on a given hardware platform varies from hardware to hardware.
+  * Some operations (e.g., `test_and_set()`) are fairly prevalent, while others (e.g., `read_and_increment()`) may not be available on all platforms.
+  * In fact, there may even be multiple variations/versions of this (e.g., in some cases, there may be an available atomic operation that atomically increments but does not necessarily return the old value; in other cases, there may be atomic operations that support `read_and_decrement()` as opposed to `read_and_increment()`; etc.).
+
+Additionally, there may be differences in **efficiencies** with which different atomic operations execute on different architectures.
+
+For these reasons, software such as **synchronization constructs** that are built using certain atomic instructions must be **ported** across hardware platforms accordingly (i.e., the implementation must use only those atomic instructions which are available on the target hardware platform). Furthermore, it must be ensured that the implementation of such software is **optimized** such that it uses the most efficient atomic operations on the target platform, and to use them in an efficient manner in the first place.
+
+Anderson's paper presents several alternatives for implementing spinlocks using the atomic instructions provided by the available hardware, which will be discussed in the remainder of this lecture.
+
+## 17. Shared-Memory Multiprocessors
