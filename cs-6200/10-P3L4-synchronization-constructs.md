@@ -539,16 +539,35 @@ The one remaining matter is: What are the **performance metrics** that are usefu
 
 To determine this, consider what are the **objectives** for the spinlock...
   1. Reduce **latency** (i.e., the time for a thread to acquire a free lock).
-      * Ideally, the thread should be able to acquire immediately (i.e., zero latency) with a single instruction. Furthermore, recall that is has been established already that spinlock require atomic instructions, therefore, in the **ideal case**, a single atomic instruction should execute with zero latency and complete execution immediately thereafter.
+      * Ideally, the thread should be able to acquire immediately (i.e., zero latency) with a single instruction. Furthermore, recall that is has been established already that spinlock require atomic instructions, therefore, in the **ideal case**, a single atomic instruction should execute with ***zero*** latency and complete execution immediately thereafter.
   2. Reduce **waiting time**/**delay** (i.e., when a thread is spinning and a lock becomes free, the subsequent time required for the thread to stop spinning and to acquire the lock that has been freed should be reduced).
-      * Similarly, in the **ideal case**, this should occur immediately (i.e., zero delay).
+      * Similarly, in the **ideal case**, this should occur immediately (i.e., ***zero*** delay).
   3. Reduce **contention** on the shared bus (or on the shared network interconnect).
       * Here, contention refers to *both* the contention due to the actual atomic memory references as well as the contention that is generated due to coherence traffic. Contention is undesirable because:
         * It delays any other CPU in the system that is attempting to access the shared memory.
         * More importantly, contention will also delay the spinlock's **owner** (i.e., the thread of the process that is attempting to quickly complete a critical section to subsequently release the spinlock), and thus in a contention situation, there can be a potential delay of the corresponding unlock operation for the spinlock, thereby adversely impacting performance even more.
-      * Therefore, in the **ideal case**, there is no contention generated.
+      * Therefore, in the **ideal case**, there is ***no*** contention generated.
 
 Therefore, these are the three objectives that are desired to be achieved in a suitable spinlock design. The different alternatives discussed in this lecture will therefore be evaluated based on these criteria.
 
 ## 21. Conflicting Metrics Quiz
+
+<center>
+<img src="./assets/P03L04-032.png" width="350">
+</center>
+
+Consider the aforementioned spinlock performance objectives and accompanying performance metrics, as repeated/summarized in the figure shown above.
+
+Among the described performance metrics, are there any **conflicting** goals (i.e., does any goal(s) counteract any other goal(s))? (Select all that apply.)
+  * `1` conflicts with `2`
+    * `DOES NOT APPLY`
+      * This cannot be determined in general, as latency vs. wait time will ultimately be determined by the corresponding algorithm(s) used.
+  * `1` conflicts with `3`
+    * `APPLIES`
+      * `1` (reduce latency) implies that the atomic operation be performed as soon as possible; consequently, the locking operation will immediately proceed with an atomic operation, which in turn conflicts with `3` (reduce contention) since this can create contention on the network.
+  * `2` conflicts with `3`
+    * `APPLIES`
+      * `2` (reduce waiting time) requires that there is continuous spinning on the lock as long as the lock is unavailable in order to detect that the lock is freed as soon as possible to acquire it immediately; consequently, this will create contention, thereby conflicting with `3` (reduce contention).
+
+## 22. Test-and-Set Spinlock
 
