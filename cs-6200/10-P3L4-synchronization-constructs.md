@@ -491,3 +491,64 @@ The **trade-offs** with these approaches are as follows:
 However, with respect to "selecting" between these approaches, there is a **caveat**/**drawback**: As a programmer, there is effectively *no* choice whether to use write-invalidate (WI) vs. write-update (WU), but rather this will be strictly ***determined by the hardware*** (i.e., this is a property of the hardware architecture and its correspondingly implemented policy).
 
 ## 19. Cache Coherence and Atomics
+
+An **important concept** to understand is what exactly occurs with cache coherence when atomic instructions are used.
+
+Recall that the purpose of atomic instructions is to deal with issues related to the arbitrary interleaving of threads that are sharing the CPU, as well as threads that are concurrently executing across multiple CPUs.
+
+<center>
+<img src="./assets/P03L04-029.png" width="600">
+</center>
+
+Consider the situation as in the figure shown above, wherein there are two CPUs, and on both CPUs it is necessary to perform some atomic instruction `atomic(x)` involving the memory location of `x`. Furthermore, `x` has been cached in both of the CPUs.
+
+The **problem** is as follows: How to prevent *multiple* threads on these two different CPUs from *concurrently* accessing the respective cached values of `x`? If it is permissible for `atomic(x)` to read and update the *cached* value of `x` (the memory reference that is the target of the atomic instruction), there can be multiple **problems**, e.g.,:
+  * Since there are multiple CPUs with caches, it is therefore uncertain where exactly the value `x` has been cached.
+  * There are **write-update (WU)** vs. **write-invalidate (WI)** protocols.
+  * There is latency on the chip.
+
+Given these issues, it is very challenging to deal with the situation wherein a particular atomic operation is applied to the cache on *one* of the CPUs, as it is uncertain whether or not another atomic operation is attempted on the cached value in the other CPU(s).
+
+For this reason, atomic operations **bypass** the caches and instead ***always*** directly access the (physical) memory location where the particular target value (i.e., `x`) is stored.
+
+
+By forcing all atomic operations to operate directly on the memory controller, this creates a **central entry point** whereby all of the corresponding references can be ***ordered*** and ***synchronized*** in a ***unique*** manner (i.e., none of the aforementioned race conditions can occur if it were permissible for the atomic operations to access the caches directly instead).
+
+<center>
+<img src="./assets/P03L04-030.png" width="600">
+</center>
+
+However, while this solves the correctness problem, it correspondingly raises another **issues**:
+  * Atomic operations generally take much **longer** than other types of instructions, inasmuch atomic operations must *always* access main memory as well as contend for this memory.
+  * Furthermore, in order to guarantee the intended atomic behavior, it is necessary to generate **coherence traffic** to either update or to invalidate *all* of the cached copies of the memory reference, regardless of whether or not this value is actually changed by the atomic operation.
+    * This is necessary in order to ensure safety and to guarantee correctness of the atomic operations.
+
+In summary, atomic instructions on shared memory multi-processor (SMP) systems are generally **more expensive** compared to instructions on a single-CPU system because:
+  * There is **contention** for the shared bus (or shared interconnect).
+  *  Atomic operations are generally more expensive because they bypass the cache and consequently trigger all necessary coherence traffic, regardless of whether or not the accessed memory reference targeted by the atomic instruction is actually modified.
+
+## 20. Spinlock Performance Metrics
+
+With the background on shared memory multi-processor (SMP) systems, cache coherence, and atomic instructions now concluded, we are now ready to discuss the design and performance trends of **spinlock implementations**.
+
+<center>
+<img src="./assets/P03L04-031.png" width="600">
+</center>
+
+The one remaining matter is: What are the **performance metrics** that are useful when reasoning about different implementations of spinlocks?
+
+To determine this, consider what are the **objectives** for the spinlock...
+  1. Reduce **latency** (i.e., the time for a thread to acquire a free lock).
+      * Ideally, the thread should be able to acquire immediately (i.e., zero latency) with a single instruction. Furthermore, recall that is has been established already that spinlock require atomic instructions, therefore, in the **ideal case**, a single atomic instruction should execute with zero latency and complete execution immediately thereafter.
+  2. Reduce **waiting time**/**delay** (i.e., when a thread is spinning and a lock becomes free, the subsequent time required for the thread to stop spinning and to acquire the lock that has been freed should be reduced).
+      * Similarly, in the **ideal case**, this should occur immediately (i.e., zero delay).
+  3. Reduce **contention** on the shared bus (or on the shared network interconnect).
+      * Here, contention refers to *both* the contention due to the actual atomic memory references as well as the contention that is generated due to coherence traffic. Contention is undesirable because:
+        * It delays any other CPU in the system that is attempting to access the shared memory.
+        * More importantly, contention will also delay the spinlock's **owner** (i.e., the thread of the process that is attempting to quickly complete a critical section to subsequently release the spinlock), and thus in a contention situation, there can be a potential delay of the corresponding unlock operation for the spinlock, thereby adversely impacting performance even more.
+      * Therefore, in the **ideal case**, there is no contention generated.
+
+Therefore, these are the three objectives that are desired to be achieved in a suitable spinlock design. The different alternatives discussed in this lecture will therefore be evaluated based on these criteria.
+
+## 21. Conflicting Metrics Quiz
+
