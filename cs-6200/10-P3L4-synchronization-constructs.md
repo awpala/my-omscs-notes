@@ -569,5 +569,102 @@ Among the described performance metrics, are there any **conflicting** goals (i.
     * `APPLIES`
       * `2` (reduce waiting time) requires that there is continuous spinning on the lock as long as the lock is unavailable in order to detect that the lock is freed as soon as possible to acquire it immediately; consequently, this will create contention, thereby conflicting with `3` (reduce contention).
 
-## 22. Test-and-Set Spinlock
+## 22. `test_and_set()` Spinlock
 
+<center>
+<img src="./assets/P03L04-033.png" width="350">
+</center>
+
+Consider a simple spinlock implementation using the `test_and_set()` instruction described previously, as in the figure shown above. In this examples (and the subsequent ones), it is assumed that the lock initialization step (i.e., `spinlock_init()`) sets `lock` to be `free`, where `0` and `1` represent `free` and `busy` (i.e., the lock is acquired/locked) (respectively).
+
+In this implementation, a key **feature** is that the atomic instruction `test_and_set()` is a very common atomic instruction that is supported by most hardware platforms. Therefore, this code is very **portable** across platforms (i.e., the *same* code can be used across many *different* platforms).
+
+<center>
+<img src="./assets/P03L04-034.png" width="600">
+</center>
+
+Regarding **latency**, this spinlock implementation performs as well as possible: It is only necessary to execute the atomic operation `test_and_set()`.
+  * Note that `lock` is originally `free` (i.e., `0`), and then as soon as the operation `spinlock_lock()` is executed, an attempt is made to execute `test_and_set()`.
+  * Since `lock` is `free`, `test_and_set()` returns `0`, therefore resulting in an exit from the `while` loop. Furthermore, `test_and_set()` changes the value of `lock` to `busy` (i.e., `1`).
+  * Therefore, at this point the `while` loop has been exited from, spinning has stopped, and `lock` has been set to `busy`.
+
+<center>
+<img src="./assets/P03L04-035.png" width="600">
+</center>
+
+Regarding **delay**, this particular spinlock implementation potentially can perform well, due to the continuous spinning on the atomic instruction `test_and_set()`.
+  * As long as `lock` is `busy`, `test_and_set()` returns `1` (i.e., `busy`), spinning continues.
+  * However, whenever `lock` does become `free`, at least one `test_and_set()` operation will detect this, and consequently exit the `while` loop. Furthermore, this single successful `test_and_set()` operation will set `lock` to `busy`, thereby causing other `test_and_set()` operations to continue spinning.
+
+<center>
+<img src="./assets/P03L04-036.png" width="600">
+</center>
+
+As indicated previously (cf. Section 21), there is a **conflict** with contention in relation to *both* latency *and* delay. Therefore, with respect to contention, this spinlock implementation will not perform well. As long as they are spinning, every processor will repeatedly go onto the shared interconnect (or onto the shared bus) to the memory location where the lock is stored, given that it is repeatedly attempting to execute the atomic instruction (i.e., `test_and_set()`). Consequently, this will create contention, thereby delaying the processing that is carried out on other CPUs, delaying the processing that the lock owner must perform (e.g., execution of the critical section), etc. which in turn will delay the time when the lock actually becomes free.
+
+The **fundamental issue** with this implementation is that it continuously spins on the atomic instruction.
+  * If there is *no* cache coherence, then it is *always* necessary to go to memory in order to check the value of the lock.
+  * Furthermore, with this implementation, even if there *is* cache coherence, it will be **bypassed** due to the use of an atomic instruction (i.e., every single spin will go to memory, regardless of the cache coherence).
+
+Clearly, this implementation is not the most efficient use of either atomic operations or of hardware that supports caches and cache coherence.
+
+## 23. `test_and_test_and_set()` Spinlock
+
+<center>
+<img src="./assets/P03L04-037.png" width="350">
+</center>
+
+In the previous implementation example (repeated for reference in the figure shown above), recall a **key issue** is that all of the CPUs repeatedly spin on the atomic operation (i.e., `test_and_set()`). To **resolve** this issue, consider a separation into two ***distinct*** operations as follows:
+  * `test()`, which checks `lock`.
+  * `test_and_lock()` is the atomic operation, as before.
+
+The **intuition** here is that for the operation `test()`, caches can be potentially used to test/check the ***cached*** copy of `lock`, and then only if this *cached* copy of `lock` indicates that its value has changed will the atomic operation (i.e., `test_and_set()`) actually be executed.
+
+<center>
+<img src="./assets/P03L04-038.png" width="600">
+</center>
+
+Following along with this change, the resulting modified operation `spinlock_lock()` is as in the figure shown above.
+  * The first condition of the predicate `(lock == busy)` checks if `lock` is `busy`.
+    * This checking is performed via the value in the **cache** (i.e., this does *not* involve any atomic operation, but rather is a simple check of whether a particular memory address is set to `1`/`busy` or `0`/`free`). On a system with caches, this will result in a **cache hit**.
+    * As long as this condition is true (i.e., the `lock` is `busy`), the second condition of the predicate (i.e., the atomic operation) will *not* be evaluated (i.e., due to short-circuit evaluation of the operator `OR`), and therefore `lock` will remain `busy` and the `while` loop will continue to cycle.
+  * Only when `lock` becomes `free` does the second condition of the predicate `test_and_set(lock) == busy` get evaluated.
+    * At this point, the atomic operation `test_and_set()` will be executed (or at least an attempt to do so will occur), and the resulting return value from this operation will indicate whether or not `lock` is acquired.
+    * Furthermore, this also means that `test_and_set()` will attempt to make a memory reference (via main memory) *only* when `lock` becomes `free`.
+
+From this collective behavior, this spinlock implementation is accordingly called the **`test_and_test_and_set()` spinlock** (or, alternatively, the **spin on read spinlock** or **spin on cached value spinlock**).
+  * ***N.B.*** The Anderson paper refers to this spinlock as "spin on read."
+
+With respect to both **latency** and **delay**, this spinlock implementation is of acceptable (i.e., "okay") performance. It is slightly worse than the `test_and_set()` spinlock due to the extra check (i.e., `test()`) to determine whether `lock` is `busy` (via the cache), however, in principle this is not an exceedingly detrimental impact on performance.
+
+With respect to **contention**, however, this implementation does not sufficiently resolve the issue.
+  * Firstly, if dealing with a **non-coherent cache (NCC)** architecture, then every single memory reference will go directly to main memory anyways (just as with the atomic operation itself, `test_and_set()`), and therefore there is ***no difference*** at all in performance.
+  * Conversely, if dealing with a **cache-coherent (CC)** architecture having **write update (WU)**, then the performance is ***acceptable***. However, a persistent issue in this case that all of the processors will detect that `lock` becomes `free` on the condition `lock == busy` (i.e., the delay component), and therefore at this point *every* one of the processors will simultaneously attempt to execute the atomic operation `test_and_set()`, thereby leading to potential issues.
+  * The ***worst*** scenario with respect to poor performance due to contention is the combination of a **cache-coherent (CC)** architecture having **write invalidate (WI)**. In this case, every single attempt to acquire `lock` not only generates contention for the memory module, but also creates **invalidation traffic**.
+
+Recall when discussing atomics that one outcome of executing an atomic instruction is that cache coherence is triggered (i.e., write-update or write-invalidate traffic) regardless of the present situation.
+  * In the case of **write update (WU)**, the coherence traffic updates the value of the other caches with the ***new*** value of `lock`. If `lock` was busy before the write-update event and if `lock` remains busy after the write-update event, then there is no change; that particular CPU can continue to spin from the **cached** copy.
+  * Conversely, in the case of **write invalidate (WI)**, the cached copy is simply ***invalidated***. Consequently, it is possible that `lock` was busy before the cache-coherence event (i.e., before the atomic instruction `test_and_set()` was executed), and if the atomic instruction was not successful, then the situation persists wherein `lock` is `busy`; however, as far as the **caches** in the system are concerned, the atomic instruction has invalidated their respective copies of `lock`.
+    * The resulting **outcome** of this is that the caches must go out to main memory in order to fetch the copy of `lock` that they will spin on, and therefore the caches will not be able to simply spin on a cached copy of `lock` but rather they will have to fetch it from main memory *every* time there is an attempt to perform the atomic instruction, thereby ***compounding*** the adverse contention effects (and correspondingly decreasing performance).
+    * Therefore, the reason for the poor performance of `lock` in this situation is that *every* CPU simultaneously detects that `lock` has become `free` and consequently simultaneously attempts to acquire `lock`.
+
+## 24. `test_and_test_and_set()` Spinlock Quiz and Answers
+
+<center>
+<img src="./assets/P03L04-039.png" width="350">
+</center>
+
+Consider further the implications of the `test_and_test_and_set()` spinlock implementation, repeated for reference in the figure shown above.
+
+In a **shared memory multi-processor (SMP)** system with `N` processors, what is the memory **complexity** of the memory contention (accesses), relative to `N`, that will result from releasing a `test_and_test_and_set()` spinlock?
+  * cache-coherent system with write-update: `O( _ )`?
+    * `O(N)`
+      * In this case, *all* of the processors are able to detect when `lock` is released immediately (i.e., when `lock == busy` becomes false), and consequently *all* will issues the atomic operation `test_and_set()`. Therefore, there will be as many references to `lock` as there are are `test_and_set()` operations occurring (i.e., `O(N)`).
+  * cache-coherent system with write-invalidate: `O ( _ )`?
+    * `O(N`<sup>`2`</sup>`)`
+      * In this case, if all of the processors' respective caches are invalidated, this will occur for all ***after*** the initial release of `lock` (i.e., after `lock == busy` is false).
+        * For some processors, by the time they re-read the memory value of `lock` from main memory in order to execute the second part of the predicate (`test_and_set(lock) = busy)`), `lock` already will have been set to `busy` by another processor, and consequently those processors will attempt to spin on the *newly read* cached copy of `lock` (i.e., going back to the first condition `lock == busy`).
+        * Conversely, for other processors, when they attempt to re-read the memory value of `lock` from main memory, this occurs ***before*** any  `test_and_set()` operations have been executed, and therefore they will detect the value of `lock` as `free`. Consequently, these processors attempt to execute the operation `test_and_set()` accordingly. Only *one* of these `test_and_set()` operations will succeed, however, every single one of them will invalidate all the other processors' caches, including the caches of those processors that detected that `lock` is `busy` (i.e., via the first condition/check `lock == busy`).
+      * Therefore, the worst-case complexity due the bandwidth that is generated from the contention that results when `lock` is freed is `O(N`<sup>`2`</sup>`)`.
+
+## 25. Spinlock "Delay" Alternatives
