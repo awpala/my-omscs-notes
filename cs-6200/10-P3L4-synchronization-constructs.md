@@ -723,4 +723,101 @@ One key **consideration** for delay-based spinlock implementation is how to sele
         * *or* if the owner of the critical section is simply either delayed or executing a long critical section.
       * Therefore, this approach can potentially degenerate to the same undesirable behavior as before: If a process happens to be executing a long critical section while holding the spinlock, this does not necessarily mean it is necessary to increase the delay. Accordingly, it is necessary to guard against this situation when using this approach.
 
-## 27. Queueing Lock
+## 27-28. Queueing Lock
+
+### 27. Queueing Lock Overview
+
+<center>
+<img src="./assets/P03L04-043.png" width="600">
+</center>
+
+The alternative delay strategies described in the previous section solve the **problem** that every process/thread attempts to **acquire** the lock *simultaneously* once the lock is freed.
+
+In Anderson's paper, the proposed implementation is called a **queueing lock** (also called the **Anderson lock**), which solves a complementary problem: Every process/thread **detects** *simultaneously* that the lock is free. Therefore, if this problem is solved (i.e., *not every* process/thread *detects* that the lock is free), then this equivalently solves the same problem as before (i.e., as a direct consequent of not *detecting* the lock is free simultaneously, accordingly the threads/processes also do not attempt to *acquire* the lock simultaneously either).
+
+The **queueing lock** is as in the figure shown above.
+  * The queuing lock consists of an **array** of **flags** of `N` elements (indexed `0` to `N-1`), where `N` is the number of processors in the system. 
+  * Each element in the array contains one of two possible values: **`has_lock`** (**`hl`**) or **`must_wait`** (**`mw`**).
+  * Additionally there are two **pointers** to the array elements:
+    * the **current lock holder** (having value `has_lock`)
+    * the last element on the queue, or **queue last** (having value `must_wait`)
+
+<center>
+<img src="./assets/P03L04-044.png" width="600">
+</center>
+
+When a new thread arrives at the queueing lock, it receives a **unique ticket** indicating the thread's current position in the queueing lock. This is achieved by adding it to the position immediately after the now-former last element in the queue, with a corresponding increment to the queue last pointer to reflect this.
+
+Since multiple threads may be arriving at the queueing lock simultaneously, it must be assured that the increment of the queue last pointer is performed atomically. Therefore, the queuing lock depends on hardware support for an atomic operation `read_and_increment()`; since this atomic operation is not as common as the aforementioned `test_and_set()`, the potential absence of `read_and_increment()` on a given hardware platform therefore constitutes a **drawback** to this implementation.
+
+For each of the threads arriving at the queueing lock, the assigned elements of the array (i.e., the `queue[ticket]`) itself acts as a **private lock**, as follows:
+  * A thread can enter the **critical section** (**CS**) when the lock is acquired:
+    * If `queue[ticket] == must_wait` is true, then the thread must spin (as before with the previous spinlock implementations).
+    * Otherwise if `queue[ticket] == has_lock` becomes true, then the lock is free and consequently the thread may proceed with entering the critical section.
+  * When a thread completes the critical section and therefore must release the lock, it must **signal**/**set** the next thread in the array to indicate that it currently owns the lock.This can be accomplished by setting `queue[ticket + 1] = has_lock` accordingly.
+
+An additional **drawback** to the queueing lock implementation is that the memory complexity is of size `O(N)` with respect to `N` processors (i.e., tracking `has_lock` vs. `must_wait` for *each* element/processor in the array), which is generally a much larger complexity than the other spinlock implementations (which only required *one* memory location to maintain information on the spinlock, i.e., whether it is `free` or `busy`).
+
+### 28. Queueing Lock Implementation
+
+<center>
+<img src="./assets/P03L04-045.png" width="600">
+</center>
+
+The queueing lock implementation is as follows:
+```c
+init:
+  flags[0] = has_lock;
+  flags[1..p-1] = must_wait;
+  queue_last = 0; // global variable
+
+lock:
+  my_place = read_and_increment(queue_last); // get the ticket
+  // spin
+  while (flags[my_place mod p] == must_wait)
+  // now in critical section
+  flags[my_place mod p] = must_wait;
+
+unlock:
+  flags[my_place+1 mod p] = has_lock;
+```
+
+Regarding `init`:
+  * The queueing lock is represented by the array `flags`, whose elements contains the values `has-lock` or `must_wait`.
+  * Initially the first element of the array (`flags[0]`) is set to `has_lock`, and the remaining elements are set to `must_wait`.
+  * Also part of the queueing lock structure is the global variable `queue_last`.
+
+Regarding `lock`:
+  * To obtain a ticket into the queueing lock, the process/thread must first perform the atomic operation `read_and_increment()`, which returns the current position in the array, as stored in `my_place`.
+  * The process will continue to spin on the corresponding array element as long as its value is `must_wait` (i.e., as long as its predecessor element(s) is executing the critical section).
+    * ***N.B.*** modular arithmetic is used (i.e., `my_place mod p`) to "wraparound" the array indices, since `read_and_increment()` continually increments `queue_last` but the array `flags` itself is of finite-length/bounded.
+  * Once the owner of the lock completes execution of the critical section, it resets its element in the array to `must_wait` in order to prepare this field for the subsequent process that attempts to acquire the lock at this array position.
+
+Regarding `unlock`:
+  * Releasing the lock involves changing the value of the *next* element/process in the array (i.e., at index `my_place+1`) to `has_lock`. Consequently, the next process will exit from its current spin loop and proceed as previously described.
+    * ***N.B.*** Modular arithmetic is used here as before per the bounded array.
+
+Observe that the atomic operation `read_and_increment()` in this spinlock implementation involves performing this operation on `queue_last`, whereas the spinning itself occurs on a completely *different* variable (i.e., `my_place`). Consequently, when issuing the atomic operation `read_and_increment()`, any kind of invalidation traffic will not affect any of the spinning occurring among the elements of the array `flags` (i.e., `queue_last` and `my_place` are two ***distinct*** memory locations).
+
+With respect to **latency**, this implementation is not very efficient, because it performs a more complex/costly atomic operation (i.e., `read_and_increment()`, which requires more cycles than the aforementioned `test_and_set()`), and additionally must perform modular arithmetic/shifting operations to determine the correct array index; furthermore, all of this must occur *before* it can be determined whether the processor/thread must spin or be in the critical section.
+
+However, with respect to **delay**, this implementation is much better. When a lock is freed, the next-to-run processor/thread is **directly signaled** (i.e., by changing the value of its flag). Since the processors/threads spin on *different* memory locations, concurrent/simultaneous spinning can occur constantly, and the change in the value (i.e., `must_wait` to `has_lock`) is detected ***immediately***.
+
+Furthermore, with respect to **contention**, this implementation is even better than any of the aforementioned alternatives described previously. Here, the atomic instruction is only executed *once* upfront and is subsequently *not* part of the spinning code. Additionally, the atomic instruction and the spinning are performed via different/distinct variables (i.e., `queue_last` and `my_place`, respectively), and therefore the invalidations that are triggered by the atomic instruction do *not* affect the processors' ability to spin on local caches.
+  * However, a **caveat** is that in order to achieve this, it must be ensured that there is a **cache-coherent** architecture available in the first place; otherwise, the spinning would have to occur on potentially remote memory references (i.e., main memory rather than in local cache).
+  * Furthermore, it must be ensured that every element is on a *separate* **cache line**; otherwise, when the value of any *one* element in the array is changed, the *entire* cache line will be consequently **invalidated**, thereby invalidating the caches of the other elements in the array (i.e., the other processors/threads that are spinning), which is undesirable.
+
+To summarize, the key **benefits** of this spinlock implementation derive from the fact that it address the key problem that was identified with respect to the other aforementioned spinlock implementations: Only *one* CPU/thread at any given time detects that the lock is free and therefore only then attempts to acquire the lock. This is achieved by having a separate (essentially "private") lock within the array of lock.
+
+## 29. Queueing Lock Array Quiz and Answers
+
+Assume the use of Anderson's queueing spinlock implementation wherein each array element of the queue can have one of two values: `has_lock` (`0`) or `must_wait` (`1`). If a system has 32 CPUs available, then how large is the array data structure itself? (Select one choice.)
+  * `32` bits
+  * `32` bytes
+  * neither
+    * `CORRECT`
+      * In order for the queueing lock implementation to work correctly, each array element must be in a *different* cache line. Therefore, the size of the array data structure itself depends on the size of the cache line (e.g., if a machine has a cache-line size of 64 bytes, then the size of the array data structure is `32 * 64 = 2048 bytes`).
+
+## 30. Spinlock Performance Comparisons
+
+
