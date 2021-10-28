@@ -705,3 +705,22 @@ The main **drawback** of this approach is that it will clearly adversely impact 
 
 ## 26. Selecting a Delay for a "Delay" Spinlock
 
+<center>
+<img src="./assets/P03L04-042.png" width="600">
+</center>
+
+One key **consideration** for delay-based spinlock implementation is how to select a suitable value for the delay itself. There are two **basic strategies** available for this purpose:
+  1. **static delay** - Uses a fixed value (e.g., CPU ID for the processor on which the process is running) to determine the delay to be used for any given *single* process running on that particular CPU.
+      * The **benefit** of this approach is that it is ***simple***, and under high loads it is likely that such static delays will nicely "spread out" all of the atomic references, thereby reducing (or perhaps altogether eliminating) contention.
+        * ***N.B.*** The delay must be some combination of the fixed information (e.g., CPU ID) and the length of the critical section in order to ensure that one process is delayed by an integer multiple of the critical section (thereby avoiding contention).
+      * The **drawback** of this approach is that it creates unnecessary delay under low-contention conditions (e.g., even with only two processes, each process will *always* be waiting by at least an integer multiple of the critical section before proceeding with execution).
+  2. **dynamic delay** - A more popular approach which avoids the issue posed by static delay (i.e., *always* delaying *all* processes) by assigning each process a ***random*** delay value based on the "perceived" ***current*** contention in the system. If the system is operating in a mode of low contention then a dynamic value will be selected within a smaller range, otherwise if there is high contention then the range is expanded accordingly, i.e., some processes will delay more (or "**back off**"), while others will delay less.
+      * The **benefit** of this approach is that in general delays will be shortened on average for a given process under low-to-medium loads.
+        * ***N.B.*** Under high load, theoretically both approaches converge to the same behavior (i.e., dynamic delay will approach the behavior of static delay).
+      * A **key question** in this approach is: How to determine (i.e., "perceive") how much contention is currently in the system (i.e., high vs. low) in order to select an appropriate range of delays? For this purpose, a useful **metric** to estimate the contention is to track the number of **failed** `test_and_set()` operations: If a `test_and_set()` operation fails, then it is more likely that there is a high degree of contention.
+      * The **drawback** of this approach is that if delaying after *every* single lock reference, then the delay will continually amplify based on *both* of the following:
+        * whether there is indeed contention in the system,
+        * *or* if the owner of the critical section is simply either delayed or executing a long critical section.
+      * Therefore, this approach can potentially degenerate to the same undesirable behavior as before: If a process happens to be executing a long critical section while holding the spinlock, this does not necessarily mean it is necessary to increase the delay. Accordingly, it is necessary to guard against this situation when using this approach.
+
+## 27. Queueing Lock
