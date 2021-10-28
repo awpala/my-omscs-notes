@@ -668,3 +668,40 @@ In a **shared memory multi-processor (SMP)** system with `N` processors, what is
       * Therefore, the worst-case complexity due the bandwidth that is generated from the contention that results when `lock` is freed is `O(N`<sup>`2`</sup>`)`.
 
 ## 25. Spinlock "Delay" Alternatives
+
+A simple way to handle the issues of the `test_and_test_and_set()` spinlock implementation is to introduce a **delay**.
+
+### Delay After Lock Release
+
+<center>
+<img src="./assets/P03L04-040.png" width="600">
+</center>
+
+The figure above shows a simple implementation which introduces a delay operation `delay()` every single time a thread detects that `lock` is `free` (i.e., the delay occurs *after* `lock` is released). When the thread detects that `lock` is `free`, it exits the inner `while` loop, and then prior to proceeding to the next iteration of the outer `while` loop (where it again checks the condition `lock == busy`), the thread waits via the operation `delay()`.
+
+The **rationale** for this approach is that even though every thread/processor detects that `lock` is `free` simultaneously, with the added operation `delay()`, not all of them will attempt to execute the atomic operation `test_and_set()` simultaneously.
+
+Consequently, **contention** in the system is significantly **improved**.
+  * When the operation `delay()` expires, the **delayed threads** will re-check the value of `lock` (i.e., via `lock == busy`), at which point it is possible that if another thread arrives in the meantime and proceeds to execute the atomic operation `test_and_set()` then the former will detect that `lock` is `busy` and consequently proceed to the inner `while` loop and continue spinning. Otherwise, if `lock` is `free`, then the delayed thread(s) wil execute the atomic operation `test_and_set()`.
+  * However, with the operation `delay()` included, it is much less likely that *all* of the threads will attempt to execute the atomic operation `test_and_set()` at exactly the *same* time. Furthermore, it is much less likely for the situation to occur wherein threads are repeatedly invalidated while attempting to spin on the cached value of `lock`, because after `delay()` in the second check of `lock == busy` in the inner `while` loop, many of the threads will detect that `lock` has already become `busy` and consequently will not attempt the atomic operation `test_and_set()` (i.e., overall, there are fewer situations in which simultaneously *both* `lock` is `busy` *and* a thread(s) is attempting to execute the atomic instruction `test_and_set()`, which was the root cause of the contention issue in the previous implementation example).
+
+With respect to **latency**, this implementation is **adequate**.
+  * Although it is necessary to perform one memory reference operation (i.e., `lock == busy`) to initialize the memory reference in the cache for `lock` before proceeding with the atomic instruction `test_and_set()`, this is equivalent to what is already being done in the `test_and_test_and_set()` spinlock implementation. 
+
+However, with respect to **delay**, naturally this spinlock implementation is much worse, inasmuch as once `lock` is freed, the operation `delay()` must occur for an elapsed time period; during this time, if there is no contention for `lock`, then this is simply wasted time/cycles.
+
+### Delay After Each Lock Reference
+
+<center>
+<img src="./assets/P03L04-041.png" width="600">
+</center>
+
+Another variant of the delay-based spinlock implementations is to introduce a delay after *each* memory reference operation for `lock`, as in the figure shown above. This is implemented by simply introducing the operation `delay()` in the body of the `while` loop prior to the next iteration.
+
+ The main **benefit** of this approach is that it works in **non-cache-coherent (NCC)** architectures.
+  * Because it is not necessary to spin constantly (i.e., due to the inclusion of `delay()` in every iteration of the loop), if there is no cache coherence and it is therefore necessary to go to main memory to fetch the reference for `lock`, then using the operation `delay()` will assist with reducing contention of the memory network.
+
+The main **drawback** of this approach is that it will clearly adversely impact the delay much more, because the delay is compounded even when there is no contention on the network.
+
+## 26. Selecting a Delay for a "Delay" Spinlock
+
