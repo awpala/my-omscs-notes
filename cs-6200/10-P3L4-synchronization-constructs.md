@@ -820,4 +820,8 @@ Assume the use of Anderson's queueing spinlock implementation wherein each array
 
 ## 30. Spinlock Performance Comparisons
 
+<center>
+<img src="./assets/P03L04-046.png" width="600">
+</center>
+
 
