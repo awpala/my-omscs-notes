@@ -774,7 +774,7 @@ init:
 lock:
   my_place = read_and_increment(queue_last); // get the ticket
   // spin
-  while (flags[my_place mod p] == must_wait)
+  while (flags[my_place mod p] == must_wait);
   // now in critical section
   flags[my_place mod p] = must_wait;
 
@@ -824,4 +824,37 @@ Assume the use of Anderson's queueing spinlock implementation wherein each array
 <img src="./assets/P03L04-046.png" width="600">
 </center>
 
+As final consideration, in closing of this lecture, consider one of the results from the performance measurements demonstrated in Anderson's paper (Figure 3), as per the figure shown above.
 
+This figure shows measurements that were gathered from executing a program with multiple processes/processors, consisting of the following **setup**:
+  * Each process executes a critical section (CS) in a loop for `10`<sup>`6`</sup> iterations.
+  * The number of processes (i.e., `N`) was varied such that there is only one process per processor, running on the Sequent Computer Systems Symmetry (Model B) platform having 20 such processors (and therefore correspondingly `N` ranges from `1` to `20` in the experiments).
+  * The platform is **cache-coherent** with **write-invalidate**.
+
+The computed **metrics** based on the experiments is the relative **overhead** as measured compared to the case of the **ideal performance**, which was defined as the theoretical limit based on how long it takes to execute the fixed number of critical sections (`10`<sup>`6`</sup>).
+  * The **rationale** for the ideal case is that if there is *no* contention (i.e., no such effects due to the fact that each of the critical sections must be locked and unlocked), then how long would it take to run this number of critical sections; accordingly, the measured ***difference*** between this theoretical limit and whatever time is measured for the actual performance of the experiment can be defined as the (relative) **overhead**, as in plotted curves in the figure shown above.
+
+The experiments were performed for each one of the spinlock implementations discussed previously in this lecture.
+  * The results do *not* include the basic atomic instruction `test_and_set()` (wherein there is simply continuous indefinite spinning on the atomic instruction), as the resulting curve would simply increase rapidly and quickly exceed the scale of the plot.
+  * Furthermore, note that both delay alternatives (i.e., static and dynamic) were also tested.
+
+The results of the experiments were as follows:
+  * Under **high** loads (i.e., large `N`, with many processes contending for the lock):
+    * The **queueing lock** implementation had the ***best*** performance. It is the most ***scalable***: As more processors are added, there is no appreciable increase on the overhead.
+    * The `test_and_test_and_set()` implementation (denoted **spin on read** in the figure) had the ***worst*** performance. In this particular case, there is a cache-coherent architecture with write-invalidate, which on release of the atomic operation `test_and_test_and_set()` there is an order of `O(N`<sup>`2`</sup>`)` memory references (i.e., very high contention on the shared bus), which in turn greatly adversely impacted performance with respect to overhead.
+    * Of the delay-based alternatives, the **static** implementations performed slightly better than the **dynamic** counterparts (denoted **backoff** in the figure). Under high loads, the static implementation more adequately balances out the atomic instructions compared to the dynamic implementation (which introduces some randomness resulting in additional collisions which are otherwise avoided by the static implementation).
+      * Furthermore, with respect to the delay-based alternatives, note that delaying after every single memory reference (denoted `ref.` in the figure) is slightly better performing than delaying only after the lock is freed/released (denoted `release`/`rel.` in the figure), because avoiding delaying after every reference avoids some additional invalidations originating from the fact that the Sequent platform is a write-invalidate architecture.
+  * Under **light** loads (i.e., small `N`, with few processors/processes):
+    * The `test_and_test_and_set()` (or **spin-on-read**) implementation performs **very well** because this spinlock implementation has **low latency** (i.e., there is a simple check for `lock == busy` and then it proceeds to the atomic operation `test_and_set()`).
+    * Among the delay-based alternatives, the **dynamic** (or **backoff**) implementations perform better than the **static** implementations because with the dynamic alternatives, there is a **low delay**. Recall that with the static implementations, they can lead to situations in which the two processors have the most extreme (i.e., shortest or longest) delays, and in cases where they contend for the lock, this results in wasted CPU cycles.
+    * The **queueing lock** implementation has the **worst** performance due to **high latency** resulting from implementation of the atomic instruction `read_and_increment()` and of the required modular arithmetic operations (i.e., for queue array processing).
+
+As a final comment, these results demonstrate that there is no *single* "good" answer to the matter of designing the "best" spinlock, but rather design decisions should be based on the expected workload (i.e., high vs. low), architectural features, number of processors, write-invalidate vs. write-update, etc. As before (cf. P2L5): "*it depends*"!
+
+***N.B.*** The paper includes additional results that examine these tradeoffs in more detail.
+
+## 31. Synchronization Constructs Summary
+
+This lecture discussed additional **synchronization constructs** beyond mutexes and condition variables (e.g., **semaphores**, **monitors**, and others), and described some of the **synchronization issues** that these constructs are well-suited for handling.
+
+Additionally, the lecture examined the **spinlock** alternatives described in Anderson's paper, including how **hardware support** (in particular **atomic instructions**) is used when implementing constructs such as spinlocks.
