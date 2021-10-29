@@ -270,7 +270,7 @@ Therefore, the operating system simply uses the same representation (i.e., via t
 `shm_open()` returns a file descriptor in **tmpfs**, and `shm_close()` closes the file descriptor.
   * ***N.B.*** While these `shm_...` are used explicitly for shared-memory file operations, in fact the regular file operations `open()` and `close()` (respectively) can also be used for this purpose, as the operating system will understand how to perform the necessary operations accordingly in this manner.
 
-To **attach** or **detach** shared memory, the POSIX API relies on the operations `mmap()` and `unmmap()` (respectively), which perform the mapping/unmapping (respectively) of the virtual-to-physical addresses for the process via the corresponding file descriptor.
+To **attach** or **detach** shared memory, the POSIX API relies on the operations `mmap()` and `munmap()` (respectively), which perform the mapping/unmapping (respectively) of the virtual-to-physical addresses for the process via the corresponding file descriptor.
 
 To **destroy** a shared-memory segment, there is an explicit operation `shm_unlink()` to perform this operation.
   * Similarly, `shm_close()` will remove the file descriptor from the address space of the process, but in order to instruct the operating system delete all of the shared-memory-related data structures and to subsequently free that shared-memory segment, `shm_unlink()` must be explicitly called.
