@@ -853,7 +853,7 @@ As a final comment, these results demonstrate that there is no *single* "good" a
 
 ***N.B.*** The paper includes additional results that examine these tradeoffs in more detail.
 
-## 31. Synchronization Constructs Summary
+## 31. Lesson Summary
 
 This lecture discussed additional **synchronization constructs** beyond mutexes and condition variables (e.g., **semaphores**, **monitors**, and others), and described some of the **synchronization issues** that these constructs are well-suited for handling.
 
