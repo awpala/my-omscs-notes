@@ -51,4 +51,53 @@ For each of the following devices, indicate whether it is typically used for inp
 
 ***N.B.*** In addition to these types of devices, there are many other types of devices. Furthermore, within each of these types of devices/categories, there are many concrete examples (e.g., different types of microphones, speakers, network interface cards, etc.). Therefore, operating systems must be designed in such a way that they can handle all of these different types of devices efficiently and in a straightforward manner.
 
-## 5. 
+## 5. I/O Device Features
+
+<center>
+<img src="./assets/P03L05-003.png" width="450">
+</center>
+
+As the figure shown above suggests, the devices space is extremely diverse, with variability in shape, size, hardware architecture, functionality provided (e.g., interfaces that applications use to interact with them), etc. Therefore, in order to simplify the discussion in this lecture, focus will be placed on key **features** of a device that enable the integration of the device into a system.
+
+### **Basic I/O Device Features**
+
+<center>
+<img src="./assets/P03L05-004.png" width="400">
+</center>
+
+(***Figure Reference***: Arpaci-Dusseau, R.H. and Arpaci-Dusseau, A.C. *Operating Systems: Three Easy Pieces* (Chapter 36).)
+
+<center>
+<img src="./assets/P03L05-005.png" width="550">
+</center>
+
+Any device can be abstracted to have the set of **features** as in the figure shown above.
+  * **Control registers**, which can be accessed by the CPU and that permit the CPU-device interactions. These are typically divided into:
+    * **Command registers** - used by the CPU to control what exactly the device will do
+    * **Data registers** - used by the CPU to control the data transfers in and out of the device
+    * **Status registers** - used by the CPU to determine the current status of the device
+  * Internally, the device incorporates all other device-specific logic in its **internals**.
+    * **Microcontroller** - The device's own CPU, which controls all of the operations that actually occur on the device (which in turn may be influenced by the external/system CPU).
+    * On-device **memory**
+    * Other processing **logic** (e.g., special chips and/or hardware needed by the device itself, such as analog-to-digital converters, the network medium [fiber optics, copper wire, etc.], etc.)
+
+## 6. CPU-Device Interconnect
+
+Devices ***interface*** with the rest of the system via a **controller**, which is typically integrated as part of the device packaging. The controller is used to connect the device with the rest of the CPU complex via some **CPU-device interconnect** (i.e., some off-chip interconnect supported by the CPU which allows other devices to connect).
+
+
+<center>
+<img src="./assets/P03L05-006.png" width="650">
+</center>
+
+The figure shown above depicts a number of different devices that are interconnected to the CPU complex via **PCI (peripheral component interconnect) bus**, one of the standard methods for connecting devices to the CPU.
+  * ***N.B.*** Modern platforms typically support **PCIe (PCI express)**, which is technologically more advanced (e.g., more bandwidth, faster, lower access latency, supports more devices, etc.) than its PCI-X (PCI extended) and PCI predecessors. For compatibility reasons, even modern platforms include some of these older technologies (typically PCI-X, which in turn is also compatible with PCI).
+
+However, the PCI bus is not the only interconnect that is typically present. Other buses include:
+  * **SCSI bus** (pronounced "scuzzy"), which connects SCSI disks
+  * **Peripheral bus**, which connects certain devices (e.g., keyboards)
+  * And others
+
+The **controllers** that are part of the device hardware determine the type of interconnect that a given device can directly attach to. Furthermore, there are **bridging controllers** that can handle any differences between different types of interconnects. 
+
+## 7. Device Drivers
