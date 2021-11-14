@@ -85,7 +85,6 @@ Any device can be abstracted to have the set of **features** as in the figure sh
 
 Devices ***interface*** with the rest of the system via a **controller**, which is typically integrated as part of the device packaging. The controller is used to connect the device with the rest of the CPU complex via some **CPU-device interconnect** (i.e., some off-chip interconnect supported by the CPU which allows other devices to connect).
 
-
 <center>
 <img src="./assets/P03L05-006.png" width="650">
 </center>
