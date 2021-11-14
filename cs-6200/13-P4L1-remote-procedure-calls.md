@@ -93,4 +93,44 @@ For the entire duration between the initial call to the remote procedure call (R
 
 ## 6. Steps in RPC
 
+<center>
+<img src="./assets/P04L01-005.png" width="550">
+</center>
 
+To generalize the example from the previous section, consider a summary of the steps involved in a remote procedure call (RPC) interaction between a client and a server.
+  * 0. **server binding** - The client finds and discovers (i.e., "***binds***" to) the server that supports the desired functionality.
+      * For connection-oriented protocols (e.g., TCP/IP) that require a connection to be established between the client and the server processes, the **connection** itself is established in this step.
+  1. **client call** - The client makes the actual RPC call, i.e., control passes to the client stub, and the client code blocks.
+  2. **marshal** - The client stub creates a data buffer which is populated with the values of the arguments that are passed to the procedure call. This process is called **marshalling** the arguments.
+      * The arguments themselves may be located at arbitrary non-contiguous locations in the client process's address space, however, the PRC run-time must send a *contiguous* buffer to the sockets for transmission. Therefore, the marshalling process takes care of this, i.e., placing all of the arguments into a buffer that is passed to the sockets.
+  3. **send** - Once the buffer is available, the RPC run-time sends the message to the server. The sending involves whatever **transmission protocol** (e.g., TCP, UDP, shared-memory based inter-process communication for a client and a server on the same machine, etc.) that both sides have agreed upon during the binding process.
+  4. **receive** - When the data is subsequently transferred onto the server machine, it is received by the RPC run-time, and then all of the necessary checks are performed to determine the correct **server stub** to which the **message** must be passed. Additionally, certain **access control** checks can be included in this particular step.
+  5. **unmarshal** - The server stub unmarshals the data, i.e., convert the incoming byte stream from the client (via the server-side receive buffers) and then extract the arguments and correspondingly create any necessary data structures to hold the values of those arguments.
+  6. **actual call** - Once the arguments are allocated and set to the appropriate values, the actual procedure call can now be made, whereby the server stub calls the implementation of the procedure that is part of the server process itself.
+  7. **result** - The server performs the RPC operation and computes its result, or the server may potentially conclude that some **error message** must be returned.
+
+On return, a similar set of steps occurs: The result is passed to the server stub, and follows a similar reverse path in order to return the result back to the client.
+
+<center>
+<img src="./assets/P04L01-006.png" width="550">
+</center>
+
+An additional step is required for this all to work. Prior to the client discovering the server for binding (i.e., step `0` in the previous figure), the server must "announce" the procedure(s) that it is capable of performing, i.e., argument types required for the procedure, the IP address and port number where it is located, and any other pertinent information required to discover the server in order for a client to bind to it. Therefore, the server must perform a **registration** step (denoted step `-1` in the figure shown above) prior to being bound by a client.
+
+## 7. Interface Definition Language (IDL)
+
+<center>
+<img src="./assets/P04L01-007.png" width="550">
+</center>
+
+A key advantage of remote procedure calls (RPCs) is that the client and the server can be developed independently as separate applications; they can be completely independently processes written different developers, and can even be written in completely different programming languages.
+
+However, in order for this to work correctly, there must be some type of **agreement** so that the server can explicitly indicate ***what*** **procedures** it is capable of performing, and ***what*** **arguments** are required for those procedures.
+
+The reason this information is necessary is so that:
+  * The client-side process can decide which particular server to bind.
+  * The remote procedure call (RPC) run-time can incorporate certain tools to automate the process of generating the stub functionality.
+
+Therefore, to address these needs, remote procedure call (RPC) systems rely on the use of **interface definition languages (IDLs)**, which serve as a **protocol** for how to express this ***agreement***.
+
+## 8. Specifying an IDL
