@@ -248,3 +248,56 @@ Regardless of how the registry is actually implemented, it requires some type of
     * ***N.B.*** Allowing for this type of "reasoning" requires support for ontologies and/or other cognitive learning methods, which is beyond the scope of this course.
 
 ## 12. Visual Metaphor
+
+<center>
+<img src="./assets/P04L01-016.png" width="600">
+</center>
+
+To illustrate the use of binding and registries by applications using remote procedure calls (RPCs), consider an analogy to the toy shop: A toy shop uses directories of outsourcing services.
+
+| Characteristic | Toy Shop Outsourcing Directory | Remote Procedure Calls (RPCs) |
+| :--: | :--: | :--: |
+| Who can provide a service? | Shops to outsource toy assembly operations | Look up the registry to find a particular service (e.g., image processing) |
+| What services do they provide? | A service that assembles train carts | The registry provides details regarding the various services provided by each server (e.g., image compression, filtering, etc.), the version number, etc., all of which relies on the use of some interface definition language (IDL) which describes the interfaces in some standard manner |
+| How will they ship & package / send &receive? | Assembled train carts ship via UPS | The registry provides information regarding the protocols that a particular server or services support (e.g., TCP or UDP) |
+
+Therefore, the application can use the information provided by the registry to determine which particular server/process to bind with (and similarly, in the toy shop, the manager can consider the relevant factors to determine which outsourcing service to select).
+
+## 13. Pointers in RPCs
+
+<center>
+<img src="./assets/P04L01-017.png" width="550">
+</center>
+
+A tricky **issue** that emerges with remote procedure calls (RPCs) is the use of **pointers** as arguments to procedures, e.g., `foo(int, int*)` (as in the figure shown above), where the second argument is a pointer to an `int` (or perhaps even a pointer to an `int` array).
+
+In regular procedures (i.e., *local* procedure calls), it is sensible to have procedures taking pointer arguments, e.g., `foo(x, y)`, where `y` is a pointer to some address in the address space of the calling process which stores the argument's value.
+
+Conversely, in a *remote* procedure call (RPC), passing a pointer to the remote server is nonsensical, inasmuch as the pointer in the caller process's (i.e., client's) address space is otherwise inaccessible to the called process (i.e., the server).
+
+Therefore, to resolve this issue with respect to remote procedure calls (RPCs), RPC systems can make one of the following decisions:
+  1. Disallow the use of pointer arguments altogether in the first place.
+  2. Allow the use of pointer arguments.
+      * To achieve this, the RPC run-time ensures that the marshalling code that gets generated understands the fact that the argument(s) in question is a pointer(s). Therefore, rather than directly copying the argument(s) to the send buffer, it instead **serializes** the pointer argument(s) (i.e., it copies the referenced/"pointed-to" data structure into the data buffer as one contiguous/serial representation). 
+      * Correspondingly, on the server side, the RPC run-time must first unpack all of the data to recreate the *same* equivalent data structure, and then it records the address to this data structure as the corresponding pointer-value argument for making the call to the actual local implementation of the particular operation/procedure.
+
+## 14. Handling Partial Failures
+
+<center>
+<img src="./assets/P04L01-018.png" width="600">
+</center>
+
+Along the lines of "trickiness" with respect to remote procedure calls (RPCs), now consider potential **errors** in fault handling and reporting.
+
+When the client **hangs** while waiting on a remote procedure call (RPC), it is often difficult to determine the exact problem, e.g.,:
+  * Is the server down? (e.g., due to server machine crash)
+  * Is the service down? (e.g., due to overloaded server)
+  * Is the network down? (e.g., due to an inoperable switch or router)
+  * Is the message lost? (e.g., due to lost client request and/or lost server response)
+
+Furthermore, even if the remote procedure call (RPC) run-time incorporates some mechanisms for **timeout and automatic retry**, there are still no guarantees in this case that the problem will be resolved or that the RPC run-time will be able to provide a better understanding of what has occurred. For some cases, it is potentially possible to determine the root cause of the error, but in principle this is still very complex (i.e., involving large overhead) and ultimately is unlikely to provide a *definitive* answer.
+
+For this reason, remote procedure call (RPC) systems typically attempt to introduce a new type of **error notification** (e.g., signal or exception) which captures what error has occurred with the RPC request but without otherwise claiming to provide the *exact* details. This serves as a ***catch all*** for *all* types of errors/failures that can potentially occur during the RPC call, and can also potentially indicate a **partial failure** (i.e., the call did not *completely* fail, but rather the client cannot determine what exactly has succeeded vs. what has failed).
+
+## 15. RPC Failure Quiz and Answers
+
