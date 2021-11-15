@@ -214,4 +214,37 @@ Once the interface definition language (IDL) is compiled and all of the code is 
 
 ## 11. Binding and Registry
 
+### **Binding**
 
+<center>
+<img src="./assets/P04L01-014.png" width="400">
+</center>
+
+**Binding** is a mechanism used by the client to determine ***which*** server it should connect to, based on:
+  * The name of the service
+  * The version number of the service
+  * etc.
+
+Furthermore, binding is used by the client to determine ***how*** to establish a connection to the particular server in question, based on:
+  * The IP address
+  * The network protocol
+  * etc.
+
+### **Registry**
+
+<center>
+<img src="./assets/P04L01-015.png" width="550">
+</center>
+
+In order to support binding, the system software must support some form of a **database** containing *all* of the available services; this database is often called a **registry**. The registry is analogous to the "Yellow Pages" used to search for a required **service name** based on the best match for the protocol, the version number, the proximity, etc. The corresponding match provides the **contact details** for that particular service (e.g., the IP address, the port number, the protocol to use, etc.).
+
+At one extreme, this registry can be some **distributed** online service (e.g., `rpcregistry.com`) that *any* remote procedure call (RPC) server can register with. In this case, the clients have a well-known contact point for finding information regarding the services they require.
+
+At the other extreme, the registry can be a **dedicated process** that runs on *every* single server machine, and is only aware of those services that run on this particular machine. Correspondingly, the clients must know the particular machine's address to request a particular service. Furthermore, in this case, the registry still provides other useful information to the client (e.g., the prot number required for connection to the server).
+
+Regardless of how the registry is actually implemented, it requires some type of **naming protocol** (i.e., naming conventions).
+  * For instance, a simple approach could require the client to specify the exact name (e.g., `add`) and version number for the requested service.
+  * Alternatively, a more sophisticated naming scheme could consider the fact that words such as `summation`, `sum`, `addition`, etc. are likely equivalent to the word `add`, and therefore any service that uses any of these names is a fair candidate to be considered when attempting to find the best match.
+    * ***N.B.*** Allowing for this type of "reasoning" requires support for ontologies and/or other cognitive learning methods, which is beyond the scope of this course.
+
+## 12. Visual Metaphor
