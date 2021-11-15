@@ -204,3 +204,14 @@ In either case, it is apparent that the marshalling process must **encode** the 
 <img src="./assets/P04L01-013.png" width="550">
 </center>
 
+In contrast to the previous section, the unmarshalling code takes the `buffer` provided by the network protocol, and then based on the procedure descriptor (e.g., `array_add`) and the known data types required for that procedure (e.g., integer `i` and an array) the unmarshalling code parses the rest of the byte stream from `buffer`. The correct number of bytes are extracted, which are then used to initialize data structures corresponding to the argument types.
+
+As a result of the unmarshalling process, `i` and `array_j` are allocated somewhere in the server process's address space and are initialized to values that correspond to whatever was placed in the message (i.e., via `buffer`) that was received by the server.
+
+To reiterate, marshalling and unmarshalling routines are not something that the developer typically explicitly writes, but rather the remote procedure call (RPC) systems typically include a special **compiler** which takes an interface definition language (IDL) **specification** (which describes the procedure prototype and the data types for the arguments) and uses it to generate the marshalling and unmarshalling routines used by the respective stubs to perform the corresponding translations. Furthermore, these routines are also responsible for generating the appropriate encoding-related actions (e.g., how to represent an array in the encoded byte stream, converting an integer from one endian format to another, etc.).
+
+Once the interface definition language (IDL) is compiled and all of the code is generated to provide the implementation for the marshalling and unmarshalling routines, all that the developer must do is to use that code and link it with the program files for the server and/or client processes when generating the respective executables.
+
+## 11. Binding and Registry
+
+
