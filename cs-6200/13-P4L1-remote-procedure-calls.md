@@ -134,3 +134,43 @@ The reason this information is necessary is so that:
 Therefore, to address these needs, remote procedure call (RPC) systems rely on the use of **interface definition languages (IDLs)**, which serve as a **protocol** for how to express this ***agreement***.
 
 ## 8. Specifying an IDL
+
+<center>
+<img src="./assets/P04L01-008.png" width="550">
+</center>
+
+An **interface definition language (IDL)** is used to describe the **interface** that a particular server exports. At a minimum, this includes:
+  * The **name** of the procedure
+  * The **types** of the various arguments used by the procedure, as well as of the results
+
+Therefore, an interface definition language (IDL) is analogous to a function prototype definition.
+
+Another important piece of information to include in an interface definition language (IDL) is a **version number**.
+  * If there are multiple servers performing the *same* operation/procedure, the version number helps the client to identify which server is the most current (i.e., which has the most-current implementation of the procedure).
+  * Furthermore, a version number is useful when it is necessary to perform upgrades in the system. For instance, it may not be necessary to update *all* of the clients and *all* of the servers simultaneously, but rather there may be **incremental upgrades** performed; therefore, by using a version number, the clients will be able to identify the server which supports exactly the type of procedure implementation that is compatible with the rest of the client program.
+
+<center>
+<img src="./assets/P04L01-009.png" width="550">
+</center>
+
+The remote procedure call (RPC) system can use an interface definition language (IDL) that is completely **language-agnostic** with respect to the programming languages that are otherwise used to write the client and the server processes.
+
+**Sun RPC**, which is an example of a remote procedure call (RPC) system that will be examined more closely later in this lecture, uses an interface definition language (IDL) that is called **external data representation (XDR)**, as in the figure shown above. XDR is a completely different specification from any other existing programming language.
+  * ***N.B.*** A more comprehensive example using Sun RPC XDR is shown [here](http://web.cs.wpi.edu/~rek/DCS/D04/SunRPC.html).
+
+<center>
+<img src="./assets/P04L01-010.png" width="550">
+</center>
+
+Conversely, the opposite of a language-agnostic interface definition language (IDL) selection for describing the interfaces is a **language-specific** interface definition language (IDL). For instance, the **Java RMI**, which is the Java equivalent of a remote procedure call (RPC), uses the actual Java programming language to specify the interfaces that the RMI server is exporting, as in the figure shown above.
+
+In such a scenario (e.g., Java RMI), the programmer who is already familiar with the language in question (e.g., Java) need not learn yet another set of rules for defining data structures, procedures, etc. in another language, but rather can use what is already familiar.
+
+However, if the user is otherwise unfamiliar with the language in question, then they still must learn something anyways, and therefore the goal of a language such as XDR is to provide as simple of an interface as possible for such user.
+
+To reiterate, whatever choice is made for the interface definition language (IDL), this is used ***only*** for the specification of the **interface** that the server will export; the interface, specified with whichever interface definition language (IDL) that is ultimately selected, will be used by the remote procedure call (RPC) system for tasks such as automating the stub-generation process, generating the marshalling process, and generating information that is used in the service discover process. However, the interface definition language (IDL) is ***not*** an implementation of the service itself.
+
+## 9. Marshalling
+
+
+
