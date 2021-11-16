@@ -102,7 +102,7 @@ To generalize the example from the previous section, consider a summary of the s
       * For connection-oriented protocols (e.g., TCP/IP) that require a connection to be established between the client and the server processes, the **connection** itself is established in this step.
   1. **client call** - The client makes the actual RPC call, i.e., control passes to the client stub, and the client code blocks.
   2. **marshal** - The client stub creates a data buffer which is populated with the values of the arguments that are passed to the procedure call. This process is called **marshalling** the arguments.
-      * The arguments themselves may be located at arbitrary non-contiguous locations in the client process's address space, however, the PRC run-time must send a *contiguous* buffer to the sockets for transmission. Therefore, the marshalling process takes care of this, i.e., placing all of the arguments into a buffer that is passed to the sockets.
+      * The arguments themselves may be located at arbitrary non-contiguous locations in the client process's address space, however, the RPC run-time must send a *contiguous* buffer to the sockets for transmission. Therefore, the marshalling process takes care of this, i.e., placing all of the arguments into a buffer that is passed to the sockets.
   3. **send** - Once the buffer is available, the RPC run-time sends the message to the server. The sending involves whatever **transmission protocol** (e.g., TCP, UDP, shared-memory based inter-process communication for a client and a server on the same machine, etc.) that both sides have agreed upon during the binding process.
   4. **receive** - When the data is subsequently transferred onto the server machine, it is received by the RPC run-time, and then all of the necessary checks are performed to determine the correct **server stub** to which the **message** must be passed. Additionally, certain **access control** checks can be included in this particular step.
   5. **unmarshal** - The server stub unmarshals the data, i.e., convert the incoming byte stream from the client (via the server-side receive buffers) and then extract the arguments and correspondingly create any necessary data structures to hold the values of those arguments.
@@ -301,3 +301,34 @@ For this reason, remote procedure call (RPC) systems typically attempt to introd
 
 ## 15. RPC Failure Quiz and Answers
 
+Assume a remote procedure call (RPC) fails and returns a **timeout message**. Given this timeout message, what is the reason for the RPC failure that can be concluded by the RPC run-time? (Select any/all that apply.)
+  * client packet lost
+  * server packet lost
+  * network link down
+  * server machine down
+  * server process failed
+  * server process overloaded
+  * all of the above
+  * any of the above
+    * `CORRECT` - As explained in the previous section, any of the failure modes indicated above as options are possible causes of failure. Also, hypothetically (albeit unlikely), it is possible for *all* of these failures to occur simultaneously; however, in practice, it is likely to be some subset of these failures, rather than *all* of them together.
+
+## 16. RPC Design Choice Summary
+
+<center>
+<img src="./assets/P04L01-019.png" width="650">
+</center>
+
+The previous sections of this lecture have described several **issues** with remote communication and the corresponding remote procedure call (RPC) mechanisms that resolve these issues, as follows:
+  * **binding** - Allows the client to determine how to find the server and which server to connect to in the first place.
+  * **interface definition language (IDL)** - Determines how to package arguments and results exchanged among the client and the server, which by extension specifies how the client and the server communicate among themselves.
+  * **pointers as arguments** - Dealing with this issue involves either (1) disallowing the use of pointers as arguments altogether, or (2) building into the RPC system itself some type of support mechanism to serialize the pointed-to data appropriately.
+  * **partial failures** - Since it is difficult to determine *exactly* the way in which an RPC system has failed, dealing with this issue involves the RPC run-time providing some special errors and notifications, with the RPC run-time attempting to determine (as reasonably as possible) what the exact cause(s) of the failure is/are but without otherwise making guarantees of a *precise* answer to this.
+
+For all of these issues, there are several **choices** that can be made in the concrete **implementation** of a remote procedure call (RPC) system.
+  * For binding, this can involve either a distributed or per-machine registry.
+  * For the interface definition language (IDL), this can involve either a language-agnostic or language-specific IDL.
+  * etc.
+
+In summary, these issues define the **design space** for a remote procedure call (RPC) system. Accordingly, in different RPC or RPC-like systems, we can make different choices within this design space. This will be the topic of the following sections, which will also briefly contrast this with the RPC-like support provided by Java called **Java Remote Method Invocation (RMI)**.
+
+## 17. What is SunRPC?
