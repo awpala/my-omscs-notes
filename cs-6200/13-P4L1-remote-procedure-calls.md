@@ -332,3 +332,45 @@ For all of these issues, there are several **choices** that can be made in the c
 In summary, these issues define the **design space** for a remote procedure call (RPC) system. Accordingly, in different RPC or RPC-like systems, we can make different choices within this design space. This will be the topic of the following sections, which will also briefly contrast this with the RPC-like support provided by Java called **Java Remote Method Invocation (RMI)**.
 
 ## 17. What is SunRPC?
+
+<center>
+<img src="./assets/P04L01-020.png" width="550">
+</center>
+
+Sun RPC is a remote procedure call (RPC) package originally developed by Sun Microsystems in the 1980s for their UNIX **network file system (NFS)**, which subsequently became more broadly popular and widely available on other platforms.
+
+Sun RPC makes the following **design choices**:
+  * **binding** - It is assumed that the server machine is known up-front, and therefore the registry design is such that there is a **registry daemon** on a per-machine basis. When a client needs to communicate with a particular service, the client must first contact the registry on that particular machine to determine how to coordinate with the exact service that it requires.
+  * **interface definition language (IDL)** - There is no fundamental assumption made regarding the programming language used by either the client or the server processes. Therefore, in order to maintain neutrality, Sun RPC relies on a language-agnostic IDL called **XDR**, which is used for both the specification of the interface as well as the encoding (i.e., how data types are encoded when transmitted among machines).
+  * **pointers** - The use of pointers is allowed. Corresponding pointed-to data structures are serialized.
+  * **failures** - Internally there is a **retry** mechanism to retry contacting the server when a connection times out, which is performed a specific number of times. Furthermore, as much as possible, the Sun RPC run-time attempts to return meaningful errors in order to allow the caller to distinguish between failure modes such as unavailable server, mismatch, unsupported protocol or version, timeout-related failure, etc.
+
+## 18. Sun RPC Overview
+
+<center>
+<img src="./assets/P04L01-021.png" width="650">
+</center>
+
+Similarly to the previous generic description of remote procedure calls (RPCs), with Sun RPC, the client and the server are able to interact via a **procedure call interface**. The server specifies the interface that it supports in a `.x` file written in XDR. Furthermore, Sun RPC includes the **rpcgen compiler** which converts `.x` to language-specific stubs, generating separate stubs for the client and server processes.
+
+When launched, the server process registers itself with the **registry daemon** which is available on the *local* machine. This per-machine registry tracks **information** such as the name of the service, version, protocol(s) supported by the service, and the port number to contact when the client process sends a request to the server. The client must explicitly contact the registry on the *target* machine in order to obtain the pertinent information regarding the server process.
+
+When **binding** occurs, the client creates an **RPC handle**, which is used whenever the client makes an remote procedure calls (RPCs). In this manner, the RPC run-time is able to track all of the per-client RPC-related state.
+
+Note that with Sun RPC (or any other RPC, for that matter), the client and the server processes that are communicating amongst each other may be either on *different* machines or on the *same* machine. In the latter case, the RPC works in the typical manner of inter-process communication (IPC), but additionally operates at a much higher level of semantics (i.e., procedure call semantics).
+
+<center>
+<img src="./assets/P04L01-022.png" width="650">
+</center>
+
+Before further discussing the key components of Sun RPC, to view a more complete reference, refer to the documentation, tutorial, and examples that are now maintained by Oracle (after its acquisition of Sun Microsystems in 2010).
+  * ***Reference***: [ONC+ Developer's Guide](https://docs.oracle.com/cd/E19683-01/816-1435/index.html)
+
+***N.B.*** In Oracle's documentation, references to **Transport-Independent Sun RPC (TI-RPC)** (i.e., as opposed to Sun RPC) denote the corresponding protocol which is used for client-server communication that does not require specification at compile-time (i.e., instead, it can be dynamically specified at run-time). Otherwise, the documentation closely follows the original Sun RPC specification, as well as the XDR interface definition language (IDL).
+
+Additionally, there are older online references available which are still valid and relevant.
+
+Lastly, the Linux man pages provide a corresponding entry via `man rpc`, which describes the Linux-supported APIs.
+
+## 19. Sun RPC XDR Example
+
