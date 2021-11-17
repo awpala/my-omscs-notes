@@ -374,3 +374,61 @@ Lastly, the Linux man pages provide a corresponding entry via `man rpc`, which d
 
 ## 19. Sun RPC XDR Example
 
+<center>
+<img src="./assets/P04L01-023.png" width="650">
+</center>
+
+Consider now the various components of Sun RPC via example, as in the figure shown above. As before, the client contacts a server that can perform calculations. In this example, the client passes the single argument `x`, which the client requests to the server to use to determine/compute the value of `x`<sup>`2`</sup>.
+
+The corresponding `.x` XDR file is shown in the figure above, which describes how the server specifies its interface.
+  * The server specifies all of the **data types** (e.g., `square_in` and `square_out`) required for the procedures that it supports (e.g., `SQUARE_PROC()`).
+    * ***N.B.*** In XDR (as in C), the data type `int` represents a 32-bit integer. Furthermore, there are no strict naming conventions (e.g., `snake_case`) required for XDR specifications.
+  * In addition to the data types, the server specifies the actual RPC service itself (e.g., `SQUARE_PROG`), which is used by the client(s) to find the appropriate service to which to bind. Furthermore, the server specifies the version (e.g., `SQUARE_VERS`) for the corresponding **procedure** (e.g., `SQUARE_PROC()`). A *single* RPC server can support one or many procedures in this manner (e.g., a calculator server can support various arithmetic operations).
+    * Each procedure has an associated **procedure ID** (e.g., `SQUARE_PROC` has id number `1`). This identifier is not used by the programmer, but rather is used internally by the RPC run-time when attempting to identify which particular procedure is being called/requested by the client (i.e., as opposed to passing the procedure name by reference back and forth between client and server).
+    * Additionally, each version of the procedure is similarly associated with a **version ID** (e.g., `1`, denoting "version 1" for `SQUARE_PROC()`). In fact, such a version number/identifier can be applied to an entire *collection* of procedures in this manner.
+      * Over time, a given procedure(s) (e.g., `SQUARE_PROC()`) may be refined and/or additional procedures may be added. In this process, it may be undesirable to *immediately* update the interface to the client with *all* corresponding changes (which may be semantically and/or syntactically different). In such a case, it may be more sensible for the client-server interaction to occur via corresponding reference to a *specific* version number/identifier of the requested procedure; therefore, when a client requests a procedure version that is not supported by the server, then the communication can be explicitly rejected by the server.
+      * In this manner, a given server can support *multiple* versions of the *same* procedure, which in turn facilitates the evolution of the system, without otherwise requiring additional coordination to update all clients and all servers simultaneously.
+  * Finally, the server specifies a **service ID**, which is a number used by the RPC run-time to differentiate among the different services it supports.
+
+Therefore, in general, the client requests a service via **names/labels** (e.g., service name, procedure name, and version number), whereas the RPC run-time itself internally uses **identifiers** (e.g., service ID, procedure ID, and version ID).
+
+<center>
+<img src="./assets/P04L01-024.png" width="600">
+</center>
+
+With respect to the **service ID**, it is permissible to specify an value in the ranges shown in the figure above (i.e., `0x20000000` to `0x3fffffff`). Otherwise, values outside of this range have pre-defined meanings (e.g., network file system) or are otherwise reserved for other uses.
+
+## 20. Compiling XDR
+
+<center>
+<img src="./assets/P04L01-025.png" width="550">
+</center>
+
+Consider now the compilation process for a `.x` file, as in the figure shown above. Here, it is assumed that the same procedure from the previous section is used (i.e., `SQUARE_PROC()`), whose definition is contained in the corresponding file (e.g., `square.x`). Using a `.x` file in this manner will automatically generate the code that is used for both the client and the server-side processing.
+
+To perform this compilation, Sun RPC relies on the compiler `rpcgen`, which can generate C code via flag `-c` (e.g., `rpcgen -c square.x`). The result of this command is the generation of various files, as follows:
+  * **header files** (e.g., `square.h`) - Contains all language-specific definitions of data types and function prototypes.
+  * **stubs**
+    * **server-side stubs** (e.g., `square_svc.c`) - The skeleton code for the server-side code (including the routine `main()`), without the actual implementation of the service/procedure itself; rather, the implementation is the responsibility of the programmer.
+    * **client-side stubs** (e.g., `square_clnt.c`) - A complete/"proper" stub.
+  * **common marshalling routines** (e.g., `square_xdr.c`) - A separate file containing common code pertaining to marshalling and unmarshalling routines for all of the data types (i.e., argument(s) and result(s)) used by both the client and the server.
+
+<center>
+<img src="./assets/P04L01-026.png" width="550">
+</center>
+
+Examining the auto-generated server file `square_svc.c` (where `svc` denotes "service"), it is composed of two parts:
+  1. The routine `main()` for the server process, which includes code for the client registration step, as well as additional housekeeping operations.
+  2. All other code related to the particular remote procedure call (RPC) service(s) (e.g., `square_prog_1`), including:
+      * The version number (e.g., `_1`), to determine which particular procedure to be called
+      * Request parsing
+      * Argument(s) marshalling
+      * And other internal code
+
+Additionally, the server stub file `square_proc_1_svc.c` contains auto-generated code which includes the prototype(s) for the actual procedure(s) that is invoked in the server process. The corresponding implementation(s) must be provided by the programmer.
+
+Similarly, the auto-generated client file `square_clnt.c` (where `clnt` denotes "client") contains the client stub. This includes an auto-generated procedure (e.g., `squareproc_1()`), which represents a wrapper for the actual remote procedure call (RPC) used by the client to call the server-side process, where the corresponding server-side implementation (i.e., `square_proc_1_svc()`) is actually called.
+
+Once all of the aforementioned is developed, the developer then writes the client application with corresponding calls to the wrapper function (e.g., `y = squareproc_1(&x, /* ... */);`), similarly to making a regular/local procedure call, without the need to additionally create sockets, buffers, copy data into buffers, etc.; indeed, the corresponding abstractions provided by the RPC system are what make remote procedure calls (RPCs) appealing.
+
+## 21. Summarizing XDR Compilation
