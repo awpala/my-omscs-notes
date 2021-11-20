@@ -384,7 +384,7 @@ The corresponding `.x` XDR file is shown in the figure above, which describes ho
   * The server specifies all of the **data types** (e.g., `square_in` and `square_out`) required for the procedures that it supports (e.g., `SQUARE_PROC()`).
     * ***N.B.*** In XDR (as in C), the data type `int` represents a 32-bit integer. Furthermore, there are no strict naming conventions (e.g., `snake_case`) required for XDR specifications.
   * In addition to the data types, the server specifies the actual RPC service itself (e.g., `SQUARE_PROG`), which is used by the client(s) to find the appropriate service to which to bind. Furthermore, the server specifies the version (e.g., `SQUARE_VERS`) for the corresponding **procedure** (e.g., `SQUARE_PROC()`). A *single* RPC server can support one or many procedures in this manner (e.g., a calculator server can support various arithmetic operations).
-    * Each procedure has an associated **procedure ID** (e.g., `SQUARE_PROC` has id number `1`). This identifier is not used by the programmer, but rather is used internally by the RPC run-time when attempting to identify which particular procedure is being called/requested by the client (i.e., as opposed to passing the procedure name by reference back and forth between client and server).
+    * Each procedure has an associated **procedure ID** (e.g., `SQUARE_PROC()` has id number `1`). This identifier is not used by the programmer, but rather is used internally by the RPC run-time when attempting to identify which particular procedure is being called/requested by the client (i.e., as opposed to passing the procedure name by reference back and forth between client and server).
     * Additionally, each version of the procedure is similarly associated with a **version ID** (e.g., `1`, denoting "version 1" for `SQUARE_PROC()`). In fact, such a version number/identifier can be applied to an entire *collection* of procedures in this manner.
       * Over time, a given procedure(s) (e.g., `SQUARE_PROC()`) may be refined and/or additional procedures may be added. In this process, it may be undesirable to *immediately* update the interface to the client with *all* corresponding changes (which may be semantically and/or syntactically different). In such a case, it may be more sensible for the client-server interaction to occur via corresponding reference to a *specific* version number/identifier of the requested procedure; therefore, when a client requests a procedure version that is not supported by the server, then the communication can be explicitly rejected by the server.
       * In this manner, a given server can support *multiple* versions of the *same* procedure, which in turn facilitates the evolution of the system, without otherwise requiring additional coordination to update all clients and all servers simultaneously.
@@ -429,6 +429,73 @@ Additionally, the server stub file `square_proc_1_svc.c` contains auto-generated
 
 Similarly, the auto-generated client file `square_clnt.c` (where `clnt` denotes "client") contains the client stub. This includes an auto-generated procedure (e.g., `squareproc_1()`), which represents a wrapper for the actual remote procedure call (RPC) used by the client to call the server-side process, where the corresponding server-side implementation (i.e., `square_proc_1_svc()`) is actually called.
 
-Once all of the aforementioned is developed, the developer then writes the client application with corresponding calls to the wrapper function (e.g., `y = squareproc_1(&x, /* ... */);`), similarly to making a regular/local procedure call, without the need to additionally create sockets, buffers, copy data into buffers, etc.; indeed, the corresponding abstractions provided by the RPC system are what make remote procedure calls (RPCs) appealing.
+Once all of the aforementioned is developed, the developer then writes the client application with corresponding calls to the wrapper function (e.g., `y = squareproc_1(&x /* , ... */);`), similarly to making a regular/local procedure call, without the need to additionally create sockets, buffers, copy data into buffers, etc.; indeed, the corresponding abstractions provided by the RPC system are what make remote procedure calls (RPCs) appealing.
 
 ## 21. Summarizing XDR Compilation
+
+<center>
+<img src="./assets/P04L01-027.png" width="550">
+</center>
+
+(***N.B.*** The figure shown above contains the high-resolution version of the diagram used in this section.)
+
+<center>
+<img src="./assets/P04L01-028.png" width="750">
+</center>
+
+This section summarizes the steps involved in developing remote procedure call (RPC) applications, as in the figure shown above.
+
+First, the `.x` file is written using XDR, and then is passed through the rpcgen compiler. The rpcgen compiler generates several files, including the header file, the respective stubs, as well as the skeleton code for the server implementation. Additionally, the rpcgen compiler generates a `_xdr` file containing a number of helpful marshalling routines.
+
+For the server-side application, the developer must provide the implementation of the actual service procedure (e.g., `square_proc_1_svc`, per the naming convention).
+
+For the client-side application, the developer develops the client application as appropriate, and  whenever necessary, the client application calls the wrapper procedure (e.g., `squareproc_1()`). This call is what actually invokes all of the communication with the server and the corresponding execution of the particular service(s) implementation(s).
+
+As a matter of correctness, the developer must ensure to include all of the appropriate `.h` files (particularly those which are auto-generated by the rpcgen compiler), as well to link the client and the server code with the corresponding respective stub objects.
+
+The RPC run-time that is called from the stubs then provides all other necessary functionality (e.g., interactions with the operating system, creating sockets, managing connections, etc.)
+
+<center>
+<img src="./assets/P04L01-029.png" width="550">
+</center>
+
+Note that `rpcgen -C` generates code that is ***not*** thread-safe. Therefore, the output of the compilation results in a function that must be called in a manner such as `y = squareproc_1(&x, client_handle);`. The issue with the implementation of this operation, as well as at the run-time level, is that there are a number of ***statically*** allocated data structures (including for the result), leading to race conditions when multiple threads attempt to make remote procedure calls (RPCs) to this routine concurrently.
+
+Correspondingly, to generate **thread-safe** code, the code must be compiled with flag `-M` (denoting "multithreading-safe"), e.g., `rpcgen -C -M square.x`. The corresponding wrapper function that is generated has a different signature and implementation, e.g., `status = squareproc_1(&x, &y, client_handle);`. Here, it ***dynamically*** allocates memory for the results of the operation, thereby resolving some of the aforementioned issues with respect to the previous thread-unsafe implementation.
+  * ***N.B.*** Using the flag `-M` does not actually create a multi-threaded server (e.g., `..._svc.c` is not multi-threaded).
+
+On Solaris platforms, the compiler flag `-a` generates multi-threaded server code. However, on Linux, this option is not supported, but rather any such multi-threaded server must be implemented manually (using the generated thread-safe routines as a starting point).
+
+## 22. `square.x` Return Type Quiz and Answers
+
+Consider the following XDR file (`square.x`):
+```c
+struct square_in {
+ int arg1;
+};
+struct square_out {
+ int res1;
+};
+
+program SQUARE_PROG { /* RPC service name */
+  version SQUARE_VERS {
+    square_out SQUARE_PROC(square_in) = 1; /* proc1 */
+  } = 1; /* version1 */
+} = 0x31230000; /* service id */
+```
+
+What is the return type of `square_proc_1()` if `square.x` is compiled with the following flags:
+  * `rpcgen -C`
+    * `square_out*`
+  * `rpcgen -C -M`
+    * `enum clnt_stat`
+
+***N.B.*** As this quiz demonstrates, the thread-safe vs. non-thread-safe versions of the function have different prototypes with correspondingly different return-value types.
+
+## 23. Sun RPC: Registry
+
+<center>
+<img src="./assets/P04L01-030.png" width="550">
+</center>
+
+
