@@ -517,3 +517,180 @@ Once the RPC daemon is running, we can explicitly query what services are regist
 
 ## 24. Sun RPC: Binding
 
+<center>
+<img src="./assets/P04L01-031.png" width="650">
+</center>
+
+With respect to the **binding** process in Sun RPC, the binding process is initiated by the client using the operation `clnt_create()`, as in the figure shown above.
+
+For the specific example of the service `square`, the operation is as in the figure shown above. The arguments to `clnt_create()` include:
+  * The host name of the server (e.g., `rpc_host_name`)
+  * The protocol used to communicate with the server (e.g., `"tcp"`)
+  * The name of the RPC service (e.g., `SQUARE_PROG`)
+  * The version number of the RPC service (e.g., `SQUARE_VERS`)
+
+***N.B.*** The RPC service name and version (e.g., `SQUARE_PROG` and `SQUARE_VERS`, respectively) are auto-generated in the remote procedure call (RPC) generation process from the `.x` file, and are included in the `.h` header file as hash-defined values. Therefore, if the client must support a different version number of the service, it must be re-compiled (since this information is static) but otherwise no other parts of the client code require modification.
+
+The return value from the operation `clnt_create()` is a client handle of type `CLIENT*` which is included in every single remote procedure call (RPC) operation that it requests and is used to track certain information, e.g.,:
+  * status of the current RPC operation
+  * error messages
+  * authentication-related information
+  * etc.
+
+## 25. XDR Data Types
+
+Recall that in the basic `square.x` example, all of the data types for the input and output arguments must be described in the `.x` file. Note that all of these types and data structures must be XDR-supported data types.
+
+***N.B. Reference***: [RFC 4506](https://datatracker.ietf.org/doc/html/rfc4506) (XDR data types specification)
+
+<center>
+<img src="./assets/P04L01-032.png" width="550">
+</center>
+
+Some of the default XDR data types are those that are commonly available in programming languages like C (e.g., `char`, `byte`, `int`, `float`, etc.).
+
+Additionally, XDR supports many other data types.
+  * `const` - After compilation, translates to a `#define` macro constant in C.
+  * `hyper` - 64-bit integer
+  * `quadruple` - 128-bit floating-point number
+  * `opaque` - Corresponds approximately to the data type `byte` in C (i.e., uninterpreted binary data).
+    * For instance, to transfer an image, it can be represented as an array of `opaque` elements.
+
+<center>
+<img src="./assets/P04L01-033.png" width="550">
+</center>
+
+Regarding **arrays**, XDR allows to specify two types of arrays:
+  1. **fixed-length array** (e.g., `int data[80]`), which specifies the *exact* number of elements in the array.
+      * The RPC run-time allocates the corresponding amount of memory whenever arguments of this data type are sent or received, and is aware of exactly how many bytes from the incoming packet stream should be read out in order to populate a variable that is of this array data type.
+  2. **variable-length array** (e.g., `int data<80>`), which species the *maximum expected* number of elements.
+      * When compiled, a variable-length array is translated into a data structure containing two fields: (1) an integer `len` which corresponds to the *actual* size of the array, and (2) a point `val` which is an address of where the data in the array is actually stored.
+      * When the data is actually sent, the sender has to specify `len` (the size of the array) and then set `val` to point ot the memory location where the data is stored.
+      * On the receiving end, the server knows that it is expecting a data structure that has variable length, and will parse `len` to determine the actual length/size of the array and correspondingly allocate the appropriate amount of memory, and then will read the remaining portions of the incoming byte stream in order to populate the allocated memory with the corresponding values.
+
+The key **exception** to the aforementioned variable-length array configuration is **strings**. When a variable-length string is defined (e.g., `string line<80>`), the resulting variable (e.g., `line`) is simply a C pointer to `char`. In memory, the string is stored as a normal C-style/null-terminated string (i.e., an array of `char`s terminated by `'\0'`). Operations (e.g., string copy, string length, etc.) require this particular representation in order to determine where the string ends. However, when the variable-length string is encoded for transmission, it is encoded as a **pair** of length and data; in this respect, such a string is otherwise identical to other similar variable-length data structures.
+
+## 26. XDR Data Types Quiz and Answers
+
+Consider a remote procedure call (RPC) routine that uses the following data type:
+```c
+int data<5>;
+```
+
+Furthermore, assume that the array `data` is ***full***. How many bytes are required to represent this five-element array in a C client on a `32`-bit machine?
+  * `28` bytes
+    * For a variable-length array, in C, this is compiled to a data structure comprised of fields `int len` (`4` bytes) and `int *val` (`4` bytes, for an address on a `32`-bit machine). Furthermore, since the memory required for five `int` elements is `5 * 4` bytes, the total memory required is the sum of these quantities, i.e., `4 + 4 + (5 * 4) = 28` bytes.
+
+## 27. XDR Routines
+
+<center>
+<img src="./assets/P04L01-034.png" width="550">
+</center>
+
+XDR provides the RPC run-time with some helpful **routines**.
+  * After compiling a `.h` XDR file, the compiler generates a number of routines used for **marshalling**/**unmarshalling** the various data types in the remote procedure call (RPC) operations. These are found in the correspondingly generated `_xdr.c`  file (e.g., `square_xdr.c`).
+  * Additionally, the compiler generates **clean-up operations**.
+    * `xdr_free()`, which de-allocates/frees up memory regions that are used for the data structures and arguments in the RPC operations.
+    * These routines are typically called within a procedure which is suffixed with `_freeresult` (e.g., `square_prog_1_freeresult()`), which is a user-defined procedure wherein the user can specify all of the different data structures (i.e., pieces of state) which must be de-allocated after the run-time is finished with servicing the RPC request and returning the results. The RPC run-time automatically calls this procedure after it finishes computing the result.
+
+## 28. Encoding
+
+<center>
+<img src="./assets/P04L01-035.png" width="550">
+</center>
+
+Consider now what actually ends up in the **buffers** that are passed for transmission among the client and the server.
+
+For instance, for a server which can support multiple procedures, it is important to pass not just the arguments but also to actually include an **RPC header** that wil uniquely identify the procedure that is being called (e.g., the service procedure ID), the version number, a request ID (e.g., to detect repeated requests on retries), etc. In this manner, similar types of information are sent between the server and the client (i.e., via the corresponding packets transmitted over the wire).
+
+Additionally, clearly the actual **data** itself must also be included. This comprises (e.g., the arguments or results). However, rather than directly copying fro memory into the packets, the different data types (i.e., arguments or results) must first be ***encoded*** into a byte stream in order to serialize them in a manner which depends on the actual data type. Therefore, it is imperative to have an actual ***agreement*** as to how this encoding is performed to allow the server to interpret the byte stream in order to recreate the appropriate data structure in the server process's address space. Furthermore, in order for the server process to actually call the procedure that implements the service, it must have the arguments present in the server process's memory. And similarly, these requirements hold for the client process's interpretation of the returned results from the server process (i.e., interpreting the received byte stream from the server in order to populate data structures in its own local memory).
+  * ***N.B.*** In some cases, there may be a one-to-one mapping of the in-memory representation with how the data is encoded in the packet, while in other cases this may not hold true.
+
+Finally, when all of the pertinent information is placed in a packet, it must be preceded with the **transport header**, which specifies the protocol (e.g., TCP or UDP) and the destination address, and ensures that all of the protocol-specific operations occur on the client and on the server appropriately.
+
+## 29. XDR Encoding
+
+<center>
+<img src="./assets/P04L01-036.png" width="550">
+</center>
+
+As hinted already with the previous discussion on the XDR data types' syntax, XDR specifies *both* the **syntax** (via the **interface definition language (IDL)**, which describes the data types) *and* the **encoding** of the data types (i.e., what is the binary representation of the data when it is on the wire).
+  * As suggested previously regarding the string data type, XDR corresponds to both the IDL (the syntax for describing the data type) and the encoding (how the data is represented when transmitted between the client and the server on the wire).
+
+The **XDR encoding rules** are as follows:
+  * All data types are encoded as integer multiples of `4` bytes.
+    * For instance, transmitting a single byte of data requires `1` byte for the data and then `3` additional bytes for padding. This facilitates alignment when moving data to/from memory and to/from network packets via the network card.
+  * ***Big-endian*** is used as the transmission standard, irrespectively of the native format of either the client or the server.
+    * In some cases, this may add unnecessary overhead (i.e., if both client and server machines are little-endian), however, having such a standard agreement facilitates prevention of any ambiguity in the interpretation of the byte-stream data sent on the wire.
+  * **Two's complement** is used for integers.
+  * **IEEE 754** format is used for floating-point numbers.
+  * etc.
+
+<center>
+<img src="./assets/P04L01-037.png" width="550">
+</center>
+
+Consider these rules via an example, as in the figure shown above.
+
+The following are given:
+```c
+string data<10> // in .x file
+data = "Hello"  // argument passed from client to server
+```
+
+The C-based client and server processes' respective address spaces require `6` bytes to store `data`'s characters (i.e., `'H'`, `'e'`, `'l'`, `'l'`, `'o'`, `'\0'`).
+
+However, the **transmission buffer** itself requires `12` bytes to store `data`, as follows:
+  * `4` bytes for the length (`length = 5`)
+  * `5` bytes for the characters (***N.B.*** `'\0'` is not transmitted for a string)
+  * `3` bytes for padding (i.e., to make the buffer an integer multiple of `4` bytes for proper boundary-alignment)
+
+## 30. XDR Encoding Quiz and Answers
+
+Consider a remote procedure call (RPC) routine that uses the following XDR data type:
+```c
+int data<5>;
+```
+
+Furthermore, assume that the array `data` is ***full***. How many bytes are required to encode this five-element array to send it from a client to a server, both of which are `32`-bit machine? (Ignore bytes required for the headers and protocol-related information.)
+  * `24` bytes
+    * Variable-length arrays are encoded such that the first four bytes correspond to the integer value of the array size (i.e., `len`), and the remaining bytes correspond to the actual array elements (with appropriate padding as necessary). In this case, the array elements require `5 * 4 = 20` bytes, and since `len` is `4` bytes (i.e., an `int` on a 32-bit machine), this gives `20 + 4 = 24` bytes, which is an integer multiple of `4` (i.e., no additional padding is necessary).
+    <center>
+    <img src="./assets/P04L01-038.png" width="300">
+    </center>
+
+## 31. Java RMI
+
+<center>
+<img src="./assets/P04L01-037.png" width="550">
+</center>
+
+Another popular type of RPC-like system is **Java Remote Method Invocations (RMIs)**. Java RMI is also pioneered by Sun as form of client-server communication among address spaces in the **Java Virtual Machine (JVM)**.
+
+**Java** is an object-oriented language, wherein objects interact via ***method invocations*** (i.e., rather than ***procedure calls***). For this reason, this inter-process communication (IPC) mechanism matches Java's object-oriented semantics in the corresponding form of a remote *method* invocation.
+
+The **architecture** of Java RMI is similar to that which was seen previously with respect to remote procedure calls (RPCs) (e.g., Sun RPC).
+  * Client and server processes have client-side and server-side stubs. The server-side stub is referred to as a **skeleton**.
+  * In the Java Virtual Machine (JVM), all of the processes (i.e., all clients and servers) are written in the Java programming language. For this reason, the **interface definition language (IDL)** for Java RMIs is itself Java (i.e., it is a language-specific IDL).
+    * ***N.B.*** It would not be sensible to use a language-agnostic approach here, given that both the client and the server processes also use Java.
+  * The **run-time layer** is separated into two components:
+    1. **Remote Reference Layer** - Captures all of the common code required to provide various ***server-reference semantics***, e.g.,:
+        * **unicast** - The client interacts with a *single* server (as in the previous examples).
+        * **broadcast** - The client interacts with *multiple* servers
+        * **return-first response** - The client returns only when the *first* response arrives
+        * **return-if-all-match** - The client returns only when *all* of the responses arrive and when these responses *match*.
+        * etc.
+    2. **Transport Layer** - Implements all transport-protocol-related functionality (e.g., TCP, UDP, shared-memory-based communications on the *same* machine, etc.)
+
+Regardless of the underlying transport protocol, all of the aforementioned functionality is implemented in a *uniform* manner; Java RMI captures these features in separate components within the remote reference layer. Therefore, as a developer, one can simply specify the desired reference semantics, or they can implement just this particular component (i.e., the remote reference layer) to achieve the particularly desired semantics.
+
+***N.B.*** Java RMIs are mentioned in this lecture for reference, however, its detail discussion is beyond the present scope.
+  * ***Reference***: [Java RMI Tutorials](https://docs.oracle.com/javase/tutorial/rmi/)
+
+## 32. Lesson Summary
+
+This lecture examined **remote procedure calls (RPCs)**, a popular inter-process communication (IPC) mechanism that is used to support client-server interactions.
+
+An RPC system requires the use of an **interface definition language (IDL)** in order to describe the remote service, as well as other mechanisms (e.g., service registration, binding, data marshalling, etc.) required to enable the remote data exchanges.
+
+This lecture described Sun RPC in detail, with sufficient examples to enable the use and implementation of Sun RPC systems.
