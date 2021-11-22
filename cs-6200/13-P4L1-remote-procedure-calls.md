@@ -498,4 +498,22 @@ What is the return type of `square_proc_1()` if `square.x` is compiled with the 
 <img src="./assets/P04L01-030.png" width="550">
 </center>
 
+Consider now the Sun RPC **registry**. Recall that the actual code that the server must register with the registries auto-generated in the `rpcgen` process, as part of the function `main()`.
+
+In Sun RPC, the registry process (or **RPC daemon**) is process that runs on every single machine, which is called `portmapper`. The process `portmapper` is contacted by *both* the server (when registering a particular service) and the client (when determining the specific contact information for a particular service being searched).
+  * ***N.B.*** To start this process in Linux, this requires administrative access permissions (i.e., `sudo`), which permits to launch the RPC daemon via command `/sbin/portmap`.
+
+Given that the client has already communicated with the RPC daemon, the client clearly knows the IP address of the machine with which it must interact, therefore the information that the client can extract from `portmapper` include the port number used by the client to communicate with the server, whether particular version and protocol are supported by the server that the the client requires, etc.
+
+Once the RPC daemon is running, we can explicitly query what services are registered with it via command `rpcinfo -p` (***N.B.*** this may require an absolute path, e.g., `/usr/sbin/rpcinfo -p`). Once run, this command returns information for every single service registered on that particular machine, including:
+  * program id
+  * service name
+  * version
+  * contact information
+    * protocol (e.g., TCP or UDP)
+    * socket port number
+
+***N.B.*** When running this service, note that `portmapper` is registered with TCP and UDP on the *same* port number, `111`. This means that there are two different sockets listened to by this server: (1) a TCP socket, and (2) a UDP socket. Therefore, the service `portmapper` can communicate with *both* TCP and UDP clients.
+
+## 24. Sun RPC: Binding
 
