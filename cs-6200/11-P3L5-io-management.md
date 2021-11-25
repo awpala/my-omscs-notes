@@ -100,3 +100,49 @@ However, the PCI bus is not the only interconnect that is typically present. Oth
 The **controllers** that are part of the device hardware determine the type of interconnect that a given device can directly attach to. Furthermore, there are **bridging controllers** that can handle any differences between different types of interconnects. 
 
 ## 7. Device Drivers
+
+TODO
+
+<center>
+<img src="./assets/P03L05-007.png" width="750">
+</center>
+
+## 8. Types of Devices
+
+TODO
+
+<center>
+<img src="./assets/P03L05-008.png" width="750">
+</center>
+
+<center>
+<img src="./assets/P03L05-009.png" width="750">
+</center>
+
+## 9. I/O Devices as Files Quiz and Answers
+
+TODO
+
+## 10. Pseudo Devices Quiz and Answers
+
+TODO
+
+References: [/dev/null](https://en.wikipedia.org/wiki/Null_device) (the Null device), [/dev/random](https://en.wikipedia.org/?title=/dev/random)
+
+## 11. Looking at `/dev` Quiz and Answers
+
+TODO
+
+## 12. CPU-Device Interactions
+
+TODO
+
+<center>
+<img src="./assets/P03L05-010.png" width="800">
+</center>
+
+<center>
+<img src="./assets/P03L05-011.png" width="800">
+</center>
+
+## 13. Device Access PIO
