@@ -146,3 +146,179 @@ TODO
 </center>
 
 ## 13. Device Access PIO
+
+TODO
+
+<center>
+<img src="./assets/P03L05-012.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-013.png" width="650">
+</center>
+
+## 14. Device Access DMA
+
+TODO
+
+<center>
+<img src="./assets/P03L05-014.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-015.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-016.png" width="650">
+</center>
+
+## 15. DMA vs. PIO Quiz and Answers
+
+TODO
+
+## 16. Typical Device Access
+
+TODO
+
+<center>
+<img src="./assets/P03L05-017.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-018.png" width="650">
+</center>
+
+## 17. OS Bypass
+
+TODO
+
+<center>
+<img src="./assets/P03L05-019.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-020.png" width="650">
+</center>
+
+## 18. Sync vs. Async Access
+
+TODO
+
+<center>
+<img src="./assets/P03L05-021.png" width="650">
+</center>
+
+## 19. Block Device Stack
+
+TODO
+
+<center>
+<img src="./assets/P03L05-022.png" width="650">
+</center>
+
+## 20. Block Device Quiz and Answers
+
+TODO
+
+<center>
+<img src="./assets/P03L05-023.png" width="350">
+</center>
+
+References: [`ioctl` man page](https://man7.org/linux/man-pages/man2/ioctl.2.html) and [`ioctl_list` man page](https://linux.die.net/man/2/ioctl_list)
+
+## 21. Virtual File System
+
+TODO
+
+<center>
+<img src="./assets/P03L05-024.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-025.png" width="650">
+</center>
+
+## 22. Virtual File System Abstractions
+
+TODO
+
+<center>
+<img src="./assets/P03L05-026.png" width="650">
+</center>
+
+## 23. VFS on Disk
+
+TODO
+
+<center>
+<img src="./assets/P03L05-027.png" width="650">
+</center>
+
+## 24. ext2 Second Extended Filesystem
+
+TODO
+
+<center>
+<img src="./assets/P03L05-028.png" width="650">
+</center>
+
+## 25. inodes
+
+TODO
+
+<center>
+<img src="./assets/P03L05-029.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-030.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-031.png" width="650">
+</center>
+
+## 26. inodes with Indirect Pointers
+
+TODO
+
+<center>
+<img src="./assets/P03L05-032.png" width="650">
+</center>
+
+<center>
+<img src="./assets/P03L05-033.png" width="650">
+</center>
+
+## 27. inode Quiz and Answers
+
+TODO
+
+<center>
+<img src="./assets/P03L05-034.png" width="350">
+</center>
+
+Reference Notes
+```
+Maximum File Size:
+
+number_of_addressable_blocks * block_size
+
+number_of_addressable_blocks = 12 + blocks_addressable_by_single_indirect + blocks_addressable_by_double_indirect + blocks_addressable_by_triple_indirect
+```
+```
+Properly rouning up first answer results in 17 GB or 16 GiB (where GB is (10^3)^3 and GiB is (2^10)^3)
+```
+
+## 28. Disk Access Optimizations
+
+TODO
+
+<center>
+<img src="./assets/P03L05-035.png" width="650">
+</center>
+
+## 29. Lesson Summary
+
+TODO
