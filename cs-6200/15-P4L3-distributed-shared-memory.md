@@ -267,14 +267,6 @@ TODO
 <img src="./assets/P04L03-040.png" width="650">
 </center>
 
-## 25. Consistency Models Quiz 3 and Answers
-
-TODO
-
-<center>
-<img src="./assets/P04L03-040.png" width="650">
-</center>
-
 ## 25. Consistency Models Quiz 4 and Answers
 
 TODO
