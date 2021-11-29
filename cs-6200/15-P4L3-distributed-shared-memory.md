@@ -186,7 +186,7 @@ TODO
 <img src="./assets/P04L03-028.png" width="650">
 </center>
 
-## **18. Strict Consistency**
+### **18. Strict Consistency**
 
 TODO
 
@@ -194,7 +194,7 @@ TODO
 <img src="./assets/P04L03-029.png" width="650">
 </center>
 
-## **19. Sequential Consistency**
+### **19. Sequential Consistency**
 
 TODO
 
@@ -214,7 +214,7 @@ TODO
 <img src="./assets/P04L03-033.png" width="650">
 </center>
 
-## **20. Causal Consistency**
+### **20. Causal Consistency**
 
 TODO
 
@@ -230,7 +230,7 @@ TODO
 <img src="./assets/P04L03-036.png" width="650">
 </center>
 
-## **21. Weak Consistency**
+### **21. Weak Consistency**
 
 TODO
 
