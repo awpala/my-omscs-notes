@@ -662,7 +662,7 @@ Furthermore, assume that the array `data` is ***full***. How many bytes are requ
 ## 31. Java RMI
 
 <center>
-<img src="./assets/P04L01-037.png" width="550">
+<img src="./assets/P04L01-039.png" width="550">
 </center>
 
 Another popular type of RPC-like system is **Java Remote Method Invocations (RMIs)**. Java RMI is also pioneered by Sun as form of client-server communication among address spaces in the **Java Virtual Machine (JVM)**.
