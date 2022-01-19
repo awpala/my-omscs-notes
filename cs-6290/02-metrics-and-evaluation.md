@@ -322,10 +322,6 @@ Here, as before, the `sum()` equivalently computes the total number of cycles re
 
 ## 18. Iron Law 2 Quiz and Answers
 
-<center>
-<img src="./assets/02-024A.png" width="650">
-</center>
-
 Consider the following system:
   * The program executes `50 billion` instructions
     * `10 billion` are branches, with `4 cycles` per instruction
@@ -339,4 +335,135 @@ What is the total execution time of the program on this processor?
 
 ## 19. Amdahl's Law
 
+<center>
+<img src="./assets/02-025.png" width="650">
+</center>
 
+**Amdahl's Law** considers the resulting system speedup when only *part* of the program (i.e. only *some* of the constituent instructions) is changed. In this situation, the **overall speedup** is as follows:
+```
+speedup = 1/[(1 - Frac_ENH) + (FRAC_ENH/speedup_ENH)]
+```
+
+where `Frac`<sub>`ENH`</sub> is the fraction (or percentage) of the original execution ***time*** (i.e., ***not*** of the number of instructions, etc.) that is affected by the change/enhancement.
+
+## 20. Amdahl's Law Quiz and Answers
+
+Consider the following system:
+  * The program executes `50 billion` instructions
+  * The processor clock cycle speed/frequency is `2 GHz`
+  * The instruction `BRANCH` is improved from `4` to `2` cycles per instruction
+
+Furthermore, the following are given:
+
+| Instruction Type | % of Total Instructions in the Program | CPI |
+|:---:|:---:|:---:|
+| `INT` | `40%` | `1` |
+| `BRANCH` | `20%` | `4` → `2` |
+| `LOAD` | `30%` | `2` |
+| `STORE` | `10%` | `3` |
+
+What is the overall speedup of the system?
+  * via Iron Law:
+  ```
+  speedup = {[(0.4 * 1) + (0.2 * 4) + (0.3 * 2) + (0.1 * 3) cycles/ins] × (50 * 10^9 ins) × [1/(2 * 10^9 cycles/s)]} /
+            {[(0.4 * 1) + (0.2 * 2) + (0.3 * 2) + (0.1 * 3) cycles/ins] × (50 * 10^9 ins) × [1/(2 * 10^9 cycles/s)]}
+          = 1.24
+  ```
+
+***N.B.*** While it may seem appropriate to apply Amdahl's Law as follows (via `Frac`<sub>`ENH`</sub>` = 20%` per instruction `BRANCH`):
+```
+speedup = 1/[(1 - 0.2) + (0.2/(4/2))] = 1/0.9 = 1.111
+```
+this does ***not*** apply here. This is because `Frac`<sub>`ENH`</sub> is only with respect to the instruction `BRANCH` (i.e., its quantity), ***not*** with respect to the overall execution time of the system/program. Recall (cf. Section 19) that Amdahl's Law only applies to execution time, but ***not*** to instructions count or to other such factors.
+
+## 21. Amdahl's Law: Implications
+
+<center>
+<img src="./assets/02-028.png" width="650">
+</center>
+
+Let us know examine the implications of Amdahl's Law with respect to system improvements.
+
+Recall Amdahl's law (cf. Section 19), as follows:
+```
+speedup = 1/[(1 - Frac_ENH) + (FRAC_ENH/speedup_ENH)]
+```
+
+Consider the following two enhancements:
+
+| Enhancement | Description | Overall Speedup (via Amdahl's Law) |
+|:---:|:---:|:---:|
+| 1 | speedup of 20 on 10% of execution time | `1/[(1-0.1) + 0.1/20] = 1.105` |
+| 2 | speedup of 1.6 on 80% of execution time | `1/[(1-0.8) + 0.8/1.6] = 1.43` |
+
+Comparing the above, it is therefore generally ***better*** to have a smaller speedup on a larger fraction of the system execution time (Enhancement 2) than to have a larger speedup on a smaller fraction of the system execution time (Enhancement 1).
+
+Examining Enhancement 1, consider the limiting extreme of an infinite speedup: `1/[(1-0.1) + 0.1/∞] = 1.111`. Even in this best-case scenario, Enhancement 2 still provides a better overall speedup.
+  * ***N.B.*** A speedup of `20` is already considerably high (and difficult to achieve in practice), so the extreme case of `∞` provides a useful demonstration, but is not otherwise practically feasible.
+
+The overall conclusion from this analysis therefore suggests to ***make the common case fast*** (i.e., focus on speedup on that component(s) of the system which occupies the largest fraction of the overall execution time).
+
+## 22. Amdahl's Law 2 Quiz and Answers
+
+Assume the following are given:
+
+| Instruction Type | % of Execution Time | CPI |
+|:---:|:---:|:---:|
+| `INT` | `40%` | `1` |
+| `BRANCH` | `20%` | `4` |
+| `LOAD` | `30%` | `2` |
+| `STORE` | `10%` | `3` |
+
+Furthermore, the clock frequency is `2 GHz`.
+
+Which of the following possible improvements is the best? (Select the correct option.)
+  * Decrease CPI from `4` to `3` for instruction `BRANCH`
+    * `INCORRECT` - `1/[(1-0.2) + 0.2/(4/3)] = 1.05`
+  * Increase clock frequency from `2 GHz` to `2.3 GHz`
+    * `CORRECT` - `1/[(1-1) + 1/(2.3/2)] = 1.15`
+  * Decrease CPI from `3` to `2` for instruction `STORE`
+    * `INCORRECT` - `1/[(1-0.1) + 0.1/(3/2)] = 1.034`
+
+***N.B.*** Observe that increasing the clock frequency impacts `100%` of the system execution time, compared to the relatively smaller system-wide impacts of the instructions `BRANCH` (`20%`) AND `STORE` (`10%`).
+
+## 23. Lhadma's Law
+
+<center>
+<img src="./assets/02-031.png" width="650">
+</center>
+
+Now consider so-called **Lhadma's Law**, a corollary to Amdahl's Law (which suggests to make the common case fast): Do not adversely impact the uncommon case too excessively (i.e., in the process of making the common case fast).
+
+Consider the following demonstrative example:
+  * An improvement/speedup of `2×` on `90%` of the execution time
+  * But a corresponding slowdown of the rest of the system by `10×`
+
+The overall speedup is therefore: `1/{[0.1/(1/10)] + [0.9/(2/1)]} = 1/[1 + 0.45] = 0.7`
+
+This suggests an overall *slowdown* of the system. In fact, even if the `90%` were improved by a factor of `∞`, the limit on the overall speedup would be only `1` (i.e., no net speedup). Therefore, with a worsening of even a relatively small part of the overall system (e.g., `10%`), the resulting impact on the overall system speedup can be net negative!
+
+## 24. Diminishing Returns
+
+<center>
+<img src="./assets/02-032.png" width="650">
+</center>
+
+A final consequence of Amdahl's Law to consider is that of the **law of diminishing returns**.
+
+Consider a processor Gen 1 whose execution can be divided into two phases (as denoted by purple and blue in the figure shown above), each of which constitute approximately half of the overall execution time.
+
+In the subsequent Gen 2 processor, the blue phase is sped up by `2×`. The overall speedup with respect to Gen 1 is then: `1/[(1-0.5) + 0.5/2] = 1.33`
+
+Similarly, in the subsequent Gen 3 processor, the blue phase is again sped up by `2×`. The overall speedup with respect to Gen 2 is then: `1/[(1-1/3) + (1/3)/2] = 1.2`
+
+Therefore, inasmuch as the the blue phase constitutes a decreasing fraction of the overall execution time in subsequent generations of the processor, speeding up this phase generation-over-generation yields a marginally diminishing improvement in the speedup. Consequently, eventually there will be practically no speedup observed generation-over-generation.
+
+Furthermore, it is typically the case that the initial improvement in a system component is relatively simple to accomplish, while subsequent improvements require a much larger expenditure of effort, cost, etc. (i.e., eventually it is more practical to focus on improving the purple phase rather than continuing to focus on the blue phase).
+
+Therefore, the implication of the law of diminishing returns is that computer architectures should not over-focus on continually improving the *same* system component, but rather critically assess what is the currently dominant component (with respect to the overall system execution time) at any given point.
+
+## 25. Lesson Outro
+
+Now we know how to measure and compare performance, and we also know that overall performance improvement requires a careful balance between improving one aspect of the design while simultaneously minimizing adverse impacts on the other aspects of the design.
+
+We are now ready to examine more advanced techniques for improving performance and efficiency. In the next lesson, we will first examine **pipelining**, one of the most important and generally applicable techniques available in a computer architect's arsenal.
