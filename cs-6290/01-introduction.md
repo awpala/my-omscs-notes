@@ -132,7 +132,7 @@ Even if `2×` speed improvement is not achieved, the same relative improvements 
 <img src="./assets/01-012A.png" width="650">
 </center>
 
-Consider the laptop processor models as in the figure shown above, which compares their relative speed performance, expected battery life, overall weight, and cost. Of these models, which is the ***worst**?
+Consider the laptop processor models as in the figure shown above, which compares their relative speed performance, expected battery life, overall weight, and cost. Of these models, which is the ***worst***?
   * The general trend moving down the table rows is an improvement in speed performance with corresponding diminution of the remaining characteristics.
   * `Laptium` is a reasonable processor model, giving reasonable performance balanced with acceptable battery life, weight, and cost. Similarly, `Slowium` is somewhat reasonable, sacrificing speed for a comparable improvement in the other characteristics.
   * Beginning with `Fastium` (moving towards the bottom), however, the improvement in speed is rapidly outpaced by diminution in the other characteristics.
