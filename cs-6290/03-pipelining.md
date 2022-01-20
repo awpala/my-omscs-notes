@@ -602,3 +602,33 @@ For each group of instructions, should we flush, stall, and/or forward?
 <img src="./assets/03-031.png" width="650">
 </center>
 
+Now that we have seen how pipelines work and how they are affected by hazards and dependencies, let us now consider how many stages a pipeline should have.
+
+In a pipeline, as we have seen so far, ideally `CPI = 1`. (Later in this course, we will see that it is possible to achieve `CPI < 1`.)
+
+However, in general, adding more stages:
+  * Potentially introduces more hazards, thereby generally increasing `CPI`
+  * There is less work per stage, thereby shortening/improving cycle time
+
+Recall the Iron Law (cf. Lecture 2):
+```
+execution time = number of instructions × CPI × cycle time
+```
+
+Therefore, for the same number of instructions in a given program:
+  * Increasing the CPI increases the execution time
+  * Decreasing the cycle time decreases the execution time
+
+Accordingly, the number of stages must be chosen in such a manner which balances the CPI and cycle time in order to minimize the overall execution time.
+
+Examining the relationship between execution time and the number of stages (as in the figure shown above), as the number of stages increases, the execution time decreases (the clock cycle time decreases, while the introduction of hazards is still relatively minimal), however, eventually the effects of hazards begin to dominate, thereby increasing the execution time beyond some optimal (minimized) execution time. In modern processors, this optimum occurs around `30` to `40` stages, which is a considerably "deep" pipeline.
+
+However, this only concerns ***performance***; another consideration is ***power*** usage. As more stages are added (thereby shortening the cycle time), there are more cycles per-unit time, and each of those cycles use more pipeline latches which consume more energy to latch temporary results. Therefore, power quickly increases with the number of stages.
+
+Therefore, when considering *both* performance *and* power, we must select a number of stages that optimizes both *together*. This typically amounts to `10` to `15` stages in modern processors (i.e., which balances adequate performance with acceptably low power consumption).
+
+## 18. Lesson Outro
+
+We now know how pipelines work and how they need to balance the increasing clock frequency vs. the stalls and flushes caused by hazards.
+
+Nowadays, virtually every processor uses pipelining, so therefore we will use our pipelining knowledge throughout the course as we examine some of the more advanced topics in subsequent lectures.
