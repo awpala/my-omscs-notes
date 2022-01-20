@@ -523,5 +523,82 @@ What (if any) dependencies are there between instructions `I1` and the others? (
 <img src="./assets/03-026.png" width="650">
 </center>
 
+Now that we have seen that some dependencies can become hazards in a given pipeline, we must handle these hazards somehow, in order to ensure correct execution within the pipeline (i.e., rather than permitting the computation of incorrect results). However, one simplification here is to observe that it is only necessary to handle dependencies which result in hazards (but otherwise we need not concern ourselves with dependencies which do *not* result in hazards).
 
+Therefore, we must ***detect*** hazard situations, and then perform some combination of the following **corrective actions**:
+  * flush dependent instructions
+  * stall dependent instructions (i.e., delay reading in order to ensure that the correct value is read)
+  * fix values that were already read by dependent instructions
+
+It is necessary to use flushes for **control dependencies**, because the instructions already in the pipeline after the control dependency become hazard are the incorrect instructions. Therefore, stalling or fixing the values is not a tenable action; instead, the affected instruction(s) must be removed from the pipeline and then the intended/correct instruction(s) must be subsequently fetched.
+
+For hazards caused by **data dependencies**, we can either stall or forward. 
+
+**Forwarding** makes the value from the previous execution immediately available for execution in the next cycle. Consider the following instructions:
+```mips
+ADD R1, R2, R3
+SUB R4, R1, R5
+```
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `SUB` | `ADD` | `...` | `...` |
+
+At the end of cycle C1, instruction `SUB` has read the wrong (i.e., stale) value in register `R1`; however, the instruction `ADD` does have the updated value in this cycle, but it has not placed it into `R1` yet at this point.
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `SUB` | `ADD` | `...` | `...` |
+| C2 | `...` | `...` | `SUB` | `ADD` | `...` |
+
+Consequently, at the beginning of the next cycle (C2), the instruction `SUB` can retrieve the value of `R1` produced by the instruction `ADD` (i.e., at the end of cycle C1), which replaces the value in `R1` read by `SUB` immediately prior in cycle C1, in order to ensure that instruction `SUB` computes using the correct value of `R1` when `SUB` reaches stage `A`.
+
+Therefore, **forwarding** denotes this notion of a value already existing "somewhere in the pipeline" at a point before it is actually used and consequently being used to "fix" the value subsequently at the actual point of use in the pipeline (i.e., to ensure correct execution).
+
+However, forwarding does not always work. Sometimes, the required value will be produced at a later point in time, i.e., *after* it is needed in the subsequent instruction (i.e., "too late" for the value to be useful); in this case, it is necessary to stall rather than to forward.
+
+## 16. Flushes, Stalls, and Forwarding Quiz and Answers
+
+<center>
+<img src="./assets/03-030A.png" width="650">
+</center>
+
+Consider a five-stage pipeline comprised of the following stages:
+  1. fetch instruction
+  2. decode instruction and read registers
+  3. perform ALU operation and evaluate branch operation
+  4. load and store memory
+  5. write result to register
+
+The following program executes in the pipeline:
+```mips
+BNE R1, R0, Label  # L1
+ADD R4, R5, R6     # L2 - begin control hazard
+SUB R5, R4, R3     # L3 - end control hazard
+MUL R1, R2, R3     # L4 - begin data dependency A (via `R1`)
+LW  R1, 0(R1)      # L5 - end data dependency A, begin data dependency B (via `R1`)
+ADD R1, R1, R1     # L6 - end data dependency B
+```
+
+***N.B.*** A control hazard occurs here because after instruction `L1`, we fetch two incorrect instructions (`L2` and `L3`) before finally fetching the correct instruction `L4`.
+
+For each group of instructions, should we flush, stall, and/or forward?
+
+| Instructions Group | Flush | Stall | Forward |
+|:---:|:---:|:---:|:---:|
+| `L2` & `L3` | `√` - We must flush to resolve a control dependency | Stalling cannot be used for control dependencies | Forwarding cannot be used for control dependencies |
+| `L4` & `L5` | Flushing cannot be used for data dependencies | Since forwarding is a viable corrective action, it is preferred over stalling | `√` - In cycle C1 (see below), instruction `LW` reads register `R1` in stage `R` while instruction `MUL` writes the value in stage `A/B`, therefore, this value can be forwarded accordingly so that it is available to instruction `LW` upon its entry into stage `A/B` |
+| `L5` & `L6` | Flushing cannot be used for data dependencies | `√` - In cycle C2 (see below), when the instruction `ADD` reads register `R1` in stage `R`, the instruction `LW` (in stage `A/B`) is computing the address and still has not accessed memory at this point. Subsequently, in cycle C3 (see below), the instruction `ADD` is computing using the *inoorrect*/stale value in register `R1`, while instruction `LW` is still loading the memory (which it does not complete until the end of this cycle). Therefore, due to this "temporal mismatch," it is necessary to stall.  | `√` - After stalling for a cycle (i.e., in cycle C3, see below), we can forward in order to avoid additional stalling |
+
+| Cycle | `F` | `R` | `A/B` | `M` | `W` |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `ADD` | `LW` | `MUL` | `SUB` | `ADD` |
+| C2 | `...` | `ADD` | `LW` | `MUL` | `SUB` |
+| C3 | `...` | `...` | `ADD` | `LW` | `MUL` |
+
+## 17. How Many Stages?
+
+<center>
+<img src="./assets/03-031.png" width="650">
+</center>
 
