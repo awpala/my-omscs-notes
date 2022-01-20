@@ -285,4 +285,243 @@ The result of this suggests that branching more than *halves* the throughput of 
 
 ## 11. Data Dependencies
 
+<center>
+<img src="./assets/03-015.png" width="650">
+</center>
+
+Additionally, there are also **data dependencies** which can cause pipeline stalls.
+
+Consider the following instructions:
+```mips
+ADD R1, R2, R3
+SUB R7, R1, R8
+```
+
+Here the instruction `SUB` has a data dependency on the previous instruction `ADD` via `R1`. This is called a **read after write** (**RAW**) **dependency**, also called a **flow dependency** or a **true dependency**.
+
+In such a scenario, we cannot simply feed such instructions successively into the pipeline assuming they are effectively independent of each other.
+
+There also additional data dependencies that can occur. Consider an extension of the aforementioned instructions as follows:
+```mips
+ADD R1, R2, R3
+SUB R7, R1, R8
+MUL R1, R5, R6
+```
+
+Here, `R1` creates another dependency among the instructions `ADD`, `SUB`, and `MUL`.
+  * In the case of `ADD` vs. `MUL`, `ADD` must complete its use of `R1` prior to `MUL` writing a new value to it for use by instructions subsequent to `MUL`. This is called a **write after write** (**WAW**) **dependency** (i.e., the orders of the write operations are significant), also called an **output dependency**.
+  * In the case of `SUB` vs. `MUL`, `SUB` must finish reading `R1` before `R1` can be used by `MUL` (which overwrites `R1`). This is called a **write after read** (**WAR**) **dependency** (i.e., the value must be read prior to being written over), also called an **anti dependency** (it effectively reverses the order of the full dependencies).
+
+***N.B.*** For reasons that are described later, these latter two dependencies (WAW and WAR) are also collectively called **false dependencies** or **name dependencies**.
+
+So, then, is there a "read after read" data dependency? The answer is no. Consider the following instructions:
+```mips
+ADD R1, R3, R4
+ADD R2, R3, R7
+```
+
+Observe that there is no dependency among these two `ADD` instructions; if they are reordered, the net effect is equivalent (i.e., the correct value of `R3` will be read in either order).
+
+## 12. Data Dependencies Quiz and Answers
+
+<center>
+<img src="./assets/03-017A.png" width="650">
+</center>
+
+Consider the program composed of the following instructions:
+```mips
+MUL R1, R2, R3  # I1
+ADD R4, R4, R1  # I2
+MUL R1, R5, R6  # I3
+SUB R4, R4, R1  # I4
+```
+
+Identify (via `√`) the data dependencies (if any) among the following pairs of instructions:
+
+| Dependencies Pair | RAW | WAR | WAW |
+|:---:|:---:|:---:|:---:|
+| `I1` → `I2` | `√` | | |
+| `I1` → `I3` | | | `√` |
+| `I1` → `I4` | | | |
+| `I2` → `I3` | | `√` | |
+
+Explanation:
+
+| Dependencies Pair | RAW | WAR | WAW |
+|:---:|:---:|:---:|:---:|
+| `I1` → `I2` | `√` | ("freebie" given initially in the prompt) | ("freebie" given initially in the prompt) |
+| `I1` → `I3` | There are no shared registers between these instructions | `I3` does not write a result into a register that is previously read by `I1` | `√` - `I3` overwrites the result produced by `I1` in register `R1` |
+| `I1` → `I4` | `I4` reads register `R1`, however, the value it reads is *not* that produced by `I1` (but rather that produced by `I3`) | `I4` does not write a result into a register that is previously read by `I1` | `I4` writes to register `R4`, which is not used by `I1`; furthermore, even if `I4` were to have written to register `R1`, this would have been a data dependency with `I3` rather than with `R1` |
+| `I2` → `I3` | `I2` does not write to a register that is subsequently read by `I3` | `√` - `I3` overwrites register `R1`, which is previously read by `I2` | `I3` and `I4` each access *different* registers for writing (`R1` and `R4`, respectively) |
+
+## 13. Dependencies and Hazards
+
+Consider now the relationship between the aforementioned dependencies and what are called **pipeline hazards**.
+
+A **dependency** is a property of the *program* alone. We can check whether two (or more) instructions have a dependency among them by simple inspection, without any regard for what the pipeline looks like.
+
+In a particular pipeline, *some* dependencies will potentially cause problems, while other dependencies cannot cause problems no matter what.
+
+<center>
+<img src="./assets/03-018.png" width="650">
+</center>
+
+An example of this as in the figure shown above, which depicts the traditional five-stage pipeline as before.
+
+The corresponding program has an output dependency (via register `R1`), as follows:
+```mips
+ADD R1, R2, R3
+MUL R1, R4, R5
+```
+
+In this particular pipeline, the output dependency is never a problem.
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `...` | `...` | `MUL` | `ADD` |
+
+The instruction `ADD` proceeds through the pipeline until it reaches the write stage (`w`).
+
+At the point of cycle C1, the instruction `MUL` has proceeded through the upstream stages (i.e., has been fetched and decoded, and has performed the read of registers `R4` and `R5`). The correct values are read for `R4` and `R5` (since they are unaffected by the instruction `ADD`), and now `MUL` simply sits in the memory stage (`M`) since it is not a memory operation; `MUL` has the computed value that it will write to `R1` at this point.
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `...` | `...` | `MUL` | `ADD` |
+| C2 | `...` | `...` | `...` | `...` | `MUL` |
+
+In the subsequent cycle C2 (i.e., after the instruction `ADD` leaves the pipeline), `MUL` simply writes its computed value to register `R1`. Therefore, as this demonstrates, these two instructions *always* write to `R1` in the correct order, and so the output dependency is not consequential to performance (i.e., CPI) in this particular pipeline, which naturally satisfies this dependency.
+
+<center>
+<img src="./assets/03-019.png" width="650">
+</center>
+
+Consider another example as in the figure shown above.
+
+The corresponding program has a write after read (RAW) dependency (via register `R4`), as follows:
+```mips
+ADD R1, R2, R3
+MUL R1, R4, R5
+SUB R4, R6, R7
+```
+
+Here, similarly the RAW dependency does not affect the performance of the particular pipeline.
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `SUB` | `MUL` | `...` | `...` | `...` |
+
+The instruction `MUL` reads register `R4` in the the decode stage (`D`), and at this point (cycle C1) the instruction `SUB` is being fetched (stage `F`); this read of `R4` is not yet affected by the (later-occurring) instruction `SUB`.
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `SUB` | `MUL` | `...` | `...` | `...` |
+| ⁝ | ⁝ | ⁝ | ⁝ | ⁝ | ⁝ |
+| C4 | `...` | `...` | `...` | `...` | `SUB` |
+
+Later on, when instruction `MUL` exits the pipeline, instruction `SUB` writes to register `R4` in the write stage (`W`). Here, there is no issue presented in the pipeline, because despite consecutive instructions' use of the register `R4`, the read of `R4` by instruction `MUL` occurs several cycles upstream of the subsequent overwrite of the value by instruction `SUB`.
+
+<center>
+<img src="./assets/03-020.png" width="650">
+</center>
+
+Now, consider a counterexample as in the figure shown above.
+
+The corresponding program has a true dependency (via register `R4`), as follows:
+```mips
+ADD R1, R2, R3
+MUL R1, R4, R5
+SUB R4, R6, R7
+DIV R10, R4, R8
+```
+
+Here, the true dependency *does* create an issue in the pipeline.
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `DIV` | `SUB` | `...` | `...` |
+
+In cycle C1, the instruction `DIV` reads register `R4` in the decode stage (`D`); furthermore, in this cycle, the instruction `SUB` is in the ALU stage (`A`). At this point, the instruction `SUB` did *not* write its computed value to register `R4` yet (it is currently computing it via stage `A`), therefore, when the instruction `DIV` attempts to read register `R4` in stage `D`, it is reading a ***stale*** value (i.e., prior to the update via instruction `SUB`).
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `DIV` | `SUB` | `...` | `...` |
+| ⁝ | ⁝ | ⁝ | ⁝ | ⁝ | ⁝ |
+| C3 | `...` | `...` | `...` | `DIV` | `SUB` |
+| C4 | `...` | `...` | `...` | `...` | `DIV` |
+
+In a subsequent cycle (C3), when instruction `SUB` is finally writing to register `R4`, the instruction `DIV` has already computed its value, and thus in the next cycle (C4), instruction `DIV` eventually writes the stale value into register `R4`.
+
+Therefore, clearly this true dependency ***is*** problematic in this pipeline. If the pipeline is allowed to proceed in this manner, register `R10` will receive the incorrect value upon completion of instruction `DIV`.
+
+Such a situation wherein a dependency can cause such an issue in a pipeline is called a **hazard**. A hazard occurs when a dependency results in incorrect execution of one or more instructions via the pipeline. Hazards are a property of *both* the program itself (because hazards arise due to dependencies within the program itself) *and* the pipeline (which impacts how the instructions interact spatiotemporally within the pipeline).
+
+***N.B.*** As demonstrated, in this particular pipeline, output and anti dependencies cannot become hazards, but true dependencies can.
+
+<center>
+<img src="./assets/03-021.png" width="650">
+</center>
+
+Note that not all true dependencies result in hazards in this particular pipeline, as demonstrated in the figure shown above.
+
+The corresponding program has a true dependency (via registers `R1` and `R7`), as follows:
+```mips
+ADD R1, R2, R3
+MUL R7, R4, R5   # N.B. write occurs to `R7` instead of `R1` here
+SUB R4, R6, R7
+DIV R10, R4, R8
+XOR R11, R1, R7
+```
+
+| Cycle | `F` | `D` | `A` | `M` | `W`|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| C1 | `...` | `XOR` | `DIV` | `SUB` | `MUL` |
+
+In cycle C1:
+  * The dependency between instructions `XOR` and `ADD` via register `R1` is *not* a hazard in this pipeline. In this pipeline, in general if there are three or more instructions between the producing and consuming instruction, then the consuming instruction reads the dependent register *after* the producing instruction has already written to it.
+  * Conversely, the dependency between instructions `XOR` and `MUL` via register `R7` *is* potentially problematic. In this cycle (C1), instruction `XOR` reads `R7` simultaneously as instruction `MUL` is writing to it. If `MUL` writes near the end of the clock cycle while `XOR` reads near the beginning of the clock cycle, then `XOR` will read the incorrect/stale value.
+
+Therefore, in general, this pipeline will only avoid hazards caused by true dependencies if and only if there are three (or more) intermediate instructions between the interdependent instructions.
+
+## 14. Dependencies and Hazards Quiz and Answers
+
+<center>
+<img src="./assets/03-025A.png" width="650">
+</center>
+
+Consider a three-stage pipeline, with the following stages (`S1`, `S2`, and `S3`, respectively):
+  1. fetch, decode
+  2. read register, ALU
+  3. read memory, write to register
+
+Furthermore, the following program proceeds through the pipeline:
+```mips
+ADD R1, R2, R3  # I1
+SUB R5, R1, R4  # I2
+DIV R6, R1, R7  # I3
+MUL R7, R1, R8  # I4
+```
+
+What (if any) dependencies are there between instructions `I1` and the others? (Indicate via `√`)
+
+| Dependency Pair | Dependency? | Hazard? |
+|:---:|:---:|:---:|
+| `I1` → `I2` | `√` - There is a dependency via register `R1` | `√` - In cycle C1 (see below), instruction `SUB` may not receive the updated value for `R1` from instruction `ADD` "in time," and therefore may read a stale value instead |
+| `I1` → `I3` | `√` - There is a dependency via register `R1` | In cycle C2 (see below), instruction `DIV` is reading the value of `R1` that was already written by instruction `ADD`, and therefore there is *no* hazard |
+| `I1` → `I4` | `√` - There is a dependency via register `R1` | In cycle C3 (see below), instruction `MUL` is reading the value of `R1` that was already written by instruction `ADD` (the same value also read previously by instruction `DIV` in cycle C2), and therefore there is *no* hazard  |
+
+| Cycle | `S1` | `S2` | `S3` |
+|:---:|:---:|:---:|:---:|
+| C1 | `DIV` | `SUB` | `ADD` |
+| C2 | `MUL` | `DIV` | `SUB` |
+| C3 | `...` | `MUL` | `DIV` |
+
+***N.B.*** Recall that dependencies (do not) exist irrespectively of the pipeline, and therefore can be determined on the basis of the program alone. Conversely, hazards must be analyzed with respect to the pipeline, which is determined by the relationship between the stages in which the corresponding read and write operations occur.
+
+## 15. Handling of Hazards
+
+<center>
+<img src="./assets/03-026.png" width="650">
+</center>
+
+
 
