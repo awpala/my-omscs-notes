@@ -406,11 +406,9 @@ As is done for the BTB table, the BHT entry can be similarly updated (if necessa
 
 Because an entry into the BHT can be a single bit, this allows for a potentially large BHT, which can accommodate many instructions and avoid conflicts among executing instructions, while still maintaining a relatively small corresponding BTB table (i.e., containing entries for only those instructions which *do* take branches).
 
-## 17. BTB and BHT Quiz and Answers
+## 17-21. BTB and BHT Quizzes and Answers
 
-<center>
-<img src="./assets/04-023A.png" width="650">
-</center>
+### Problem Statement
 
 Consider the following program:
 ```mips
@@ -425,11 +423,17 @@ Loop: BEQ R1, R2, Done  # 0xC008
 Done:                   # 0xC020
 ```
 
-***N.B.*** Observe that each program instruction is 4 bytes in size.
+***N.B.*** Observe that each program instruction address is 4 bytes in size.
 
 Suppose we are given the following:
   * A branch history table (BHT) having `16` entries and which makes perfect branch predictions
   * A branch target buffer (BTB) table having `4` entries which that makes perfect branch predictions 
+
+### 17. Quiz 1 and Answers
+
+<center>
+<img src="./assets/04-023A.png" width="650">
+</center>
 
 How many times do we access the BHT for *each* instruction?
 
@@ -452,5 +456,135 @@ The first two instructions at addresses `0xC000` and `0xC004` execute only once.
 
 The loop executes as long as `R1` and `R2` are not equal, which are initialized by the first two instructions to values `0` and `100` (respectively). The last two instructions of the `Loop` segment increment `R1` by `1` and then jump back to `Loop`. Therefore, this proceeds for 100 iterations, until `R1` and `R2` are equal (i.e., both equaling `100`, which occurs on the 101st iteration), at which point the loop is exited and the program proceeds to label `Done` (i.e., at this point in the program, the branch is *taken* to `Done`).
 
-## 17. BTB and BHT 2 Quiz and Answers
+### 18. Quiz 2 and Answers
+
+<center>
+<img src="./assets/04-025A.png" width="650">
+</center>
+
+Which branch history table (BHT) entry do we access for each instruction?
+
+| Instruction Address | Instruction | BHT Entry |
+|:---:|:---:|:---:|
+| `0xC000` | `MOV R2, 100` | `0` |
+| `0xC004` | `MOV R1, 0` | `1` |
+| `0xC008` | (`Loop:`) `BEQ R1, R2, Done` | `2` |
+| `0xC00C` | `ADD R4, R3, R1` | `3` |
+| `0xC010` | `LW R4, 0(R4)` | `4` |
+| `0xC014` | `ADD R5, R5, R4` | `5` |
+| `0xC018` | `ADD R1, R1, 1` | `6` |
+| `0xC01C` | `B Loop` | `7` |
+
+***Explanation***:
+
+There are `16` entries in the BHT, which can be accessed via the offset least-significant bits (LSBs) of the corresponding instruction addresses. Therefore:
+
+| Instruction Address | BHT Entry |
+|:---:|:---:|
+| `0xC000` (`1100 0000 00\|00 00\|00`) | `0` |
+| `0xC004` (`1100 0000 00\|00 01\|00`) | `1` |
+| `0xC008` (`1100 0000 00\|00 10\|00`) | `2` |
+| `0xC00C` (`1100 0000 00\|00 11\|00`) | `3` |
+| `0xC010` (`1100 0000 00\|01 00\|00`) | `4` |
+| `0xC014` (`1100 0000 00\|01 01\|00`) | `5` |
+| `0xC018` (`1100 0000 00\|01 10\|00`) | `6` |
+| `0xC01C` (`1100 0000 00\|01 11\|00`) | `7` |
+
+***N.B.*** If `15` were reached in this manner, the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
+
+## 19. BTB and BHT 3 Quiz and Answers
+
+<center>
+<img src="./assets/04-027A.png" width="650">
+</center>
+
+How many times do we access the branch target buffer (BTB) table for each instruction?
+
+| Instruction Address | Instruction | Number of BTB Table Accesses |
+|:---:|:---:|:---:|
+| `0xC000` | `MOV R2, 100` | `0` |
+| `0xC004` | `MOV R1, 0` | `0` |
+| `0xC008` | (`Loop:`) `BEQ R1, R2, Done` | `1` |
+| `0xC00C` | `ADD R4, R3, R1` | `0` |
+| `0xC010` | `LW R4, 0(R4)` | `0` |
+| `0xC014` | `ADD R5, R5, R4` | `0` |
+| `0xC018` | `ADD R1, R1, 1` | `0` |
+| `0xC01C` | `B Loop` | `100` |
+
+***Explanation***:
+
+The BTB table is only accessed if the branch history table (BHT) indicates to take the branch (recall that we assume both tables predict perfectly); otherwise, if the branch is *not* taken, then we simply increment the program counter (PC) without accessing the BTB table at all.
+
+Therefore, by inspection, all non-branching instructions do not access the BTB table at all. The instruction `B Loop` at instruction `0xC01C` is *always* taken, and this occurs `100` times in the program loop. Furthermore, with respect to the instruction `BEQ R1, R2, Done` at instruction address `0xC008`, in every iteration that stays in the loop (i.e., when `R1` and `R2` are not equal, which occurs for `100` iterations, as per the quiz in Section 17), the branch is not taken and therefore the BTB table is not accessed; conversely, when `R1` and `R2` become equal (i.e., both having the value `100`, which occurs once in the final iteration), this causes an access of the BTB table (and consequent branch to `Done`).
+
+## 20. Quiz 4 and Answers
+
+<center>
+<img src="./assets/04-029A.png" width="650">
+</center>
+
+Which branch target buffer (BTB) table entry do we use for each instruction? (Leave blank if no entry is used.)
+
+| Instruction Address | Instruction | BHT Entry |
+|:---:|:---:|:---:|
+| `0xC000` | `MOV R2, 100` | |
+| `0xC004` | `MOV R1, 0` | |
+| `0xC008` (`1100 0000 0000 \|10\|00`) | (`Loop:`) `BEQ R1, R2, Done` | `2` |
+| `0xC00C` | `ADD R4, R3, R1` | |
+| `0xC010` | `LW R4, 0(R4)` | |
+| `0xC014` | `ADD R5, R5, R4` | |
+| `0xC018` | `ADD R1, R1, 1` | |
+| `0xC01C` (`1100 0000 0001 \|11\|00`) | `B Loop` | `3` |
+
+***Explanation***:
+
+Recall from the previous quiz (cf. Section 19) that only the branching instructions will access the BTB table; therefore, for the remaining non-branching instructions, by inspection, there are no corresponding BHT entries.
+
+To determine the BHT entries of the branching instructions, this can be achieved by examining their instruction addresses. Since the BTB table has `4` entries, we use the four least-significant bits (LSBs) offset by two bits (i.e., `00`, which is are common to all of the instructions).
+
+## 21. Quiz 5 and Answers
+
+<center>
+<img src="./assets/04-031A.png" width="650">
+</center>
+
+Consider the same system as before, however, with the following slight modification:
+  * A branch history table (BHT) having `16` entries, with each entry being a `1`-bit predictor and initialized to value `0` (i.e., all predict "not taken")
+    * This is ***different*** from the initial system, which made perfect branch predictions
+  * A branch target buffer (BTB) table having `4` entries which that makes perfect branch predictions 
+    * This is the ***same*** as before
+
+How many mispredictions occur for each instruction during program execution?
+
+| Instruction Address | Instruction | Number of Mispredictions |
+|:---:|:---:|:---:|
+| `0xC000` | `MOV R2, 100` | `0` |
+| `0xC004` | `MOV R1, 0` | `0` |
+| `0xC008` | (`Loop:`) `BEQ R1, R2, Done` | `1` |
+| `0xC00C` | `ADD R4, R3, R1` | `0` |
+| `0xC010` | `LW R4, 0(R4)` | `0` |
+| `0xC014` | `ADD R5, R5, R4` | `0` |
+| `0xC018` | `ADD R1, R1, 1` | `0` |
+| `0xC01C` | `B Loop` | `1` |
+
+***Explanation***:
+
+Recall (cf. Section 18, Quiz 2) that each BHT entry is unique in this program, therefore, none of the instructions will generate collisions in the BTB table.
+
+By inspection, the first two (non-branching) instructions generate `0` mispredictions.
+
+Upon entry into the loop, the first iteration is as follows:
+  * The branching instruction `BEQ R1, R2, Done` at instruction address `0xC008` is *not* taken, which is a correct prediction (because the BHT entries are initialized to `0`).
+  * The subsequent (non-branching) instructions are *not* taken, which is similarly a correct prediction.
+  * The tail-end branching instruction `B Loop` at address `0xC01C` *is* taken, and this is an *misprediction*, since the BHT entry is initialized to `0`, thereby contradictorily suggesting the branch would *not* be taken. Consequently, the BHT entry is updated to `1`.
+
+In subsequent loop iterations, the program proceeds similarly; furthermore, with the tail-end instruction's BHT entry set to `1` in the first iteration, this is no longer a misprediction in these iterations.
+
+In the final loop iteration (for which the values `R1` and `R2` both become equal to `100`, i.e., on the 101st iteration), the branching instruction `BEQ R1, R2, Done` at instruction address `0xC008` is now *taken*, and this is a *misprediction* since the BHT entry (initialized to `0`) suggests otherwise. Consequently, the BHT entry is updated to `1` and the program takes the branch to label `Done`.
+
+As these results suggest, over the course of the program, the prediction is very accurate (i.e., only 2 mispredictions out of hundreds of executed instructions!).
+  * ***N.B.*** As demonstrated here, 1-bit predictors are effective for iterative constructs such as loops. However, as we will see later, 1-bit predictors are not as effective when dealing with other constructs (e.g., those which do not have many iterations and/or those which do not have many if-else statements).
+
+## 22. Issues with 1-Bit Prediction
+
 
