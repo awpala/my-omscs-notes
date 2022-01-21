@@ -171,7 +171,7 @@ As this suggests, predicting as "not taken" is *always* better than making no pr
 
 Therefore, virtually every processor that has a pipeline will perform some form of branch prediction, even if the "prediction" is simply to increment the program counter (PC) to fetch the next instruction (in practice, there is no net cost incurred to perform this operation, as it does not require performing actual branch prediction and the PC must be incremented regardless as part of normal operation of the processor). 
 
-## 7. Multiple Predictions Quiz
+## 7. Multiple Predictions Quiz and Answers
 
 <center>
 <img src="./assets/04-008A.png" width="650">
@@ -364,7 +364,7 @@ Now that the BTB table is populated, consider the performance of timing experime
 To achieve this objective, consider the composition of the 64-bit input address `PC`<sub>`NOW`</sub>. `log`<sub>`2`</sub>`(1024) = 10` bits are required to index into the BTB table. Therefore, we can dedicate the 10 least-significant bits (LSBs) to store the index into the BTB table. Such a mapping function is very fast, as it involves a simple/direct indexing into the table via the LSBs.
   * ***N.B.*** Here, we are using the least-significant bits (LSBs) rather than the most-significant bits (MSBs) because the MSBs typically resemble each other, particularly within the same part of a given program (e.g., within a loop), for example *`0x24`*`AC` (`ADD`), *`0x24`*`B0` (`MUL`), etc. This in turn would give rise to ambiguous inputs with respect to mapping into the BTB table (i.e., resulting in unintended conflicts/overwrites of existing values). Conversely, LSBs will generally be more dissimilar, even among "nearby" instructions within the program.
 
-## 15. BTB Quiz
+## 15. BTB Quiz and Answers
 
 <center>
 <img src="./assets/04-020A.png" width="650">
@@ -394,4 +394,63 @@ This gives the value (denoted by `|...|` above) `1011000011`<sub>`2`</sub>, or e
 
 ## 16. Direction Predictor
 
+<center>
+<img src="./assets/04-021.png" width="650">
+</center>
+
+So, then, how to accomplish **direction prediction**? To do this, we use a table called the **branch history table** (**BHT**), which takes the least significant bits (LSBs) of `PC`<sub>`NOW`</sub> as input indices, similarly to indexing into the branch target buffer (BTB) table.
+
+However, the entry in the BHT is much smaller: The simplest predictor will have a single bit indicating `0` (branch is *not* taken, therefore increment the program counter) vs. `1` (the branch is taken, therefore use the BTB table).
+
+As is done for the BTB table, the BHT entry can be similarly updated (if necessary) once the actual branch instruction is resolved.
+
+Because an entry into the BHT can be a single bit, this allows for a potentially large BHT, which can accommodate many instructions and avoid conflicts among executing instructions, while still maintaining a relatively small corresponding BTB table (i.e., containing entries for only those instructions which *do* take branches).
+
+## 17. BTB and BHT Quiz and Answers
+
+<center>
+<img src="./assets/04-023A.png" width="650">
+</center>
+
+Consider the following program:
+```mips
+      MOV R2, 100       # 0xC000
+      MOV R1, 0         # 0xC004
+Loop: BEQ R1, R2, Done  # 0xC008
+      ADD R4, R3, R1    # 0xC00C 
+      LW  R4, 0(R4)     # 0xC010
+      ADD R5, R5, R4    # 0xC014
+      ADD R1, R1, 1     # 0xC018
+      B   Loop          # 0xC01C
+Done:                   # 0xC020
+```
+
+***N.B.*** Observe that each program instruction is 4 bytes in size.
+
+Suppose we are given the following:
+  * A branch history table (BHT) having `16` entries and which makes perfect branch predictions
+  * A branch target buffer (BTB) table having `4` entries which that makes perfect branch predictions 
+
+How many times do we access the BHT for *each* instruction?
+
+| Instruction Address | Instruction | Number of BHT Accesses |
+|:---:|:---:|:---:|
+| `0xC000` | `MOV R2, 100` | `1` |
+| `0xC004` | `MOV R1, 0` | `1` |
+| `0xC008` | (`Loop:`) `BEQ R1, R2, Done` | `1` |
+| `0xC00C` | `ADD R4, R3, R1` | `101` |
+| `0xC010` | `LW R4, 0(R4)` | `100` |
+| `0xC014` | `ADD R5, R5, R4` | `100` |
+| `0xC018` | `ADD R1, R1, 1` | `100` |
+| `0xC01C` | `B Loop` | `100` |
+
+***Explanation***:
+
+The BHT is accessed in order to determine whether a given instruction is a taken branch; this is done every time we fetch an instruction, and because we have perfect prediction (for both the BTB table and the BHB), this implies that we will never fetch any instruction that will not actually execute.
+
+The first two instructions at addresses `0xC000` and `0xC004` execute only once. The third instruction at address `0xC008` is the branch instruction, which only executes once and causes entry into the loop/branching logic (denoted by label `Loop`).
+
+The loop executes as long as `R1` and `R2` are not equal, which are initialized by the first two instructions to values `0` and `100` (respectively). The last two instructions of the `Loop` segment increment `R1` by `1` and then jump back to `Loop`. Therefore, this proceeds for 100 iterations, until `R1` and `R2` are equal (i.e., both equaling `100`, which occurs on the 101st iteration), at which point the loop is exited and the program proceeds to label `Done` (i.e., at this point in the program, the branch is *taken* to `Done`).
+
+## 17. BTB and BHT 2 Quiz and Answers
 
