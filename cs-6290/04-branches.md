@@ -587,4 +587,44 @@ As these results suggest, over the course of the program, the prediction is very
 
 ## 22. Issues with 1-Bit Prediction
 
+<center>
+<img src="./assets/04-032.png" width="650">
+</center>
+
+As demonstrated in the previous section, the 1-bit predictor works reasonably well for loops having many iterations. However, there are some **issues** that arise when using a 1-bit predictor, which have ultimately led to development of other, better predictors.
+
+The 1-bit predictor performs prediction ***well*** in the following cases:
+  * Branches that are either always taken, or always not taken
+    * Even if the initial guess is incorrect, the cost for this misprediction penalty is eventually amortized over subsequent iterations
+  * The number of times that the branches are taken vastly outnumber the branches not being taken, or the number of times the branches are not taken vastly outnumber the branches being taken
+    * Similarly, the mispredictions will be relatively rare and therefore their cost is amortized over the course of the program's execution 
+
+The latter case is demonstrative for why the 1-bit predictor can be problematic. Consider the following situation, wherein there are many more branches that are taken rather than not taken:
+```
+T T T T NT T T T
+√ √ √ √ X  X √ √
+```
+
+In such a scenario, a misprediction (`X`) is a relatively rare anomaly; however, observe that *each* such misprediction will necessarily generate *two* mispredictions (i.e., the initial incorrect prediction followed by the subsequent correction).
+
+Therefore, the 1-bit predictor will generally perform ***poorly*** in the following cases:
+  * There is a comparable number of branches taken vs. branches not taken (i.e., in these cases, there will be many such anomalies occurring during program execution)
+  * Short loops, which are insufficient to adequately amortize the misprediction cost over the course of its (relatively few) iterations
+    * The prediction is generally only correct while the program remains in the loop; as soon as it exits, a misprediction penalty is incurred
+
+<center>
+<img src="./assets/04-033.png" width="650">
+</center>
+
+In the most extreme case, the 1-bit predictor will perform the ***worst*** when the number of branches taken vs. not taken are approximately equal.
+
+Next, we will consider improving prediction in the case of "poor" 1-bit predictor performance.
+
+## 23. 2-Bit Predictor
+
+<center>
+<img src="./assets/04-034.png" width="650">
+</center>
+
+
 
