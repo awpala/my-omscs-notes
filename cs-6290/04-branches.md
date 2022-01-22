@@ -800,7 +800,7 @@ Consider the following system:
   * 1-bit history, initialized to `0`
   * 2-bit predictor per each history state, both initialized to `SN` (Strong Not-Taken)
 
-Furthermore, the pattern to predict is `(NNT)*`
+Furthermore, the pattern to predict is `(NNT)*`.
 
 After `100` repetitions of the pattern (i.e., 300 total outcomes), what is the overall number of mispredictions that occur?
   * `100`
@@ -821,6 +821,98 @@ Consider the corresponding sequence as follows:
 
 Since sequence S7 has the same state and prediction behavior as the initial state (i.e., sequence S1), it can be inferred by inspection that this pattern will continue. Therefore, in the overall `300` sequences, a third of these will be incorrect predictions (i.e., each third of the triplets, e.g., `S3` in `S1` to `S3`, `S6` in `S4` to `S6`, etc.), or `100` total. Therefore, a 1-bit history predictor is not particularly effective for this pattern.
 
-## 30. 2-Bit History Predictor
+## 30-31. 2-Bit History Predictor
 
+### 30. Introduction
+
+<center>
+<img src="./assets/04-043.png" width="650">
+</center
+
+As demonstrated in the previous section, the 1-bit history predictor cannot predict the pattern `(NNT)*` very well. A 2-bit history predictor is better suited for this pattern; the 2-bit history predictor is discussed in this section.
+
+For a 2-bit history predictor, as before, the program counter (PC) indexes into the branch history table (BHT). However, the corresponding BHT entry has five components: `2` bits of history (i.e., the two preceding outcomes), and `4` 2-bit counters (one for each combination of possible history states). Therefore, the 2-bit history requires an entry size of `10` bits (`2 + 4*2`). Here, we shall denote the 2-bit counters as `C0`, `C1`, `C2`, and `C3`.
+
+Consider the operation of the 2-bit history predictor as follows (by generalizing the behavior of the 1-bit history predictor from the previous section):
+```
+NT NT T   NT  NT  T   NT  NT  T   ...
+      00  01  10  00  01  10  00
+      C0↑         C0↑         C0↑
+          C1↓         C1↓
+              C2↓         C2↓
+```
+
+Observe that:
+  * Counter `C0` always increments, therefore, it quickly begins to consistently predict branch taken (`T`) and it converges on strongly taken (`ST`)
+  * Counters `C1` and `C2` always decrement, therefore, they quickly begin to consistently predict branch not taken (`NT`) and converge on strongly not taken (`SN`)
+  * Counter `C3` is never accessed, because the pattern `11` (i.e., via `TT`) does not occur in the history bits
+
+Therefore, eventually the 2-bit history predictor becomes a perfect predictor for this pattern.
+
+## 31. Properties and Generalized *N*-Bit History Predictor
+
+<center>
+<img src="./assets/04-044.png" width="650">
+</center
+
+The previous section demonstrated that after the initial "warmup" period, the 2-bit history predictor predicts the pattern `(NNT)*` with 100% accuracy. To achieve this, *one* of its 2-bit counters is "wasted"/unused (i.e., `C3`).
+
+Furthermore, consider the pattern `(NT)*` using the 2-bit history predictor:
+```
+NT T NT  T   NT  T   ...
+     01  10  01  10  
+     C1↓     C1↓         
+         C2↑     C2↑      
+```
+
+In this case, *two* of its 2-bit counters are "wasted"/unused (i.e., `C0` and `C3`). 
+
+Therefore, in general, an ***n*-bit history predictor** will predict all patterns of length `≤ `*`n`*` + 1` with 100% accuracy. However, the corresponding cost is *`n`*` + 2×2`<sup>*`n`*</sup> total bits per BHT entry. Consequently, this will typically generate a lot of waste (i.e., unused bits among the 2-bit counters) in practice.
+
+This leads to another design challenge: How do we predict such *n*-length patterns (which do occur in practice, e.g., loops) while not incurring such a large cost (and corresponding waste) to do so?
+
+## 32. *N*-Bit History Predictor Quiz and Answers
+
+<center>
+<img src="./assets/04-046A.png" width="650">
+</center
+
+Consider the following system:
+  * *n*-bit history
+  * 2-bit predictor per each history state
+  * `1024` entries are required uniquely identify each branch instruction in the branch history table (BHT)
+
+For *`n`* values of `1`, `4`, `8`, and `16`:
+  * What is the cost in bits?
+  * How well does the predictor work on pattern `(NNNT)*`?
+  * What is the number of 2-bit counters required for the pattern `(NT)*`?
+
+***Solution and Explanation***:
+
+| *`n`* | Cost (bits) | Predicts Pattern `(NNNT)*` Accurately? | Number of 2-Bit Counters Required for Pattern `(NT)*` | Usage of Available 2-Bit Counters |
+|:---:|:---:|:---:|:---:|:---:|
+| `1` | `[(1 + 2*2`<sup>`1`</sup>`)]*1024 = 5*1024 = 5120` | no | `2` | `2/(2`<sup>`1`</sup>`) = 1` (`100%`) |
+| `4` | `[(4 + 2*2`<sup>`4`</sup>`)]*1024 = 36*1024 = 36864` | yes |`2` | `2/(2`<sup>`4`</sup>`) = 0.125` (`12.5%`) |
+| `8` | `[(8 + 2*2`<sup>`8`</sup>`)]*1024 = 520*1024 = 532480` | yes | `2` | `2/(2`<sup>`8`</sup>`) = 7.8125 × 10`<sup>`-3`</sup> (`~0.78%`) |
+| `16` | `[(16 + 2*16`<sup>`16`</sup>`)]*1024 = 131088*1024 = 134234112` | yes | `2` | `2/(2`<sup>`16`</sup>`) ≈ 3.05176 × 10`<sup>`-5`</sup> (`~0.003%`) |
+
+By inspection, in general, recall (cf. Section 31) that an `n`-bit history predictor will be accurate for a pattern of length `≤ `*`n`*` + 1`.
+
+With respect to the 2-bit counters requirement:
+
+(*1-bit history predictor*)
+```
+NT T NT ...
+   0 1
+```
+(*4-bit history predictor*)
+```
+NT T NT T NT   T    NT   ...
+          0101 1010 0101
+```
+  * uses patterns `01` and `10` exclusively, thereby requiring ***two*** 2-bit counters (i.e., from the available `2`<sup>`4`</sup>` = 16`)
+
+(and similarly for the 8-bit and 16-bit history predictors)
+
+## 33. History Predictor Quiz and Answers
 
