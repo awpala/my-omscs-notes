@@ -624,7 +624,27 @@ Next, we will consider improving prediction in the case of "poor" 1-bit predicto
 
 <center>
 <img src="./assets/04-034.png" width="650">
-</center>
+</center
 
+The predictor that fixes the aforementioned issue of two mispredictions per anomaly (in the 1-bit predictor) is called a **2-bit predictor** (**2BP**), or a **2-bit counter** (**2BC**).
+
+The two bits are defined as follows:
+  * **prediction bit** -The most-significant bit (MSB), which indicates what the prediction should be, similarly to the single bit of the 1-bit predictor
+  * **hysteresis bit** (or **conviction bit**) - The least significant bit (LSB), which indicates the certainty of the prediction bit
+
+The 2BP has the following possible state values:
+  * `00` - strong not-taken
+  * `01` - weak not-taken
+  * `10` - weak taken
+  * `11` - strong taken
+
+Per the corresponding state diagrams (as in the figure shown above):
+  * In the 1-bit predictor, one outcome completely "changes our mind completely" about what to do with the branch, which results in *two* mispredictions per anomaly.
+  * Conversely, in the 2-bit predictor, there is only *one* misprediction per anomaly, as incorrect guesses do not incur an additional penalty to return to the correct prediction state.
+    * In general, the state will reside in either "strong" state, and only transition through the "weak" zone periodically. Only in this transition through the "weak" zone will a two-mispredictions penalty be incurred.
+
+The behavior is the 2-bit predictor is simple enough to implement, while providing more effective (i.e., less penalty-incurring) performance.
+
+## 24. 2-Bit Predictor Initialization
 
 
