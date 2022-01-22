@@ -647,4 +647,180 @@ The behavior is the 2-bit predictor is simple enough to implement, while providi
 
 ## 24. 2-Bit Predictor Initialization
 
+<center>
+<img src="./assets/04-035.png" width="650">
+</center
+
+Given that there are four possible states for the 2-bit predictor, consider: Does it matter in which state the predictor starts off? 
+
+Starting in a ***strong*** state suggests the following possible prediction behaviors:
+```
+00 00 00
+NT NT NT
+√  √  √ 
+```
+  * An initial *correct* prediction remains in the strong state
+```
+00 01 10 11
+T  T  T  T
+X  X  √  √
+```
+  * An initial *incorrect* prediction incurs ***two*** penalties before predicting correctly
+
+Starting in a ***weak*** state suggests the following possible prediction behaviors:
+```
+01 00 00
+NT NT NT
+√  √  √ 
+```
+  * An initial *correct* prediction transitions to the strong state
+```
+01 10 11 11
+T  T  T  T
+X  √  √  √
+```
+  * An initial *incorrect* prediction incurs ***one*** penalty before predicting correctly
+
+These comparisons therefore suggest it is advantageous to initialize in a ***weak*** state.
+
+However, consider the situation where the branching behavior changes frequently:
+
+(*start in strong state*)
+```
+00 01 00 01
+T  NT T  NT
+X  √  X  √
+```
+(*start in weak state*)
+```
+01 10 01 10
+T  NT T  NT
+X  X  X  X
+```
+
+Therefore, in the worst case, starting in a weak state results in *always* mispredicting when branching is frequent.
+
+However, in practice, it is more common to have more stable branching behavior, therefore, the suggestion of starting in a weak state will be generally advantageous. Furthermore, even an initial misprediction is generally inconsequential to performance over the lifetime of the program (i.e., the misprediction penalty is amortized relatively quickly), so it also just as valid to simply (somewhat arbitrarily) start in state `00`, which is relatively simple to do.
+
+## 25. 2-Bit Predictor (2BT) Quiz and Answers
+
+<center>
+<img src="./assets/04-037A.png" width="650">
+</center
+
+Consider a 2-bit predictor having the four states as described previously (cf. Section 24), defined as follows:
+
+| State | Bit Pattern |
+|:---:|:---:|
+| Strong Not-Taken (SN) | `00` |
+| Weak Not-Taken (WN) | `01` |
+| Weak Taken (WT) | `10` |
+| Strong Taken (ST) | `11` |
+
+Assume we start at state `00` (Strong Not-Taken).
+
+Is there a sequence of branch outcomes that results in ***never*** predicting correctly? If so, indicate the first five steps of the state transitions sequence.
+  * `Yes`: `T` → `T` → `NT` → `T` → `NT`
+
+***Explanation***:
+```
+SN WN WT WN WT ...
+00 01 10 01 10 ...
+T  T  NT T  NT ...
+X  X  X  X  X  ...
+```
+
+***N.B.*** It is possible to change this particular predictor such that this behavior does not result in 100% misprediction, however, in general, ***every*** predictor inherently has the possible worst-case scenario of 100% misprediction; it is merely a matter of how likely such a sequence will occur in practice (a good predictor ensures this is exceedingly rare).
+
+## 26. 1-Bit Predictor to 2-Bit Predictor Improvements
+
+<center>
+<img src="./assets/04-038.png" width="650">
+</center
+
+As we have seen, moving from a 1-bit predictor to a 2-bit predictor improves prediction behavior, primarily because one-off occurrences of the other branching behavior does not completely change the prediction decision.
+
+Therefore, a natural question arises: Would adding more bits (e.g., 3-bit predictor, 4-bit predictor, etc.) further improve prediction performance?
+  * The ***drawback*** of using more bits is cost, which increases in proportion to the number of bits used for prediction
+  * * The ***benefit*** of using more bits is that when anomalous outcomes occur in sequential "streaks," this increases hysteresis (i.e., remaining longer in the "original" behavior prediction before transitioning to the "other" behavior) which may be more appropriate for reducing penalty incurrence
+
+However, in practice, it is not often that such "anomalous streaks" occur in a program. Therefore, additional bits are generally of marginal benefit beyond 2-bit predictors (maybe 3-bit predictors may be useful, however, 4-bit predictors and beyond are typically impractical).
+
+So, then, if adding more bits does not provide additional benefits beyond a certain point, how do we further improve prediction (i.e., beyond the 2-bit predictor)? In particular, as we have seen, neither the 1-bit predictor nor the 2-bit predictor are effective in the case of frequent switching in the branching behavior. This topic is discussed next.
+
+## 27. History-Based Predictors
+
+<center>
+<img src="./assets/04-039.png" width="650">
+</center
+
+**History-based predictors** attempt to predict patterns with frequent changes in branching behavior, with changes occurring in a repeated pattern (as in the figure shown above). Such patterns are therefore ***predictable***, however, they are ineffectively predicted by *n*-bit predictors.
+
+To solve this issue, history-based predictors "learn the pattern" over time. To accomplish this, rather than focusing solely on the "majority" outcome, history-based predictors examine the ***branch history*** as the program executes (as in the figure shown above). This history in turn refines the predictive pattern in response the *current* branching behavior, until the prediction eventually becomes accurate for the inherent underlying branching pattern (which may involve more complex "mappings", e.g., `NT NT` predicts `T`, `T NT` predicts `NT`, etc.).
+
+## 28. 1-Bit History Predictor with 2-Bit Counters
+
+<center>
+<img src="./assets/04-040.png" width="650">
+</center
+
+As a more concrete example, consider a history-based predictor comprised of a 1-bit history with two 2-bit counters (one for each history state). The general approach to this branch predictor is similar to before (as in the figure shown above): The program counter (PC) indexes into the branch history table (BHT). However, here, rather than having a 1-bit (or 2-bit) counter in each entry, instead we have a 1-bit history (H) and a pair of 2-bit counters (2BC) (one for when the state is `0`, and the other for when the state is `1`).
+
+Consider the following sequence:
+
+| Sequence | Predictor State | Prediction | Actual Branch Outcome | Correct Prediction? |
+|:---:|:---:|:---:|:---:|:---:|
+| S1 | `(0, SN, SN)` | `NT` | `T` | `X` |
+| S2 | `(1, WN, SN)` | `NT` | `NT` | `√` |
+| S3 | `(0, WN, SN)` | `NT` | `T` | `X` |
+| S4 | `(1, WT, SN)` | `NT` | `NT` | `√` |
+| S5 | `(0, WT, SN)` | `T` | `T` | `√` |
+| S6 | `(1, ST, SN)` | `NT` | `NT` | `√` |
+| S7 | `(0, ST, SN)` | `T` | `T` | `√` |
+
+In the initial state (`(0, SN, SN)`, sequence S1), the history bit `0` indicates to use the *first* 2-bit predictor (`SN`), resulting in a prediction of `NT` (not taken). However, since this differs from the actual branch outcome (`T`/taken), there is a misprediction. Since the prediction is incorrect, the history bit indexes into the first 2-bit predictor and changes it to `WN`, and then also flips itself to `1` (i.e., the actual outcome, `T`).
+
+In the next prediction (`(1, WN, SN)`, sequence S2), the history bit `1` indicates to use the *second* 2-bit predictor (`SN`), resulting in a prediction of `NT`, which is correct. Therefore, the 2-bit predictors remain unchanged. Furthermore, the history bit is changed to `0`, consistently with the actual branch outcome (`NT`).
+
+In the next prediction (`(0, WN, SN)`, sequence S3), the history bit `0` indicates to use the *first* 2-bit predictor (`WN`), resulting in a prediction of `NT`, which is incorrect. Since the prediction is incorrect, the history bit indexes into the first 2-bit predictor and changes it to `WT`, and then also flips itself to `1` (i.e., the actual outcome, `T`).
+
+In the next prediction (`(1, WT, SN)`, sequence S4), the history bit `1` indicates to use the *second* 2-bit predictor (`SN`), resulting in a prediction of `NT`, which is correct. Therefore, the 2-bit predictors remain unchanged. Furthermore, the history bit is changed to `0`, consistently with the actual branch outcome (`NT`).
+
+In the next prediction (`(0, WT, SN)`, sequence S5), the history bit `0` indicates to use the *first* 2-bit predictor (`WT`), resulting in a prediction of `T`, which is correct. Since the prediction is correct, the history bit indexes into the first 2-bit predictor and changes it to `ST`, and then also flips itself to `1` (i.e., the actual outcome, `T`).
+
+From this point on, there is perfect prediction, with the 2-bit predictors set to "strong" states, and the history bit flipping accordingly with the actual branch outcome to reference the appropriate 2-bit predictor. Therefore, at this point, the branching pattern has been "learned" by the predictor.
+
+## 29. 1-Bit History Predictor Quiz and Answers
+
+<center>
+<img src="./assets/04-042A.png" width="650">
+</center
+
+Consider the following system:
+  * 1-bit history, initialized to `0`
+  * 2-bit predictor per each history state, both initialized to `SN` (Strong Not-Taken)
+
+Furthermore, the pattern to predict is `(NNT)*`
+
+After `100` repetitions of the pattern (i.e., 300 total outcomes), what is the overall number of mispredictions that occur?
+  * `100`
+
+***Explanation***:
+
+Consider the corresponding sequence as follows:
+
+| Sequence | Predictor State | Prediction | Actual Branch Outcome | Correct Prediction? |
+|:---:|:---:|:---:|:---:|:---:|
+| S1 | `(0, SN, SN)` | `N` | `N` | `√` |
+| S2 | `(0, SN, SN)` | `N` | `N` | `√` |
+| S3 | `(0, SN, SN)` | `N` | `T` | `X` |
+| S4 | `(1, WN, SN)` | `N` | `N` | `√` |
+| S5 | `(0, WN, SN)` | `N` | `N` | `√` |
+| S6 | `(0, SN, SN)` | `N` | `T` | `X` |
+| S7 | `(0, SN, SN)` | `N` | `N` | `√` |
+
+Since sequence S7 has the same state and prediction behavior as the initial state (i.e., sequence S1), it can be inferred by inspection that this pattern will continue. Therefore, in the overall `300` sequences, a third of these will be incorrect predictions (i.e., each third of the triplets, e.g., `S3` in `S1` to `S3`, `S6` in `S4` to `S6`, etc.), or `100` total. Therefore, a 1-bit history predictor is not particularly effective for this pattern.
+
+## 30. 2-Bit History Predictor
+
 
