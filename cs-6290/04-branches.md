@@ -912,7 +912,148 @@ NT T NT T NT   T    NT   ...
 ```
   * uses patterns `01` and `10` exclusively, thereby requiring ***two*** 2-bit counters (i.e., from the available `2`<sup>`4`</sup>` = 16`)
 
-(and similarly for the 8-bit and 16-bit history predictors)
+(...and similarly for the 8-bit and 16-bit history predictors)
 
 ## 33. History Predictor Quiz and Answers
+
+<center>
+<img src="./assets/04-048A.png" width="650">
+</center
+
+Consider the following common nested loop structure:
+```c
+for (int i = 0; i != 8; i++)
+  for (int j = 0; j != 8; j++)
+    // do something
+```
+
+In order to execute this code effectively, how may entries are required by the history predictor?
+  * At least `4` entries (i.e., two for each `for` loop, accounting for branching in each)
+
+How many history bits should each entry have?
+  * At least an `8`-bit history, to account for full traversal of the inner `for` loop
+
+How many 2-bit counters should each entry have?
+  * `2`<sup>`8`</sup>` = 256` 2-bit counters
+
+***N.B.*** The pattern of the outer-`for` loop's condition-check branch statement is `(NT NT NT NT NT NT NT NT T)*`. Therefore, using `256` will result in many unused/wasted bits, since realistically only `9` are required to effectively predict this pattern.
+
+## 34-36. History with Shared Counters
+
+So, then, how to reduce waste (i.e., how to have fewer than `2`<sup>`n`</sup> counters ***per entry***) while still maintaining a long history? That is the topic of this section.
+
+<center>
+<img src="./assets/04-049.png" width="650">
+</center
+
+As demonstrated in the previous section (cf. Section 33), for an `n`-bit history pattern, only *`O`*`(n)` (i.e., `n + 1`) counters are required to capture this effectively.
+
+Therefore, with `2`<sup>`n`</sup> 2-bit counters available, one idea is to ***share*** these counters between the entries (i.e., rather than dedicating *all* of these counters on a *per-entry* basis). This introduces the possibility of conflict if two counters share the *same* bits, however, with a sufficiently large "pool" of counters (i.e., relative to the the size/needs of a particular entry), such conflicts rarely occur in practice.
+
+<center>
+<img src="./assets/04-050.png" width="650">
+</center
+
+The operation of such a 2-bit counter is as shown in the figure above.
+  * The lower bits of the **program counter** (**PC**) index into the **pattern history table** (**PHT**), which maintains only the history bits for the branch in question (e.g., an `11`-bit history is correspondingly recorded in an `11`-bit entry in the PHT, ***without*** the 2-bit counters).
+  * To determine whether or not to take the branch, the PHT entry is combined with the PC index (typically via XOR operator, or similar) to then index into the **branch history table** (**BHT**), which contains the individual 2-bit counters as entries. The latter entries therefore predict whether or not the branch is taken.
+  * Subsequently, if the branch outcome is known, we use the same combination of PC index & PHT entry to index back into the same BHT entry, incrementing/decrementing it accordingly to the current branch decision, and then this pattern is also fed back into the PHT entry for the next prediction on this particular branch.
+
+***N.B.*** In principle, the combination of PC index & PHT entry may *not* be unique with respect to the BHT entry, thereby yielding a collision/conflict in the BHT. However, this is typically not a practical issue, provided the size of the BHT is large relative to the PHT.
+
+For example, with a PC index comprised of `11` bits (with corresponding `11`-bit entries in the PHT) and a BHT of size `2`<sup>`11`</sup> entries, this requires an overall cost of `(2`<sup>`11`</sup>` × 11 history entries) + (2`<sup>`11`</sup>` × 2 two-bit counters) = 16 KBi`, which is much lower than the cost using an equivalent PHT of size `2`<sup>`11`</sup> entries (cf. *`O`*`(MBi)` to *`O`*`(GBi)`) instead of `11`-bit sized entries.
+  * ***N.B.*** Here, the unit `Bi` denotes `2`<sup>`10`</sup> based metric prefixes, e.g., `KBi = 2`<sup>`10`</sup>, `MBi = 2`<sup>`20`</sup>, etc. (cf. `KB = 10`<sup>`3`</sup>, `MB = 10`<sup>`6`</sup>, etc.)
+
+<center>
+<img src="./assets/04-051.png" width="650">
+</center
+
+Consider the pattern `T T T T ...` (i.e., branch always taken). In this case, the corresponding entry in the PHT is `1 1 1 1 ...`, along with a fixed PC index for the branch. Therefore, performing the appropriate combination (i.e., via XOR), this requires only `1` counter (i.e., only `1` entry in the BHT table, using only one of its 2-bit counters). Even so, the total cost for this is the PHT entry (e.g., `11` bits) combined with the size of the 2-bit counter (which is still much less than `2`<sup>`n`</sup> combined with the 2-bit counter).
+
+By the same reasoning, the pattern `NT NT NT NT ...` (with corresponding PHT entry `0 0 0 0 ...`) requires only `1` counter.
+
+The pattern `NT T NT T ...` generates two possible PHT entries `0 1 0 1 ...` and `1 0 1 0 ...`, and therefore requires `2` counters.
+
+In general, it is evident that many patterns will indeed have a small counter requirement. This leaves many available entries in the BHT for more complex patterns such as `NT NT NT NT T`, which may require the full `n` history bits (e.g., `16`), correspondingly using all `n` 2-bit counters. Therefore, this arrangement naturally allocates BHT entries proportionally to the requirements of the PHT. However, to avoid potential conflicts, the BHT should be large relative to the PHT (i.e., to avoid mapping to the *same* entry in the BHT via two different PC indices representing two distinct/different branches); by virtue of using a 2-bit-entry BHT, it is not difficult to have a large BHT in practice.
+
+## 37. Pshare
+
+<center>
+<img src="./assets/04-052.png" width="650">
+</center
+
+The previously described arrangement (cf. Section 36) is called a **pshare** predictor, characterized by the following:
+  * A ***p***rivate history for each branch (i.e., *each* individual branch should have its *own* history in the branch history table (BHT))
+  * ***S***hared counters, whereby in general *different* branches can map to the *same* counters
+
+Pshare predictors are useful for the following:
+  * Even-odd behavior (e.g., taken vs. not-taken branching)
+  * Loops with relatively few iterations (e.g., `8`-iteration loops)
+
+Essentially, pshare predictors are effective whenever the branches' own previous behavior is predictive of their future behavior.
+
+Another similar predictor type is called a **gshare** predictor, characterized by the following:
+  * A ***g***lobal history (a *single* history to predict *all* branches)
+    * With a "global history" arrangement, the program counter (PC) is first combined directly with the global history entry before indexing into the table (as in the figure shown above). Therefore, *every* branch gets shifted via the history table proceeding in this manner. 
+  * ***S***hared counters (similarly to pshare)
+
+Gshare predictors are useful for **correlated branches** (i.e., branches whose decision is related to what the other programs in the program were doing). As an example of correlated branching, consider the following code:
+```c
+if (shape == "square") { // branch 1
+  // do something
+}
+
+// do something
+
+if (shape != "Square") { // branch 2
+  // do something
+}
+```
+
+In this example, branches `1` and ` 2` are *correlated*: Taking either branch precludes taking the other (and vice versa). Therefore, if either branch is already in the history, the other can be predicted perfectly as a direct consequence. However, on initial encounter of the first-occurring branch, this information will be unknown initially and therefore can yield a missed prediction.
+
+## 38. Pshare vs. Gshare Quiz and Answers
+
+<center>
+<img src="./assets/04-054A.png" width="650">
+</center
+
+Consider the following C code fragment:
+```c
+for (int i = 1000; i != 0; i--)
+  if (i % 2)
+    n += i;
+```
+
+The equivalent assembly code is as follows:
+```mips
+LOOP:
+  BEQ R1, zero, EXIT  # test to exit `for` loop
+  AND R2, R1, 1       # test least-significant bit of `R1`
+  BEQ R2, zero, EVEN  # jump to `EVEN` if even number occurs
+  ADD R3, R3, R1      # add `R1` (`i`) to `R3` (`n`) if odd
+EVEN:
+  ADD R1, R1, -1      # decrement `i`
+  B   LOOP            # branch unconditionally back to LOOP
+EXIT:
+  # end of code fragment
+```
+
+To achieve good prediction accuracy on *all* branches in this code segment, how many bits should be used for entries using pshare vs. gshare?
+  * pshare - `1` bit
+  * gshare - `3` bits
+
+***Explanation***:
+
+This code contains three branches (`BEQ ...`, `BEQ ...`, `B ...`).
+  * (1) By inspection, `B LOOP` is trivially predicable, even without any history; therefore, any history will work.
+  * (2) `BEQ R1, zero, EXIT` is taken all `1000` times, except for the last iteration. Even with a 2-bit counter, this branch will be predicted accurately `1000` times followed by only one misprediction, which overall is still very accurate.
+  * (3) `BEQ R2, zero, EVEN`, which makes even-odd decision, requires the "most attention" with respect to history. In particular, it is important to know whether the previous iteration was even or odd in order to predict accurately.
+    * For pshare, this can be handled simply with `1` history bit. This will also cover branches (1) and (2).
+    * For gshare, the previous outcome should exist in the global history. The global history yields the following pattern (via `BEQ ...`, `BEQ ...`, `B ...`, respectively): `011 001 ...`. Accordingly, there are effectively two patterns that must be captured: `110` and `010` (i.e., the second branch is varying, while the other two branches have the predictable pattern `1_0` or `0_0`), thereby requiring `3` history bits accordingly.
+
+Therefore, gshare can achieve similar performance to pshare, however, generally this will require more history bits to accomplish. Additionally, gshare can effectively handle "correlated branches" (cf. Section 37), unlike pshare which cannot.
+
+## 39. Gshare or Pshare?
+
 
