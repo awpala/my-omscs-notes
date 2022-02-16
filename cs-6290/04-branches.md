@@ -624,7 +624,7 @@ Next, we will consider improving prediction in the case of "poor" 1-bit predicto
 
 <center>
 <img src="./assets/04-034.png" width="650">
-</center
+</center>
 
 The predictor that fixes the aforementioned issue of two mispredictions per anomaly (in the 1-bit predictor) is called a **2-bit predictor** (**2BP**), or a **2-bit counter** (**2BC**).
 
@@ -649,7 +649,7 @@ The behavior is the 2-bit predictor is simple enough to implement, while providi
 
 <center>
 <img src="./assets/04-035.png" width="650">
-</center
+</center>
 
 Given that there are four possible states for the 2-bit predictor, consider: Does it matter in which state the predictor starts off? 
 
@@ -706,7 +706,7 @@ However, in practice, it is more common to have more stable branching behavior, 
 
 <center>
 <img src="./assets/04-037A.png" width="650">
-</center
+</center>
 
 Consider a 2-bit predictor having the four states as described previously (cf. Section 24), defined as follows:
 
@@ -736,7 +736,7 @@ X  X  X  X  X  ...
 
 <center>
 <img src="./assets/04-038.png" width="650">
-</center
+</center>
 
 As we have seen, moving from a 1-bit predictor to a 2-bit predictor improves prediction behavior, primarily because one-off occurrences of the other branching behavior does not completely change the prediction decision.
 
@@ -752,7 +752,7 @@ So, then, if adding more bits does not provide additional benefits beyond a cert
 
 <center>
 <img src="./assets/04-039.png" width="650">
-</center
+</center>
 
 **History-based predictors** attempt to predict patterns with frequent changes in branching behavior, with changes occurring in a repeated pattern (as in the figure shown above). Such patterns are therefore ***predictable***, however, they are ineffectively predicted by *n*-bit predictors.
 
@@ -762,7 +762,7 @@ To solve this issue, history-based predictors "learn the pattern" over time. To 
 
 <center>
 <img src="./assets/04-040.png" width="650">
-</center
+</center>
 
 As a more concrete example, consider a history-based predictor comprised of a 1-bit history with two 2-bit counters (one for each history state). The general approach to this branch predictor is similar to before (as in the figure shown above): The program counter (PC) indexes into the branch history table (BHT). However, here, rather than having a 1-bit (or 2-bit) counter in each entry, instead we have a 1-bit history (H) and a pair of 2-bit counters (2BC) (one for when the state is `0`, and the other for when the state is `1`).
 
@@ -794,7 +794,7 @@ From this point on, there is perfect prediction, with the 2-bit predictors set t
 
 <center>
 <img src="./assets/04-042A.png" width="650">
-</center
+</center>
 
 Consider the following system:
   * 1-bit history, initialized to `0`
@@ -827,7 +827,7 @@ Since sequence S7 has the same state and prediction behavior as the initial stat
 
 <center>
 <img src="./assets/04-043.png" width="650">
-</center
+</center>
 
 As demonstrated in the previous section, the 1-bit history predictor cannot predict the pattern `(NNT)*` very well. A 2-bit history predictor is better suited for this pattern; the 2-bit history predictor is discussed in this section.
 
@@ -853,7 +853,7 @@ Therefore, eventually the 2-bit history predictor becomes a perfect predictor fo
 
 <center>
 <img src="./assets/04-044.png" width="650">
-</center
+</center>
 
 The previous section demonstrated that after the initial "warmup" period, the 2-bit history predictor predicts the pattern `(NNT)*` with 100% accuracy. To achieve this, *one* of its 2-bit counters is "wasted"/unused (i.e., `C3`).
 
@@ -875,7 +875,7 @@ This leads to another design challenge: How do we predict such *n*-length patter
 
 <center>
 <img src="./assets/04-046A.png" width="650">
-</center
+</center>
 
 Consider the following system:
   * *n*-bit history
@@ -918,7 +918,7 @@ NT T NT T NT   T    NT   ...
 
 <center>
 <img src="./assets/04-048A.png" width="650">
-</center
+</center>
 
 Consider the following common nested loop structure:
 ```c
@@ -944,7 +944,7 @@ So, then, how to reduce waste (i.e., how to have fewer than `2`<sup>`n`</sup> co
 
 <center>
 <img src="./assets/04-049.png" width="650">
-</center
+</center>
 
 As demonstrated in the previous section (cf. Section 33), for an `n`-bit history pattern, only *`O`*`(n)` (i.e., `n + 1`) counters are required to capture this effectively.
 
@@ -952,7 +952,7 @@ Therefore, with `2`<sup>`n`</sup> 2-bit counters available, one idea is to ***sh
 
 <center>
 <img src="./assets/04-050.png" width="650">
-</center
+</center>
 
 The operation of such a 2-bit counter is as shown in the figure above.
   * The lower bits of the **program counter** (**PC**) index into the **pattern history table** (**PHT**), which maintains only the history bits for the branch in question (e.g., an `11`-bit history is correspondingly recorded in an `11`-bit entry in the PHT, ***without*** the 2-bit counters).
@@ -966,7 +966,7 @@ For example, with a PC index comprised of `11` bits (with corresponding `11`-bit
 
 <center>
 <img src="./assets/04-051.png" width="650">
-</center
+</center>
 
 Consider the pattern `T T T T ...` (i.e., branch always taken). In this case, the corresponding entry in the PHT is `1 1 1 1 ...`, along with a fixed PC index for the branch. Therefore, performing the appropriate combination (i.e., via XOR), this requires only `1` counter (i.e., only `1` entry in the BHT table, using only one of its 2-bit counters). Even so, the total cost for this is the PHT entry (e.g., `11` bits) combined with the size of the 2-bit counter (which is still much less than `2`<sup>`n`</sup> combined with the 2-bit counter).
 
@@ -980,7 +980,7 @@ In general, it is evident that many patterns will indeed have a small counter re
 
 <center>
 <img src="./assets/04-052.png" width="650">
-</center
+</center>
 
 The previously described arrangement (cf. Section 36) is called a **pshare** predictor, characterized by the following:
   * A ***p***rivate history for each branch (i.e., *each* individual branch should have its *own* history in the branch history table (BHT))
@@ -1016,7 +1016,7 @@ In this example, branches `1` and ` 2` are *correlated*: Taking either branch pr
 
 <center>
 <img src="./assets/04-054A.png" width="650">
-</center
+</center>
 
 Consider the following C code fragment:
 ```c
@@ -1055,5 +1055,17 @@ This code contains three branches (`BEQ ...`, `BEQ ...`, `B ...`).
 Therefore, gshare can achieve similar performance to pshare, however, generally this will require more history bits to accomplish. Additionally, gshare can effectively handle "correlated branches" (cf. Section 37), unlike pshare which cannot.
 
 ## 39. Gshare or Pshare?
+
+<center>
+<img src="./assets/04-055.png" width="650">
+</center>
+
+Now that we have seen the gshare can perform correlated branching which pshare cannot, while pshare can perform equivalent branching with relatively shorter/smaller history requirements than gshare, the question is: Which of these should be selected for a given processor?
+
+Many earlier processors selected only one or the other. However, it was quickly discovered that it is advantageous to use ***both***, i.e.,:
+  * Gshare for correlated branches
+  * Pshare for self-similar branches, even with a relatively short history
+
+## 40. Tournament Predictor
 
 
