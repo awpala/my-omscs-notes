@@ -1068,4 +1068,49 @@ Many earlier processors selected only one or the other. However, it was quickly 
 
 ## 40. Tournament Predictor
 
+<center>
+<img src="./assets/04-056.png" width="650">
+</center>
+
+The discussion from the previous section leads us to a so called **tournament predictor**. In a tournament predictor, there are two predictors:
+  * One predictor is better for certain branches (e.g., X, Y, Z)
+  * The other predictor is better for other branches (e.g., A, B, C)
+
+The objective of the tournament predictor is to optimize each predictor to its corresponding branches; however, it is unknown a priori which predictor is optimized to which branches.
+
+Given two predictors (e.g., a gshare and a pshare, as in the figure shown above), the program counter (PC) is used to index into both predictors, and the decisions that they generate are 
+are combined with a **meta-predictor** (another array of 2-bit counters, which is also indexed via the PC). The output of the meta-predictor does not give a prediction for the branch, but rather it indicates which of the two predictors is the more likely to give an accurate prediction for the branch in question.
+
+The individual predictors are "trained" as before. However, the meta-predictor is trained differently. Rather than incrementing when the branch is taken and decrementing when the branch not taken, the meta-predictor is trained based on the performance of the two predictors, as depicted in the following table:
+
+| Predictor 1 | Predictor 2 | Meta-Predictor |
+|:--:|:--:|:--:|
+| correct prediction | correct prediction | no change |
+| correct prediction | incorrect prediction | decrement |
+| incorrect prediction | correct prediction | increment |
+| incorrect prediction | incorrect prediction | no change |
+
+(where here Predictor 1 is the gshare, and Predictor 2 is the pshare)
+
+Therefore, in the meta-predictor, the prediction bit of the 2-bit counter indicates which of the two predictors to select. The hysteresis is present just in case gshare is overall more accurate but sometimes pshare beats it (or vice versa). Furthermore, note that each branch has its own meta-predictor entry (via corresponding PC index), and therefore this decision process depends on the branches themselves (i.e., correspondingly with the particular program behavior during its execution).
+
+## 41. Hierarchical Predictors
+
+<center>
+<img src="./assets/04-057.png" width="650">
+</center>
+
+Another type of predictor that combines prediction decisions is called a **hierarchical predictor**. It is similar to a tournament predictor with a couple of differences/variations as follows:
+
+| Tournament Predictor | Hierarchical Predictor |
+|:--|:--|
+| Combines two good predictors (one being optimized for certain branches, the other being optimized for other branches). This involves using two good predictions (which are expensive to implement) per branch/entry just to use *one* of them ultimately. | Combines one good predictor with one "fair/ok" predictor. Here, the good predictor (which is expensive to implement) is used where necessary, whereas the ok predictor covers common and/or trivial cases (that are otherwise "overkill" for the good predictor's capabilities).  |
+| Updates both predictors on each decision so that they are both up-to-date with the current prediction/execution state, with each attempting to optimize each branching decision. | Updates only the ok predictor on *each* decision, but only updates the good predictor if the ok predictor does not perform well for a particular branch(es). Therefore, the good predictor's entries are not allocated if the ok predictor is otherwise performing well. This allows to have expensive (but relatively few) entries in the good predictor, and inexpensive (but relatively numerous) entries in the ok predictor. |
+
+Based on these characteristics, when comparing the tournament vs. hierarchical predictors, typically the hierarchical predictor wins out, because it turns out that there are many branches which can be predicted well using a simple 2-bit counter (i.e., used as the ok predictor in the hierarchical predictor). With each predictor balancing cost vs. accuracy, the hierarchical predictor optimizes this balance more efficiently.
+
+***N.B.*** It is even possible to have either a tournament or hierarchical predictor with more than two predictors, generalizing the respective concepts accordingly.
+
+## 42. Hierarchical Predictor Example
+
 
