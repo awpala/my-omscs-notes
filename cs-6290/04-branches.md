@@ -122,7 +122,7 @@ Consider the following pipelined processor system:
     LOOP:
       ADDI R1, R1, -1
       ADD  R2, R2, R2
-      BNE2 R1, LOOP
+      BNEZ R1, LOOP
     ```
 
 What is the speedup achieved if we have a ***perfect*** predictor (i.e., the next instruction to be fetched is always known correctly)?
@@ -135,7 +135,7 @@ The number of cycles spent in each instruction within the loop are as follows:
 LOOP:
   ADDI R1, R1, -1  # 2 -> this instruction is determined in stage 2/`D`
   ADD  R2, R2, R2  # 2 -> this instruction is determined in stage 2/`D`
-  BNE2 R1, LOOP    # 3 -> this instruction's branching behavior is indeterminate until stage 3/`A`
+  BNEZ R1, LOOP    # 3 -> this instruction's branching behavior is indeterminate until stage 3/`A`
 ```
 
 Therefore, overall, it takes `2 + 2 + 3 = 7` cycles per loop iteration to perform these instructions.
@@ -145,7 +145,7 @@ Furthermore, with a perfect predictor, the number of cycles spent in each instru
 LOOP:
   ADDI R1, R1, -1  # 1
   ADD  R2, R2, R2  # 1
-  BNE2 R1, LOOP    # 1
+  BNEZ R1, LOOP    # 1
 ```
 
 Therefore, overall, it takes `1 + 1 + 1 = 3` cycles per loop iteration to determine the instructions.
@@ -1112,5 +1112,73 @@ Based on these characteristics, when comparing the tournament vs. hierarchical p
 ***N.B.*** It is even possible to have either a tournament or hierarchical predictor with more than two predictors, generalizing the respective concepts accordingly.
 
 ## 42. Hierarchical Predictor Example
+
+<center>
+<img src="./assets/04-058.png" width="650">
+</center>
+
+Consider the Pentium M processor, which represents a real-world hierarchical predictor. It is characterized by the following predictors:
+  * ***cheap*** - a large array of 2-bit counters
+  * ***local history*** - stores a local history for each branch, along with an array of 2-bit counters for different histories
+  * ***global history*** - stores a global history (which is longer than the local-history predictor), along with an array of 2-bit counters
+
+To ***predict*** a single branch, first, look up the PC in the 2-bit counter array, as well as in the local and global history predictors
+
+<center>
+<img src="./assets/04-059.png" width="350">
+</center>
+
+Next, the actual prediction is formed for the processor by using the result of the global predictor, as shown above. If the global predictor indicates that the branch ***is*** predicted here, then a companion "tag" array records that this branch is indeed predicted by the global predictor.
+
+<center>
+<img src="./assets/04-060.png" width="350">
+</center>
+
+Conversely, if the global predictor does ***not*** have a matching tag (i.e., it does not predict the instruction and is consequently not inserted into the global predictor), then correspondingly the local predictor is used, as shown above. If the local predictor indicates tha the branch ***is*** predicted here, then the local predictor similarly uses a "tag" array to record this.
+
+<center>
+<img src="./assets/04-061.png" width="350">
+</center>
+
+Finally, if neither the global predictor nor the global predictor have a matching tag (i.e., neither predict the instruction), then the 2-bit counter is used to provide the result.
+
+However, when we ***update*** the predictor, we first update the 2-bit counter. Then:
+  * If the branch is ***predicted***:
+    * If the branch is present in the local predictor, we update the local predictor accordingly.
+    * Similarly, if the branch is present in the global predictor, we update the global predictor accordingly.
+  * If the branch is ***mispredicted***:
+    * It is inserted into the local predictor, so that the branch is present subsequently.
+    * Furthermore, if the local branch is mispredicting, then the branch is inserted into the global predictor, so that the branch is present subsequently.
+
+By "cascading" in this manner, branches are almost perfectly predictable by 2-bit counters, which accounts for a lot of the branches in practice.
+  * For example, always taken (or predominantly taken) branches will be mostly predicted by the 2-bit counter, rarely requiring the local and global predictors, which in turn frees/saves space in the latter predictors for the other branches which do require them. Consequently, we can have fewer of the 2-bit entries in the local and global predictors than otherwise necessary (i.e., relative to predicting *all* of the branches via the local and/or global predictors).
+
+<center>
+<img src="./assets/04-062.png" width="350">
+</center>
+
+So, then, how do we determine whether the branch is present or not? To accomplish this, we insert some bits of the branch's address into the corresponding tag-array entry of the predictor (i.e., the local predictor, as shown above). Therefore, the history entry will index via some bits of the PC in order to find the history, and in the same entry of the tag array, we also insert some of the upper bits of the PC; accordingly, when different branches map to this entry, only one of them gets predicted by this entry, while the rest are not determined to be found at this location. In this manner, if most of the branches that map to this entry are actually predictable by the 2-bit predictor, then the entry is not required to make a prediction for those branches.
+
+## 43. Multi-Predictor Quiz and Answers
+
+<center>
+<img src="./assets/04-064A.png" width="650">
+</center>
+
+Consider a program with the following characteristics, which uses a multi-predictor scheme to combine decisions:
+  * A 2-bit predictor which works well for 95% of instructions
+  * A pshare predictor which works well for the same 95% of instructions, and for an additional 2% not covered by the 2-bit predictor (i.e., giving an overall 97% prediction)
+  * A gshare predictor which works well for the same 95% of instructions, as well as for an additional 3% not covered by either the 2-bit predictor or the pshare predictor (i.e., giving an overall 98% prediction)
+
+Therefore, cumulatively, the three predictors can predict virtually 100% of instructions.
+
+How can we describe such a multi-predictor? (Given options: `2-bit predictor`, `pshare`, `gshare`, `tournament`, `hierarchical`, `return address stack (RAS)`)
+  * The overall predictor is a `hierarchical` predictor that choses between a `2-bit counter` predictor and a `tournament` predictor, which itself choses between `pshare` and `gshare`.
+
+***Explanation***:
+
+Because the 2-bit counter is the cheapest predictor which can cover the most branches, it is sensible to use it ot predict most of the branches. In such a multi-predictor scheme, the 2-bit counter is combined with a (more expensive) tournament predictor, which is reserved for branches which are mispredicted by the 2-bit counter. The tournament predictor in turn is composed of a pshare and gshare, which have complementary prediction capabilities (i.e., covering the remaining 5% of mispredictions) but are otherwise not advantageous relative to one another.
+
+## 44. Return Address Stack (RAS)
 
 
