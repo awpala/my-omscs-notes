@@ -109,3 +109,37 @@ In order for if conversion to work here, what is need is an instruction such as 
 
 # 4. Conditional Move
 
+<center>
+<img src="./assets/05-007.png" width="650">
+</center>
+
+Therefore, the simplest form of predication supporting hardware is a **conditional move** instruction.
+
+In the MIPS instruction set:
+  * The instruction `MOVZ` takes two sources (`Rs`, `Rt`) and a destination register (`Rd`).
+    * It compares `Rt` to `0`...
+      * If `Rt` is `0`, then `Rd` is set to `Rs`.
+      * Otherwise, `Rd` is unchanged.
+    * Consequently, there is no branch anymore, as there is only a single instruction.
+  * The instruction `MOVN` works similarly to `MOVZ`, except that it moves `Rs` into `Rd` only if `Rt` is *not* `0`.
+
+```mips
+R3 = cond
+R1 = ... x1 ...
+R2 = ... x2 ...
+MOVN x, R1, R3
+MOVZ x, R2, R3
+```
+ 
+Therefore, to implement `x = cond ? x1 : x2;` using MIPS, this could be done as shown above. The result places one of `R1` or `R2` into `x`, depending on whether `R3` is `true` or `false` (i.e., depending on the condition `cond`).
+
+```c
+if (cc)
+  Dst = src;
+```
+
+Similarly, the x86 instruction set has a set of `CMOV` instructions (e.g., `CMOVZ`, `CMOVNZ`, `CMOVGT`, etc.), wherein the condition is determined by the flags. All of these instructions effectively implement the shown above (where `cc` denotes the condition code, and `Dst` and `src` represent the destination and source registers, respectively). The corresponding implementation would be similar to that shown previously for MIPS, with the inclusion of `R3 = cond` being unnecessary here (but rather supplanted with a corresponding `CMOV` instruction instead).
+
+## 5. `MOVZ`/`MOVN` Quiz and Answers
+
+
