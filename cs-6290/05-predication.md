@@ -44,12 +44,11 @@ Consider a ***large if-then-else***. Here, we have a decision which yields two p
   * If we predict, we waste up to 50 instructions (i.e., with mispredictions), but more likely (i.e., with correct predictions) we waste nothing.
   * Conversely, if we predicate, and assuming the two branches have equal waste, then given 200 instructions we will waste 100 of them either way. Therefore, the waste is larger than the corresponding penalty of branch prediction (50). Therefore, branch prediction is also more sensible here.
 
-
 <center>
 <img src="./assets/05-004.png" width="250">
 </center>
 
-Now, consider ***small if-then-else*** (as in the figure shown above). With 5 instructions apiece in the then and else paths...
+Now, consider a ***small if-then-else*** (as in the figure shown above). With 5 instructions apiece in the then and else paths...
   * Here, predication involves 10 instructions, followed by subsequent instructions done by the program either way (i.e., irrespectively of prediction vs. predication).
     * With 100% waste, we end up with `1.00 * 5 = 5` instructions wasted with predication.
   * With prediction, there is no penalty with correct predictions, however, mispredictions yield a waste of 50 instructions, which is substantially ***worse*** than predication.
@@ -58,3 +57,55 @@ Now, consider ***small if-then-else*** (as in the figure shown above). With 5 in
 Therefore, in general, the smaller the if-then-else, the stronger the bias towards predication and away from prediction (barring high prediction accuracy).
 
 ## 3. If Conversion
+
+<center>
+<img src="./assets/05-005.png" width="650">
+</center>
+
+Before discussing how predication works in hardware, first consider the technique called **if conversion**, which is how the compiler creates the code that will be executed along both paths.
+
+```c
+if (cond) {
+  x = arr[i];
+  y = y + 1;
+} else {
+  x = arr[j];
+  y = y - 1;
+}
+```
+
+Consider the relatively small if-then-else code fragment, as shown above. If conversion transforms this code into the work of both paths, followed by a selection of some sort between the results of these two paths, as follows:
+
+```c
+x1 = arr[i];
+x2 = arr[j];
+y1 = y + 1;
+y2 = y - 1;
+x = cond ? x1 : x2;
+y = cond ? y1 : y2;
+```
+
+But a question still remains: How is this done?
+
+```mips
+BEQ ...,
+  MOV x, x2
+  B Done
+
+MOV x, x1
+⋮
+```
+
+If we convert statement `x = cond ? x1 : x2;` (as shown above) into a conditional expression  that still branches based on the condition and then performs the move of `x2` into `x` or otherwise moves `x` into `x1`, then we haven't really done much; we have simply converted one branch into another, and now we have this branch twice (unless we have some sort of correlating predictor, such as the global history predictor), resulting in possibly *two* missed predictions, rather than only the *one* that could have resulted.
+
+<center>
+<img src="./assets/05-006.png" width="450">
+</center>
+
+Therefore, if this is the *only* possibility, then  if conversion is simply ***not*** performed.
+
+
+In order for if conversion to work here, what is need is an instruction such as `MOV x, x1, cond` via flag `cond` indicating `true`.
+
+# 4. Conditional Move
+
