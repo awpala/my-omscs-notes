@@ -1179,6 +1179,113 @@ How can we describe such a multi-predictor? (Given options: `2-bit predictor`, `
 
 Because the 2-bit counter is the cheapest predictor which can cover the most branches, it is sensible to use it ot predict most of the branches. In such a multi-predictor scheme, the 2-bit counter is combined with a (more expensive) tournament predictor, which is reserved for branches which are mispredicted by the 2-bit counter. The tournament predictor in turn is composed of a pshare and gshare, which have complementary prediction capabilities (i.e., covering the remaining 5% of mispredictions) but are otherwise not advantageous relative to one another.
 
-## 44. Return Address Stack (RAS)
+## 44-45. Return Address Stack (RAS)
 
+<center>
+<img src="./assets/04-065.png" width="650">
+</center>
 
+As we have seen, there are several different types of branches requiring prediction.
+  * For conditional branches (e.g., `BNE R0, R1, Label`), we must predict:
+    * ***Direction*** (i.e., taken vs. not taken), via the aforementioned strategies
+    * If taken, what is the ***target*** address?
+      * For this purpose, the BTB is sufficient, because the target (e.g., `Label`) is always the same
+  * For unconditional jumps, function calls, etc., we must predict:
+    * ***Direction***, which is trivial since it is always taken (and therefore even the simplest predictor is sufficient)
+    * If taken, what is the ***target*** address?
+      * For this purpose, the BTB is sufficient (i.e., which simply recalls the previous target of the previously executed instruction)
+  * For a function return, we must predict:
+    * ***Direction***, which is trivial since it is always taken
+    * If taken, what is the ***target*** address? This is difficult to predict in general...
+      * If the function is called from the *same* place, then return will always jump back to the *same* location, and therefore the BTB will be sufficient.
+      * However, more typically, the function can be called from multiple places in the program (e.g., instructions `CALL FUN` at addresses `0x1230` and `0x1250` in the figure above, which are the return targets for the common function `FUN1`)
+        * In this case the BTB is insufficient, because in general it will recall the incorrect return target (e.g., if called from `0x1230` initially then the subsequent call from `0x1250` will incorrectly predict a return to `0x1230`, and so forth for subsequent calls).
+        * So, then, how can function returns be predicted accurately in such a situation?
+
+To resolve the issue with respect to predicting a return address correctly, we use a **return address stack (RAS)**, which is a separate predictor dedicated to predicting return addresses from a function call.
+
+<center>
+<img src="./assets/04-066.png" width="650">
+</center>
+
+The RAS works via a small hardware stack with a corresponding pointer. When a function call is executed (e.g., `CALL FUN` at address `0x1230`), the return address (i.e., `0x1234`) is pushed onto the RAS and the pointer is moved up.
+
+<center>
+<img src="./assets/04-067.png" width="650">
+</center>
+
+Within the function, upon reaching the instruction `RET`, the pointer is popped.
+
+<center>
+<img src="./assets/04-068.png" width="650">
+</center>
+
+Similarly, upon reaching `CALL FUN` at address `0x1250`, the return address (`0x1254`) is pushed on the RAS, and the pointer is moved up. Upon reaching the instruction `RET`, the pointer is popped.
+
+<center>
+<img src="./assets/04-069.png" width="650">
+</center>
+
+So, then, why use the RAS predictor, rather than the actual call stack of the program? This is because the RAS predictor must be located on the chip very closely to where the rest of the branch prediction is occurring, and must also be very small. Therefore, unlike a traditional stack (wherein stack frames can be pushed on sequentially until memory is exceeded, as in the right part of the figure shown above), the RAS predictor provides a small stack to allow making predictions very ***rapidly*** (i.e., in one cycle), which in turn allows for only a limited amount of entries on the RAS stack itself.
+
+What happens when we exceed the size of the RAS? (i.e., What resolution measures are available?)
+  * Do not push anything else, but rather preserve what is already present on the RAS stack, in order to avoid overwriting anything there
+  * Wrap around back to the beginning of the stack, and overwrite in this manner
+
+## 46. RAS Quiz and Answers
+
+<center>
+<img src="./assets/04-071A.png" width="650">
+</center>
+
+Which approach is better for resolving a full RAS stack?
+  * do not push
+  * wraparound
+    * `CORRECT`
+
+***Explanation***:
+
+To understand why the wraparound approach is better, consider a typical program (as in the figure shown above, starting with top-level `main()`). The function `main()` proceeds with extensive work until it eventually calls the function `doit()`, which correspondingly pushes onto the RAS stack. Similarly, a cascade of nested function calls may occur subsequently, with corresponding pushes onto the RAS stack.
+
+To demonstrate simply, consider the call sequence (within `main()`) of `doit()`, `func()`, `doless()`, and then subsequent repeated calls to `add()` (i.e., the functions become increasingly less complex and more frequently called).
+  * With only *one* entry in the RAS stack and using *do not push* approach, then this is occupied by the initial call to `doit()`, which might be a very large function. As long as we stay in this function (i.e., because it does the majority of the actual work in the program), all of the subsequent function calls will be mispredicted due to running out of space on the RAS, with the only *correct* prediction occurring upon final return from `doit()`.
+  * With *two* entries on the RAS stack and using *do not push* approach, the first entry is occupied by the return address of `doit()`, which ultimately will save *one* missed prediction upon final return to `doit()`; and similarly, the second entry will ultimately save *one* missed prediction upon return to `func()`.
+
+Therefore, with the *do not push* approach, this results in a series of mispredictions in downstream (shorter, more frequent) function calls, to ultimately yield correct predictions for the final returns of the (longer, less frequent) parent-function calls.
+
+Conversely, in the *wraparound* approach, correct prediction occurs with respect to the smaller, downstream/terminal function calls' returns (of which there are many), with mispredictions only occurring for the final returns with respect to the (infrequently called) parent-function calls. Therefore, because the innermost, more-frequent function calls dominate, the few entries on the RAS stack are utilized more effectively with the *wraparound* approach (i.e., by minimizing mispredictions).
+
+Another consideration with respect to RAS is that it *is* a *predictor*, after all; therefore, either way, there will inherently be some mispredictions occurring (which can be recovered from appropriately). However, the objective here is to *minimize mispredictions*, and therefore inasmuch as neither approach is a *perfect* predictor, the wraparound approach is still the more optimal between the two with respect to this objective.
+
+## 47. But...But...How Do We *Know* It Is a `ret`?
+
+<center>
+<img src="./assets/04-072.png" width="650">
+</center>
+
+Note that the prediction must be made while fetching the instruction; in the case of a return instruction, the return address stack (RAS) must be used *before* determining that it is a return instruction; it is *not* feasible to simply arbitrarily push and pop from the RAS prior identifying a return instruction (e.g., if there is an instruction `ADD` present which is popped, rather than a `RET` as intended, then the program will not behave correctly). Therefore, it must be determined (or at least accurately predicted) when a return instruction occurs in order to use the RAS appropriately.
+  * To summarize: The ***problem*** is that the RAS is being used *while* fetching the instruction, which has *not* been decoded yet, so therefore it is indeterminate whether or not the instruction in question is a return instruction.
+
+So, then, how can this be resolved/determined?
+
+One way is to simply use a **predictor**, which is simply trained on whether or not the instruction fetched is `RET`, with the predictor thereby informing whether to use the RAS or not. Such a predictor would be very accurate.
+  * If at a particular point, the PC previously held the address `0xABC` containing the instruction `RET`, then it is very likely that the same PC occurring will still have instruction `RET`. In this situation, a single-bit predictor can be used effectively here.
+
+Another approach is to use **predecoding**, whereby the processor's cache (described in a subsequent lesson) stores instructions that have been fetched from memory. The processor fetches instructions from the cache, and only if the cache does not already contain the instruction then does the processor fetch from memory. Therefore, with predecoding, when fetching from memory, enough of the instruction is decoded to determine whether or not it is a `RET`, and this information is stored along with the actual instruction in the cache (e.g., with 32-bit instructions, 33 bits are stored: 32 bits for the actual instruction, and 1 bit to indicate whether or not the instruction is a `RET`).
+  * Therefore, as the instructions come in from memory and are placed into the cache, they are predecoded along with the additional bit/information. Then, upon fetching, this information is readily available. 
+  * Alternatively, the instructions can be fetched from memory directly to cache as they are, and then on every fetch, determine what the instruction. However, because it is more power-efficient to predecode *once* (and subsequently fetch *many* times), the previously described predecoding scheme is a more popular approach.
+
+Predecoding is therefore useful for predictions such as:
+  * Is it a return instruction?
+  * Is it a branch instruction at all?
+    * If it is not a branch at all, then we can completely omit the use of any branch predictors, thereby saving a lot of power.
+
+Furthermore, if instructions have variable sizes, predecoding can also inform, for example, how many bytes does the instruction contain (i.e., in order to fetch the next instruction quickly, without relying on decoding the instruction immediately prior to fetching the next one, and so on).
+
+Additionally, there are many things that modern processors do during this predecoding phase, in order to avoid doing them "on the clock (cycle)."
+
+## 48. Lesson Outro
+
+We now know how the processor predicts which instruction to fetch next. This knowledge will be explored further in a course project.
+
+However, some branches are difficult to predict nevertheless. The next lesson explores helping the compiler to completely eliminate such branches from the program to avoid predicting them altogether.
