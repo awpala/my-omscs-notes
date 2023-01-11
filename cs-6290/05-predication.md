@@ -1,0 +1,60 @@
+# Predication
+
+## 1. Lesson Introduction
+
+This lesson continues the study of control hazards. We already know about branch predictors (cf. Lesson 4), and we also know that some branches are *really* difficult to predict, even with a sophisticated branch predictor.
+
+In this lesson, we will see how the compiler can assists with completely avoiding some of these difficult-to-predict branches.
+
+## 2. Predication
+
+<center>
+<img src="./assets/05-001.png" width="650">
+</center>
+
+**Predication** is another method for dealing with control hazards. Unlike branch prediction, when we are really trying to guess which way the if-then-else, loop, or other branching will occur, predication is another way of dealing with control dependencies.
+
+Branch prediction is about guessing where the program is going.
+  * Usually there is no penalty for correct branch prediction; essentially, we just keep fetching as if there were no branch, and even if the branch is actual taken then we continue fetching from the correct location, thereby avoiding a penalty.
+  * However, a key ***problem*** with branch prediction is that in modern processors there is a ***huge*** penalty for mispredictions.
+    * Bear in mind that modern processors have a ***deep*** pipeline, with *many* stages occurring prior to encountering the missed prediction. Furthermore, each stage contains many in-progress instructions; therefore, a misprediction negates *all* of this work (typically on the order of several 10s of instructions, e.g., `48 ~ 50` instructions in a 12-stage pipeline with 4 instructions per cycle)!
+
+Predication involves doing the work of *both* the taken and not taken directions of a branch.
+  * In this manner, the waste is up to 50% of the work performed (i.e., at the position within the pipeline that the branch occurs, half of the content fetched to that point could be from one path while the other half is from the other path, with only effectively half overall being used and the other half being discarded).
+
+So, then, what is particularly useful about predication, given the relatively low penalty potential of branch prediction vs. the inherent "wastefulness" of predication? To demonstrate this, let's consider some conditional branches that we might want to predict, as follows.
+
+<center>
+<img src="./assets/05-002.png" width="250">
+</center>
+
+For a ***loop***, usually branch prediction is preferable.
+  * With loop branches, the more iterations that occur, the more predictable they are in general.
+  * Conversely, with predication, in each iteration of the loop, the work is divided into two: One is for the next iteration, the other for after the loop. Therefore, with 1000 iterations, very little of the work ends up being done "correctly," i.e., the branch diverges too much (as in the figure shown above).
+    * When we need to determine whether or not to stay in the loop, we start the work of both of these, with one path going off of the loop and the other going back into the loop. This proceeds similarly with subsequent branches/paths, and with all of this work occurring concurrently, a very small fraction of the work (i.e., the right-most circled in the figure shown above) results in staying in the loop itself, with the other ("non-useful") work encompassing various variants of (unnecessarily) exiting the the loop in each iteration.
+
+For ***function calls***, a similar phenomenon occurs, i.e., branch prediction is more advantageous.
+  * Here, predication is not sensible, because calls and returns always go to the return address, so the notion of "not going" there is nonsensical.
+
+<center>
+<img src="./assets/05-003.png" width="250">
+</center>
+
+Consider a ***large if-then-else***. Here, we have a decision which yields two possible paths (as in the figure shown above). Here, should we attempt to predict this decision, or to predicate (such that we do the work of both and eventually merge and re-continue through the execution path).
+  * If we predict, we waste up to 50 instructions (i.e., with mispredictions), but more likely (i.e., with correct predictions) we waste nothing.
+  * Conversely, if we predicate, and assuming the two branches have equal waste, then given 200 instructions we will waste 100 of them either way. Therefore, the waste is larger than the corresponding penalty of branch prediction (50). Therefore, branch prediction is also more sensible here.
+
+
+<center>
+<img src="./assets/05-004.png" width="250">
+</center>
+
+Now, consider ***small if-then-else*** (as in the figure shown above). With 5 instructions apiece in the then and else paths...
+  * Here, predication involves 10 instructions, followed by subsequent instructions done by the program either way (i.e., irrespectively of prediction vs. predication).
+    * With 100% waste, we end up with `1.00 * 5 = 5` instructions wasted with predication.
+  * With prediction, there is no penalty with correct predictions, however, mispredictions yield a waste of 50 instructions, which is substantially ***worse*** than predication.
+    * With a 10% misprediction rate, we end up with `0.10 * 50 = 5` instructions wasted with prediction. Therefore, with an accuracy of 90% or better, we are better off predicting; otherwise, with a worse accuracy than this, predication is better.
+
+Therefore, in general, the smaller the if-then-else, the stronger the bias towards predication and away from prediction (barring high prediction accuracy).
+
+## 3. If Conversion
