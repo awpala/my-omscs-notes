@@ -107,7 +107,7 @@ Therefore, if this is the *only* possibility, then  if conversion is simply ***n
 
 In order for if conversion to work here, what is need is an instruction such as `MOV x, x1, cond` via flag `cond` indicating `true`.
 
-# 4. Conditional Move
+## 4. Conditional Move
 
 <center>
 <img src="./assets/05-007.png" width="650">
@@ -142,4 +142,35 @@ Similarly, the x86 instruction set has a set of `CMOV` instructions (e.g., `CMOV
 
 ## 5. `MOVZ`/`MOVN` Quiz and Answers
 
+<center>
+<img src="./assets/05-009A.png" width="650">
+</center>
+
+Consider how conditional move instruction are used, given the following MIPS code:
+```mips
+  BEQZ R1, Else
+  ADDI R2, R2, 1
+  B    End
+Else:
+  ADDI R3, R3, 1
+End:
+```
+After if conversion, the result is as follows:
+```mips
+ADDI R4, R2, 1
+ADDI R5, R3, 1
+# ?
+# ?
+```
+
+What are instructions (`?`) required to perform the if conversion?
+
+***Answer and Explanation***
+
+```mips
+ADDI R4, R2, 1
+ADDI R5, R3, 1
+MOVN R2, R4, R1 # answer
+MOVZ R3, R5, R1 # answer
+```
 
