@@ -225,3 +225,29 @@ which implies a critical threshold of `1 - 0.5 = 0.95` (`95%`) prediction accura
 
 ## 8. `MOVc` Summary
 
+<center>
+<img src="./assets/05-013.png" width="650">
+</center>
+
+To summarize, in the aforementioned approach involving conditional move instructions (`MOVc`):
+  * Compiler support is required → `necessary` for if conversion
+    * If the compiler does not provide this optimization, then the code will be simply left intact (i.e., with a branch present); therefore, this is not a fully backwards-compatible approach, inasmuch as when the conditional move instructions are included in the instruction set architecture (ISA) then the compiler can take advantage of this optimization, but otherwise old code will not benefit from these conditional move instructions.
+  * Removes hard-to-predict branches → `useful` for if conversion
+    * If such a branch is identified (e.g., via profiling), if conversion can be performed to eliminate such a branch.
+  *  Typically requires the use of more registers than the original, non-converted code → `not strictly necessary` for if conversion
+    * The results of *both* paths must be stored.
+  * More instructions are executed (i.e., as a result of if conversion)
+    * *Both* paths are executed, not just *one* of them. → `useful` for if conversion
+    * `MOVc` instructions must be included in order to select the actual results (i.e., those to be used/kept from among the results generated via both paths). → `not strictly necessary` for if conversion
+
+Per above features, those designated `not strictly necessary` can be mitigated/resolved by updating the ISA to make ***all*** instructions conditional (i.e., every instruction computes its result and then either does or does not write it to the destination register, depending on whether or not a condition is or is not true [respectively]). Such an approach is called **full predication**, which requires extensive ISA support to perform; this approach is discussed next.
+
+## 8-9. Full Predication
+
+### Hardware Support
+
+
+### Example
+
+
+## 10. Full Predication Quiz and Answers
