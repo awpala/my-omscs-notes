@@ -262,9 +262,31 @@ For example, the Intel **Itanium** instruction set has full predication (as in t
 
 ### Example
 
+<center>
+<img src="./assets/05-015.png" width="650">
+</center>
 
+Consider the code shown above (as from previously in this lesson). Recall that these yield `4` instructions on if conversion via conditional moves (cf. Section 4): Two instructions to perform the actual work of the `ADDI`s, and two others which conditionally write the results back to `R2` or `R3`.
+
+Conversely, with full predication via Itanium, the conversion yields the following:
+```
+     MP.EQZ P1, P2, R1
+(P2) ADDI   R2, R2, 1
+(P1) ADDI   R3, R3, 1
+```
+
+Here:
+  * The condition check is performed using the predicate-set instruction `MP.EQZ` (which compares equality `R1 == 0` and sets `P1` and `P2` accordingly). The predicates are always set *oppositely* to each other (i.e., if `R1` is `0`, then `P1` is set to `true` and `P2` is set to `false`; and vice versa if `R1` is not `0`).
+  * The subsequent `ADDI` instructions perform corresponding addition of `1` to the respective registers (`R2` and `R3`), however, the selection among these two `ADDI`s is dictated by the corresponding predicates (i.e., `P2` and `P1`, respectively).
+
+With this conversion scheme:
+  * There are ***no*** additional registers required (cf. `R4` and `R5` from previous conditional-move-based if conversion).
+  * Furthermore, while it is still necessary to perform the work of both parts/branches, there is no additional overhead to perform subsequent move instructions for moving the results into the corresponding registers (cf. `MOVN`/`MOVZ` from previous conditional-move-based if conversion); rather, this is handled directly via the predicates.
+
+Collectively, this provides a post-conversion instructions overhead (`3` instructions) at closer parity to original/unconverted (`3*0.5 + 2*0.5 = 2.5` instructions); the net overhead occurs simply by virtue of still requiring to do the work of *both* paths via full predication, rather than just *one* (but otherwise no additional instructions required to select the results, as in conditional-move-based if conversion).
 
 ## 10. Full Predication Quiz and Answers
+
 
 
 ## 11. Lesson Outro
