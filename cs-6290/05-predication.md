@@ -246,8 +246,26 @@ Per above features, those designated `not strictly necessary` can be mitigated/r
 
 ### Hardware Support
 
+<center>
+<img src="./assets/05-014.png" width="650">
+</center>
+
+Consider the respective hardware requirements for conditional moves (i.e., via `MOVcc`) vs. full predication.
+
+For conditional moves, a separate opcode is required to identify that the instruction in question is a conditional instruction. Typically, there is a *separate* opcode for *each* particular condition, thereby requiring *multiple* such opcodes in practice.
+
+For full predication, the ***same*** instructions are used as those for instructions without conditions, to which condition bits are added; this is done for ***every*** instruction. Therefore, every instruction word contains *some* bits indicating the condition for writing to the destination register.
+
+For example, the Intel **Itanium** instruction set has full predication (as in the figure shown above).
+  * Here, an instruction such as `ADD r1=r2, r3` identifies the source registers (`r1` and `r2`), the destination register (`r1`), the instruction/opcode (`ADD`), and also includes a field (`qp`) within the instruction itself in order to specif the so-called **qualifying predicate** (which, here, identifies the location of the condition for performing the write to the register `r1`).
+  * An Itanium instruction is comprised of 41 bits, wherein the six least-significant bits specify the qualifying predicate. In Itanium, these bits are actually small 1-bit registers, which enable to perform a condition check, whose result can be stored in this 1-bit register; correspondingly, these six bits indicate which of the 64-bit conditional registers will be used (i.e., in order to determine whether or not to write to `r1`).
 
 ### Example
 
 
+
 ## 10. Full Predication Quiz and Answers
+
+
+## 11. Lesson Outro
+
