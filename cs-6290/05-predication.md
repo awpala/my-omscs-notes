@@ -165,7 +165,7 @@ ADDI R5, R3, 1
 
 What are instructions (`?`) required to perform the if conversion?
 
-***Answer and Explanation***
+***Answer and Explanation***:
 
 ```mips
 ADDI R4, R2, 1
@@ -173,4 +173,36 @@ ADDI R5, R3, 1
 MOVN R2, R4, R1 # answer
 MOVZ R3, R5, R1 # answer
 ```
+
+Recall that if conversion amounts to doing the work of *both* (i.e., then/taken *and* else/not-taken) paths, and then selecting among the two results such that only *one* of them is active.
+
+The first two instructions of the if conversion (`ADDI ...`) correspond to these two paths.
+  * If the taken path is correct, then `R2` is assigned the value of `R4`.
+  * If the not-taken path is correct, then `R3` is assigned the value of `R5`.
+
+Subsequently:
+  * `MOVN` performs the taken path via `R1` as the condition, moving `R4` into `R2`
+  * `MOVZ` performs the non-taken path via `R1` as the condition, moving `R5` into `R3`
+
+In the if-conversion form, the branches are therefore removed and replaced with four total sequential steps/instructions; in contrast, pre-conversion, there are more instructions, as well as a more difficult-to-predict branching (via `BEQZ R1, Else`).
+
+## 6. `MOVZ`/`MOVN` Performance
+
+<center>
+<img src="./assets/05-010.png" width="650">
+</center>
+
+Let us now consider the performance of `MOVZ`/`MOVN` in the context of if conversion.
+
+In the previous section (quiz), it was already demonstrated that such branch code as in the figure shown above can be if converted.
+
+Suppose now that the instruction `B End` is perfectly predicted, and is therefore the only one of practical concern. Furthermore, assume that the branch is predicted with `80%` accuracy, with a `40%` penalty for misprediction. In this case:
+  * The if converted version incurs a penalty of `4` instructions
+  * For the non-converted version, assuming unbiased, difficult-to-predict branching, misprediction yields a penalty of `5/2 + (1 - 0.8)*0.4 = 10.5` instructions on average
+
+Therefore, in this instance, the if converted version is more optimal with respect to penalty-minimization.
+
+## 7. `MOVZ`/`MOVN` Performance Quiz and Answers
+
+
 
