@@ -198,11 +198,30 @@ In the previous section (quiz), it was already demonstrated that such branch cod
 
 Suppose now that the instruction `B End` is perfectly predicted, and is therefore the only one of practical concern. Furthermore, assume that the branch is predicted with `80%` accuracy, with a `40%` penalty for misprediction. In this case:
   * The if converted version incurs a penalty of `4` instructions
-  * For the non-converted version, assuming unbiased, difficult-to-predict branching, misprediction yields a penalty of `5/2 + (1 - 0.8)*0.4 = 10.5` instructions on average
+  * For the non-converted version, assuming unbiased, difficult-to-predict branching, misprediction yields a penalty of `(0.5*3 + 0.5*2) + (1 - 0.8)*0.4 = 10.5` instructions on average
 
 Therefore, in this instance, the if converted version is more optimal with respect to penalty-minimization.
 
 ## 7. `MOVZ`/`MOVN` Performance Quiz and Answers
 
+<center>
+<img src="./assets/05-012A.png" width="650">
+</center>
 
+Consider the code shown above. The branch designated by the first instruction (`BEQZ R1, Else`) is taken `50%` of the time. Given this information, the if conversion is better when the prediction accuracy is below what (i.e., *specify* a percentage), assuming a `30`-instruction misprediction penalty.
+  * `95%`
+
+***Explanation***:
+
+Given a `50%` taken rate, *perfect* prediction implies an execution of `3*0.5 + 2*0.5 = 2.5` instructions between the two branches (in contrast, the if-converted version executes `4` instructions).
+
+Therefore, the critical level for prediction accuracy can be determined as follows:
+```
+2.5 + x*30 = 4
+x = (4 - 2.5)/30 = 0.05
+```
+
+which implies a critical threshold of `1 - 0.5 = 0.95` (`95%`) prediction accuracy.
+
+## 8. `MOVc` Summary
 
