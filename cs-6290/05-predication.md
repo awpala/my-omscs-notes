@@ -283,11 +283,61 @@ With this conversion scheme:
   * There are ***no*** additional registers required (cf. `R4` and `R5` from previous conditional-move-based if conversion).
   * Furthermore, while it is still necessary to perform the work of both parts/branches, there is no additional overhead to perform subsequent move instructions for moving the results into the corresponding registers (cf. `MOVN`/`MOVZ` from previous conditional-move-based if conversion); rather, this is handled directly via the predicates.
 
-Collectively, this provides a post-conversion instructions overhead (`3` instructions) at closer parity to original/unconverted (`3*0.5 + 2*0.5 = 2.5` instructions); the net overhead occurs simply by virtue of still requiring to do the work of *both* paths via full predication, rather than just *one* (but otherwise no additional instructions required to select the results, as in conditional-move-based if conversion).
+Collectively, this provides a post-conversion instructions overhead (i.e., `3` instructions via full predication) at closer parity to original/unconverted (i.e., `3*0.5 + 2*0.5 = 2.5` instructions); the net overhead occurs simply by virtue of still requiring to do the work of *both* paths via full predication, rather than just *one* (but otherwise no additional instructions required to select the results, as in conditional-move-based if conversion).
 
 ## 10. Full Predication Quiz and Answers
 
+<center>
+<img src="./assets/05-017A.png" width="650">
+</center>
 
+Consider the following code:
+
+```mips
+  BEQZ R2, Else
+  ADD  R1, R1, 1
+  B    Done
+Else:
+  ADD  R1, R1, -1
+Done:
+```
+
+which yields the following if conversion via full predication:
+
+```mips
+     MP.EQZ P1, P2, R2
+(P?) ADD    R1, R1, 1
+(P?) ADD    R1, R1, -1
+```
+
+(***N.B.*** Recall that here `P1` is set if `R2 == 0`, otherwise `P2` is set if `R2 != 0`)
+
+Furthermore, assume the following:
+  * This code achieves `CPI = 0.5` without mispredictions
+  * The misprediction penalty is `10` cycles
+
+Given this information, what are the corresponding predicates (denoted `(P?)` above) in the post-full-predication-if-converted code? Additionally, at what threshold should if-conversion be performed, below which `BEQZ` prediction is incorrect (i.e., `<_%` accuracy)?
+
+***Answer and Explanation***:
+
+```mips
+     MP.EQZ P1, P2, R2
+(P2) ADD    R1, R1, 1
+(P1) ADD    R1, R1, -1
+```
+
+By inspection, since `R2` set to `0` corresponds to the branch `Else`, this corresponds to `P1`; correspondingly, the other ("then") branch corresponds to `P2`.
+
+Regarding the critical threshold for accuracy:
+  * Post-conversion, there are `3` instructions, requiring `0.5*3 + 0.5*3 = 1.5` cycles (assuming other things are performed in the rest of the cycle)
+  * Pre-conversion, there are `3` instructions in the then path and `2` instructions in the `Else` path, therefore (assuming no bias) this requires `2.5` cycles on average, and additionally factoring in the CPI this yields `2.5 * 0.5 = 1.25` cycles.
+
+Critically, these two schemes perform equally when the cost of mispredictions is `1.5 - 1.25 = 0.25` cycles per branch (i.e., this net loss can be incurred on average in the critical case). Since the misprediction penalty is `10` cycles, this implies a critical misprediction rate of `(0.25 cycles/branch)/(10 cycles) = 1/40` (i.e., 1 in 40 branches mispredicted, or `2.5%`). Therefore, the critical threshold is `1 - 0.025 = 0.975` (`97.5%`), i.e., the correct prediction rate must be at least 97.5% to avoid performing the if conversion via full predication.
 
 ## 11. Lesson Outro
 
+This lesson discussed if conversion, wherein difficult-to-predict branches are converted into equivalent code that longer but which excludes branches.
+
+Additionally, this lesson described special instructions required to perform if conversions.
+
+Now that there is a better understanding of how control hazards are handled, we must now learn how to handle **data hazards** while maintaining adequate instruction flow through the pipeline, as discussed in the next lesson.
