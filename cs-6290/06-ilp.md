@@ -14,7 +14,7 @@ In this lesson, we will learn about **instruction-level parallelism (ILP)**, whi
 
 In the most ***ideal*** situation, all instructions pending execution simply go through the pipeline all in the *same* stage (i.e., all executing simultaneously in the *same* cycle).
 
-| Instructions* | C1 | C2 | C3 | C4 | C5 |
+| Instruction* | C1 | C2 | C3 | C4 | C5 |
 |:--:|:--:|:--:|:--:|:--:|:--:|
 | `R1 = R2 + R3` | `F` | `D` | `E` | `⋯` | `WB` |
 | `R4 = R1 - R5` | `F` | `D` | `E` | `⋯` | `WB` |
@@ -39,5 +39,36 @@ While a CPI of `0` is "ideal on paper," there are inherent **issues** here. For 
 Therefore, necessarily, such instructions *cannot* execute in the *same* cycle; instead, some type of resolution measure is necessary for managing such instructions' respective executions.
 
 ## 3. The `Execute` Stage
+
+As seen previously (cf. Section 2), an issue arises when multiple instructions execute in the *same* cycle dealing with the *same* data/register(s) (e.g., having to read registers *before* the previous instruction has written to them). In particular, this problem occurs in the stage `E` (execute), due to operation there on an ***invalid*** value by that point.
+
+<center>
+<img src="./assets/06-003.png" width="650">
+</center>
+
+Consider **forwading** in the stage `E` as a potential resolution measure for this issue. Recall (cf. Lesson 3) that forwarding feeds the value(s) from the previous instruction into the subsequent instruction *before* the value(s) has been written to the register(s).
+
+Returning to the example from the previous section, and focusing on the stage `E` (as in the figure shown above), recall that there is a dependency between instructions `I1` and `I2`. Here, `I1` executes, and then subsequently `I2` also executes in the *same* cycle.
+
+The ***problem*** with forwarding here is that while forwarding from `I1` to `I2` *could* resolve the issue with respect to the latter in the *next* cycle, it does *not* resolve the matter with respect to the *same*/*current* cycle.
+  * Examining the timeline for the cycle (relative to the beginning of stage `E`), the result from `I1` is only available at the *end* of `I1` (which is the only point where forwarding to `I2` would be beneficial), but the point at which the value is *necessary* for use in `I2` is in the *beginning* of the *same* cycle; this would essentially (unrealistically) require "backwards time travel"
+
+<center>
+<img src="./assets/06-004.png" width="650">
+</center>
+
+In reality, to resolve this matter, it is necessary to **stall** in `I2` during this cycle, pending completion of `I1`'s execution, thereby delaying execution of `I2` in the current/same cycle, only executing in the subsequent cycle (i.e., concurrently with `I3`).
+
+If there are *no* dependencies among subsequent instructions `I3`, `I4`, and/or `I5` with respect to `I1`, then the former can all still proceed with execution uninterruptedly in the same cycle. This yields the following (ignoring transient effects such as initial filling of the pipeline, etc. for simplicity):
+
+```
+CPI = 2 cycles / 5 instructions = 0.4
+```
+
+This is a slight deviation from the ideal of `1 cycle / 5 instructions = 0.2`, however, as this analysis suggests, many such dependencies (which *do* occur in practice) will further exacerbate this problem (i.e., deviating/increasing away from `0` cycles per instruction).
+
+## 4. RAW Dependencies
+
+
 
 
