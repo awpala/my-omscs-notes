@@ -43,7 +43,7 @@ Therefore, necessarily, such instructions *cannot* execute in the *same* cycle; 
 As seen previously (cf. Section 2), an issue arises when multiple instructions execute in the *same* cycle dealing with the *same* data/register(s) (e.g., having to read registers *before* the previous instruction has written to them). In particular, this problem occurs in the stage `E` (execute), due to operation there on an ***invalid*** value by that point.
 
 <center>
-<img src="./assets/06-003.png" width="650">
+<img src="./assets/06-003.png" width="450">
 </center>
 
 Consider **forwading** in the stage `E` as a potential resolution measure for this issue. Recall (cf. Lesson 3) that forwarding feeds the value(s) from the previous instruction into the subsequent instruction *before* the value(s) has been written to the register(s).
@@ -54,7 +54,7 @@ The ***problem*** with forwarding here is that while forwarding from `I1` to `I2
   * Examining the timeline for the cycle (relative to the beginning of stage `E`), the result from `I1` is only available at the *end* of `I1` (which is the only point where forwarding to `I2` would be beneficial), but the point at which the value is *necessary* for use in `I2` is in the *beginning* of the *same* cycle; this would essentially (unrealistically) require "backwards time travel"
 
 <center>
-<img src="./assets/06-004.png" width="650">
+<img src="./assets/06-004.png" width="450">
 </center>
 
 In reality, to resolve this matter, it is necessary to **stall** in `I2` during this cycle, pending completion of `I1`'s execution, thereby delaying execution of `I2` in the current/same cycle, only executing in the subsequent cycle (i.e., concurrently with `I3`).
@@ -69,6 +69,26 @@ This is a slight deviation from the ideal of `1 cycle / 5 instructions = 0.2`, h
 
 ## 4. RAW Dependencies
 
+As we have just seen (cf. Section 3), even the ideal processor (i.e., that which can execute *all* instructions per cycle) still must obey **RAW (read-after-write) dependencies**, i.e., it must still wait for results to be produced in order to be used by subsequent instructions requiring those results. This in turn generates inherent ***delays*** which will occur even in such an ideal processor, and therefore the instruction-level parallelism (ILP) is not `0`, but rather something larger than that.
 
+<center>
+<img src="./assets/06-005.png" width="450">
+</center>
+
+Consider the instructions in the figure shown above. RAW dependencies are denoted by green curved arrows. Here, there are three downstream RAW dependencies (`I2`, `I4`, and `I5`), while `I1` and `I3` can execute normally. Therefore, in the ideal situation:
+
+```
+CPI = 3 cycles / 5 instructions = 0.6
+```
+
+Additionally, with an added dependency between `I2` and `I3` (denoted by red in the figure shown above), there is now full RAW dependency across all five instructions (i.e,. all five cycles are required to perform all five instructions), resulting in the following:
+
+```
+CPI = 5 cycles / 5 instructions = 1
+```
+
+Therefore, in general, the RAW dependencies will dictate the lower limit of the possible CPI (i.e., somewhere between `0` and `1`), even with an ideal processor (i.e., one which can otherwise efficiently fetch all instructions, decode/read arbitrarily many registers simultaneously, etc.--but still *cannot* provide time travel!).
+
+### 5. WAW Dependencies
 
 
