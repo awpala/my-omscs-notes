@@ -92,7 +92,7 @@ Therefore, in general, the RAW dependencies will dictate the lower limit of the 
 ### 5. WAW Dependencies
 
 <center>
-<img src="./assets/06-006.png" width="650">
+<img src="./assets/06-006.png" width="450">
 </center>
 
 | Instruction | C5 | C6 | C7 | C8 |
@@ -113,7 +113,7 @@ Consequently, in this five-stage pipeline, by cycle `C6`, there is a "relative l
 Observe that the root cause of this ***problem*** is the delay induced from the upstream RAW dependency.
 
 <center>
-<img src="./assets/06-007.png" width="650">
+<img src="./assets/06-007.png" width="450">
 </center>
 
 | Instruction | C5 | C6 | C7 | C8 | C9 |
@@ -128,6 +128,51 @@ To resolve this problem, on solution would be to delay the writing in the fifth 
 
 ### 6. Dependency Quiz and Answers
 
+<center>
+<img src="./assets/06-009A.png" width="450">
+</center>
 
+Now that we have seen two types of depdendencies (i.e., read-after-write/RAW and write-after-write/WAW) and how they can affect the scheduling of instructions in a processor attempting to perform at `CPI > 1`, consider the following scenario.
+
+A processor is given with a classical five-stage pipeline (`F`, `D`, `E`, `M`, `W`) and which can also perform ***forwarding*** (i.e., if the result has been produced, it is fed into the instruction correctly, even though it has not been written to a register yet). Furthermore, each stage can execute `10` instructions (i.e., ideally, it can perform all `10` instructions within `5` cycles--assuming no dependencies, etc.).
+
+Given this processor, in which cycle does the operation `WB` (write back) occur for the following instructions)?
+
+| Instruction | `E` | `WB` |
+|:--:|:--:|:--:|
+| `MUL R2, R2, R2` | `C2` | `C4` |
+| `ADD R1, R1, R2` | `C3` | ? |
+| `MUL R3, R3, R3` | ? | ? |
+| `ADD R1, R1, R3` | ? | ? |
+| `MUL R4, R4, R4` | ? | ? |
+| `ADD R1, R1, R4` | ? | ? |
+
+(***N.B.*** Cycles are numbered relative to `C0` for initial fetch/`F` of first instruction.)
+
+***Answer and Explanation***:
+
+| Instruction | `E` | `WB` |
+|:--:|:--:|:--:|
+| (1) `MUL R2, R2, R2` | `C2` | `C4` |
+| (2) `ADD R1, R1, R2` | `C3` | `C5` |
+| (3) `MUL R3, R3, R3` | `C2` | `C4` |
+| (4) `ADD R1, R1, R3` | `C4` | `C6` |
+| (5) `MUL R4, R4, R4` | `C2` | `C4` |
+| (6) `ADD R1, R1, R4` | `C5` | `C7` |
+
+In the second instruction, the operation `ADD` requires a one-cycle delay to read the result of the previous instruction (i.e., dependence via `R2`), resulting in `WB` occurring in cycle `C5`.
+
+In the third instruction, there is no dependency, since the instruction only involves the single register `R3` (which does not depend on either upstream instructions). Therefore, `WB` can occur in cycle `C4` "as usual."
+
+In the fourth instruction, there is a dependency (via `R1` and `R3`) on the upstream instructions (via the second and third instructions, respectively). In particular, this instruction must wait to execute in cycle `C3` for `R1` to be available/valid for writing to, consequently resulting in a `WB` in cycle `C6`.
+  * ***N.B.*** This `ADD` operation will also overwrite `R1` in the which was written in the previous `ADD` (i.e., the second instruction), however, this has no impact on the second instruction (which also reads `R1`), due to the latter having already completing `WB` in cycle `C5`.
+
+In the fifth instruction, there is no dependency, since the instruction only involves the single register `R4` (which does not dependent on any upstream instructions). Therefore, `WB` can occur in cycle `C4` "as usual."
+  * ***N.B.*** This instruction is analogous to the second instruction, ie., no dependencies involved.
+
+In the sixth instruction, there is a dependency (via `R1` and `R4`) on the upstream instructions (via the fourth and fifth instructions, respectively). Correspondingly, the execution of the sixth instruction must occur subsequently to the latest-occurring dependency, i.e., subsequently to cycle `C4` (via the fourth instruction, which does not execute until cycle `C4`). Consequently, the sixth instruction does not execute until cycle `C5` and subsequently performs `WB` in cycle `C7`.
+  * ***N.B.*** Cycle `C7` is valid for `WB` of the sixth instruction, because there is no other write dependency (i.e., in any upstream instructions) by the time of cycle `C7`, i.e., this would be the latest-occurring `WB` with respect to register `R1`.
+
+### 7. Removing False Dependencies
 
 
