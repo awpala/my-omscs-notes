@@ -91,4 +91,43 @@ Therefore, in general, the RAW dependencies will dictate the lower limit of the 
 
 ### 5. WAW Dependencies
 
+<center>
+<img src="./assets/06-006.png" width="650">
+</center>
+
+| Instruction | C5 | C6 | C7 | C8 |
+|:--:|:--:|:--:|:--:|:--:|
+| `R1 = ...` | `E` | `M` | `WB R1` |`⋯` |
+| `R4 = ...` | `(...)` | `E` | `M` | `WB R4` |
+| `R7 = ...` | `E` | `M` | `WB R7` |`⋯` |
+| `R8 = ...` | `E` | `M` | `WB R8` |`⋯` |
+| `R4 = ...` | `E` | `M` | `WB R4` |`⋯` |
+
+Consider the instructions shown above. For purposes of examining **write-after-write (WAW) dependencies**, it is inconsequential as to which specific instructions are being performed (as denoted by `...` accordingly), other than the fact that such a dependency exists among them and that the write-to operation impacts a particular register itself.
+
+Here, the first instruction computes a result which it writes to `R1`, the second instruction similarly writes to `R4`, and so on. If there is a read-after-write (RAW) dependency between the first and second instructions, then by cycle `C5` (at which the first instruction is executing), the second instruction must wait on the first to complete its execution first (and consequently the latter will only execute in the subsequent cycle, `C6`); simultaneously, the downstream instructions proceed with execution in cycle `C5`, unaffected by the upstream RAW dependency.
+
+Consequently, in this five-stage pipeline, by cycle `C6`, there is a "relative lag" in the second instruction with respect to the others (which have now proceed to stage `M`), which continues into cycle `C7`. However, because of the "upstream lag," there is a discrepancy in the pipeline stage `WB R4`, which is performed by *both* the second instruction (now in cycle `C8` due to delay) and the first instruction (in cycle `C7` "as usual"). Effectively, the second instruction will overwrite (in cycle `C8`) the *intended* value produced by the fifth instruction (previously in cycle `C7`).
+  * The original intent of the programmer here is that the fifth instruction would "already have" the valid value by that point (which would only be a valid assumption if there were *no* RAW dependency here).
+
+Observe that the root cause of this ***problem*** is the delay induced from the upstream RAW dependency.
+
+<center>
+<img src="./assets/06-007.png" width="650">
+</center>
+
+| Instruction | C5 | C6 | C7 | C8 | C9 |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `R1 = ...` | `E` | `M` | `WB R1` |`⋯` |`⋯` |
+| `R4 = ...` | `-` | `E` | `M` | `WB R4` |`⋯` |
+| `R7 = ...` | `E` | `M` | `WB R7` |`⋯` |`⋯` |
+| `R8 = ...` | `E` | `M` | `WB R8` |`⋯` |`⋯` |
+| `R4 = ...` | `E` | `M` |`(...)`|`(...)`| `WB R4` |
+
+To resolve this problem, on solution would be to delay the writing in the fifth instruction to occur in a downstream cycle relative to the second instruction via stalling, as shown above. Therefore, in this situation, the processor must intervene with some type of resolution measure to ensure correct ordering of the write operations.
+
+### 6. Dependency Quiz and Answers
+
+
+
 
