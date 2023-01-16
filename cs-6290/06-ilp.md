@@ -173,6 +173,24 @@ In the fifth instruction, there is no dependency, since the instruction only inv
 In the sixth instruction, there is a dependency (via `R1` and `R4`) on the upstream instructions (via the fourth and fifth instructions, respectively). Correspondingly, the execution of the sixth instruction must occur subsequently to the latest-occurring dependency, i.e., subsequently to cycle `C4` (via the fourth instruction, which does not execute until cycle `C4`). Consequently, the sixth instruction does not execute until cycle `C5` and subsequently performs `WB` in cycle `C7`.
   * ***N.B.*** Cycle `C7` is valid for `WB` of the sixth instruction, because there is no other write dependency (i.e., in any upstream instructions) by the time of cycle `C7`, i.e., this would be the latest-occurring `WB` with respect to register `R1`.
 
-### 7. Removing False Dependencies
+### 7-10. Removing False Dependencies
 
+#### 7. Introduction to False Dependencies
 
+Thus far we have seen that:
+  * read-after-write (RAW) dependencies are of concern due to having to feed the required value from a previous instruction, thereby causing a delay
+  * write-after-write (WAW) dependencies are of concern due to ensuring that the downstream-most instruction indeed occurs intended (i.e., writes a valid value to the register)
+
+Anti-dependencies (cf. Lesson 3) are also of concern here, because it is undesirable to overwrite results *before* the instructions requiring the results have a chance to actually use them.
+
+<center>
+<img src="./assets/06-010.png" width="350">
+</center>
+
+Additionally, consider the removal of **false dependencies** (also called **name dependencies**).
+  * Read-after-write (RAW) is a **true dependency**, because it *must* be obeyed in order to produce a valid program (i.e., there is inter-dependency among the data shared by the instruction programs, which is consequential to the intended semantics of the program itself).
+  * Conversely, **write-after-read (WAR)** and **write-after-write (WAW)** are examples of **false dependencies**. This designation is due to the fact that there is nothing *fundamental* about them: They simply arise naturally by virtue of using the *same* register for two *different* results (e.g., as seen previously in this lesson, two instructions writing to the same register results in a WAW dependency; if the second/later instruction were to use another register to write this value instead, then the WAR dependency would cease to occur).
+
+Therefore, when dealing with a ***true*** dependency, it is ***necessary*** to perform a delay in order to resolve it (i.e., there is no other possible resolution measure available, such as using an alternate/unused register).
+
+#### 8. Duplicating Register Values
