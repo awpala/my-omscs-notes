@@ -310,7 +310,7 @@ MUL R1, R5, R6
 
 Here, `R1` creates another dependency among the instructions `ADD`, `SUB`, and `MUL`.
   * In the case of `ADD` vs. `MUL`, `ADD` must complete its use of `R1` prior to `MUL` writing a new value to it for use by instructions subsequent to `MUL`. This is called a **write after write** (**WAW**) **dependency** (i.e., the orders of the write operations are significant), also called an **output dependency**.
-  * In the case of `SUB` vs. `MUL`, `SUB` must finish reading `R1` before `R1` can be used by `MUL` (which overwrites `R1`). This is called a **write after read** (**WAR**) **dependency** (i.e., the value must be read prior to being written over), also called an **anti dependency** (it effectively reverses the order of the full dependencies).
+  * In the case of `SUB` vs. `MUL`, `SUB` must finish reading `R1` before `R1` can be used by `MUL` (which overwrites `R1`). This is called a **write after read** (**WAR**) **dependency** (i.e., the value must be read prior to being written over), also called an **anti dependency** (it effectively reverses the order of the flow dependencies).
 
 ***N.B.*** For reasons that are described later, these latter two dependencies (WAW and WAR) are also collectively called **false dependencies** or **name dependencies**.
 
