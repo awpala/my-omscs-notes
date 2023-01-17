@@ -237,3 +237,19 @@ Note that this "multiple versions storing" is complicated to implement in practi
 
 #### 9. Register Renaming
 
+<center>
+<img src="./assets/06-013.png" width="650">
+</center>
+
+As an alternative to duplicating register values (which can be challenging to implement in practice), **register renaming** is another scheme to provide resolution to false dependencies, in a manner which is more manageable.
+
+Register renaming separates the concept of **architectural registers** (i.e., those used by the programmer/compiler, e.g., `ADD R1, R2, R3`) from that of **physical registers**, which constitute all of the places that values can actually be placed/stored in the processor itself. 
+
+Correspondingly, with register renaming, the idea is that as the processor reads instructions and determines which (architectural) registers they are using (i.e., via fetching and decoding), the processor also performs register renaming, whereby the processor re-writes the program itself to use the physical registers instead.
+
+In order to determine the location of these values, the processor uses a table called the **register allocation table (RAT)**, which maps the values of the physical registers to the architectural registers. Correspondingly, *each* architectural register contains an entry in the RAT, indicating the location where its physical register can be found.
+  * ***N.B*** The concept of the RAT should be familiarized at this point, as it will recur often in the subsequent subject matter of this course.
+
+#### 10. RAT Example
+
+
