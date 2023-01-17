@@ -191,6 +191,49 @@ Additionally, consider the removal of **false dependencies** (also called **name
   * Read-after-write (RAW) is a **true dependency**, because it *must* be obeyed in order to produce a valid program (i.e., there is inter-dependency among the data shared by the instruction programs, which is consequential to the intended semantics of the program itself).
   * Conversely, **write-after-read (WAR)** and **write-after-write (WAW)** are examples of **false dependencies**. This designation is due to the fact that there is nothing *fundamental* about them: They simply arise naturally by virtue of using the *same* register for two *different* results (e.g., as seen previously in this lesson, two instructions writing to the same register results in a WAW dependency; if the second/later instruction were to use another register to write this value instead, then the WAR dependency would cease to occur).
 
-Therefore, when dealing with a ***true*** dependency, it is ***necessary*** to perform a delay in order to resolve it (i.e., there is no other possible resolution measure available, such as using an alternate/unused register).
+Therefore, when dealing with a ***true*** dependency, it is ***necessary*** to perform a delay in order to resolve it (i.e., there is no other possible resolution measure available, such as using an alternate/unused register). Conversely, false dependencies *do* have potential resolution measures, as discussed next.
 
 #### 8. Duplicating Register Values
+
+<center>
+<img src="./assets/06-011.png" width="450">
+</center>
+
+One approach for eliminating false dependencies is to **duplicate** register values.
+
+| Instruction | `C100` | `C101` |`C102`|
+|:--:|:--:|:--:|:--:|
+|`R1 = R2 + R3` | `E` |`⋯`|`⋯`|
+|`R4 = R1 - R5` |`⋯`| `E` |`⋯`| `⋯`|
+|`R3 = R4 + 1` |`⋯`|`⋯`| `E` |`
+|`R4 = R8 - R9` | `E` |`⋯`| `⋯`| 
+| `⋮` | `⋮` | `⋮` | `⋮` |
+|`... = R4 ...` |`⋯`|`⋯`| `⋯`| 
+
+For example, consider the instructions shown above. In cycle `C100`, the first instruction is able to execute. Subsequently, the value `R1` can be supplied to the second instruction via forwarding, allowing the second instruction to execute in cycle `C101`. Similarly, `R4` is supplied to the third instruction from the second instruction via forwarding, with the former executing in cycle `C102`.
+
+However, throughout this time, the fourth instruction *is* otherwise capable of executing in cycle `C100` (i.e., no dependency with respect to either operand `R8` or `R9`), if not for the co-dependency on register `R4` for writing the resulting value. Therefore, a ***false dependency*** arises with respect to the second and fourth instructions by virtue of both writing to `R4`.
+
+<center>
+<img src="./assets/06-012.png" width="450">
+</center>
+
+| Instruction | `C100` | `C101` |`C102`|`C103`|
+|:--:|:--:|:--:|:--:|:--:|
+|`R1 = R2 + R3` | `E` |`⋯`|`⋯`|`⋯`|
+|`R4 = R1 - R5` |`⋯`| `E` |`M`| `WB`|
+|`R3 = R4 + 1` |`⋯`|`⋯`| `E` |`⋯`|
+|`R4 = R8 - R9` | `E` |`M`| `WB` | `⋯`| 
+| `⋮` | `⋮` | `⋮` | `⋮` | `⋮` |
+|`... = R4 ...` |`⋯`|`⋯`| `⋯`| `⋯`|  
+
+Consider which value of `R4` will occur in the downstream-most instruction, as shown above.
+
+The second instruction will proceed from the stage `E` into the subsequent stages in the corresponding cycles (i.e., `M`/`C102` and `WB`/`C103`). Meanwhile, the fourth instruction proceeds similarly, but earlier on (i.e., `E`/`C100`, `M`/`C101`, and `WB`/`C102`). Because the second instruction writes to `R4` in a *later* cycle (i.e., CYCLE `C103`), this is the value ultimately received by the downstream-most instruction; however, this is ***not*** the intended semantics of the program, i.e., the value of `R4` should be that written in the fourth instruction.
+
+To resolve this issue, a possible **solution** here is to simply **duplicate** the value, i.e., the second instruction writes to *one* version of `R4`, while the fourth instruction writes to *another* version of `R4`, whereby both versions are stored for later recall. In this manner, rather than storing only *one* value in the register (e.g., `R4`), *multiple* such values are stored instead. Then, a subsequent instruction must **search** all of these possible values when attempting to read it later--i.e., that which occurred in the most recent *instruction* (e.g., the fourth instruction), but not necessarily the most recent *cycle* (e.g., cycle `C103`, via the second instruction; and similarly for the third instruction's reading of `R4` from the previous/second instruction rather than that of the earlier-cycle-occurring fourth instruction).
+
+Note that this "multiple versions storing" is complicated to implement in practice.
+
+#### 9. Register Renaming
+
