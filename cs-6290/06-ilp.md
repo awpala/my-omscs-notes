@@ -89,7 +89,7 @@ CPI = 5 cycles / 5 instructions = 1
 
 Therefore, in general, the RAW dependencies will dictate the lower limit of the possible CPI (i.e., somewhere between `0` and `1`), even with an ideal processor (i.e., one which can otherwise efficiently fetch all instructions, decode/read arbitrarily many registers simultaneously, etc.--but still *cannot* provide time travel!).
 
-### 5. WAW Dependencies
+## 5. WAW Dependencies
 
 <center>
 <img src="./assets/06-006.png" width="450">
@@ -126,7 +126,7 @@ Observe that the root cause of this ***problem*** is the delay induced from the 
 
 To resolve this problem, on solution would be to delay the writing in the fifth instruction to occur in a downstream cycle relative to the second instruction via stalling, as shown above. Therefore, in this situation, the processor must intervene with some type of resolution measure to ensure correct ordering of the write operations.
 
-### 6. Dependency Quiz and Answers
+## 6. Dependency Quiz and Answers
 
 <center>
 <img src="./assets/06-009A.png" width="450">
@@ -173,9 +173,9 @@ In the fifth instruction, there is no dependency, since the instruction only inv
 In the sixth instruction, there is a dependency (via `R1` and `R4`) on the upstream instructions (via the fourth and fifth instructions, respectively). Correspondingly, the execution of the sixth instruction must occur subsequently to the latest-occurring dependency, i.e., subsequently to cycle `C4` (via the fourth instruction, which does not execute until cycle `C4`). Consequently, the sixth instruction does not execute until cycle `C5` and subsequently performs `WB` in cycle `C7`.
   * ***N.B.*** Cycle `C7` is valid for `WB` of the sixth instruction, because there is no other write dependency (i.e., in any upstream instructions) by the time of cycle `C7`, i.e., this would be the latest-occurring `WB` with respect to register `R1`.
 
-### 7-10. Removing False Dependencies
+## 7-10. Removing False Dependencies
 
-#### 7. Introduction to False Dependencies
+### 7. Introduction to False Dependencies
 
 Thus far we have seen that:
   * read-after-write (RAW) dependencies are of concern due to having to feed the required value from a previous instruction, thereby causing a delay
@@ -193,7 +193,7 @@ Additionally, consider the removal of **false dependencies** (also called **name
 
 Therefore, when dealing with a ***true*** dependency, it is ***necessary*** to perform a delay in order to resolve it (i.e., there is no other possible resolution measure available, such as using an alternate/unused register). Conversely, false dependencies *do* have potential resolution measures, as discussed next.
 
-#### 8. Duplicating Register Values
+### 8. Duplicating Register Values
 
 <center>
 <img src="./assets/06-011.png" width="450">
@@ -235,7 +235,7 @@ To resolve this issue, a possible **solution** here is to simply **duplicate** t
 
 Note that this "multiple versions storing" is complicated to implement in practice.
 
-#### 9. Register Renaming
+### 9. Register Renaming
 
 <center>
 <img src="./assets/06-013.png" width="650">
@@ -250,7 +250,7 @@ Correspondingly, with register renaming, the idea is that as the processor reads
 In order to determine the location of these values, the processor uses a table called the **register allocation table (RAT)**, which maps the values of the physical registers to the architectural registers. Correspondingly, *each* architectural register contains an entry in the RAT, indicating the location where its physical register can be found.
   * ***N.B*** The concept of the RAT should be familiarized at this point, as it will recur often in the subsequent subject matter of this course.
 
-#### 10. RAT Example
+### 10. RAT Example
 
 <center>
 <img src="./assets/06-014.png" width="650">
@@ -287,5 +287,122 @@ ADD R4, R8, R9 # ADD P21, P8, P9
 When the processor fetches and decodes the instructions, it subsequently renames the instructions and rewrites them in a manner in which they occur with respect to the corresponding physical registers (e.g., `R2` is renamed to `P2`, etc., as in the code shown above). Furthermore, note that with respect to the **stored results** themselves, these are not placed in the same corresponding physical register, but rather in a different/vacant one (e.g., result `R1` is stored in `P17`, ***not*** in `P1`; and similarly for the other results registers).
   * ***N.B.*** In this manner, the RAT is updated on each new instruction fetch and decode produces a new value, in order to provide a "valid" updated value for subsequent instructions (e.g., per the above instructions, `R4` is first saved into `P18` in the second instruction, but subsequently saved in separate/new register `P21` in the fifth instruction, which is correspondingly *read* as the *latter* value further downstream, thereby resolving a potential write-after-write dependency). 
 
-### 11. Register Renaming Quiz and Answers
+## 11. Register Renaming Quiz and Answers
+
+<center>
+<img src="./assets/06-018A.png" width="650">
+</center>
+
+| Fetched | Renamed |
+|:--:|:--:|
+| `MUL R2, R2, R2` | `MUL P7, P2, P2` |
+| `ADD R1, R1, R2` | `??` |
+| `MUL R2, R4, R4` | `??` |
+| `ADD R3, R3, R2` | `??` |
+| `MUL R2, R6, R6` | `??` |
+| `ADD R5, R5, R2` | `??` |
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P1` |
+| `R2` | `P2` |
+| `R3` | `P3` |
+| `R4` | `P4` |
+| `R5` | `P5` |
+| `R6` | `P6` |
+
+Consider the sequence of instructions shown above (given as a fetched-renamed pairs, in order of occurrence) and corresponding initial state of the RAT (immediately prior to execution of the first instruction).
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P1` |
+| `R2` | `P7` |
+| `R3` | `??` |
+| `R4` | `??` |
+| `R5` | `??` |
+| `R6` | `??` |
+
+Furthermore, The RAT entries post-execution are as shown above (the entry after the first instruction is executed is given here). 
+
+What are the corresponding post-execution renamed instructions and RAT physical register values (i.e., `??`s per above)?
+
+***Answer and Explanation***:
+
+| Fetched | Renamed |
+|:--:|:--:|
+| `MUL R2, R2, R2` | `MUL P7, P2, P2` |
+| `ADD R1, R1, R2` | `ADD P8, P1, P7` |
+| `MUL R2, R4, R4` | `MUL P9, P4, P4` |
+| `ADD R3, R3, R2` | `ADD P10, P3, P9` |
+| `MUL R2, R6, R6` | `MUL P11, P6, P6` |
+| `ADD R5, R5, R2` | `ADD P12, P5, P11` |
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P8` |
+| `R2` | `P11` |
+| `R3` | `P10` |
+| `R4` | `P4` |
+| `R5` | `P12` |
+| `R6` | `P6` |
+
+The final state of the renamed (physical) registers are assigned sequentially per the corresponding write-to-register operations, as shown above.
+* After the first instruction (given initially):
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P1` |
+| `R2` | `P7` |
+| `R3` | `R3` |
+| `⋮ ` | `⋮ ` |
+
+* After the second instruction:
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P8` |
+| `R2` | `P7` |
+| `R3` | `R3` |
+| `⋮ ` | `⋮ ` |
+
+* After the third instruction:
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P8` |
+| `R2` | `P9` |
+| `R3` | `R3` |
+| `⋮ ` | `⋮ ` |
+
+* After the fourth instruction:
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P8` |
+| `R2` | `P9` |
+| `R3` | `P10` |
+| `⋮ ` | `⋮ ` |
+
+* After the fifth instruction:
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P8` |
+| `R2` | `P11` |
+| `R3` | `P10` |
+| `⋮ ` | `⋮ ` |
+
+* After the sixth (final) instruction:
+
+| Architectural Register | Physical Register |
+|:--:|:--:|
+| `R1` | `P8` |
+| `R2` | `P11` |
+| `R3` | `P10` |
+| `R4` | `P4` |
+| `R5` | `P12` |
+| `R6` | `P6` |
+
+## 12. False Dependencies *after* Renaming?
+
 
