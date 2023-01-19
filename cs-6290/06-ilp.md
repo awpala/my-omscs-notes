@@ -252,4 +252,40 @@ In order to determine the location of these values, the processor uses a table c
 
 #### 10. RAT Example
 
+<center>
+<img src="./assets/06-014.png" width="650">
+</center>
+
+An example of a **register allocation table (RAT)** is shown above. Here, each architectural register (e.g., `R0`, `R1`, etc.) stores a corresponding entry in the table (e.g., entry `0`, `1`, etc., respectively).
+
+<center>
+<img src="./assets/06-015.png" width="650">
+</center>
+
+When the processor fetches instructions, it makes corresponding entries in the RAT. For example, consider the following instruction:
+
+```mips
+ADD R1, R2, R3
+```
+
+For all the registers that are read by the instruction (e.g., `R1`, `R2`, and `R3`), there is a lookup performed for the corresponding entries in the RAT. In this case, consider the correspondence of (architectural register) `R1` in (physical register) `P1`, `R2` in `P2`, etc. for the sake of example.
+
+<center>
+<img src="./assets/06-016.png" width="650">
+</center>
+
+Now consider, the following expanded set of instructions:
+
+```mips
+ADD R1, R2, R3 # ADD P17, P2, P3
+SUB R4, R1, R5 # SUB P18, P17, P5
+XOR R6, R7, R8 # XOR P19, P7, P8
+MUL R5, R8, R9 # MUL P20, P8, P9
+ADD R4, R8, R9 # ADD P21, P8, P9
+```
+
+When the processor fetches and decodes the instructions, it subsequently renames the instructions and rewrites them in a manner in which they occur with respect to the corresponding physical registers (e.g., `R2` is renamed to `P2`, etc., as in the code shown above). Furthermore, note that with respect to the **stored results** themselves, these are not placed in the same corresponding physical register, but rather in a different/vacant one (e.g., result `R1` is stored in `P17`, ***not*** in `P1`; and similarly for the other results registers).
+  * ***N.B.*** In this manner, the RAT is updated on each new instruction fetch and decode produces a new value, in order to provide a "valid" updated value for subsequent instructions (e.g., per the above instructions, `R4` is first saved into `P18` in the second instruction, but subsequently saved in separate/new register `P21` in the fifth instruction, which is correspondingly *read* as the *latter* value further downstream, thereby resolving a potential write-after-write dependency). 
+
+### 11. Register Renaming Quiz and Answers
 
