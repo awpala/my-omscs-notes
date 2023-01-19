@@ -475,3 +475,35 @@ A **key principle** of ILP to bear in mind (i.e., in order to conceptualize it p
   * Conversely, it *is* valid to consider the *IPC* of a program running on a given processor, though that pertains to a separate matter altogether (i.e., performance on the processor itself, rather than an intrinsic property of the program per se)
 
 ### 14. ILP Example
+
+<center>
+<img src="./assets/06-021.png" width="650">
+</center>
+
+```mips
+ADD P10, P2, P3  # I1
+XOR P6, P7, P8   # I2
+MUL P5, P8, P9   # I3
+ADD P4, P8, P9   # I4
+SUB P11, P10, P5 # I5
+```
+
+Having gained a better understanding of ILP, consider the program shown above as a concrete example for determining the ILP. The program as shown is already in its renamed state, with only true dependencies remaining. These true dependencies occur as follows:
+  * between instructions `I1` and `I5` via register `P10`
+  * between instructions `I3` and `I5` via register `P5`
+
+Furthermore, consider which instructions can execute in which cycle. This can be determined systematically / by inspection as follows:
+  * In the first cycle, instructions `I1`, `I2`, `I3`, and `I4` can execute simultaneously
+  * Due to the aforementioned true dependencies, instruction `I5` cannot occur until the upstream dependencies have executed (i.e., `I3` and `I5`), and therefore instruction `I5` cannot occur until the second/subsequent cycle
+
+Consequently, from the aforementioned analysis, the resulting ILP is as follows:
+```
+ILP = 5 instructions / 2 cycles = 2.5
+```
+(***N.B.*** Recall that this ILP is intrinsic to the *program* itself, irrespectively of the processor on which it runs)
+
+Note the following convenient **heuristics**/**tricks** for determining the ILP.
+  * Renaming of the program is unnecessary here; by inspection, even if examining the initial form of the program (i.e., using architectural registers) reveals anti and/or output dependencies, these can be effectively ignored for purposes of ILP analysis, with attention paid strictly to the true dependencies only; the process of renaming simply removes the former dependencies, leaving only the true dependencies remaining.
+  * When proceeding through this type of analysis, be mindful to keep track of the (effective) cycles resulting from the true-dependency-containing program, and correspondingly noting the placement of the factors in the ILP calculation (i.e., do not confuse instructions with cycles with respect to numerator vs. denominator, respectively).
+
+## 15. ILP Quiz and Answers
