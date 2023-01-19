@@ -405,4 +405,48 @@ The final state of the renamed (physical) registers are assigned sequentially pe
 
 ## 12. False Dependencies *after* Renaming?
 
+<center>
+<img src="./assets/06-019.png" width="650">
+</center>
 
+From the previous quiz (cf. Section 11), it was observed that fetched instructions can be renamed to eliminate false dependencies (as in the figure shown above).
+
+Let us now examine further to verify whether any false dependencies remain post-rename, and what the corresponding impact is on the instructions per cycle (IPC).
+
+| Fetched | Renamed |
+|:--:|:--:|
+| `MUL R2, R2, R2` | `MUL P7, P2, P2` |
+| `ADD R1, R1, R2` | `ADD P8, P1, P7` |
+| `MUL R2, R4, R4` | `MUL P9, P4, P4` |
+| `ADD R3, R3, R2` | `ADD P10, P3, P9` |
+| `MUL R2, R6, R6` | `MUL P11, P6, P6` |
+| `ADD R5, R5, R2` | `ADD P12, P5, P11` |
+
+Per the instructions shown above, there are still true dependencies in the renamed program as follows (solid purple arrows per figure shown above):
+  * via `P7` between the first and second instructions
+  * via `P9` between the third and fourth instructions
+  * via `P11` between the fifth and sixth instructions
+
+Furthermore, in the original program (pre-rename), there are output dependencies as follows (dashed green arrows per figure shown above):
+  * via `R2` between the first and third instructions
+  * via `R2` between the third and fifth instructions
+
+Additionally, in the original program (pre-rename), there are anti-dependencies as follows (dashed green arrows per figure shown above):
+  * `R2` between the second and third instructions
+  * `R2` between the fourth and fifth instructions
+
+Therefore, examining the dependencies in aggregate in the pre-renamed/fetched state, there is effectively a full sequential program, yielding the following:
+```
+CPI = 6 cycles / 6 instructions = 1
+IPC = 1 / CPI = 1
+```
+
+Conversely, in the renamed program:
+```
+CPI = 2 cycles / 6 instructions = 0.33
+IPC = 1 / CPI = 3
+```
+
+Therefore, a substantial improvement is yielded in the renamed program. This is due to elimination of the output and anti dependencies, allowing for execution of the first, third, and fifth instructions in the first cycle (i.e., the upstream instructions in the post-rename true-dependencies pairs), followed immediately by the second, fourth, and sixth instructions in the subsequent second/next cycle (i.e., rather than sequentially executing in six successive cycles/steps, as in the pre-rename program).
+
+## 13. Instruction Level Parallelism (ILP)
