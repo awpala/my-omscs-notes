@@ -449,4 +449,29 @@ IPC = 1 / CPI = 3
 
 Therefore, a substantial improvement is yielded in the renamed program. This is due to elimination of the output and anti dependencies, allowing for execution of the first, third, and fifth instructions in the first cycle (i.e., the upstream instructions in the post-rename true-dependencies pairs), followed immediately by the second, fourth, and sixth instructions in the subsequent second/next cycle (i.e., rather than sequentially executing in six successive cycles/steps, as in the pre-rename program).
 
-## 13. Instruction Level Parallelism (ILP)
+## 13-14. Instruction Level Parallelism (ILP)
+
+### 13. ILP Introduction
+
+<center>
+<img src="./assets/06-020.png" width="650">
+</center>
+
+Now that we have examined register renaming, tracing through true dependencies, etc. earlier in the lesson, we are ready to critically examine **instruction level parallelism (ILP)**.
+
+ILP can be defined as the instructions per cycle (IPC) resulting from the following conditions being met:
+  * The processor performing the *entire* instruction in 1 *single* cycle (i.e., without otherwise requiring a pipeline)
+  * The processor can perform any (arbitrary) number of instructions in the *same* cycle
+    * Theoretically, it could execute the *entire* program in *one* cycle in this manner; however, it must still obey true dependencies to maintain a *valid* program
+
+In other words, ILP describes the ideal performance of a processor which is only constrained by the existence of true dependencies within the program.
+
+In order to ***compute*** the ILP for a program, perform the following steps:
+1. Rename the registers as applicable
+2. Evaluate the program as if it is fully "executed," taking true dependencies into account in order to characterize the full (effective) set of instructions
+
+A **key principle** of ILP to bear in mind (i.e., in order to conceptualize it properly) is that ILP itself is an inherent ***property*** of a ***program*** (but ***not*** of the particular processor itself). Essentially, the ILP is a model for understanding the theoretically ideal performance of a given program, subject only to true dependencies (which is an inherent property of the program, rather than the specific implementation details imposed on the program by the particular processor itself).
+  * With this in mind, it does not make sense, for example, to pose the question "*What is the ILP for this program running on an Intel Core i7 processor?*"
+  * Conversely, it *is* valid to consider the *IPC* of a program running on a given processor, though that pertains to a separate matter altogether (i.e., performance on the processor itself, rather than an intrinsic property of the program per se)
+
+### 14. ILP Example
