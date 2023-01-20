@@ -714,3 +714,26 @@ IPC = 6 instructions / 3 cycles = 2
 ***N.B.*** In this particular case, even if this were a 2-issue processor, the in-order property is even more rate-limiting here, inasmuch as it causes delays by virtue of the inherent data dependencies in the program, thereby yielding the same IPC of `2`. Therefore, in general, many of these factors act in aggregate to impact the IPC of a real processor.
 
 ## 19. ILP & IPC Discussion
+
+<center>
+<img src="./assets/06-030.png" width="450">
+</center>
+
+Having seen what ILP is and how it relates to IPC, we can now further discuss them comparatively.
+
+Recall that ILP is defined as the IPC of an ***ideal, out-of-order processor*** having perfect branch prediction, and sufficient computational resources to perform arbitrarily large and complex programs (subject to data dependency limitations). Furthermore, in general, `ILP ≥ IPC` (i.e., with respect to the IPC achievable by any *real* processor).
+
+Consider a **narrow-issue, in-order** processor (whereby "narrow-issue" designates a processor only capable of performing 1-3 or so instructions per cycle). In this case, the IPC is mostly limited by the ***narrow-issue*** constraint (i.e., in-order is relatively less constraining).
+
+Conversely, for a **wide-issue, in-order** processor (whereby "wide-issue" designates a processor capable of performing relatively many instructions per cycle), the IPC is mostly limited by the ***in-order*** constraint (i.e., wide-issue is relatively less constraining, inasmuch as it is already approaching the ideal/ILP capabilities with respect to instructions-per-cycle execution).
+
+Lastly, consider a **wide-issue, out-of-order** processor. In order to improve IPC (i.e., approaching towards ILP/ideal), such a processor must:
+  * (*via wide-issue*) perform fetch, execute, etc. operations on `>> 1` instructions per cycle (i.e., more than `4` or so)
+  * eliminate false dependencies
+  * (*via out-of-order*) be capable of executing instructions out-of-order 
+
+## 20. Lesson Outro
+
+In this lesson, we have seen that excellent performance should be achievable, even when the program has many data dependencies.
+
+In the next several lessons, we will learn how a *real* processor can *actually* achieve this, using only hardware structures having limited size and complexity.
