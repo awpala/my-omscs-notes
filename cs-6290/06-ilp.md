@@ -652,3 +652,65 @@ IPC = 5 instructions / 4 cycles = 1.25
 In this case, the IPC is only half that of the ILP. Therefore, in general, `ILP ≥ IPC`, with the ILP constituting the ***upper bound*** of theoretical performance (i.e., relatively to an ideal processor).
 
 ## 18. IPC & ILP Quiz and Answers
+
+<center>
+<img src="./assets/06-029A.png" width="450">
+</center>
+
+```mips
+ADD R1, R2, R3 # I1
+ADD R2, R3, R4 # I2
+ADD R3, R1, R2 # I3
+ADD R7, R8, R9 # I4
+ADD R1, R7, R7 # I5
+ADD R1, R4, R5 # I6
+```
+
+Consider the program shown above, running on the real processor characterized by the following:
+  * `3`-issue, in-order
+  * `3` ALUs (i.e., general purpose, for any arbitrary instruction)
+
+What is the ILP and IPC for this program?
+
+***Answer and Explanation***
+
+First, examining the dependencies gives:
+  * between instructions `I1` and `I3` via register `R1`
+  * between instructions `I2` and `I3` via register `R2`
+  * between instructions `I4` and `I5` via register `R7`
+
+```mips
+ADD R1, R2, R3 # I1 - C1
+ADD R2, R3, R4 # I2 - C1
+ADD R3, R1, R2 # I3 -     C2
+ADD R7, R8, R9 # I4 - C1
+ADD R1, R7, R7 # I5 -     C2
+ADD R1, R4, R5 # I6 - C1
+```
+
+With respect to ILP (as annotated in the code above), two cycles result from the data dependencies, giving the following:
+
+```
+ILP = 6 instructions / 2 cycles = 3
+```
+
+```mips
+ADD R1, R2, R3 # I1 - C1
+ADD R2, R3, R4 # I2 - C1
+ADD R3, R1, R2 # I3 -     C2
+ADD R7, R8, R9 # I4 -     C2
+ADD R1, R7, R7 # I5 -         C3
+ADD R1, R4, R5 # I6 -         C3
+```
+
+With respect to IPC on the real processor (as annotated in the code above), in addition to the two cycles resulting from the data dependencies, instruction `I3` is delayed to cycle `C2` because the processor is in-order, and therefore must wait for `I2` to execute first (which similarly bottlenecks/delays downstream instructions with respect to "in-order"). Similarly, instruction `I4` can execute in cycle `C2`, however, the data dependency (i.e., between `I4` and `I5` via register `R7`) causes an additional one-cycle delay, with instructions `I5` and `I6` consequently occurring in the subsequent cycle `C3`.
+
+This yields the following:
+
+```
+IPC = 6 instructions / 3 cycles = 2
+```
+
+***N.B.*** In this particular case, even if this were a 2-issue processor, the in-order property is even more rate-limiting here, inasmuch as it causes delays by virtue of the inherent data dependencies in the program, thereby yielding the same IPC of `2`. Therefore, in general, many of these factors act in aggregate to impact the IPC of a real processor.
+
+## 19. ILP & IPC Discussion
