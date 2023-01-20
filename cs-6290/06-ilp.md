@@ -576,6 +576,79 @@ Per the aforementioned dependencies, the first three instructions occur in succe
 
 Therefore, with an ideal processor, control dependencies have no (adverse) impact on ILP, because the branched-to instruction(s) effectively execute "as usual," and correspondingly, control dependencies can similarly be ignored with respect to ILP determination.
 
-### 17. ILP vs. IPC
+## 17. ILP vs. IPC
 
+It has already been established that ILP is not equivalent/equal to IPC on any *real* processor (actually, it *can* be, but not *strictly* so); indeed, the ILP is effectively the IPC for a an *ideal* processor, performing perfect branch prediction and only constrained by data dependencies.
 
+```mips
+ADD R1, R2, R3 # I1
+SUB R4, R1, R5 # I2
+XOR R6, R7, R8 # I3
+MUL R5, R8, R9 # I4
+ADD R4, R8, R9 # I5
+```
+
+To further demonstrate the distinction between ILP and IPC, consider the program shown above. Furthermore, consider a *real* processor characterized by the following:
+  * 2-issue (the processor can handle two instructions per cycle)
+  * out-of-order superscalar (the processor does not require execution of the program to occur in *exact* order)
+  * `1` multiplication unit, and `2` units which can perform addition, subtraction, XOR, etc. operations
+
+<center>
+<img src="./assets/06-025.png" width="450">
+</center>
+
+```mips
+ADD R1, R2, R3 # I1 - C1
+SUB R4, R1, R5 # I2 -     C2
+XOR R6, R7, R8 # I3 - C1
+MUL R5, R8, R9 # I4 - C1
+ADD R4, R8, R9 # I5 - C1
+```
+
+With respect to ILP, these "real processor" characteristics can be ignored, only focusing on data dependencies. There is one data dependency between instructions `I1` and `I2` via register `R1`. Consequently, this yields *two** cycles under ILP (denoted above as cycles `C1` and `C2`) and the following:
+
+```
+ILP = 5 instructions / 2 cycles = 2.5
+```
+
+<center>
+<img src="./assets/06-026.png" width="650">
+</center>
+
+```mips
+ADD R1, R2, R3 # I1 - C1
+SUB R4, R1, R5 # I2 -     C2
+XOR R6, R7, R8 # I3 - C1
+MUL R5, R8, R9 # I4 - C1
+ADD R4, R8, R9 # I5 -     C2
+```
+
+Consider now the *real* processor scenario. In addition to the previously identified data dependency (i.e., between instructions `I1` and `I2` via register `R1`), we must consider the other aforementioned limitations of the processor. Due to the limitations of the processor, instruction `I5` cannot be performed in cycle `C1`, because the hardware is limited to one `MUL` and (cumulatively) two `ADD`, `SUB`, and/or `XOR` operations per cycle, and therefore the processor must *wait* to execute instruction `I5` (which consequently occurs in the subsequent cycle, `C2`, as shown above). With respect to IPC, this therefore yields:
+
+```
+IPC = 5 instructions / 2 cycles = 2.5
+```
+
+In this case, the resulting IPC is identical to the ILP of the ideal processor.
+
+<center>
+<img src="./assets/06-027.png" width="650">
+</center>
+
+```mips
+ADD R1, R2, R3 # I1 - C1
+SUB R4, R1, R5 # I2 -     C2
+XOR R6, R7, R8 # I3 -         C3
+MUL R5, R8, R9 # I4 - C1
+ADD R4, R8, R9 # I5 -             C4
+```
+
+Conversely, consider a modification of the real processor whereby there is only *one* `ADD`, `SUB`, and/or `XOR` operations per cycle available (as in the figure shown above). In this case, there is additional "bottlenecking" of the hardware, resulting in four cycles (denoted as cycles `C1` through `C4` above), and correspondingly:
+
+```
+IPC = 5 instructions / 4 cycles = 1.25
+```
+
+In this case, the IPC is only half that of the ILP. Therefore, in general, `ILP ≥ IPC`, with the ILP constituting the ***upper bound*** of theoretical performance (i.e., relatively to an ideal processor).
+
+## 18. IPC & ILP Quiz and Answers
