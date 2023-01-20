@@ -507,3 +507,46 @@ Note the following convenient **heuristics**/**tricks** for determining the ILP.
   * When proceeding through this type of analysis, be mindful to keep track of the (effective) cycles resulting from the true-dependency-containing program, and correspondingly noting the placement of the factors in the ILP calculation (i.e., do not confuse instructions with cycles with respect to numerator vs. denominator, respectively).
 
 ## 15. ILP Quiz and Answers
+
+<center>
+<img src="./assets/06-023A.png" width="650">
+</center>
+
+```mips
+ADD R1, R1, R1
+ADD R2, R2, R1
+ADD R3, R2, R1
+ADD R6, R7, R8
+ADD R8, R3, R7
+ADD R1, R1, R1
+ADD R1, R7, R7
+```
+
+Given the program shown above, what is the ILP?
+
+***Answer and Explanation***:
+
+```mips
+ADD R1, R1, R1 # I1 - C1
+ADD R2, R2, R1 # I2 -     C2
+ADD R3, R2, R1 # I3 -         C3
+ADD R6, R7, R8 # I4 - C1
+ADD R8, R3, R7 # I5 -             C4
+ADD R1, R1, R1 # I6 -     C2
+ADD R1, R7, R7 # I7 - C1
+```
+
+Ignoring output and anti dependencies, the following true dependencies occur in the program:
+  * `I1` and `I2` via register `R1`
+  * `I2` and `I3` via register `R2`
+    * ***N.B.*** There is also dependency between `I1` and `I3` via register `R1`, however, both are effectively "bottlenecking" similarly with respect to instruction `I3`
+  * `I3` and `I5` via register `R3`
+  * `I1` and `I6` via register `R1`
+
+Therefore, the true dependencies give rise to four sequential cycles (as denoted above, i.e., `C1` through `C4`), giving rise to the following:
+```
+ILP = 7 instructions / 4 cycles = 1.75
+```
+
+## 16. ILP with Structural and Control Dependencies
+
