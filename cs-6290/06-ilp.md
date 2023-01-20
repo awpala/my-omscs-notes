@@ -550,3 +550,32 @@ ILP = 7 instructions / 4 cycles = 1.75
 
 ## 16. ILP with Structural and Control Dependencies
 
+<center>
+<img src="./assets/06-024.png" width="650">
+</center>
+
+We have seen that when determining the ILP for a program, false dependencies among data dependencies can be effectively ignored, and instead only considering true dependencies (also called flow dependencies, or read-after-write [RAW] data dependencies). Therefore, instruction-level parallelism (ILP) on considers these types of data dependencies; however, note that there are additionally two other types of data dependencies of concern: **Structural dependencies** and **control dependencies**. How, then, do these latter dependencies affect ILP?
+
+Firstly, when performing ILP analysis, there are *no* **structural dependencies** to consider. Structural dependencies occur when there is insufficient hardware available to perform all necessary tasks in the *same* cycle. However, when determining the ILP, *ideal* hardware is assumed, therefore, such an "implementation detail" is not a relevant consideration. Therefore, ignoring structural dependencies effectively implies that any instruction that *could* possibly execute in the cycle *will* execute accordingly (and not otherwise wait on another resource, e.g., being rate-limited by a single adder, etc.).
+
+Furthermore, with respect to **control dependencies**, *perfect* same-cycle branch prediction is assumed. This means that branches are predicted in the *same* cycle as that in which they are fetched. Therefore, all of the *correct* instructions after the branch are observed by the ideal processor in the *same* cycle in which the branch is encountered in the program.
+
+```mips
+  ADD R1, R2, R3    # I1 - C1
+  MUL R1, R1, R1    # I2 -     C2
+  BNE R5, R1, Label # I3 -         C3
+  ADD R5, R1, R2    # I4
+  ⋮
+Label:
+  MUL R5, R7, R8    # IN - C1
+```
+
+As an example, consider the program shown above, which contains a branch. Here, between instructions `I1` and `I2` there is both a flow dependency and output dependency via register `R1`, as well as a branch instruction in `I3` (with a corresponding flow dependency with `I2` via register `R1`).
+
+Per the aforementioned dependencies, the first three instructions occur in successive cycles (`C1` through `C3`). Furthermore, assume that the branch in instruction `I3` is *taken*; in this case, although the branch cannot *execute* until cycle `C3`, upon initial fetching immediately prior to cycle `C1`, it is already *known* that the branch will be taken (i.e., goes to `Label`), and--therefore--instruction `IN` can execute immediately in cycle `C1` due to no data dependencies (i.e., no *delay* is introduced into the program).
+
+Therefore, with an ideal processor, control dependencies have no (adverse) impact on ILP, because the branched-to instruction(s) effectively execute "as usual," and correspondingly, control dependencies can similarly be ignored with respect to ILP determination.
+
+### 17. ILP vs. IPC
+
+
