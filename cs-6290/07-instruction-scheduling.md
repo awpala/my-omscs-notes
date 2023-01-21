@@ -48,3 +48,88 @@ The ***differences*** between Tomasulo's algorithm and modern machines are as in
 We will first begin with examining Tomasulo's algorithm itself, and then contrast with modern machines subsequently thereafter.
 
 ## 4. Tomasulo's Algorithm - The Big Picture
+
+Before examining Tomasulo's algorithm in detail, here we will first consider an overview of how it works (i.e., the underlying hardware structure).
+
+<center>
+<img src="./assets/07-003.png" width="650">
+</center>
+
+The first component is the **instruction queue (IQ)**, as in the figure shown above. The instructions are repeatedly fetched in the order they are received from the **Fetch** unit, and queued appropriately (i.e., in a ***first-in, first-out*** manner); in the case of Tomasulo's algorithm, recall that these are restricted to floating-point instruction.
+
+<center>
+<img src="./assets/07-004.png" width="650">
+</center>
+
+The next-available instruction in the IQ is placed into one of the available **reservation stations (RS)**, as in the figure shown above. The RSes are essentially "on standby" in this manner, waiting to receive the next instruction.
+
+<center>
+<img src="./assets/07-005.png" width="650">
+</center>
+
+Additionally, there is a **floating-point registers file (REGS)** (as in the figure shown above), which contains the floating point registers themselves. When an instruction is inserted into the RS, the values already present in the REGS (i.e,. those which are *currently* available for execution) are simply inserted into the RS appropriately.
+
+<center>
+<img src="./assets/07-006.png" width="650">
+</center>
+
+Once the instruction is ready to execute, it is sent to the corresponding **execution unit**, as in the figure shown above. Different types of execution units are present (e.g., `ADD`, `MUL`, etc.) for the appropriate instruction/computation required. Furthermore, each execution unit has a separate, dedicated RS, into which the appropriate upstream instructions queue/wait for.
+
+<center>
+<img src="./assets/07-007.png" width="650">
+</center>
+
+Once such a unit (e.g., `ADD`, per the figure shown above) has produced a result, the result is **broadcasted** on the **common data bus (CDB)**, as in the figure shown above (denoted by purple arrows and lines). This result is fed back into the REGS (i.e., all current results are available/up-to-date accordingly in REGS, ready for use by subsequent instructions).
+
+<center>
+<img src="./assets/07-008.png" width="650">
+</center>
+
+Furthermore, the results are broadcasted to the RSes as well, as in the figure shown above. This is to ensure current data is relayed to instructions which are in queue within the RSes, pending execution. Therefore, at any given time, a given RS is synchronizing values which are either known and/or pending update.
+
+In the figure shown above, there are *two* feedback lines (shown in purple) per RS, to emphasize the fact that a typical instruction has *two* inputs (e.g., operands for either operation `ADD` or `MUL`); correspondingly, subsequent post-result broadcast of the result can impact either of these two values (e.g., possibly latching into multiple RSes).
+
+<center>
+<img src="./assets/07-009.png" width="650">
+</center>
+
+Finally, if the instruction is *not* an arithmetic instruction (e.g., but rather a `LOAD`, `STORE`, etc. via REGS), then it is instead sent to the **address generation unit (ADDR)**, as in the figure shown above. From there, the instruction is inserted into the appropriate **buffer** (i.e., load buffer, store buffer, etc., respectively), from which the instruction is subsequently queued up for going into **memory (MEM)**.
+
+<center>
+<img src="./assets/07-010.png" width="650">
+</center>
+
+As in the figure shown above, the **load buffer (LB)** provides only the specifically requested data, while the the **store buffer (SB)** provides *both* the address *and* the data to MEM.
+
+<center>
+<img src="./assets/07-011.png" width="650">
+</center>
+
+When the loaded data is returned from MEM, it is similarly ***broadcasted*** via the CDB, targeting the appropriate register in REGS, as in the figure shown above.
+
+<center>
+<img src="./assets/07-012.png" width="650">
+</center>
+
+Furthermore, the loaded data from MEM is additionally ***broadcasted*** back to the SB, so that the current values are available there for subsequent placement into MEM, i.e., the corresponding value is only placed into MEM once it becomes available.
+
+Therefore, unlike arithmetic instructions (which can be executed out-of-order), inputs to load and store instructions are only made available in the store/load buffers in an ***in-order*** manner.
+  * ***N.B.*** The manner in which this in-ordering is achieved will be discussed later (in particular, modern processors are in fact capable of performing load and store operations *out*-of-order).
+
+<center>
+<img src="./assets/07-013.png" width="650">
+</center>
+
+Before proceeding further with additional details regarding Tomasulo's algorithm, consider some additional nomenclature (as in the figure shown above, denoted in red).
+  * The **issue** is the section which coordinates sending of the instructions from IQ to RS or ADDR.
+  * When the instruction is finally sent from a RS to the corresponding execution unit, this action is called a **dispatch**.
+  * When the executed by the execution unit and subsequently broadcasted, this operation is called **write result** (or **broadcast**).
+
+Next, we will examine what occurs subsequently to performing these successive operations (i.e., issue, dispatch, and broadcast).
+
+## 5-6. Tomasulo's Algorithm - Operation `Issue`
+
+### 5. Introduction
+
+
+### 6. Example
