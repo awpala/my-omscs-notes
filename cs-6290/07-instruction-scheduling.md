@@ -131,5 +131,20 @@ Next, we will examine what occurs subsequently to performing these successive op
 
 ### 5. Introduction
 
+<center>
+<img src="./assets/07-014.png" width="650">
+</center>
+
+The first step in Tomasulo's algorithm is the operation `Issue`. During `Issue`, the next instruction (in ***program-order***) is taken from the instruction queue (IQ). This must be done in program-order to ensure correct register renaming.
+
+Next, it must be determined from where the inputs to the instruction originate (i.e., are they already in the register file [REGS], or rather are they pending broadcast from already in-progress instructions). Furthermore, if it is necessary to *wait* for an instruction, then which one? For this particular purpose, there will be some type of **register allocation table (RAT)** available.
+
+Next, the next-available **reservation station (RS)** is obtained, having the appropriate type for the instruction in question (i.e., `ADD`, `MUL`, etc.). Furthermore, if all RSes are busy at this point (i.e., in use by an instruction already), then no Issue operation occurs in this particular cycle.
+  * ***N.B.*** In Tomasulo's algorithm, instructions are issued *once* per cycle.
+
+Next, the instruction is placed into the appropriate RS.
+
+Finally, the destination register of the instruction is **tagged**, such that when the result is produced, it is sent there appropriately (i.e., for subsequent use by future instructions sharing the data in that register accordingly).
 
 ### 6. Example
+
