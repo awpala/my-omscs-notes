@@ -148,3 +148,56 @@ Finally, the destination register of the instruction is **tagged**, such that wh
 
 ### 6. Example
 
+Consider now a running example of how Tomasulo's algorithm works, starting with the operation `Issue`.
+
+<center>
+<img src="./assets/07-015.png" width="650">
+</center>
+
+An **issue queue (IQ)** with four instructions is given (as in the figure shown above), containing four instructions in program-order.
+  * ***N.B*** Instructions here are written compactly in a high-level format for simplicity/brevity (e.g., `F2 = F4 + R1` rather than `ADD F2, F4, F1`, etc.).
+
+Furthermore, the **floating-point registers** (denoted by `F1, F2`, etc.) are contained in the **register alias table (RAT)**, which stores the corresponding instructions producing the register in question. A blank entry in the RAT redirects to the **register file (RF)**, the latter of which in turn contains the values of the registers themselves.
+
+Lastly, the **reservation stations (RS)** (denoted by `RS1`, `RS2`, etc.) store the operand values for the appropriate instructions.
+
+<center>
+<img src="./assets/07-016.png" width="650">
+</center>
+
+When instruction `I1` (`F2 = F4 + F1`) is issued from the IQ, it is taken from the **instruction buffer** (as in the figure shown above).
+
+Next, the RAT is examined. Since both inputs `F1` and `F4` are available, their corresponding values from the RF are store in `RS1` (where `+` denotes the operation `ADD`), which *is* indeed a currently available RS at this point.
+
+Lastly, for purposes of register renaming, since the result will now originate from `RS1`, the corresponding entry is updated in the RAT to reflect this (i.e., future instructions will now read `F2` via `RS1`'s pending result, rather than via the RF). Furthermore, the instruction will be removed from the IQ, thereby shifting down the upstream instructions accordingly (in the figure, this is denoted by crossing out with purple line in the IQ, but otherwise for simplicity without corresponding redrawing of the IQ itself).
+
+<center>
+<img src="./assets/07-017.png" width="650">
+</center>
+
+Next, instruction `I2` (`F1 = F2 / F3`) is taken from the IQ (as in the figure shown above).
+
+The operation `DIV` (denoted `/` in the figure shown above) is sent to the next-available RS associated with the execution unit `MUL`. Since operand `F2` is used, it cannot be read directly from the RF now (i.e., due to the aforementioned upstream use by `I1`), but rather this value must ***wait*** on `RS1`.
+
+Correspondingly, instruction `I2` is removed from the issue queue, and the RAT is correspondingly updated for `F1` via `RS4`.
+
+<center>
+<img src="./assets/07-018.png" width="650">
+</center>
+
+Next, instruction `I3` (`F4 = F1 - F2`) is taken from the IQ (as in the figure shown above). In this case, neither operand values can be read directly from the corresponding RF entries, but rather both are ***waiting*** on the RAT (i.e., `F1` via `RS4`, and `F2` via `RS1`). Furthermore, the RAT is updated accordingly (i.e., `F4` via `RS2`). 
+
+
+<center>
+<img src="./assets/07-019.png" width="650">
+</center>
+
+***N.B.*** At this point (i.e., immediately following instruction `I3`), if there were *no* `RS3`present, the execution unit `ADD` would be currently *full*, and therefore instruction `I4` would have to wait to be removed from the IQ in the next cycle, pending execution of at least one of instructions `I1` or `I3` first.
+
+Lasty, instruction `I4` (`F1 = F2 + F3`) is taken from the IQ (as in the figure shown above). Here, operand `F3` is taken directly from the RF, whereas operand `F1` is taken from the RAT (via `RS4`).
+
+However, note that here there is a ***collision*** with respect to RAT entry for `F1` (i.e., the result of previous instruction `I2` vs. that of the current instruction `I4`). To resolve this, the existing entry (i.e., `RS4`) is ***overwritten*** by this more-recent result (i.e., `RS3`). Furthermore, as before, instruction `I4` is removed from the IQ.
+
+***N.B.*** In a real processor, *one* instruction is issued per cycle, with these inter-dependent instructions having been executed (i.e., providing corresponding results) by the time the next instruction is removed from the IQ.
+
+## 7. `Issue` Quiz and Answers
