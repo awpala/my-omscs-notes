@@ -26,3 +26,25 @@ Finally, **structural dependencies** arise when instructions cannot be executed 
 Among these resolution measures, it remains to be determined how these can be performed. Initially, this lesson will focus on register renaming and out-of-order execution, in particular, implementing these resolution measures in a manner which is amenable to actual hardware implementation in a processor (i.e., beyond simply "on paper").
 
 ## 3. Tomasulo's Algorithm
+
+<center>
+<img src="./assets/07-002.png" width="650">
+</center>
+
+The first technique for improving processor instructions per cycle (IPC) is called **Tomasulo's algorithm**, which is a 40+ year old technique for out-of-order execution. This algorithm was used in older IBM 360 machines.
+
+Tomasulo's algorithm determines which instructions have inputs that are currently ready for execution in the next/upcoming cycle, as well as those instructions which still must wait for their inputs to be produced. Tomasulo's algorithm also includes a form of register renaming. Furthermore, Tomasulo's algorithm is surprisingly similar to what is still in current use on modern processors with respect to out-of-order execution.
+
+Therefore, Tomasulo's algorithm is a useful case study in a still-applicable approach to this problem (albeit with more complexity in implementation on modern machines).
+
+| Characteristic | Tomasulo's Algorithm | Modern Machines |
+|:--:|:--:|:--:|
+| Applicable instructions | Only for floating point instructions | For *all* instructions |
+| Scope of examined "window" (i.e., near-future/upcoming-cycle instructions) | Only examined relatively *few* instructions within the  window | Examine *hundreds* of instructions within the window  |
+| Exception handling | Rudimentary exception handling, since floating-point instructions are a relatively small scope, only applying to relatively niche programs (e.g., those involving intensive floating-point calculations) and in simple configurations (e.g., only running one program at a time, for which exceptions could be handled relatively simply on an ad hoc basis) | Include extensive, explicit hardware support for exception handling, as will be discussed later |
+
+The ***differences*** between Tomasulo's algorithm and modern machines are as in the table shown above.
+
+We will first begin with examining Tomasulo's algorithm itself, and then contrast with modern machines subsequently thereafter.
+
+## 4. Tomasulo's Algorithm - The Big Picture
