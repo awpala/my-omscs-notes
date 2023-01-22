@@ -556,6 +556,23 @@ Lastly, the reservation stations (RSes) are as follows:
 
 ### 22. Load and Store Instructions
 
+<center>
+<img src="./assets/07-046.png" width="650">
+</center>
+
+Here, let us briefly consider what occurs during load and store instructions.
+
+Just as we have previously seen data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies vai **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
+  * A **read-after-write (RAW)** dependency occurs if there is an operation `SW` (store word) to some address in memory, which is then followed by an operation `LW` (load word) from the same address (i.e., the `LW` uses the value stored by `SW`).
+  * A **write-after-read (WAR)** (false) dependency occurs if the program first performs `LW`, followed by `SW`; if these operations were reordered, then the `LW` reads a stale value (i.e., preceding that which is otherwise updated by the subsequent operation `SW`).
+  * A **write-after-write (WAW)** dependency occurs if there are successive  `SW` operations to the *same* address; here, the latest-occurring `SW` should be the value at the end, but a "stale" value can occur if these `SW` operations are reordered.
+
+Obviously, dependencies in memory must be similarly obeyed (and/or otherwise eliminated) just as for data dependencies in registers. To **resolve** these memory dependencies, Tomasulo's algorithm does the following:
+  * Perform instructions load and store **in-order**, i.e., do not reorder them at all, but rather insert them into the load/store queue in first-in, first-out order (e.g., a load does not execute if there is a previous store pending, even if the load is ready to execute at that point).
+    * In practice, this is the resolution method of choice for Tomasulo's algorithm.
+  * Identify the dependencies between load and store instructions, and correspondingly **reorder** them (as with any other instruction).
+    * This turns out to be rather complicated to implement in practice (i.e., relative to more straightforward approach to reordering register dependencies). However, this *is* in fact implemented on modern processors (i.e., including for load and store instructions).
+
 ### 23. Cycles 1-2
 
 ### 24. Cycles 3-4
