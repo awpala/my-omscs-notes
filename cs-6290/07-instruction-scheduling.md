@@ -409,11 +409,34 @@ Therefore, because all of these operations *can* (and do) occur in every cycle, 
 
 ## 16-19. One-Cycle Quizzes
 
+### 16. Introduction
+
+The following set of quizzes tests understanding of what occurs in one cycle via Tomasulo's algorithm.
+
 ### 17. Part 1 Question and Answers
 
 <center>
 <img src="./assets/07-038A.png" width="650">
 </center>
+
+Consider the configuration shown above (blue text and annotations denote the state at the beginning of the cycle). Furthermore, the following are permissible based on the hardware itself:
+  * Operations `Issue` and `Dispatch` *cannot* occur in the same cycle
+  * Operations `Capture` and `Dispatch` *can* occur in the same cycle
+  * Update of RAT following simultaneous operations `Issue` and `Broadcast` *can* occur in the same cycle
+
+At the end of the cycle, what will be the contents of the two entries in both the RAT and REGS?
+
+***Answer and Explanation***:
+
+Consider all possible events in this cycle, as follows:
+  * 1 - Issuing of an instruction from IQ will update the RAT correspondingly
+  * 2 - `(RS0) 4.4` will be broadcasted from the execution unit `ALU`, which in turn will correspondingly update the RAT and REGS
+
+These events can be analyzed in any arbitrary order, however, their resulting effects must be further examined and reconciled accordingly as necessary (denoted in purple text and annotations in the figure shown above).
+  * 1 - Issuing of the instruction from IQ (`F1 = F0 + F1`) examines the entries for `F0` and `F1` in the RAT, followed by writing of `F1` into the corresponding reservation station(s). Because there is an available RS (`RS2`), the instruction is issued there, with corresponding update for entry `F1` in the RAT. Furthermore, there is no corresponding update to the REGS.
+  * 2 - Broadcasting of `(RS0) 4.4` from the execution unit `ALU` makes the corresponding update to `REGS` for entry `F0`, and also invalidates the existing entry for `F0` in `RAT` (which now directs back to REGS).
+
+Lastly, the entry `F1` in REGS remains unchanged, since neither event affected that value.
 
 ### 18. Part 2 Question and Answers
 
@@ -421,11 +444,44 @@ Therefore, because all of these operations *can* (and do) occur in every cycle, 
 <img src="./assets/07-040A.png" width="650">
 </center>
 
+Continuing from the previous example (cf. Section 17), the same initial state is observed as previously.
+
+By the end of this cycle, what is the final state of reservation stations (RSes)? In particular, are `RS0` and/or `RS1` still busy? And will `RS2` be used at all?
+
+***Answer and Explanation***:
+
+To determine the downstream effects on the RSes, it is first necessary to determine whether an instruction is issued from the IQ, as well as the impact of the currently broadcasting instruction from the execution unit (i.e., is there any capturing of the result by the RSes). These can be analyzed in arbitrary order, however, caution must be exercised in examining multiple updates to the *same* field.
+
+With respect to issuing from IQ:
+  * `RS2` is identified as an available reservation station, and becomes ***occupied*** by the instruction (`F1 = F0 + F1`) accordingly. Furthermore, both operands `F0` and `F1` have corresponding entries in the RAT (`RS0` and `RS1`, respectively)
+
+With respect to the broadcast from `ALU`:
+  * pre-broadcast:
+    * `RS0` frees its reservation station, thus `RS0` is ***not occupied*** at the end of the cycle.
+    * `RS1` remains ***occupied*** due to dependence on `RS0` for one of its operands.
+  * post-broadcast:
+    * `RS1` entry for `RS0` is captured as `4.4`
+    * `RS2` entry (which was issued in this same cycle) for `RS0` is captured as `4.4`; furthermore, this is necessary to occur in the *same* cycle, because with `RS0` freed, that value is now stale/invalid. `RS0` entry for `RS1` is still pending a result (which is permissible here, since `RS1` has not yet executed).
+
 ### 19. Part 3 Question and Answers
 
 <center>
 <img src="./assets/07-042A.png" width="650">
 </center>
+
+Continuing from the previous example (cf. Sections 17 and 18), the same reference state is observed as previously.
+
+Which instruction (if any) will dispatch into the execution `ALU` by the end of this cycle? (Note: "No cycle" is a possible option.)
+
+***Answer and Explanation***:
+
+Recall (cf. Section 18) that `RS0` will free its reservation station and is in process of executing, therefore it ***will not*** dispatch (i.e., *again*) in this cycle.
+
+`RS1` will capture its last-remaining operand during this cycle, thereby making it eligible for dispatch immediately thereafter. Since simultaneous capture and dispatch *is* possible on this hardware (as per the given parameters, cf. Section 17), `RS1` ***will*** consequently dispatch.
+
+`RS2` is occupied during this cycle via issuing of the instruction (`F1 = F0 + F1`). However, since simultaneous issue nad dispatch is *not* possible on this hardware (as per the given parameters, cf. Section 17), `RS2` ***will not*** dispatch in this cycle (i.e., even if its operands were available/ready).
+
+***N.B.*** In this case, since there is only *one* available instruction for dispatch, there is no ambiguity here. However, if there were *more than one* instructions available for dispatch, some type of mechanism (e.g., oldest first) would have to be devised/implemented to select among these, since there is only one execution unit (`ALU`) available.
 
 ## 20. Tomasulo's Algorithm Quiz and Answers
 
