@@ -1155,6 +1155,80 @@ This concludes execution of the program via Tomasulo's algorithm.
 
 ## 28. Tomasulo's Algorithm - Timing Example
 
+As a practical matter (e.g., exam questions), it is typically most noteworthy to focus on **timing** of particular events (i.e., cycles in which dispatches, executions, broadcasts, etc. occur).
+
+<center>
+<img src="./assets/07-062.png" width="650">
+</center>
+
+Consider such an example, as in the figure shown above.
+
+The processor given is the same as from before (cf. Section 21), as well as the same program in question.
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | | | | |
+| `I2` | `L.D F2, 45(R3)` | | | | |
+| `I3` | `MUL.D F0, F2, F4` | | | | |
+| `I4` | `SUB.D F8, F2, F6` | | | | |
+| `I5` | `DIV.D F10, F0, F6` | | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | | |
+
+As a consolidated version of the same example, consider the table shown above.
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` | |
+
+With respect to instruction `I1` (as in the table shown above), by inspection, an issue can occur in cycle `C1`, followed by an execution in cycle `C2`. The result can be written as early as cycle `C4` (i.e., based on the hardware constraints), so this is noted tentatively as such accordingly.
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` | |
+
+With respect to instruction `I2` (as in the table shown above), by inspection, an issue can occur in cycle `C2`. Furthermore, since the load instructions cannot overlap, the earliest possible execution would be in cycle `C4`, followed by a tentative write result in cycle `C6`.
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` | operand `F2` dependent on instruction `I2` |
+
+With respect to instruction `I3` (as in the table shown above), by inspection, an issue can occur in cycle `C3`, and there is a corresponding reservation station available for this purpose (i.e., `ML1`). Examining the operands of instruction `I3`, there is a dependency with respect to `F2` (via instruction `I2`), so the earliest possible execution for instruction `I3` would be cycle `C7`. Furthermore, a tentative write result can occur in cycle `C17` for this operation (which requires `10` cycles to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` | operand `F2` dependent on instruction `I2` |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` | operand `F2` dependent on instruction `I2` |
+
+With respect to instruction `I4` (as in the table shown above), by inspection, an issue can occur in cycle `C4`, and there is a corresponding reservation station available for this purpose (i.e., `AD1`). Examining the operands of instruction `I4`, there is a dependency with respect to both `F2` (via instruction `I2`) and `F6` (via instruction `I1`), so the earliest possible execution for instruction `I4` would be cycle `C7`. Furthermore, a tentative write result can occur in cycle `C9` for this operation (which requires `2` cycles to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` | operand `F2` dependent on instruction `I2` |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` | operand `F2` dependent on instruction `I2` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | `C18` | `C58` | operand `F0` dependent on instruction `I3` |
+
+With respect to instruction `I5` (as in the table shown above), by inspection, an issue can occur in cycle `C5`, and there is a corresponding reservation station available for this purpose (i.e., `ML2`). Examining the operands of instruction `I5`, there is a dependency with respect to both `F0` (via instruction `I3`) and `F6` (via instruction `I1`), so the earliest possible execution for instruction `I5` would be cycle `C18`. Furthermore, a tentative write result can occur in cycle `C58` for this operation (which requires `40` cycles to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` | operand `F2` dependent on instruction `I2` |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` | operand `F2` dependent on instruction `I2` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | `C18` | `C58` | operand `F0` dependent on instruction `I3` |
+| `I6` | `ADD.D F6, F8, F2` | `C6` | `C10` | `C12` | operand `F8` dependent on instruction `I4` |
+
+Lastly, with respect to instruction `I6` (as in the table shown above), by inspection, an issue can occur in cycle `C5`, and there is a corresponding reservation station available for this purpose (i.e., `ML2`). Examining the operands of instruction `I6`, there is a dependency with respect to both `F8` (via instruction `I4`) and `F2` (via instruction `I2`), so the earliest possible execution for instruction `I6` would be cycle `C10`. Furthermore, a tentative write result can occur in cycle `C12` for this operation (which requires `2` cycles to execute).
+
+As a final "sanity check," to ensure proper ordering of instructions, examine the "Cycle of `Write Result`" to ensure there are no inconsistencies and/or nonsensical entries (e.g., two instructions attempting to write simultaneously in the *same* cycle). Here, no such inconsistencies result, so the proposed tentative values can be finalized. (Conversely, if such collisions had occurred, it would be necessary to reevaluate the cycles, e.g., postponing certain cycles to allow proper write results ordering.)
+
 ## 29-30. Tomasulo's Algorithm Timing Quizzes
 
 ### 29. Part 1 Quiz and Answers
