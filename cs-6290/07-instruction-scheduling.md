@@ -340,6 +340,35 @@ There are several possible **hardware resolutions** to this issue, such as:
 
 ### 13. Broadcast of a "Stale" Result
 
+Finally, consider the issue of a `Broadcast` operation being performed for a "stale" result.
+
+<center>
+<img src="./assets/07-034.png" width="650">
+</center>
+
+Consider the configuration as in the figure shown above. Here the execution unit `MUL/DIV` is preparing to broadcast the result `(RS4) -0.11` (via corresponding instruction in `RS4`). However, upon examination of the register allocation table (RAT), observe that none of the instructions are currently associated with `RS4`.
+
+So, then, how can such a situation occur? This can occur as a result of renaming (e.g., if, for example, the entry for `F4` in the RAT originally held `RS4`, but was subsequently changed to `RS2`, as shown in the current configuration). 
+
+<center>
+<img src="./assets/07-035.png" width="650">
+</center>
+
+Consequently, upon broadcasting (as in the figure shown above, denoted by green lines and arrows), the reservation stations are updated as usual, i.e., each operand entry is matched against the tag `RS4` and updated accordingly (e.g., update of `RS2`, as denoted in purple in the figure shown above).
+
+Here, there is no change to the RAT, because the resulting value (`-0.11`) is not used by any subsequent instructions in the instruction queue. The only reason for updating the register file is to store this value for downstream instructions depending on it; however, here, no such instructions occur in the instruction queue. Furthermore, the current values in the RAT are appropriate for the next instructions arriving in the instruction queue.
+
+```mips
+DIV F4, ... # first-occurring in instruction queue
+⋮
+ADD F4, ... # next-occurring in instruction queue -- uses `F4` produced by `DIV F4, ...`
+⋮           # use `F4` produced by `ADD F4, ...`
+```
+
+Accordingly, consider the corresponding sequence of instructions shown above. In general, a given downstream instruction should use the most-recently-broadcasted value (i.e., `F4`).
+
+Furthermore, note that if the broadcasted tag does not match any of the current entries in the RAT, then neither the RAT nor the register file should be updated (because all the instructions in their respective reservation stations which are depending on this value will have received it accordingly via the broadcast by that point). Bear this in mind (e.g., in quizzes, demonstrations, etc.) when updating the states accordingly.
+
 ## 14-15. Tomasulo's Algorithm - Review
 
 ## 16-19. One Cycle Quizzes
