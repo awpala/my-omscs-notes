@@ -157,7 +157,7 @@ Consider now a running example of how Tomasulo's algorithm works, starting with 
 An **issue queue (IQ)** with four instructions is given (as in the figure shown above), containing four instructions in program-order.
   * ***N.B*** Instructions here are written compactly in a high-level format for simplicity/brevity (e.g., `F2 = F4 + R1` rather than `ADD F2, F4, F1`, etc.).
 
-Furthermore, the **floating-point registers** (denoted by `F1, F2`, etc.) are contained in the **register alias table (RAT)**, which stores the corresponding instructions producing the register in question. A blank entry in the RAT redirects to the **register file (RF)**, the latter of which in turn contains the values of the registers themselves.
+Furthermore, the **floating-point registers** (denoted by `F1, F2`, etc.) are contained in the **register allocation table (RAT)**, which stores the corresponding instructions producing the register in question. A blank entry in the RAT redirects to the **register file (RF)**, the latter of which in turn contains the values of the registers themselves.
 
 Lastly, the **reservation stations (RS)** (denoted by `RS1`, `RS2`, etc.) store the operand values for the appropriate instructions.
 
@@ -215,7 +215,7 @@ From here, perform the `Issue` operation on the next two instructions, or otherw
 <img src="./assets/07-021A.png" width="650">
 </center>
 
-The next instruction to be issued from the IQ is instruction `I1` (`F4 = F1 / F2`), which is issued to `RS5`, with corresponding register alias table (RAT) entry being set to `RS5`. Furthermore, note that both operands of `I1` depend on the in-progress instructions existing prior to this cycle (i.e., `F1` and `F2` via `RS4` and `RS1`, respectively).
+The next instruction to be issued from the IQ is instruction `I1` (`F4 = F1 / F2`), which is issued to `RS5`, with corresponding register allocation table (RAT) entry being set to `RS5`. Furthermore, note that both operands of `I1` depend on the in-progress instructions existing prior to this cycle (i.e., `F1` and `F2` via `RS4` and `RS1`, respectively).
 
 The next instruction in the IQ after instruction `I1` is instruction `I2` (`F4 = F3 × F4`). This instruction *cannot* be issued in the current cycle, due to the RSes for the execution unit `MUL` being currently *full*. Therefore, the operation issue is currently stalled, pending availability of the next-available RS.
 
@@ -291,7 +291,51 @@ Consider the configuration in the figure shown above, immediately prior to a `Di
   * `RS2` is older than `RS3` (i.e., `RS2` precedes `RS3` in program-order), so `RS3` cannot dispatch until `RS2` does.
     * `DOES NOT APPLY` - In an out-of-order algorithm (which Tomasulo's algorithm *is* characterized by), there *is* a dispatch of an instruction as soon as its operands are ready. If this factor were of concerned, then the dispatch of the instruction could simply be delayed (i.e., even if the operands *are* ready at this point); however, note that this would yield an in-order processor, which is not desirable here (i.e., due to sub-optimal performance). In fact, the reason why this is an out-of-order processor is precisely because instructions such as `R3` *can* execute even if they are *not* the oldest one in the reservation stations.
 
-## 11-13. Tomasulo's Algorithm - Operation `Write Result` (or `Broadcast`)
+## 11-13. Tomasulo's Algorithm - Operation `Write Result` (aka `Broadcast`)
 
 ### 11. Introduction
 
+The final step in Tomasulo's Algorithm is the operation `Write Result` (also called `Broadcast`).
+
+<center>
+<img src="./assets/07-029.png" width="650">
+</center>
+
+Consider the configuration in the figure shown above. Towards the end of the cycle, the execution unit `ADD` is ready to broadcast its result. To do this, the tag is applied (`RS1`) to the corresponding result (`-0.29`) and then sent on the bus, resulting in downstream broadcast to the corresponding structures (as denoted by green lines and arrows in the figure shown above).
+
+<center>
+<img src="./assets/07-030.png" width="650">
+</center>
+
+Next, the result value (`-0.29`) is written to the register file (i.e., entry `F2`). Furthermore, here, observe that it is not necessary to carry the tag `F2` in the result, because `RS1` already matches the register allocation table (RAT) entry (i.e., `RS1` in `F2`).
+
+<center>
+<img src="./assets/07-031.png" width="650">
+</center>
+
+Next, the RAT entry is updated, i.e., the entry matching the tag (`RS1`) is changed accordingly; in particular, here, the previous entry is removed for `F2`, with `F2` now directly retrieving its value from the register file (i.e., as implied via empty entry in the RAT, which in practice is typically handled by a "valid" bit).
+
+<center>
+<img src="./assets/07-032.png" width="650">
+</center>
+
+Lastly, the reservation table (`RS1`) is freed, in order to accommodate the next appropriate instruction in the instruction queue.
+  * ***N.B.*** In real hardware, this "erasure of the entry" in the RS would be handled by a "valid" bit, or equivalent mechanism.
+
+### 12. More than One Broadcast
+
+### 13. Broadcast of a "Stale" Result
+
+## 14-15. Tomasulo's Algorithm - Review
+
+## 16-19. One Cycle Quizzes
+
+### 16. Introduction
+
+### 17. Part 1 Question and Answers
+
+### 18. Part 2 Question and Answers
+
+### 19. Part 3 Question and Answers
+
+## 20. Tomasulo's Algorithm Quiz and Answers
