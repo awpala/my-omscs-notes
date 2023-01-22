@@ -978,14 +978,180 @@ With respect to broadcast and corresponding capture/latch, the RAT is updated as
 | `LD1` | | | | | | | |
 | `LD2` | | | | | | | | |
 | `AD1` | | | | | | | | |
-| `AD2` | `C7` | `ADD.D` | `-9.6` | `-2.5` | `(N/A)` | `(N/A)` | `No` |
+| `AD2` | `C9` | `ADD.D` | `-9.6` | `-2.5` | `(N/A)` | `(N/A)` | `No` |
 | `AD3` | | | | | | | |
-| `ML1` | `C7` | `MUL.D` | `-2.5` | `2.5` |`(N/A)` |`(N/A)` | `Yes (C7-C17)` |
-| `ML2` | `C7` | `DIV.D` | `(waiting)` | `7.1` | `ML1` | `(N/A)` | `No` |
+| `ML1` | `C9` | `MUL.D` | `-2.5` | `2.5` |`(N/A)` |`(N/A)` | `Yes (C7-C17)` |
+| `ML2` | `C9` | `DIV.D` | `(waiting)` | `7.1` | `ML1` | `(N/A)` | `No` |
 
 Furthermore, with respect to broadcast and corresponding capture/latch, `AD1` entry in RS `AD2` is updated accordingly (i.e., with result `-9.6`).
 
 ### 27. Cycles 10-end
+
+<center>
+<img src="./assets/07-057.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | | |
+| `I6` | `ADD.D F6, F8, F2` | `C6` | `C10` | |
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | | | | | | | | |
+| `AD1` | | | | | | | | |
+| `AD2` | `C10` | `ADD.D` | `-9.6` | `-2.5` | `(N/A)` | `(N/A)` | `Yes (C10-C12)` |
+| `AD3` | | | | | | | |
+| `ML1` | `C10` | `MUL.D` | `-2.5` | `2.5` |`(N/A)` |`(N/A)` | `Yes (C7-C17)` |
+| `ML2` | `C10` | `DIV.D` | `(waiting)` | `7.1` | `ML1` | `(N/A)` | `No` |
+
+In cycle `C10`, instruction `I6` is able to dispatch, as indicated in the tables shown above.
+
+In cycle `C11`, the RSes `AD2` and `ML1` are executing their respective instructions, however, no other operations occur in this time.
+
+<center>
+<img src="./assets/07-058.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | | |
+| `I6` | `ADD.D F6, F8, F2` | `C6` | `C10` | `C12` |
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | | | | | | | | |
+| `AD1` | | | | | | | | |
+| `AD2` | | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | `C12` | `MUL.D` | `-2.5` | `2.5` |`(N/A)` |`(N/A)` | `Yes (C7-C17)` |
+| `ML2` | `C12` | `DIV.D` | `(waiting)` | `7.1` | `ML1` | `(N/A)` | `No` |
+
+In cycle `C12`, instruction `I6` is able to broadcast its result (`-12.1`) via RS `AD2`, as indicated in the tables shown above. (In this case, there is no capture/latch, since there is no RS waiting on this particular result.)
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | `ML1` |
+| `F2` | |
+| `F4` | |
+| `F6` | |
+| `F8` | |
+| `F10` | `ML2` |
+
+Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e., with `F6` now read directly from REGS). Additionally, note that the old value (`7.1`) for `F6` in REGS is overwritten by the new value (`-12.1`).
+
+The subsequent cycles `C13` through `C16` simply execute pending instruction via RS `ML1`.
+
+<center>
+<img src="./assets/07-059.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | | |
+| `I6` | `ADD.D F6, F8, F2` | `C6` | `C10` | `C12` |
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | | | | | | | | |
+| `AD1` | | | | | | | | |
+| `AD2` | | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | | | | | | | |
+| `ML2` | `C17` | `DIV.D` | `-6.25` | `7.1` |`(N/A)` | `(N/A)` | `No` |
+
+In cycle `C17`, instruction `I3` is able to broadcast its result (`-6.25`) via RS `ML1`, which is correspondingly broadcasted and captured/latched, as indicated in the tables shown above.
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | |
+| `F2` | |
+| `F4` | |
+| `F6` | |
+| `F8` | |
+| `F10` | `ML2` |
+
+Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e., with `F0` now read directly from REGS).
+
+<center>
+<img src="./assets/07-060.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | `C18` | |
+| `I6` | `ADD.D F6, F8, F2` | `C6` | `C10` | `C12` |
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | | | | | | | | |
+| `AD1` | | | | | | | | |
+| `AD2` | | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | | | | | | | |
+| `ML2` | `C18` | `DIV.D` | `-6.25` | `7.1` |`(N/A)` | `(N/A)` | `Yes (C18-C58)` |
+
+In cycle `C18`, the last-remaining instruction `I5` is able to dispatch, as indicated in the tables shown above.
+
+The subsequent cycles `C19` through `C57` simply execute pending instruction via RS `ML2`.
+
+<center>
+<img src="./assets/07-061.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | `C6` |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | `C7` | `C17` |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | `C7` | `C9` |
+| `I5` | `DIV.D F10, F0, F6` | `C5` | `C18` | `C58` |
+| `I6` | `ADD.D F6, F8, F2` | `C6` | `C10` | `C12` |
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | | | | | | | | |
+| `AD1` | | | | | | | | |
+| `AD2` | | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | | | | | | | |
+| `ML2` | | | | | | | |
+
+In cycle `C58`, the last-remaining instruction `I5` is able to broadcast its result (`0.5165`), as indicated in the tables shown above.
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | |
+| `F2` | |
+| `F4` | |
+| `F6` | |
+| `F8` | |
+| `F10` | |
+
+Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e., with `F10` now read directly from REGS).
+
+This concludes execution of the program via Tomasulo's algorithm.
 
 ## 28. Tomasulo's Algorithm - Timing Example
 
