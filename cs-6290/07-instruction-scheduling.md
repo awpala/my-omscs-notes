@@ -279,3 +279,19 @@ Among these heuristics, ***oldest first*** is the most common/optimal.
 
 ## 10. `Dispatch` Quiz and Answers
 
+<center>
+<img src="./assets/07-028A.png" width="650">
+</center>
+
+Consider the configuration in the figure shown above, immediately prior to a `Dispatch` operation. Why has not `RS3` (which already has executable operand values) dispatched already prior to reaching this cycle? (Select all valid possibilities.)
+  * `RS3` was issued in the previous cycle.
+    * `APPLIES` - If `RS3` were indeed issued in the previous cycle (i.e., it arrived within the reservation station), then depending on when instructions for execution are selected (e.g., towards the end of the cycle), there may be a temporal "mismatch" (i.e., the next-available instruction was not ready yet at that point)
+  * Another instruction was dispatched to the execution unit `ADD`.
+    * `APPLIES` - This is possible, for example, if `RS1` wAas sent in the previous cycle to the execution unit; in that case, the execution unit (assumed here to only execute one instruction per cycle) would be "occupied" and therefore unable to execute `RS3`.
+  * `RS2` is older than `RS3` (i.e., `RS2` precedes `RS3` in program-order), so `RS3` cannot dispatch until `RS2` does.
+    * `DOES NOT APPLY` - In an out-of-order algorithm (which Tomasulo's algorithm *is* characterized by), there *is* a dispatch of an instruction as soon as its operands are ready. If this factor were of concerned, then the dispatch of the instruction could simply be delayed (i.e., even if the operands *are* ready at this point); however, note that this would yield an in-order processor, which is not desirable here (i.e., due to sub-optimal performance). In fact, the reason why this is an out-of-order processor is precisely because instructions such as `R3` *can* execute even if they are *not* the oldest one in the reservation stations.
+
+## 11-13. Tomasulo's Algorithm - Operation `Write Result` (or `Broadcast`)
+
+### 11. Introduction
+
