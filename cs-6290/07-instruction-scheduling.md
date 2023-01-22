@@ -324,6 +324,20 @@ Lastly, the reservation table (`RS1`) is freed, in order to accommodate the next
 
 ### 12. More than One Broadcast
 
+Now, consider the situation in which it is necessary to perform more than one `Broadcast` operation.
+
+<center>
+<img src="./assets/07-033.png" width="650">
+</center>
+
+Consider the configuration as in the figure shown above. Here, both the executions units `ADD` and `MULT` finish their respective operations simultaneously in the *same* cycle, and must correspondingly broadcast over the *same* (single) bus; in such a case, which broadcast will occur first?
+
+There are several possible **hardware resolutions** to this issue, such as:
+  * Provide a *separate* broadcast bus for *each* execution unit.
+    * In this case, there will be twice as many comparators for each operand for each instruction in each reservation station (i.e., the tag must be compared in turn among all of these).
+  * If only *one* bus is available, then typically one of the execution units is made to be the **highest-priority unit**.
+    * A common **heuristic** along these lines is to give higher priority to relatively slower execution units (e.g., `MUL`, if `MUL` is slower than `ADD`). The reason for this is that because the corresponding instructions will have been executing for the relatively longest time, they are then correspondingly relatively more likely to be "bottlenecking" for downstream dependencies. This could be further improved by additional carrying along information regarding the instruction age, however, this gives rise to a more complicated implementation (which in practice does not yield much additional improvement over an already reasonably effective heuristic).
+
 ### 13. Broadcast of a "Stale" Result
 
 ## 14-15. Tomasulo's Algorithm - Review
