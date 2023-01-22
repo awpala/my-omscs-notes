@@ -575,7 +575,87 @@ Obviously, dependencies in memory must be similarly obeyed (and/or otherwise eli
 
 ### 23. Cycles 1-2
 
+<center>
+<img src="./assets/07-047.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | | |
+| `I2` | `L.D F2, 45(R3)` | | | |
+| `I3` | `MUL.D F0, F2, F4` | | | |
+| `I4` | `SUB.D F8, F2, F6` | | | |
+| `I5` | `DIV.D F10, F0, F6` | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | |
+
+In cycle `C1`, there is nothing to dispatch and nothing to write, so only issuing is of concern. This is noted accordingly in the table shown above.
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | `C1` | `L.D` | `(N/A)` | `134` (`100 + 34`) | `(N/A)`|`(N/A)` | `No` |
+| `LD2` | | | | | | | |
+| `AD1` | | | | | | | |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | | | | | | | |
+| `ML2` | | | | | | | |
+
+Since there is a correspondingly empty reservation station, instruction `I1` can be placed accordingly into `LD1`, as in the table shown above. Furthermore, instruction `I1` gets its operand `R2` directly via REGS.
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | |
+| `F2` | |
+| `F4` | |
+| `F6` | `LD1` |
+| `F8` | |
+| `F10` | |
+
+The other operand `F6` is placed into the RAT (via corresponding RS `LD1`), as in the table shown above.
+
+<center>
+<img src="./assets/07-048.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | | |
+| `I3` | `MUL.D F0, F2, F4` | | | |
+| `I4` | `SUB.D F8, F2, F6` | | | |
+| `I5` | `DIV.D F10, F0, F6` | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | |
+
+In cycle `C2`, there is nothing to dispatch and nothing to write, so only issuing is of concern. This is noted accordingly in the table shown above.
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | `C1` | `L.D` | `(N/A)` | `134` | `(N/A)`|`(N/A)` | `Yes (C4)` |
+| `LD2` | `C2` | `L.D` | `(N/A)` | `245` (`200 + 45`) | `(N/A)`|`(N/A)` | `No` |
+| `AD1` | | | | | | | |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | | | | | | | |
+| `ML2` | | | | | | | |
+
+Since there is a correspondingly empty reservation station, instruction `I2` can be placed accordingly into `LD2`, as in the table shown above. Furthermore, instruction `I2` gets its operand `R3` directly via REGS.
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | |
+| `F2` | `LD2` |
+| `F4` | |
+| `F6` | `LD1` |
+| `F8` | |
+| `F10` | |
+
+The other operand `F2` is placed into the RAT (via corresponding RS `LD2`), as in the table shown above.
+
+Furthermore, note that instruction `I1` is dispatched in cycle `C2`, noted above in the corresponding tables for `C2`. Furthermore, recall (cf. Section 21) that a load instruction requires `2` cycles; here, we shall assume that the write back occurs *after* execution of the second cycle (from initiation) is completed (i.e., two cycles after `C2`, or `C4`).
+
 ### 24. Cycles 3-4
+
+
 
 ### 25. Cycles 5-6
 
