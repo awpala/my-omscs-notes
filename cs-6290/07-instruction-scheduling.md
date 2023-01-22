@@ -249,4 +249,33 @@ At this point, it is determined which RSes have sufficient information (i.e., fu
 
 ### 9. More than One Instruction Is Ready
 
+During operation `Dispatch`, we have not yet considered what occurs if *more* than one instruction is ready to execute.
+
+<center>
+<img src="./assets/07-025.png" width="650">
+</center>
+
+Consider the configuration in the figure shown, wherein a broadcast (via value `-0.29` via tag `RS1`) is occurring, leading into the next cycle.
+
+<center>
+<img src="./assets/07-026.png" width="650">
+</center>
+
+As before (cf. Section 8), `RS1` is now available following previous execution, and the broadcasted value is correspondingly updated/latched (i.e., in the correspondingly pending operands of `RS2`, `RS3`, and `RS4`).
+
+Here, `RS4` is the unambiguous candidate for the execution unit `MUL`. However, with respect to execution unit `ADD`, it is unclear which instruction to dispatch, as there are two available (`RS2` and `RS3`) but only one execution unit. (Here, we are assuming that the execution unit `ADD` can only handle one instruction per cycle.)
+
+Ideally, the instruction should be selected such that it allows the earliest-possible execution of future instructions (thereby yielding the highest performance); however, as a practical matter, this requires *knowledge* of the future, which is not strictly feasible (and this is not particularly something that hardware is adept at, for that matter, inasmuch as hardware is only capable of analyzing the current instruction as well as perhaps a best-case "look-ahead" of 1-2 instructions in the instruction queue; but, in general, the currently queued instructions have many indeterminate results dependencies in any given cycle).
+
+So, then, what is the appropriate manner in which to make this determination of which instruction to dispatch next? The following **heuristics** are available for this purpose:
+  * ***oldest first*** - select whichever instruction has been in the corresponding RS the longest
+    * All else equal, there is a relatively high probability that this instruction will provide a result that is "currently blocking / pending update"
+  * ***most dependencies first*** - select whichever instruction has the most dependencies
+    * This one is sensible from a "maximizing of unblocking" standpoint, however, it is also practically least feasible, as it requires searching through a lot of information (thereby requiring intensive resources, etc.)
+  * ***random*** - select the next instruction randomly
+
+Among these heuristics, ***oldest first*** is the most common/optimal.
+  * Note that if the oldest is *not* sent first, then eventually executable instructions will be depleted (i.e., the remaining ones will increasingly depend more on the oldest instruction[s]). Therefore, it's not a matter of *correctness* insofar as selecting an alternate strategy to oldest first is concerned, but rather that oldest first is an effective strategy *in practice* (in particular with releasing instructions that are "blocking"). In this manner, oldest first balances out the volume of information reviewed (and corresponding resource requirements to achieve this) against critical unblocking of instructions, providing a "compromise" between the other strategies (i.e., random and most dependencies first).
+
+## 10. `Dispatch` Quiz and Answers
 
