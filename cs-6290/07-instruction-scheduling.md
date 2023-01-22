@@ -630,7 +630,7 @@ In cycle `C2`, there is nothing to dispatch and nothing to write, so only issuin
 
 | Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
 |:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-| `LD1` | `C1` | `L.D` | `(N/A)` | `134` | `(N/A)`|`(N/A)` | `Yes (C4)` |
+| `LD1` | `C2` | `L.D` | `(N/A)` | `134` | `(N/A)`|`(N/A)` | `Yes (C2-C4)` |
 | `LD2` | `C2` | `L.D` | `(N/A)` | `245` (`200 + 45`) | `(N/A)`|`(N/A)` | `No` |
 | `AD1` | | | | | | | |
 | `AD2` | | | | | | | |
@@ -655,7 +655,142 @@ Furthermore, note that instruction `I1` is dispatched in cycle `C2`, noted above
 
 ### 24. Cycles 3-4
 
+<center>
+<img src="./assets/07-049.png" width="650">
+</center>
 
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | | |
+| `I4` | `SUB.D F8, F2, F6` | | | |
+| `I5` | `DIV.D F10, F0, F6` | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | |
+
+In cycle `C3`, instruction `I3` is issued. This is noted accordingly in the table shown above.
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | `C3` | `L.D` | `(N/A)` | `134` | `(N/A)`|`(N/A)` | `Yes (C2-C4)` |
+| `LD2` | `C3` | `L.D` | `(N/A)` | `245` | `(N/A)`|`(N/A)` | `No` |
+| `AD1` | | | | | | | |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | `C3` | `MUL.D` | `(waiting)` | `2.5` | `LD2` |`(N/A)` | `No` |
+| `ML2` | | | | | | | |
+
+Since there is a correspondingly empty reservation station, instruction `I3` can be placed accordingly into `ML1`, as in the table shown above. Furthermore, the operand `F4` is read directly from REGS. However, the other operand (`F2`) is waiting on `LD2`.
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | `ML1` |
+| `F2` | `LD2` |
+| `F4` | |
+| `F6` | `LD1` |
+| `F8` | |
+| `F10` | |
+
+Furthermore, the remaining operand `F0` is placed into the RAT (via corresponding RS `ML1`), as in the table shown above.
+
+In cycle `C3`, instruction `I1` (via corresponding RS `LD1`) is still executing; in this case, can instruction `I2` (via corresponding RS `LD2`) begin execution?
+  * If the load/store unit were pipelined, then this *would* be possible.
+  * Conversely, without such a pipelined load/store unit, then this is *not* possible. With this assumption holding (as is intended for this particular example), `LD2` wil have to wait until cycle `C4` to begin executing the instruction, once the previous instruction `I1` (via `LD1`) has completed execution.
+
+Furthermore, note that nothing is broadcasting yet in cycle `C3`.
+
+<center>
+<img src="./assets/07-050.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | |
+| `I2` | `L.D F2, 45(R3)` | `C2` | | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | | |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | | |
+| `I5` | `DIV.D F10, F0, F6` | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | |
+
+In cycle `C4`, instruction `I4` is issued. This is noted accordingly in the table shown above.
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | `C4` | `L.D` | `(N/A)` | `134` | `(N/A)`|`(N/A)` | `Yes (C2-C4)` |
+| `LD2` | `C4` | `L.D` | `(N/A)` | `245` | `(N/A)`|`(N/A)` | `No` |
+| `AD1` | `C4` | `SUB.D` | `(waiting)` | `(waiting)` | `LD2` | `LD1` | `No` |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | `C4` | `MUL.D` | `(waiting)` | `2.5` | `LD2` |`(N/A)` | `No` |
+| `ML2` | | | | | | | |
+
+Since there is a correspondingly empty reservation station, instruction `I3` can be placed accordingly into `ML1`, as in the table shown above. Furthermore, both operands are waiting on RSes (i.e., `LD2` and `LD1`).
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | `ML1` |
+| `F2` | `LD2` |
+| `F4` | |
+| `F6` | `LD1` |
+| `F8` | `AD1` |
+| `F10` | |
+
+Furthermore, the remaining operand `F8` is placed into the RAT (via corresponding RS `AD1`), as in the table shown above.
+
+This now covers analysis of issuing in cycle `C4`. Now, consider analysis of dispatching in cycle `C4`, as follows.
+
+<center>
+<img src="./assets/07-051.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | `C1` | `C2` | `C4` |
+| `I2` | `L.D F2, 45(R3)` | `C2` | `C4` | |
+| `I3` | `MUL.D F0, F2, F4` | `C3` | | |
+| `I4` | `SUB.D F8, F2, F6` | `C4` | | |
+| `I5` | `DIV.D F10, F0, F6` | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | |
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | `C4` | `L.D` | `(N/A)` | `134` | `(N/A)`|`(N/A)` | `Yes (C2-C4)` |
+| `LD2` | `C4` | `L.D` | `(N/A)` | `245` | `(N/A)`|`(N/A)` | `Yes (C4-C6)` |
+| `AD1` | `C4` | `SUB.D` | `(waiting)` | `(waiting)` | `LD2` | `LD1` | `No` |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | `C4` | `MUL.D` | `(waiting)` | `2.5` | `LD2` |`(N/A)` | `No` |
+| `ML2` | | | | | | | |
+
+In cycles `C2` and `C3`, instruction `I1` (via RS `LD1`) has been executing, and is now ready to write result in cycle `C4` (and correspondingly instruction `I2` via RS `LD2` is ready to dispatch and begin executing), as indicated in the tables shown above.
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | `C4` | `L.D` | `(N/A)` | `245` | `(N/A)`|`(N/A)` | `Yes (C4-C6)` |
+| `AD1` | `C4` | `SUB.D` | `(waiting)` | `7.1` | `LD2` | `(N/A)` | `No` |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | `C4` | `MUL.D` | `(waiting)` | `2.5` | `LD2` |`(N/A)` | `No` |
+| `ML2` | | | | | | | |
+
+On write of the result of instruction `I1`, the result (`7.1`) is broadcasted and captured/latched (i.e., via waited-on RS `LD1`), as in the table shown above. Furthermore, RS `LD1` is now available.
+  * ***N.B.*** For demonstration purposes, an "available" RS here corresponds to a blank row/entry, however, in practice, this would be recorded in hardware via a single "valid" bit entry.
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | `ML1` |
+| `F2` | `LD2` |
+| `F4` | |
+| `F6` | |
+| `F8` | `AD1` |
+| `F10` | |
+
+Additionally, the RAT is updated as shown above. Consequently, value `F6` is now read directly from REGS.
+
+To recap, in cycle `C4`:
+  * Instruction `I4` is issued
+  * Instruction `I1` is dispatched and written back
 
 ### 25. Cycles 5-6
 
