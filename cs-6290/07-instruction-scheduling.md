@@ -489,6 +489,14 @@ Recall (cf. Section 18) that `RS0` will free its reservation station and is in p
 <img src="./assets/07-044A.png" width="650">
 </center>
 
+Which of the following is ***not*** true regarding Tomasulo's algorithm?
+  * It issues instructions in program-order
+    * `DOES NOT APPLY` - Instructions arrive via the instruction queue (IQ) in program-order. Consequently, it is not possible to issue instructions out-of-order.
+  * It dispatches instructions in program-order
+    * `APPLIES` - Instructions *can* be dispatched in out-of-program-order, hence why Tomasulo's algorithm is characterized as an out-of-order algorithm (i.e., running on an out-of-order processor).
+  * It writes results in program-order
+    * `APPLIES` - This is not necessarily true. Results can be written in the order in which they are *produced*, which may be out-of-program-order. 
+
 ## 21-27. Tomasulo's Algorithm - Long Example
 
 ### 21. Introduction
