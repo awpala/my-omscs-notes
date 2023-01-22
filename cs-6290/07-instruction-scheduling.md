@@ -371,14 +371,90 @@ Furthermore, note that if the broadcasted tag does not match any of the current 
 
 ## 14-15. Tomasulo's Algorithm - Review
 
-## 16-19. One Cycle Quizzes
+Now that we have seen all of the steps in Tomasulo's algorithm, consider a review of it in its entirety.
 
-### 16. Introduction
+<center>
+<img src="./assets/07-036.png" width="650">
+</center>
+
+The pertinent hardware components in Tomasulo's algorithm are as follows (as in the figure shown above):
+  * **Instruction Queue (IQ)**
+  * **Register Allocation Table (RAT)**
+  * **Register File (REGS)**
+  * **Reservation Station (RS)**
+  * **Execution Unit** (e.g., `ADD`)
+
+Examining the **operations** for *one* instruction, these are as follows:
+  1. `Issue`(denoted by blue in the figure shown above)
+      * The instruction is issued from the IQ to an available RS, with a corresponding lookup performed in the RAT to determine the location of the value(s) for its operand(s).
+      * Once the instruction is issued, its waits for the operands to become ready (i.e., obtain actual values)
+  2. `Capture` (denoted by green in the figure shown above)
+      * While instructions wait in their respective RSes, the instructions are attempting to capture the results broadcasted by other instructions (i.e., from their respective execution units)
+  3. `Dispatch` (denoted by purple in the figure shown above)
+      * Once the last-pending operand has been captured, the instruction is dispatched, i.e., sent to the execution unit for execution.
+  4. `Write Result` (aka `Broadcast`) (denoted by red in the figure shown above)
+    * Once the instruction completes execution, it writes its result, i.e., this result is broadcasted and fed back to other instructions in their respective RSes which are pending capture of this result, as well as making corresponding updates to the REGS and RAT. Writing to the RAT allows (i.e., clearing the entry there) allows future instructions to get the current value from the REGS directly, rather than waiting for the blocking instruction to execute.
+
+It is ***important*** to note while all of these operations occur sequentially for any given *instruction*, in any given *cycle*, some instruction will be in any one of these operations at any given time (i.e., the processor is generally performing *all* of these operations simultaneously at any given time). In this manner, the broadcasted result is the one that feeds back to the capture for use by subsequent instructions which are pending the result.
+
+Therefore, because all of these operations *can* (and do) occur in every cycle, there are some additional **considerations** to be aware of.
+  * Is it possible to perform an `Issue` of an instruction followed immediately by a `Dispatch` of that instruction in the *same* cycle, if it does not need to `Capture` any other results? → Typically, ***no***.
+    * While issuing the instruction, the RS is being populated for the instruction. In order to dispatch, it is necessary to test the contents of the RS prior to dispatching. Since the data is being written to the RS *during* the issue, and since the RS is not ready yet at that point in the cycle, it is not yet recognized as an instruction that can be dispatched by that point. Effectively, the RS is treated as "empty" in this cycle, and only starting in the *next* cycle is the RS containing the instruction eligible for dispatch.
+    * However, note that it *is* possible to design the processor in such a manner that the instruction is ready for dispatch in the *same* cycle as in which it is issued.
+  * Is it possible to perform a `Capture` (i.e., of the last-pending operand value) in the *same* cycle as the `Dispatch`? → Typically, ***no***.
+    * The RS updates its status from "operands missing" to "operands available" in during the cycle in which the capture is occurring; only in the next cycle does the RS subsequently appear as containing an instruction which can be dispatched.
+    * However, it *is* still possible to capture operands in the *same* cycle as dispatch, however, this requires specialized hardware to accomplish this.
+  * Is it possible to update the RAT entry for *both* `Issue` and `Write Result` (aka `Broadcast`) in the *same* cycle? → ***yes***.
+    * An instruction that is issued may need to update the RAT, in order to change the entry belonging to its destination operand. Meanwhile, the instruction that is broadcasting also needs to update the RAT entry corresponding to its destination operand. Therefore, if the instruction being issued and the instruction writing its result *both* have the *same* destination-register entry in the RAT, then the RAT entry must be effectively "updated twice"; this *can* indeed be done. Rather than writing the entry once and then writing it again, it must be ensured that the instruction that issuing ends up being the one whose value is ultimately retained in the RAT; this is because the broadcast instruction is pointing other RSes to the read the corresponding register in the REGS, but since the issuing instruction is later-occurring in the program-order, the latter instructs the RSes to examine *its* own RS for the result. Because the (downstream) instructions that read the RAT are the ones that issue even later, then they need to see the *latest* value of the register upon their issuing, i.e., that which is produced by the currently issuing instruction (rather than the broadcasting instruction). Therefore, there is no ambiguity, and the issuing instruction can simply be used to update the RAT entry accordingly.
+
+## 16-19. One-Cycle Quizzes
 
 ### 17. Part 1 Question and Answers
 
+<center>
+<img src="./assets/07-038A.png" width="650">
+</center>
+
 ### 18. Part 2 Question and Answers
+
+<center>
+<img src="./assets/07-040A.png" width="650">
+</center>
 
 ### 19. Part 3 Question and Answers
 
+<center>
+<img src="./assets/07-042A.png" width="650">
+</center>
+
 ## 20. Tomasulo's Algorithm Quiz and Answers
+
+<center>
+<img src="./assets/07-044A.png" width="650">
+</center>
+
+## 21-27. Tomasulo's Algorithm - Long Example
+
+### 21. Introduction
+
+### 22. Load and Store Instructions
+
+### 23. Cycles 1-2
+
+### 24. Cycles 3-4
+
+### 25. Cycles 5-6
+
+### 26. Cycles 7-9
+
+### 27. Cycles 10-end
+
+## 28. Tomasulo's Algorithm - Timing Example
+
+## 29-30. Tomasulo's Algorithm Timing Quizzes
+
+### 29. Part 1 Quiz and Answers
+
+### 30. Part 2 Quiz and Answers
+
+## 31. Lesson Outro
