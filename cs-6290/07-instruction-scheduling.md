@@ -187,7 +187,6 @@ Correspondingly, instruction `I2` is removed from the issue queue, and the RAT i
 
 Next, instruction `I3` (`F4 = F1 - F2`) is taken from the IQ (as in the figure shown above). In this case, neither operand values can be read directly from the corresponding RF entries, but rather both are ***waiting*** on the RAT (i.e., `F1` via `RS4`, and `F2` via `RS1`). Furthermore, the RAT is updated accordingly (i.e., `F4` via `RS2`). 
 
-
 <center>
 <img src="./assets/07-019.png" width="650">
 </center>
@@ -201,3 +200,53 @@ However, note that here there is a ***collision*** with respect to RAT entry for
 ***N.B.*** In a real processor, *one* instruction is issued per cycle, with these inter-dependent instructions having been executed (i.e., providing corresponding results) by the time the next instruction is removed from the IQ.
 
 ## 7. `Issue` Quiz and Answers
+
+<center>
+<img src="./assets/07-020Q.png" width="650">
+</center>
+
+Consider the operation `Issue` as in the figure shown above. Two instructions are already present in the register stations (RS) immediately prior to execution of the next instruction in the instruction queue (IQ).
+
+From here, perform the `Issue` operation on the next two instructions, or otherwise describe what occurs if the instruction cannot be issued. (For simplicity, do not consider execution of in-progress instructions in the other RSes, but rather simply issue with respect to the next-in-line instructions.)
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/07-021A.png" width="650">
+</center>
+
+The next instruction to be issued from the IQ is instruction `I1` (`F4 = F1 / F2`), which is issued to `RS5`, with corresponding register alias table (RAT) entry being set to `RS5`. Furthermore, note that both operands of `I1` depend on the in-progress instructions existing prior to this cycle (i.e., `F1` and `F2` via `RS4` and `RS1`, respectively).
+
+The next instruction in the IQ after instruction `I1` is instruction `I2` (`F4 = F3 × F4`). This instruction *cannot* be issued in the current cycle, due to the RSes for the execution unit `MUL` being currently *full*. Therefore, the operation issue is currently stalled, pending availability of the next-available RS.
+
+## 8-9. Tomasulo's Algorithm - Operation `Dispatch`
+
+### 8. Introduction
+
+Now, consider the operation `Dispatch`.
+
+<center>
+<img src="./assets/07-022.png" width="650">
+</center>
+
+Consider the configuration as in the figure shown above. In a given cycle, the operation dispatch must consider the **latching** of operations/results that are produced, as well as  determine which instructions are ready to execute; in a given cycle, both of these determinations occur *simultaneously*.
+
+In the configuration shown, there is a new cycle beginning; by the end of this cycle, the next instruction to execute will be determined. At the beginning of the cycle, none of the instructions are ready for execution (i.e., there is nothing to dispatch yet).
+
+<center>
+<img src="./assets/07-023.png" width="650">
+</center>
+
+On initial broadcast of the result from register station `RS1` post-execution (i.e., in an upstream cycle), its result is received in the corresponding RSes, including `RS1` itself (which is now available following the aforementioned upstream-cycle execution using its results).
+
+<center>
+<img src="./assets/07-024.png" width="650">
+</center>
+
+Next, post-broadcast, the tag `RS1` is matched into respective operands waiting on its result. In this case, the corresponding value (`-0.29`) is replaced in the operands of `RS2`, `RS3`, and `RS4`, all of which are pending this updated result.
+
+At this point, it is determined which RSes have sufficient information (i.e., fully populated operand values) to proceed with execution. In this case, `RS2` is still pending an operand value (`RS4`), whereas both `RS3` and `RS4` have sufficient information available now to execute. Correspondingly, the latter are sent to their respective execution units (assuming both can execute on this particular processor at this point). Upon completion of the execution, the results will be broadcasted, and this process repeats accordingly.
+
+### 9. More than One Instruction Is Ready
+
+
