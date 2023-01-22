@@ -501,6 +501,59 @@ Which of the following is ***not*** true regarding Tomasulo's algorithm?
 
 ### 21. Introduction
 
+Now that we have seen how Tomasulo's algorithm works and the corresponding structures, we will now consider a longer example spanning multiple cycles (which is more representative of long-form problems, exam questions, etc.).
+
+<center>
+<img src="./assets/07-045.png" width="650">
+</center>
+
+For convenience, the tables in the figure shown above are provided to streamline the analysis.
+
+The processor is characterized as follows:
+  * The unit `L` (load) requires `2` cycles to execute
+  * The unit `ADD` (add) requires `2` cycles to execute
+  * The unit `MUL` (multiply) requires `10` cycles to execute
+  * The unit `DIV` (divide) requires `40` cycles to execute
+
+Furthermore, the initial content of the register file (REGS) is as follows:
+  * Register `R2` contains `100`
+  * Register `R3` contains `200`
+  * Register `F4` contains `2.5`
+
+The instructions in the instruction queue (IQ) are as follows (ordered in program-order starting with instruction `I1`):
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `L.D F6, 34(R2)` | | | |
+| `I2` | `L.D F2, 45(R3)` | | | |
+| `I3` | `MUL.D F0, F2, F4` | | | |
+| `I4` | `SUB.D F8, F2, F6` | | | |
+| `I5` | `DIV.D F10, F0, F6` | | | |
+| `I6` | `ADD.D F6, F8, F2` | | | |
+
+The register allocation table (RAT) contains the register statuses as follows (where empty entry implies pointing to the corresponding entry in REGS):
+
+| Register | Value |
+|:--:|:--:|
+| `F0` | |
+| `F2` | |
+| `F4` | |
+| `F6` | |
+| `F8` | |
+| `F10` | |
+
+Lastly, the reservation stations (RSes) are as follows:
+
+| Reservation Station Label | RS is busy/occupied? | Operation | Operand `Vj` | Operand `Vk` | Waited-for value `Qj` | Waited-for value `Qk` | Instruction is dispatched? |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `LD1` | | | | | | | |
+| `LD2` | | | | | | | |
+| `AD1` | | | | | | | |
+| `AD2` | | | | | | | |
+| `AD3` | | | | | | | |
+| `ML1` | | | | | | | |
+| `ML2` | | | | | | | |
+
 ### 22. Load and Store Instructions
 
 ### 23. Cycles 1-2
