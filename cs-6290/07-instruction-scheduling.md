@@ -1229,10 +1229,158 @@ Lastly, with respect to instruction `I6` (as in the table shown above), by inspe
 
 As a final "sanity check," to ensure proper ordering of instructions, examine the "Cycle of `Write Result`" to ensure there are no inconsistencies and/or nonsensical entries (e.g., two instructions attempting to write simultaneously in the *same* cycle). Here, no such inconsistencies result, so the proposed tentative values can be finalized. (Conversely, if such collisions had occurred, it would be necessary to reevaluate the cycles, e.g., postponing certain cycles to allow proper write results ordering.)
 
-## 29-30. Tomasulo's Algorithm Timing Quizzes
+## 29-31. Tomasulo's Algorithm Timing Quizzes
 
-### 29. Part 1 Quiz and Answers
+### 29. Introduction
 
-### 30. Part 2 Quiz and Answers
+<center>
+<img src="./assets/07-063Q.png" width="650">
+</center>
 
-## 31. Lesson Outro
+Consider the processor characterized as in the figure shown above.
+
+The processor has the following latencies for the corresponding operations:
+  * Instruction `LD` requires `1` cycle
+  * Instruction `ADD` requires `1` cycle
+  * Instruction `MUL` requires `5` cycles
+
+The processor has the following reservation stations (RS) available:
+  * `1` RS available for `LD`
+  * `2` RSes available for `ADD`
+  * `2` RSes available for `MUL`
+
+The processor has the following restrictions:
+  * *Cannot* perform operations `Issue` and `Dispatch` in the *same* cycle
+  * *Cannot* perform operations `Capture` and `Dispatch` in the *same* cycle
+  * *Cannot* simultaneously free an RS and re-allocate it (i.e., for a subsequent instruction) in the *same* cycle (i.e., the RS is only available to be issued to starting in the *next* cycle)
+
+The corresponding program running on this processor is the following:
+```mips
+LD  F6, 0(R2)
+MUL F2, F0, R1
+ADD F6, F2, F6
+ADD F6, F2, F6
+ADD F1, F1, F1
+ADD F1, F3, F4
+```
+
+The quiz which analyzes this processor via Tomasulo's algorithm is split into two parts, as covered in the following subsections.
+
+### 30. Part 1 Quiz and Answers
+
+<center>
+<img src="./assets/07-064A.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | | |
+| `I2` | `MUL F2, F0, R1` | `C2` | | |
+| `I3` | `ADD F6, F2, F6` | `C3` | | |
+| `I4` | `ADD F6, F2, F6` | `C4` | | |
+| `I5` | `ADD F1, F1, F1` | | | |
+| `I6` | `ADD F1, F3, F4` | | | |
+
+Given the system shown previously (cf. Section 29), perform the corresponding time analysis for instructions `I1` through `I4`. The initial starting point (i.e., issued instructions) is given in the table shown above.
+
+***Answer and Explanation***:
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+| `I4` | `ADD F6, F2, F6` | `C4` | `C11` | `C12` |
+| `I5` | `ADD F1, F1, F1` | | | |
+| `I6` | `ADD F1, F3, F4` | | | |
+
+The final result is as per the table shown above.
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+
+With respect to instruction `I1` (as in the table shown above), there are no dependencies, however, it cannot dispatch in the same cycle as its issue (i.e., cycle `C1`), therefore, dispatch can only occur as soon as cycle `C2`. Furthermore, a tentative write result can occur in cycle `C3` for this operation (which requires `1` cycles to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+
+With respect to instruction `I2` (as in the table shown above), there are no dependencies, however, it cannot dispatch in the same cycle as its issue (i.e., cycle `C2`), therefore, dispatch can only occur as soon as cycle `C3`. Furthermore, a tentative write result can occur in cycle `C3` for this operation (which requires `5` cycles to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+
+With respect to instruction `I3` (as in the table shown above), it cannot dispatch in the same cycle as its issue (i.e., cycle `C3`); furthermore, it has dependencies with respect to its operands `F2` (via `I2`) and `F6` (via `I1`), which further precludes dispatch. Since the earliest-available result is in cycle `C8` (via `I2`), and additionally per the hardware restriction of not having simultaneous capture and dispatch in the same cycle, the earliest-possible dispatch for instruction `I3` is cycle `C9`. Furthermore, a tentative write result can occur in cycle `C10` for this operation (which requires `1` cycle to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+| `I4` | `ADD F6, F2, F6` | `C4` | `C11` | `C12` |
+
+Finally, with respect to instruction `I4` (as in the table shown above), it cannot dispatch in the same cycle as its issue (i.e., cycle `C3`); furthermore, it has dependencies with respect to its operands `F2` (via `I2`) and `F6` (via `I3`), which further precludes dispatch. Since the earliest-available result is in cycle `C10` (via `I3`), and additionally per the hardware restriction of not having simultaneous capture and dispatch in the same cycle, the earliest-possible dispatch for instruction `I3` is cycle `C11`. Furthermore, a tentative write result can occur in cycle `C12` for this operation (which requires `1` cycle to execute).
+
+### 31. Part 2 Quiz and Answers
+
+<center>
+<img src="./assets/07-066A.png" width="650">
+</center>
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+| `I4` | `ADD F6, F2, F6` | `C4` | `C11` | `C12` |
+| `I5` | `ADD F1, F1, F1` | | | |
+| `I6` | `ADD F1, F3, F4` | | | |
+
+Continuing with the same system (cf. Section 30), analysis through cycle `C4` is as per the table shown above.
+
+Complete the remaining analysis with respect to pending instructions `I5` and `I6`.
+
+***Answer and Explanation***:
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+| `I4` | `ADD F6, F2, F6` | `C4` | `C11` | `C12` |
+| `I5` | `ADD F1, F1, F1` | `C11` | `C12` | `C13` |
+| `I6` | `ADD F1, F3, F4` | `C13` | `C14` | `C15` |
+
+The final result is as per the table shown above.
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+| `I4` | `ADD F6, F2, F6` | `C4` | `C11` | `C12` |
+| `I5` | `ADD F1, F1, F1` | `C11` | `C12` | `C13` |
+
+With respect to instruction `I5` (as in the table shown above), it cannot issue yet in cycle `C5`, because no reservation station is available yet at this point (i.e., execution of instructions `I3` and `I4` is ongoing at this point); furthermore, a reservation station cannot be reallocated simultaneously as the previously-executing instruction is dispatched from it, so the earliest-possible issue for instruction `I5` is cycle `C11` (via freed RS of instruction `I3`, which frees in cycle `C10`). There are no dependencies, however, it cannot dispatch in the same cycle as its issue (i.e., cycle `C11`), therefore, dispatch can only occur as soon as cycle `C12`. Furthermore, a tentative write result can occur in cycle `C13` for this operation (which requires `1` cycle to execute).
+
+| Instruction Label | Instruction | Cycle of `Issue` | Cycle of `Execute` | Cycle of `Write Result` |
+|:--:|:--:|:--:|:--:|:--:|
+| `I1` | `LD  F6, 0(R2)` | `C1` | `C2` | `C3` |
+| `I2` | `MUL F2, F0, R1` | `C2` | `C3` | `C8` |
+| `I3` | `ADD F6, F2, F6` | `C3` | `C9` | `C10` |
+| `I4` | `ADD F6, F2, F6` | `C4` | `C11` | `C12` |
+| `I5` | `ADD F1, F1, F1` | `C11` | `C12` | `C13` |
+| `I6` | `ADD F1, F3, F4` | `C13` | `C14` | `C15` |
+
+Finally, with respect to instruction `I6` (as in the table shown above), it cannot issue yet in cycle `C12`, because no reservation station is available yet at this point (i.e., execution of instructions `I4` and `I5` is ongoing at this point); furthermore, a reservation station cannot be reallocated simultaneously as the previously-executing instruction is dispatched from it, so the earliest-possible issue for instruction `I6` is cycle `C13` (via freed RS of instruction `I4`, which frees in cycle `C12`). There are no dependencies, however, it cannot dispatch in the same cycle as its issue (i.e., cycle `C13`), therefore, dispatch can only occur as soon as cycle `C14`. Furthermore, a tentative write result can occur in cycle `C15` for this operation (which requires `1` cycle to execute).
+
+## 32. Lesson Outro
+
+This lesson examined how the processor can rename and reorder instructions in order to work around data dependencies.
+
+The next lesson will describe what occurs when something unexpected must be performed (e.g., handling divide by zero, memory protection exception, etc.).
