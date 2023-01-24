@@ -742,7 +742,7 @@ As we have seen, moving from a 1-bit predictor to a 2-bit predictor improves pre
 
 Therefore, a natural question arises: Would adding more bits (e.g., 3-bit predictor, 4-bit predictor, etc.) further improve prediction performance?
   * The ***drawback*** of using more bits is cost, which increases in proportion to the number of bits used for prediction
-  * * The ***benefit*** of using more bits is that when anomalous outcomes occur in sequential "streaks," this increases hysteresis (i.e., remaining longer in the "original" behavior prediction before transitioning to the "other" behavior) which may be more appropriate for reducing penalty incurrence
+  * The ***benefit*** of using more bits is that when anomalous outcomes occur in sequential "streaks," this increases hysteresis (i.e., remaining longer in the "original" behavior prediction before transitioning to the "other" behavior) which may be more appropriate for reducing penalty incurrence
 
 However, in practice, it is not often that such "anomalous streaks" occur in a program. Therefore, additional bits are generally of marginal benefit beyond 2-bit predictors (maybe 3-bit predictors may be useful, however, 4-bit predictors and beyond are typically impractical).
 
