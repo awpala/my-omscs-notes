@@ -153,4 +153,34 @@ Therefore, on instruction execuction via the execution unit `ADD`, the instructi
 
 ## 7. Free Reservation Stations Quiz and Answers
 
+<center>
+<img src="./assets/08-009A.png" width="650">
+</center>
+
+We have seen that the reorder buffer (ROB) changes when a reservation station (RS) is made available. Now, suppose an instruction *cannot* issue because there is no available RS for it. In which of the following configurations is the more likely? (Select one.)
+  * Configuration 1 - `CORRECT`
+    * No ROB available (but otherwise following Tomasulo's algorithm)
+    * Two `ADD` and two `MUL` RSes available
+  * Configuration 2
+    * Has ROB available
+    * Two `ADD` and two `MUL` RSes available
+
+***Explanation***:
+
+If the instruction cannot issue due to no available RSes, this means that all of the RSes are currently busy. Therefore, with a processor *lacking* a ROB, the RSes are retained from the time of instruction issue until the instruction broadcasts its result. Consequently, issuing of an instruction once the RSes are busy will necessitate waiting until the next instruction broadcast the result.
+
+Conversely, in a ROB-based processor, all else equal (i.e., otherwise with the same number and types of RSes available), the RSes are occupied simultaneously with instruction issue, but then correspondingly freed simultaneously with dispatch of the instructions for execution (i.e., the RSes are freed relatively sooner compared to the non-ROB-based processor, all else equal). This in turn allows the next-available instruction to occupy the next-available RS.
+
 ## 8. ReOrder Buffer (ROB): Part 3
+
+<center>
+<img src="./assets/08-010.png" width="650">
+</center>
+
+<center>
+<img src="./assets/08-011.png" width="650">
+</center>
+
+<center>
+<img src="./assets/08-012.png" width="650">
+</center>
