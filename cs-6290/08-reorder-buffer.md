@@ -42,3 +42,36 @@ Therefore, this ***issue*** of handling exceptions precisely is a fundamental fl
 
 ## 3. Branch Misprediction in Out-of-Order Execution
 
+Another ***issue*** with Tomasulo's algorithm is the occurrence of **branch mispredictions**. How, then, can recovery from branch predictions be achieved?
+
+<center>
+<img src="./assets/08-002.png" width="650">
+</center>
+
+```mips
+  DIV R1, R3, R4    # I1 - DIV requires 40 cycle
+  BEQ R1, R2, Label # I2
+  ADD R3, R4, R5    # I3
+  ⋮
+```
+
+Consider the program shown above. Here, the branch `BEQ ...` in instruction `I2` *can* be predicted, however, it takes a long time (i.e., `40` cycles) to detect a misprediction. In the meantime, instruction `I3` is fetched as usual (i.e., the branch is taken), and intruction `I3` subsequently completes execution; in this case, register `R3`'s result is already written.
+
+However, once a misprediction of the branch is detected (i.e., `40` to` 50` cycles later), the expected behavior of the program is such as if the instruction `I3` were never executed in the first place, but rather commence with fetching instructions beginning from `Label` (i.e., `DIV`). But that becomes impossible, because `R3` has already been updated by that point, and therefore instruction `I1` is using the unintended/incorrect value for its operand `R3`.
+
+Observe that the issue described here is reminiscent of that described previously for exceptions (cf. Section 2): An instruction can complete execution and write its result to a register *before* preceding (program-order) instructions have been fully ***verified*** (and in the case of branching, before it is even determined whether or not the instruction should have actually been executed in the first place).
+
+```mips
+  DIV R1, R3, R4    # I1 - DIV requires 40 cycle
+  BEQ R1, R2, Label # I2
+  ADD R3, R4, R5    # I3
+  ⋮
+  DIV ...
+```
+
+A final issue arises due to so-called **phantom exceptions**. Consider the same program as shown above, with an additional downstream instruction `DIV ...` (still within the same branch). Assume there is a misprediction resulting in instruction `I3` *not* being executed (i.e., branch *not* taken). An issue arises if the downstream instruction `DIV ...` generates an exception, the the exception is indeed triggered irrespectively of the fact that it was not supposed to be executed (i.e., due to this branch not being taken). Therefore, this unnecessary exception-handling overhead will be incurred, without realizing it before its too late to detect in the normal program execution.
+
+To reiterate, a ***key concern*** with exception handling is that there must be certainty that an exception is in fact necessary prior to executing it.
+
+## 4. Correct Out-of-Order Execution
+
