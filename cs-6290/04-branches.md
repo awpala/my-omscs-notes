@@ -961,7 +961,7 @@ The operation of such a 2-bit counter is as shown in the figure above.
 
 ***N.B.*** In principle, the combination of PC index & PHT entry may *not* be unique with respect to the BHT entry, thereby yielding a collision/conflict in the BHT. However, this is typically not a practical issue, provided the size of the BHT is large relative to the PHT.
 
-For example, with a PC index comprised of `11` bits (with corresponding `11`-bit entries in the PHT) and a BHT of size `2`<sup>`11`</sup> entries, this requires an overall cost of `(2`<sup>`11`</sup>` × 11 history entries) + (2`<sup>`11`</sup>` × 2 two-bit counters) = 16 KBi`, which is much lower than the cost using an equivalent PHT of size `2`<sup>`11`</sup> entries (cf. *`O`*`(MBi)` to *`O`*`(GBi)`) instead of `11`-bit sized entries.
+For example, with a PC index comprised of `11` bits (with corresponding `11`-bit entries in the PHT) and a BHT of size `2`<sup>`11`</sup> entries, this requires an overall cost of `(2`<sup>`11`</sup>` × 11 history entries) + (2`<sup>`11`</sup>` × 2 two-bit counters) = 26 KBi`, which is much lower than the cost using an equivalent PHT of size `2`<sup>`11`</sup> entries (cf. *`O`*`(MBi)` to *`O`*`(GBi)`) instead of `11`-bit sized entries.
   * ***N.B.*** Here, the unit `Bi` denotes `2`<sup>`10`</sup> based metric prefixes, e.g., `KBi = 2`<sup>`10`</sup>, `MBi = 2`<sup>`20`</sup>, etc. (cf. `KB = 10`<sup>`3`</sup>, `MB = 10`<sup>`6`</sup>, etc.)
 
 <center>
