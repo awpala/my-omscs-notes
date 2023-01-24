@@ -867,7 +867,7 @@ NT T NT  T   NT  T   ...
 
 In this case, *two* of its 2-bit counters are "wasted"/unused (i.e., `C0` and `C3`). 
 
-Therefore, in general, an ***n*-bit history predictor** will predict all patterns of length `≤ `*`n`*` + 1` with 100% accuracy. However, the corresponding cost is *`n`*` + 2×2`<sup>*`n`*</sup> total bits per BHT entry. Consequently, this will typically generate a lot of waste (i.e., unused bits among the 2-bit counters) in practice.
+Therefore, in general, an ***n*-bit history predictor** will predict all patterns of length `≤ `*`n`*`+ 1` with 100% accuracy. However, the corresponding cost is *`n`*`+ 2×2`<sup>*`n`*</sup> total bits per BHT entry. Consequently, this will typically generate a lot of waste (i.e., unused bits among the 2-bit counters) in practice.
 
 This leads to another design challenge: How do we predict such *n*-length patterns (which do occur in practice, e.g., loops) while not incurring such a large cost (and corresponding waste) to do so?
 
