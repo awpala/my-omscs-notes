@@ -96,7 +96,27 @@ Therefore, rather than simply writing to registers on an ad hoc basis immediatel
 
 ### 5. Part 1
 
+Now that we know that the reorder buffer (ROB) is *needed* in order to hold instructions until they are ready to execute in program-order, consider now how the ROB itself is structured.
+
+<center>
+<img src="./assets/08-004.png" width="450">
+</center>
+
+The ROB is a table of entries, as in the figure shown above. Each entry records at least three fields:
+  * `VAL` → the value produced by the instruction (i.e., not the value written to the actual register, but rather upon completed execution of the instruction, the ROB's `VAL` is the target of the corresponding broadcast operation)
+  * `DONE` → a bit to record whether or not the value `VAL` is valid
+    * The ROB entry for the instruction is received *before* the result is actually written to the target register, therefore this must be tracked accordingly
+  * `REG` → by the end of execution, the result itself must be written to an actual target register, which is recorded in this field correspondingly
+
+The ROB in the figure shown above can hold up to eight instructions. Furthermore, the instructions are maintained in the ROB in ***program-order***. Correspondingly, two pointers are required:
+  * `Issue` → indicates where the next instruction will be placed upon the next-occurring issue operation
+  * `Commit` → what is the next-executable instruction in program-order 
+
+Therefore, in the ROB in the figure shown above, the valid (i.e., in program-order) instructions are `I1` (oldest) through `I5` (newest), while newer instructions are added to `I6` and `I7`.
+
 ### 6. Part 2
+
+
 
 ## 7. Free Reservation Stations Quiz and Answers
 
