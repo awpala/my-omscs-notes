@@ -1005,7 +1005,7 @@ if (shape == "square") { // branch 1
 
 // do something
 
-if (shape != "Square") { // branch 2
+if (shape != "square") { // branch 2
   // do something
 }
 ```
