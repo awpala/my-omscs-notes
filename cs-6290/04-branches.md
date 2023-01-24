@@ -441,8 +441,8 @@ How many times do we access the BHT for *each* instruction?
 |:---:|:---:|:---:|
 | `0xC000` | `MOV R2, 100` | `1` |
 | `0xC004` | `MOV R1, 0` | `1` |
-| `0xC008` | (`Loop:`) `BEQ R1, R2, Done` | `1` |
-| `0xC00C` | `ADD R4, R3, R1` | `101` |
+| `0xC008` | (`Loop:`) `BEQ R1, R2, Done` | `101` |
+| `0xC00C` | `ADD R4, R3, R1` | `100` |
 | `0xC010` | `LW R4, 0(R4)` | `100` |
 | `0xC014` | `ADD R5, R5, R4` | `100` |
 | `0xC018` | `ADD R1, R1, 1` | `100` |
