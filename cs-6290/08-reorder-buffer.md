@@ -75,3 +75,29 @@ To reiterate, a ***key concern*** with exception handling is that there must be 
 
 ## 4. Correct Out-of-Order Execution
 
+<center>
+<img src="./assets/08-003.png" width="650">
+</center>
+
+Now, consider how **out-of-order execution** *should* be performed appropriately.
+  * The program itself should be executed ***out-of-order*** (i.e., in intended program-order).
+  * Results should be broadcasted ***out-of-order***.
+  * Values should be deposited to registers ***in-order***.
+    * This is ***necessary***, because if register values are deposited out-of-order, then if it is subsequently discovered that one of the earlier instructions should *not* have been performed (e.g., it generates an exception, it has a branch misprediction, etc.), then this instruction has already deposited the value to the register previously when it should not have; therefore, by depositing in-order, this situation is prevented. By implication, by the time of depositing the value, all previous instructions have already finished successfully and there is no disruption to the program's semantics.
+    * In Tomasulo's algorithm, values are *not* deposited to registers in-order, and therefore the aforementioned issues arise accordingly.
+
+In order to resolve this issue, a structure called the **reorder buffer (ROB)** is used, characterized as follows:
+  * Even after the instruction is issued, the ROB ***remembers*** the program-order.
+  * The ROB ***retains*** the results of the instructions until they are safe to write to their respective registers.
+
+Therefore, rather than simply writing to registers on an ad hoc basis immediately following production of the results/values, the results first enter the ROB. The ROB in turn is reviewed in-order, with results correspondingly deposited into their respective registers appropriately. Once the result is deposited from the ROB, only then is the instruction's execution completed.
+
+## 5-6. ReOrder Buffer (ROB): Parts 1-2
+
+### 5. Part 1
+
+### 6. Part 2
+
+## 7. Free Reservation Stations Quiz and Answers
+
+## 8. ReOrder Buffer (ROB): Part 3
