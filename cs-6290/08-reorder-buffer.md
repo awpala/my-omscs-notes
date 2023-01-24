@@ -116,7 +116,40 @@ Therefore, in the ROB in the figure shown above, the valid (i.e., in program-ord
 
 ### 6. Part 2
 
+Now that the structure of the reorder buffer (ROB) is more familiar, consider now how its actually ***used***.
 
+<center>
+<img src="./assets/08-005.png" width="650">
+</center>
+
+Consider the configuration as in the figure shown above. There is an instruction `R1 = R2 + R3` currently in the instruction queue (IQ). Here, we will analyze what occurs with this instruction, from its issuing from the IQ up through its eventual commit to the ROB (in such a processor having the ROB available).
+
+On instruction ***issue***:
+  * Retrieve an available reservation station (RS) and place the instruction into it (denoted by green arrow in the figure shown above)
+  * The instruction is placed into the ROB, at the position of the pointer `Issue` (i.e., at index `6`)
+
+<center>
+<img src="./assets/08-006.png" width="650">
+</center>
+
+Upon placement of the instruction into the ROB, the pointer `Issue` is advanced by one position, as in the figure shown above.
+
+Furthermore, as per Tomasulo's algorithm, the register allocation table (RAT) is updated accordingly with the entry for the instruction. However, rather than pointing to the RS itself, the RAT instead records the entry of the ROB `ROB6` (as denoted by purple arrow in the figure shown above).
+
+<center>
+<img src="./assets/08-007.png" width="650">
+</center>
+
+The RS is correspondingly populated with the values of its operand, including the entry `ROB6` via the ROB (as in the figure shown above). Furthermore, the entry `ROB6` records the target register `R1`, and designates the bit `Done` as `0` (i.e., instruction is still pending execution).
+
+Now, the instruction `ADD` waits on its operands (i.e,. pending capture/latch, for subsequent dispatch to the execution unit `ADD`), as previously demonstrated with respect to Tomasulo's algorithm (cf. Lesson 7).
+
+Eventually, once the instruction `ADD` is able to ***dispatch***, this occurs as follows:
+  * Once the operands are ready, send to the execution unit (i.e., `ADD`)
+  * Furthermore, free the RS upon dispatch
+    * ***N.B.*** Previously, with Tomasulo's algorithm (i.e., without ROB), it was necessary to *wait* for the RS to release all the way until the instruction result is broadcasted (i.e., due to the RS serving as the tag for the result); however, this is obviated by the ROB entry itself, which instead provides this same feature, without otherwise encumbering the RS. In this manner, the RS is relieved of this additional tagging responsibility, now only serving in its primary role of capturing in-progress operands and determining when/which instructions to dispatch at the appropriate times.
+
+Therefore, on instruction execuction via the execution unit `ADD`, the instruction `ADD` carries the tag `ROB6` for subsequent broadcast.
 
 ## 7. Free Reservation Stations Quiz and Answers
 
