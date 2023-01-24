@@ -208,7 +208,7 @@ Therefore, in this instance, the if converted version is more optimal with respe
 <img src="./assets/05-012A.png" width="650">
 </center>
 
-Consider the code shown above. The branch designated by the first instruction (`BEQZ R1, Else`) is taken `50%` of the time. Given this information, the if conversion is better when the prediction accuracy is below what (i.e., *specify* a percentage), assuming a `30`-instruction misprediction penalty.
+Consider the code shown above. The branch designated by the first instruction (`BEQZ R1, Else`) is taken `50%` of the time. Given this information, the if conversion is better when the prediction accuracy is below what (i.e., *specify* a percentage), assuming a `30`-instruction misprediction penalty?
   * `95%`
 
 ***Explanation***:
