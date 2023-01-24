@@ -234,7 +234,7 @@ To summarize, in the aforementioned approach involving conditional move instruct
     * If the compiler does not provide this optimization, then the code will be simply left intact (i.e., with a branch present); therefore, this is not a fully backwards-compatible approach, inasmuch as when the conditional move instructions are included in the instruction set architecture (ISA) then the compiler can take advantage of this optimization, but otherwise old code will not benefit from these conditional move instructions.
   * Removes hard-to-predict branches → `useful` for if conversion
     * If such a branch is identified (e.g., via profiling), if conversion can be performed to eliminate such a branch.
-  *  Typically requires the use of more registers than the original, non-converted code → `not strictly necessary` for if conversion
+  * Typically requires the use of more registers than the original, non-converted code → `not strictly necessary` for if conversion
     * The results of *both* paths must be stored.
   * More instructions are executed (i.e., as a result of if conversion)
     * *Both* paths are executed, not just *one* of them. → `useful` for if conversion
