@@ -207,3 +207,26 @@ That concludes the step-by-step examination of the ROB for one instruction. As i
 
 ## 9. Hardware Organization with ROB
 
+<center>
+<img src="./assets/08-013.png" width="650">
+</center>
+
+Consider now what ***hardware structures*** exist within the reorder buffer (ROB) itself, as in the figure shown above.
+  * As before, there is an **instruction queue (IQ)**, from which instructions are dispatched into corresponding **reservation stations (RS)**
+  * As before, there is a **register allocation table (RAT)**, which can point to either a **register file (RF)** or to a renamed/tagged version of the instruction within the RS (i.e., pending corresponding write to the RF)
+
+<center>
+<img src="./assets/08-014.png" width="650">
+</center>
+
+Following Tomasulo'a algorithm from before (cf. Lesson 7), RAT entries *not* pointing to the RF would otherwise point to the corresponding RSes; however, with ROB, there is the new additional structure of the **reorder buffer (ROB)** itself present, as in the figure shown above.
+  * The pointers `HEAD` (where the next instruction that issues is stored) and `TAIL` (the last instruction designated for commit) delimit the range within the ROB corresponding to currently-executing instructions.
+  * Furthermore, the RAT entries which are not currently pointing to the RF are instead correspondingly pointing to the entries in the ROB (as designated by purple arrows in the figure shown above) for the instructions that produce the corresponding values in question.
+
+## 10. ROB Quiz and Answers
+
+<center>
+<img src="./assets/08-016A.png" width="650">
+</center>
+
+
