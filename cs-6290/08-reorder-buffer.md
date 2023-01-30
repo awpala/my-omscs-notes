@@ -177,10 +177,33 @@ Conversely, in a ROB-based processor, all else equal (i.e., otherwise with the s
 <img src="./assets/08-010.png" width="650">
 </center>
 
+Eventually, the execution unit `ADD` produces a result which is subsequently ***broadcasted***, as in the figure shown above. This operation broadcast occurs exactly as described previously in Tomasulo's algorithm (cf. Lesson 7), except that the associated tag (i.e., `(ROB6)`) is that of the reorder buffer (ROB) entry, rather than of the reservation station (RS) (which has already been freed by this point).
+
+Upon broadcasting of the tagged value (i.e., `(ROB6) 15`), it is fed back to the corresponding RSes (which they capture/latch), just as before with Tomasulo's algorithm.
+
+*Without* the ROB, it would also be necessary to capture the result in a register (i.e., via REGS), and correspondingly updating (i.e., writing back to) the register allocation table (RAT) to point to this register.
+
 <center>
 <img src="./assets/08-011.png" width="650">
 </center>
 
+Conversely, with a ROB, there is no such write back operation to REGS at this point yet, but rather the write occurs to the ROB (i.e., with a corresponding update to the DONE bit set to `1`), as in the figure shown above. Furthermore, the RAT retains the value of the ROB entry (i.e., rather than updating the RAT to point to REGS).
+
 <center>
 <img src="./assets/08-012.png" width="650">
 </center>
+
+With the ROB, there is still a pending matter: While the result has been logged and the computation has been completed at this point, it has not yet been deposited into REGS; therefore, this is the last-remaining step, as in the figure shown above.
+
+This additional step comprises the operation `Commit`. Here, all of the previous instructions are first committed, i.e., in each cycle, it is tested whether the next instruction at the pointer `Commit` (e.g., at index `1` of the ROB per the figure shown above) is completed, and if so, the pointer `Commit` is repositioned accordingly (i.e., at index `6`), and determining whether the instruction in question there is `Done` (i.e., it *is* in this case, via the corresponding bit set to `1`).
+
+Upon this determination, the operation `Commit` itself involves taking the stored value (i.e., `15`) and writing it to the corresponding register in REGS (i.e., `R1`). Furthermore, the RAT is correspondingly updated to now reflect the updated entry in REGS (i.e., rather than pointing to the ROB); effectively, the process of updating the RAT is now moved from the operation `Broadcast` to that of `Commit`. Lastly, upon committing the instruction, the pointer `Commit` is updated the corresponding position (i.e., index `7`, as denoted by the purple arrow in the figure shown above).
+
+That concludes the step-by-step examination of the ROB for one instruction. As is readily apparent, many of the same steps are reminiscent of those in Tomasulo's algorithm (cf. Lesson 7), with minor ***variations***, recapped as follows:
+  * Pointing the RAT to the ROB entry rather than to the RS
+  * Writing to the ROB on broadcast rather than directly to REGS
+  * The RS is freed on dispatch rather than on broadcast
+  * Additional operation `Commit` is included to coordinate between the ROB, RAT, and REGS
+
+## 9. Hardware Organization with ROB
+
