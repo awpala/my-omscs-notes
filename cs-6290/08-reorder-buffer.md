@@ -315,3 +315,48 @@ Therefore, the instruction `MUL` might produce a value (e.g., `15`, as in the fi
 </center>
 
 Similarly, the instruction `DIV` may eventually proceed, generating a corresponding result (e.g., `2`), which it records in the ROB accordingly (as in the figure shown above). As with the instruction `MUL`, this obviates an unintended "premature write" to REGS, given that this instruction results from a misprediction.
+
+<center>
+<img src="./assets/08-025.png" width="650">
+</center>
+
+Eventually, the instruction `LD` completes, yielding a result (i.e., `700`), as in the figure shown above. Correspondingly, the value is recorded in the ROB and the bit `Done` is set accordingly. Consequently, the pointer `Commit` is advanced, and the result is written to REGS, thereby updating the RAT accordingly (i.e., to point to the REGS entry).
+
+<center>
+<img src="./assets/08-026.png" width="650">
+</center>
+
+Now, suppose that the instruction `BNE` takes longer to produce a result than is required for `ADD`, as in the figure shown above. Consequently, instruction `ADD` produces a result (i.e., `3`) and updates the ROB entry and corresponding `Done` bit accordingly. However, here, this result is *not* written to REGS (nor would this have been done if following Tomasulo's algorithm without a ROB), due to the renaming of `R2` in RAT (i.e., as `ROB5` in the ROB configuration, or equivalent tagging in non-ROB-based Tomasulo's algorithm).
+
+Eventually, the branch is resolved, and it is determined that a misprediction has occurred, as in the figure shown above. Correspondingly, the instruction `BNE` is marked as `Done` in the ROB, with the program proceeding with fetching instructions correctly in program-order (i.e., taking the corresponding branch, as designated by `Label`).
+
+<center>
+<img src="./assets/08-027.png" width="650">
+</center>
+
+However, the question still remains: How do we remove the incorrect instructions (i.e., those produced from the branch misprediction, as denoted by red in the figure shown above)?
+
+To address this matter, the ROB entry is annotated accordingly (i.e., via `!`, as in the figure shown above). Furthermore, rather than "fixing" the in-progress entries in the ROB, we proceed by simply fetching these "wrong" instructions, as it is still uncertain how to eliminate these instructions until the pointer `Commit` reaches the branch point.
+
+Finally, upon committing the instruction `BNE`, it is determined that the wrong instructions have been fetched (i.e., the program counter [PC] that *should* have been created by the branch differs from the PC that was actually used, resulting in the misprediction). Consequently, the pointer `Commit` is advanced (as in the figure shown above), which does *not* result in any writing to REGS, however, due to the misprediction, the **recovery** is commenced *prior* to restarting the fetch from the correct place (i.e., in a manner ensuring in program-order).
+
+<center>
+<img src="./assets/08-028.png" width="650">
+</center>
+
+To perform this **recovery** operation, in a ROB-based processor, at the point at which the operation `Commit` has reached the branch instruction (i.e., `BNE`), REGS contains *exactly* the values that are required immediately prior to entering the branch instruction (as in the figure shown above), i.e., all of the corresponding instructions prior to the branch have been committed accordingly (with their updates reflected in REGS), while the same has *not* been done for the mispredicted instructions yet by this point.
+
+Therefore, to ***undo*** the incorrect/mispredicted instructions, there are two necessary resolution measures.
+  * Reverse the issuing of these instructions by simply making the ROB empty at these points (i.e., the pointer `Issue` is moved to the location of pointer `Commit`, as in the figure shown above), with corresponding undoing of the `Done` bits to invalidate these entries in the ROB.
+  * Furthermore, REGS is updated accordingly with the preexisting values in the RAT. The ROB entries in the RAT are invalidated accordingly, with the RAT entries instead pointing directly to REGS (recall that the state of REGS immediately prior to entering the branch is *correct*).
+
+Effectively, the current state is such that the mispredicted instructions have never occurred in the first place, and the program can now proceed with fetching instructions correctly (i.e., in program-order).
+
+As is readily apparent, with a ROB-based processor, out-of-order instruction execution can be achieved in such a manner that correct in-program-order execution is still maintained.
+
+Overall, the **recovery** in a ROB-based processor consists of the following features:
+  * Making the RAT entries point to the corresponding REGS entries, thereby erasing/invalidating the renaming in the RAT resulting from mispredicted/incorrect instructions
+  * Emptying out the mispredicted/incorrect ROB entries in the ROB after committing (i.e., via corresponding relocation of the pointer `Issue`)
+  * Emptying out mispredicted/incorrect instructions in their respective reservation stations and correspondingly preventing execution units (e.g., `ALU`, etc.) from broadcasting results in the future
+
+## 12. ROB and Exceptions
