@@ -360,3 +360,37 @@ Overall, the **recovery** in a ROB-based processor consists of the following fea
   * Emptying out mispredicted/incorrect instructions in their respective reservation stations and correspondingly preventing execution units (e.g., `ALU`, etc.) from broadcasting results in the future
 
 ## 12. ROB and Exceptions
+
+Now, consider how a reorder buffer (ROB) fixes exception-handling issues.
+
+<center>
+<img src="./assets/08-029.png" width="650">
+</center>
+
+```mips
+DIV R0, R1, R2 # `R2` is `0`, resulting in divide-by-zero exception
+ADD ...
+```
+
+One such exception-handling **issue** arises in a program such as that shown above. Here, the instruction `DIV` can be delayed (i.e., the result `R0` is produced later), whereas the instruction `ADD` can be executed relatively quickly. Recall (cf. Lesson 7) that via Tomasulo's algorithm, the instruction `ADD` would deposit the result to the destination register long before the instruction `DIV` determines that its operand `R2` is `0`, resulting in a divide-by-zero exception; therefore, the exception handler should have been invoked, without ever executing the subsequent instruction `ADD` in the first place.
+
+The ROB assists in this situation by treating the exception itself as any other result. Thus, when it is determined that `R2` is `0`, then--rather than producing a result for `R0`--the corresponding ROB entry is noted as an "exception" rather, than the (incomputable) result.
+
+Furthermore, once the instruction `DIV` reaches the pointer `Commit`, at that point, the instruction `ADD` has not yet been committed, whereas all instructions preceding `DIV` have. Therefore, now, a corresponding flush of these errant instructions (i.e., `DIV` and `ADD`) can be performed, with a corresponding jump to the **exception handler** (denoted by purple arrow in the figure shown above), which now occurs effectively "immediately prior" to execution of the instruction `DIV`.
+
+Similarly for a load instruction resulting ni a page fault, an analogous chain of events would unfold, i.e., upon reaching of the commit on (attempted) page load (resulting in a page-fault exception handler), everything that has been committed up to that point in the program will be "restored" accordingly. Upon successfully resolving the page load from disk, the program can jump back into the program and resume execution accordingly as normal.
+
+```mips
+  BEQ R1, R2, Label
+  DIV R0, R0, R5    # `R5` is `0`, resulting in divide-by-zero
+  ⋮
+Label:
+```
+
+Another such exception-handling **issue** arises in a program such as that shown above. Here, there is a **phantom exception**, whereby if the branch via `BEQ` is *not* taken and the subsequent instruction `DIV` generates an exception (i.e., via operand `R5`, which results in a divide-by-zero error), then a situation can arise whereby the exception via `DIV` is generated *prior* to resolution of the branch `BEQ`. Therefore, upon finally resolving the branch, it is "too late" to catch the fact that an exception has already occurred with the subsequent instruction `DIV`.
+
+To mitigate this issue, the ROB will designate the instruction `DIV` as an "exception." As the pointer `Commit` reaches the branch point (i.e., either at `BEQ` or immediately prior to it, depending on the particular branch misprediction strategy used), it will be determined that the branch has been mispredicted, and that the actual intenion of the program is to jump to `Label` instead. Consequently, neither the instruction `DIV` itself nor its downstream (i.e., branch not-taken) instructions are committed, and their executions are correspondingly "canceled," and therefore the exception via `DIV` itself is never generated in the first place (i.e., because the instruction `DIV` is never executed).
+
+Therefore, the ***key point*** with respect to exception handling is that the ROB simply treats the exception itself as a(n invalid) ***result***, with a corresponding ***delay*** in the actual handling of the exception itself until the exception-generating instruction commits (at which point, the exact "resume point" for the exception handler is already determined). Furthermore, this approach mitigates any possible phantom exceptions resulting from branching.
+
+## 13. Outside View of "Executed"
