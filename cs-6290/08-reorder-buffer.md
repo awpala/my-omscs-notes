@@ -243,4 +243,75 @@ The reorder buffer (ROB) is required in order to (Select all applicable choices)
 
 ## 11. Branch Misprediction Recovery
 
+Recall that the reorder buffer (ROB) is necessary in order to have precise exceptions, as well as to facilitate recovery from branch mispredictions; the latter is the topic of section.
 
+<center>
+<img src="./assets/08-017.png" width="650">
+</center>
+
+Consider the following program (as in the figure shown above, which includes the corresponding hardware configurations):
+```mips
+LD  R1, 0(R1)
+BNE R1, R2, Label # <- Misprediction occurs via `R1 == R2` (branch not taken)
+ADD R2, R1, R1    # <- Assume the program proceeds here due to misprediction
+MUL R3, R3, R4
+DIV R2, R3, R7
+```
+
+Assume that the program has a branch misprediction, whereby the subsequent instructions (denoted by red in the figure shown above) are executed despite an actual branching (i.e., to `Label`) being intended.
+
+Immediately prior to the first instruction, the hardware state is as in the figure shown above, with the pointers `Issue` and `Commit` of the ROB being co-located. Furthermore, both the register file (REGS) and register allocation table (RAT) are empty.
+
+<center>
+<img src="./assets/08-018.png" width="650">
+</center>
+
+First, the instruction `LD` is issued, as in the figure shown above.
+  * In the ROB, the pointer `Issue` is advanced by a position, and the result `R1` for this instruction is placed in the corresponding ROB entry
+  * The RAT is updated with the corresponding ROB entry `ROB1`
+
+<center>
+<img src="./assets/08-019.png" width="650">
+</center>
+
+Next, the instruction `BNE` is issued, as in the figure shown above.
+  * In the ROB, the pointer `Issue` is advanced by a position, and since there is no output/result from this instruction, the ROB records a null entry (denoted by `/` in the figure shown above)
+  * There is no corresponding update in the RAT (i.e., no pending result to record)
+
+<center>
+<img src="./assets/08-020.png" width="650">
+</center>
+
+Next, instructions which should *not* have been issued (i.e., due to branch misprediction) are issued, starting with `ADD`, as in the figure shown above.
+  * The result `R2` for this instruction is placed in the corresponding ROB entry
+  * The RAT is updated with the corresponding ROB entry `ROB3`
+
+<center>
+<img src="./assets/08-021.png" width="650">
+</center>
+
+Next, the instruction `MUL` is issued, as in the figure shown above.
+  * The result `R3` for this instruction is placed in the corresponding ROB entry
+  * The RAT is updated with the corresponding ROB entry `ROB4`
+
+<center>
+<img src="./assets/08-022.png" width="650">
+</center>
+
+Next, the instruction `DIV` is issued, as in the figure shown above.
+  *  In the ROB, the pointer `Issue` is advanced by a position, and the result `R2` for this instruction is placed in the corresponding ROB entry
+  * The RAT is updated with the corresponding ROB entry `ROB5`, which overwrites the previous entry for `R2` (cf. instruction `ADD`)
+
+<center>
+<img src="./assets/08-023.png" width="650">
+</center>
+
+Now, suppose that the initial instruction `LD` takes a long time to produce a value (e.g., due to a cache miss). The branch (i.e., via instruction `BNE`) cannot complete until the `LD` is completed, and correspondingly the mispredicted instruction `ADD` is similarly "bottlenecked" by `LD`; however, the instruction `MUL` *can* complete because its operands (`R3` and `R4`) are not produced by any of the aforementioned upstream instructions.
+
+Therefore, the instruction `MUL` might produce a value (e.g., `15`, as in the figure shown above), which it *is* otherwise capable of writing to REGS; however, once it is discovered that the branch is mispredicted, this would necessitate somehow "undoing" this operation `MUL`. Correspondingly, in a ROB-based processor, this result is instead recorded in the ROB entry, with a corresponding setting of the `Done` bit.
+
+<center>
+<img src="./assets/08-024.png" width="650">
+</center>
+
+Similarly, the instruction `DIV` may eventually proceed, generating a corresponding result (e.g., `2`), which it records in the ROB accordingly (as in the figure shown above). As with the instruction `MUL`, this obviates an unintended "premature write" to REGS, given that this instruction results from a misprediction.
