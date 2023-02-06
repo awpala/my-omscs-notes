@@ -229,4 +229,18 @@ Following Tomasulo'a algorithm from before (cf. Lesson 7), RAT entries *not* poi
 <img src="./assets/08-016A.png" width="650">
 </center>
 
+The reorder buffer (ROB) is required in order to (Select all applicable choices):
+  * Remember the program order
+    * `APPLIES` → The ROB is the only intermediary between issue (which is performed in program-order) and commit (which is also performed in program-order) which preserves program-order (whereas other intermediate steps between these generally occur out-of-order)
+  * Temporarily store the instruction's result
+    * `APPLIES` → The ROB stores the instruction's result between the time when the instruction is produced (i.e., when a broadcast occurs on the bust) and the time when the instruction's result is committed to the register file.
+  * Serve as the name (tag) for the result
+    * `APPLIES` → With Tomasulo's algorithm, the reservation station served this role; however, with a ROB configuration, the ROB entry is the one performing this role instead
+  * Store source operands until dispatch
+    * `DOES NOT APPLY` → This role is still performed by the reservation station, even with the ROB configuration
+  * Determine which instruction goes to which execution unit
+    * `DOES NOT APPLY` → The ROB is typically unified (i.e., *all* instructions go to the ROB, but they generally receive different/distinct entries in the ROB itself); therefore, it is evident/unambiguous which execution unit the instructions are directed to, because different execution units have distinct/dedicated reservation stations, and thus when an instruction is issued, it is sent to the *intended* set of reservations stations (which in turn dictate the corresponding execution unit)
+
+## 11. Branch Misprediction Recovery
+
 
