@@ -511,3 +511,123 @@ At this point, the instruction `DIV` now carries the exception condition into th
 
 ## 15. Register Allocation Table (RAT) Updates on Commit
 
+<center>
+<img src="./assets/08-043.png" width="650">
+</center>
+
+COnsider the configuration as in the figure shown above. The reorder buffer (ROB) currently holds the instructions as shown above. (***N.B.*** In the third instruction denoted `ROB3`, the evaluation `ROB1 * R7` is using the rename tag from entry `ROB1`; and similarly in the last instruction via `ROB2`, i.e., `R9 + ROB2`.)
+
+Now, assume that all of these instructions have finished execution and placed these results accordingly in the ROB; it is now time to commit them.
+
+<center>
+<img src="./assets/08-044.png" width="650">
+</center>
+
+The next instruction to be committed is `ROB1`, as in the figure shown above. At this point, the entries in the register allocation table (RAT) are as shown above.
+  * `R1` points to `ROB4`, because the entry `ROB4` is the *latest* to write to register `R1` as far as the issued instructions are concerned
+  * `R2` points to `ROB5`, since there were no other renames of `R1` prior to that
+  * `R3` points to `ROB2`, since that was the most recent rename
+
+Furthermore, assume there are some existing (indeterminate) values in the register file (REGS), which will now be overwritten.
+  * Recall that with Tomasulo's algorithm without ROB (cf. Lesson 7), when finishing instructions out-of-order (with no corresponding commit at the end), as the result is broadcasted, it is necessary to examine the RAT for the result.
+    * If the RAT indicates that the result is produced by the instruction (i.e., via renamed tag), then the REGS would be updated accordingly with this entry.
+    * Conversely, if the intended result is *not* that which is broadcasted, then REGS is correspondingly *not* updated (i.e., the result should be read directly from REGS instead).
+  * Conversely, with respect to the ROB, there is an additional step involving the commit; in particular, commits are performed ***in program-order***. Each time an instruction is committed, its result *is* deposited into REGS irrespectively of the RAT entry.
+
+<center>
+<img src="./assets/08-045.png" width="650">
+</center>
+
+Therefore, with respect to instruction `ROB1`, upon committing, the result (i.e., `R2 + R3`) is placed directly in REGS, as in the figure shown above. Even though the RAT entry for `R1` suggests `ROB4`, this is not necessarily the latest (i.e., *committed*) value of register `R1`.
+
+Furthermore, at this point, it is also determined whether or not the RAT will in fact be updated. Here, it is verified that indeed `ROB4` is the most recently renamed version of register `R1` immediately following committing of instruction `ROB1`.
+
+<center>
+<img src="./assets/08-046.png" width="650">
+</center>
+
+The entry for `ROB1` is now freed, and the next instruction `ROB2` is processed, as in the figure shown above. On commit of `ROB2`, the result of `ROB2` (i.e., `R5 + R6`) is written directly to REGS, irrespectively of the corresponding entry in RAT for register `R3`.
+
+Upon inspecting RAT, the latest entry for `R3` is `ROB2`, which is now pointing to a stale entry in the ROB, and therefore the RAT is updated accordingly to point directly to `R3` in REGS.
+
+<center>
+<img src="./assets/08-047.png" width="650">
+</center>
+
+The entry for `ROB2` is now freed, and the next instruction `ROB3` is processed, as in the figure shown above. On commit of `ROB3`, the result of `ROB3` (i.e., `ROB1 * R7`) is written directly to REGS, irrespectively of the corresponding entry in RAT for register `R1`.
+
+Upon inspecting the RAT, it is verified that indeed `ROB4` is the most recently renamed version of register `R1` immediately following committing of instruction `ROB3`.
+
+<center>
+<img src="./assets/08-048.png" width="650">
+</center>
+
+At this point, it is worthwhile to pause and examine the current configuration/state, as in the figure shown above. In particularly, why are we proceeding in such a manner, whereby values are being deposited directly to REGS, knowing that they will be soon overwritten?
+
+The reason for this is that because--at any given point in time--if it is necessary to stop there and handle an exception or other related errant behavior, then all that is necessary to do at that point is to simply flush the ROB (i.e., invalidate the existing ROB entries) and then simply reset the RAT to point directly to REGS (i.e., for all constituent registers); in its current state, the REGS is synchronized/consistent with the committed-to point of the ROB (denoted by purple arrow in the figure shown above), i.e., still executing in program-order. In particular, note that such a "rollback"/"reset" would ***not*** be feasible if such "redundant" work were not being performed (i.e., the REGS would be inconsistent with program-order).
+
+Therefore, in general, REGS is ***always*** consistent/up-to-date as of the commit point when following this approach; accordingly, the process can be "stopped abruptly" at any given point as necessary (e.g., to handle an exception), with a corresponding redirect to REGS for the "true state" of the program at that point.
+
+<center>
+<img src="./assets/08-049.png" width="650">
+</center>
+
+Proceeding back through the program, the entry for `ROB3` is now freed, and the next instruction `ROB4` is processed, as in the figure shown above. On commit of `ROB4`, the result of `ROB4` (i.e., `R4 + R8`) is written directly to REGS, irrespectively of the corresponding entry in RAT for register `R1`.
+
+Upon inspecting RAT, the latest entry for `R1` is `ROB4`, which is now pointing to a stale entry in the ROB, and therefore the RAT is updated accordingly to point directly to `R1` in REGS.
+
+<center>
+<img src="./assets/08-050.png" width="650">
+</center>
+
+The entry for `ROB4` is now freed, and the next instruction `ROB5` is processed, as in the figure shown above. On commit of `ROB5`, the result of `ROB5` (i.e., `R9 + ROB2`) is written directly to REGS, irrespectively of the corresponding entry in RAT for register `R2`.
+
+Upon inspecting RAT, the latest entry for `R2` is `ROB5`, which is now pointing to a stale entry in the ROB, and therefore the RAT is updated accordingly to point directly to `R2` in REGS.
+
+At this point, with an empty ROB, the state of RAT is as expected, i.e., all registers pointing to corresponding entries in REGS, as of the most recent commit via ROB.
+
+When proceeding in this manner of analysis, be mindful of the fact that the results are copied ***directly*** from ROB to REGS, irrespectively of the RAT entry, however, the RAT is correspondingly updated accordingly on commit (but only if there is a necessary rename from the ROB entry to the register/REGS entry; otherwise, an existing ROB entry in RAT *is* the intended entry, i.e., one which is pending an upcoming commit).
+
+## 16-21. ReOrder Buffer (ROB) Example
+
+### 16. Cycles 1-2
+
+### 17. Cycles 3-4
+
+### 18. Cycles 5-6
+
+### 19. Cycles 13-24
+
+### 20. Cycles 25-43
+
+### 21. Cycles 44-48
+
+## 22-29. ReOrder Buffer (ROB) Quizzes and Answers
+
+### 22. Quiz 1 and Answers
+
+### 23. Quiz 2 and Answers
+
+### 24. Quiz 3 and Answers
+
+### 25. Quiz 4 and Answers
+
+### 26. Quiz 5 and Answers
+
+### 27. Quiz 6 and Answers
+
+### 28. Quiz 7 and Answers
+
+### 29. Quiz 8 and Answers
+
+## 30. ReOrder Buffer (ROB) Timing Example
+
+## 31-33. ReOrder Buffer (ROB) Timing Quizzes and Answers
+
+### 31. Quiz 1 and Answers
+
+### 32. Quiz 2 and Answers
+
+### 33. Quiz 3 and Answers
+
+## 34. Unified Reservation Stations
