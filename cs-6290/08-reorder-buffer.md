@@ -394,3 +394,78 @@ To mitigate this issue, the ROB will designate the instruction `DIV` as an "exce
 Therefore, the ***key point*** with respect to exception handling is that the ROB simply treats the exception itself as a(n invalid) ***result***, with a corresponding ***delay*** in the actual handling of the exception itself until the exception-generating instruction commits (at which point, the exact "resume point" for the exception handler is already determined). Furthermore, this approach mitigates any possible phantom exceptions resulting from branching.
 
 ## 13. Outside View of "Executed"
+
+<center>
+<img src="./assets/08-030.png" width="650">
+</center>
+
+```mips
+  ADD R1, R2, R3
+  BNE R1, R3, Label
+  DIV R7, R8, R0    # Misprediction in `BNE` goes here, rather than to `Label`
+  ⋮
+Label:
+  MUL R5, R6, R7
+```
+
+Consider the program shown above. Here, a misprediction in the branch instruction `BNE` results in proceeding to the next instruction `DIV`, rather than jumping to `Label`/`MUL` as intended.
+
+
+<center>
+<img src="./assets/08-031.png" width="650">
+</center>
+
+<center>
+<img src="./assets/08-032.png" width="650">
+</center>
+
+<center>
+<img src="./assets/08-033.png" width="650">
+</center>
+
+As far as the ***processor*** is concerned, the sequence of steps is as in the figures shown above.
+
+
+<center>
+<img src="./assets/08-034.png" width="650">
+</center>
+
+<center>
+<img src="./assets/08-035.png" width="650">
+</center>
+
+Upon resolving the branch, the instruction `DIV` is "undone," and the corresponding sequence is as in the figures shown above.
+
+<center>
+<img src="./assets/08-036.png" width="650">
+</center>
+
+At some later point in time, the processor may eventually see the instruction `DIV` as being fully executed but not committed, as in the figure shown above.
+
+
+<center>
+<img src="./assets/08-037.png" width="650">
+</center>
+
+Concurrently, at this same later time point, the ***programmer*** observes/perceives the committed instruction `ADD`, as in the figure shown above. Until the processor finishes executing the instruction `BNE`, the programmer effectively does not "see" the downstream instructions `BNE` or (already executed) `DIV`.
+
+<center>
+<img src="./assets/08-038.png" width="650">
+</center>
+
+
+<center>
+<img src="./assets/08-039.png" width="650">
+</center>
+
+By the time the instruction `BNE` completes execution, from the perspective of the program, the execution of the subsequent instruction `DIV` is not "seen" (i.e., it is removed via the reorder buffer [ROB]), as in the figures shown above.
+
+<center>
+<img src="./assets/08-040.png" width="650">
+</center>
+
+Subsequently, the program will commence with the processor fetching from `Label`/`MUL`, which is the next "visible" instruction to the programmer, as in the figure shown above. Effectively, the programmer never "sees" execution of any wrong-path instructions; furthermore, on occurrence of exceptions, the program similarly never "sees" any instructions besides those which should have been executed.
+
+Therefore, the operation `Commit` effectively denotes "***official execution***" of the program, insofar as the programmer's perspective is concerned (which in general can differ from the *actual* execution occurring immediately prior to broadcasting of the result; thus, the internal state of the processor may not be reflected exactly "as-is" to the programmer).
+
+## 14. Exceptions with ReOrder Buffer (ROB) Quiz and Answers
