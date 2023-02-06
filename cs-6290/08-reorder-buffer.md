@@ -469,3 +469,45 @@ Subsequently, the program will commence with the processor fetching from `Label`
 Therefore, the operation `Commit` effectively denotes "***official execution***" of the program, insofar as the programmer's perspective is concerned (which in general can differ from the *actual* execution occurring immediately prior to broadcasting of the result; thus, the internal state of the processor may not be reflected exactly "as-is" to the programmer).
 
 ## 14. Exceptions with ReOrder Buffer (ROB) Quiz and Answers
+
+<center>
+<img src="./assets/08-042A.png" width="650">
+</center>
+
+| Instruction (in program-order) | Status | New Status |
+|:-|:-:|:-:|
+| `ADD R2, R2, R1` | Committed | |
+| `LW  R1, 0(R2) ` | Executing | |
+| `ADD R3, R4, R5` | Done | |
+| `DIV R3, R2, R3` | Executing | |
+| `ADD R1, R4, R4` | Done | |
+| `ADD R3, R2, R2` | Done | |
+
+Consider the program in the table shown above. Here, the instructions statuses are as follows:
+  * ***Committed*** → The instruction has exited the pipeline and its result has been committed from the reorder buffer (ROB) to the register file (REGS)
+  * ***Executing*** → The instruction has left the reservation station (RS) and is commencing execution in the execution unit, however, its result has not yet been broadcasted on the bus (i.e., it has not yet *committed*)
+  * ***Done*** → The instruction has arrived at the RS, subsequently left the RS, computed its result, deposited its result somewhere else, but the result is not yet *committed* (i.e., the instruction has not yet left the processor)
+
+The current statuses of the program's instructions are as given in the table shown above. Consider the situation where an **exception** (denoted `E` in the figure shown above) occurs in the instruction `DIV ...` (e.g., a divide-by-zero exception via operand `R3`). What is the *new* status of these instructions after the exception has been handled (i.e., the point immediately prior to which the program can now proceed onto the exception handler)?
+
+***Answer and Explanation***:
+
+| Instruction (in program-order) | Status | New Status |
+|:-|:-:|:-:|
+| `ADD R2, R2, R1` | Committed | Committed |
+| `LW  R1, 0(R2) ` | Executing | Committed |
+| `ADD R3, R4, R5` | Done | Committed |
+| `DIV R3, R2, R3` | Executing | Unexecuted |
+| `ADD R1, R4, R4` | Done | Unexecuted |
+| `ADD R3, R2, R2` | Done | Unexecuted |
+
+At the point in which the exception occurs (i.e., with respect to instruction `DIV`), what should occur by this point is that the upstream instructions have already finished executing, with the subsequent instructions not executing (as far as the programmer is concerned).
+
+Because the programmer only "sees" the program state up to the point of the most recent commit, then the fact that the downstream `ADD` instructions are already Done means that these must now be "undone" (i.e., the instructions starting with `DIV` onwards must be flushed from the pipeline), with the processor state correspondingly restored to the correct state immediately prior to encountering the exception (i.e., as expected in program-order).
+
+To perform this "rollback," since the first instruction `ADD` is already committed (which cannot be undone at this point), the subsequent two instructions (immediately prior to `DIV`) must first be committed in order to proceed to the exception itself (***N.B.*** since the third instruction is already Done in the initial state, the change to commit is relatively trivial, however, the instruction `LW` may be slightly "bottlenecking" before proceeding through all necessary Commit statuses).
+
+At this point, the instruction `DIV` now carries the exception condition into the status Commit itself; therefore, upon attempting to commit the instruction, it is determined that this cannot be done, and the exception is consequently generated. Therefore, now, the processor ceases committing further and instead flushes all subsequent instructions from the pipeline, resulting in these latter instructions being effectively Unexecuted (i.e., insofar as the programmer is concerned, these instructions were "never" fetched in the first place). Now, the program can proceed transfer of control to the exception handler (as denoted by the purple right-pointing arrow in the figure shown above).
+
+## 15. Register Allocation Table (RAT) Updates on Commit
+
