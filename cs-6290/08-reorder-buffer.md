@@ -989,6 +989,26 @@ At this point, both the ROB and the RAT are empty, and the ARF contains the most
 
 ### 22. Quiz 1 and Answers
 
+<center>
+<img src="./assets/08-071A.png" width="650">
+</center>
+
+Consider the system characterized as in the figure shown above. Furthermore, assume that the same issue, dispatch, and broadcast behavior applies to this system as from previously (cf. Lesson 7), summarized briefly as follows:
+  * If a result is captured, then the instruction can dispatch from registration station (RS) in the *same* cycle
+  * If a result is dispatched, execution can commence in the *next* cycle
+  * If an instruction is issued and has fully determinate operands on issuing, then the instruction can dispatch in the *same* cycle
+  * Upon completing execution of an instruction, the result can be broadcast in the *next* cycle
+
+In cycle `C1`, instruction `I1` issues. What is the corresponding entry in the register allocation table (RAT) for register `R2` (i.e., via instruction `I1`)?
+
+***Answer and Explanation***:
+
+In cycle `C1`, instruction `I1` issues, with corresponding occupation of the appropriate reservation station (RS) and entry in the reorder buffer (ROB) table, as in the figure shown above.
+
+At this point, both of instruction `I1`s operands (i.e., `R3` and `R4`) are directly available from the architecture register file (ARF), with the corresponding values (i.e., `20` and `5`, respectively) populated accordingly in the RS.
+
+Furthermore, the RAT entry is populated with entry `ROB1` for register `R2`.
+
 ### 23. Quiz 2 and Answers
 
 ### 24. Quiz 3 and Answers
