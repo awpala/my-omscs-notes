@@ -740,6 +740,65 @@ By cycle `C7`, there are no more instructions to issue. However, none of the in-
 
 ### 19. Cycles 13-24
 
+<center>
+<img src="./assets/08-058.png" width="650">
+</center>
+
+Cycle `C13` is depicted in the figure shown above.
+
+At this point, instruction `I2` finally writes its result and broadcasts. The corresponding `Done` bit is set in the ROB for entry `ROB2`, with its value (i.e., `12`) broadcasted accordingly.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | | |
+| `I5` | `C5` | | | |
+| `I6` | `C6` | | | |
+
+Instruction `I4` captures the broadcast value (i.e., `12`, via `ROB2`), and now has sufficient operands information/values in order to dispatch accordingly, and is able to dispatch and execute in the subsequent cycle `C14`, as indicated in the table shown above. Furthermore, the RS previously occupied by `I4` is freed accordingly.
+
+<center>
+<img src="./assets/08-059.png" width="650">
+</center>
+
+Cycle `C14` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | `C24` | |
+| `I5` | `C5` | | | |
+| `I6` | `C6` | | | |
+
+At this point, instruction `I4` commences execution and continues to do so until cycle `C24` (via `10` cycle requirement for instruction `MUL`).
+
+Furthermore, instructions `I5` and `I6` are still pending their operands in this cycle, and continue to do so from cycles `C15` through `C23`.
+
+<center>
+<img src="./assets/08-060.png" width="650">
+</center>
+
+Cycle `C24` is depicted in the figure shown above.
+
+At this point, instruction `I4` finally writes its result and broadcasts. The corresponding `Done` bit is set in the ROB for entry `ROB4`, with its value (i.e., `36`) broadcasted accordingly.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | | |
+| `I5` | `C5` | `C25` | | |
+| `I6` | `C6` | | | |
+
+Instruction `I5` captures the broadcast value (i.e., `36`, via `ROB4`), and now has sufficient operands information/values in order to dispatch accordingly, and is able to dispatch and execute in the subsequent cycle `C25`, as indicated in the table shown above. Furthermore, the RS previously occupied by `I5` is freed accordingly.
+
+Note that at this point, none of the instructions with their `Done` bit set (i.e., instructions `I2` through `I4`) can commit yet, as they are all pending a commit by the upstream instruction `I1`. Accordingly, no commit will occur until this "bottleneck" is resolved (i.e., in cycle `C43`, as per the table shown above).
+
 ### 20. Cycles 25-43
 
 ### 21. Cycles 44-48
