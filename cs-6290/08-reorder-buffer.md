@@ -1071,11 +1071,37 @@ In cycle `C5`, no instruction is able to be dispatched yet at the start of the c
 
 Furthermore, in cycle `C5`, instruction `I3` is now able to complete execution and consequently write its result (i.e., via corresponding tag `ROB3`). As a result of the write, entry `ROB3` has its `Done` bit set accordingly.
 
-Since the broadcast and capture are able to occur in the same cycle in this system, and furthermore since the RS can dispatch in the same cycle as it captures, instruction `I5` (via tag `ROB5`) can now dispatch from its RS, since it has now received its last-pending operand result (i.e., `ROB3`). Correspondingly, instruction `I5` will execute until cycle `C6` (as per `1` cycle requirement for instruction `SUB`).
+Since the broadcast and capture are able to occur in the same cycle in this system, and furthermore since the RS can dispatch in the same cycle as it captures, instruction `I5` (via tag `ROB5`) can now dispatch from its RS, since it has now received its last-pending operand result (i.e., `ROB3`). Correspondingly, instruction `I5` will execute (producing corresponding result `-1`) from cycles `C6` to `C7` (as per `1` cycle requirement for instruction `SUB`).
 
-Observe that in this cycle, instruction `I5` is able to issue, capture, and dispatch all in the same cycle!
+***N.B.*** Observe that in this cycle, instruction `I5` is able to issue, capture, and dispatch all in the *same* cycle!
 
 ### 25. Quiz 4 and Answers
+
+<center>
+<img src="./assets/08-078Q.png" width="650">
+</center>
+
+In cycle `C6`, instruction `I6` issues, with corresponding occupation of the appropriate reservation station (RS) and entry in the reorder buffer (ROB) table, as in the figure shown above. Furthermore, instruction `I4` is still present in its corresponding RS.
+
+Furthermore, in cycle `C6`, instruction `I2` has completed execution and is able to write/broadcast its result (i.e., `8`), with a corresponding setting of its `Done` bit in its ROB entry. This value is consequently captured by the RS of instruction `I4`, which is still currently pending its other operand (`ROB1`) and thus not able to dispatch yet at this point.
+
+<center>
+<img src="./assets/08-079Q.png" width="650">
+</center>
+
+In cycle `C7`, instruction `I5` has completed execution and is able to write/broadcast its result (i.e., `-1`), with a corresponding setting of its `Done` bit in its ROB entry. This value is consequently captured by the RS of instruction `I6`, which is still currently pending its other operand (`ROB1`) and thus not able to dispatch yet at this point.
+
+In which cycle does instruction `I4` get dispatched from its RS?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-080A.png" width="650">
+</center>
+
+Observe that instruction `I4` (in its corresponding RS) is pending the result (i.e., `4`) of instruction `I4` (via corresponding tag `ROB1`). This will occur in cycle `C12`; at that point, instruction `I4` will also be able to dispatch from its RS in the same cycle upon receiving the broadcasted result, with execution commencing in the following cycle (i.e., `C13`).
+
+***N.B.*** At this point, the system is "logjammed" (.e., via pending result `ROB1`) until cycle `C13`, so this cycle will be the focus of the next quiz accordingly.
 
 ### 26. Quiz 5 and Answers
 
