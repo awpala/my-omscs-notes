@@ -1105,6 +1105,31 @@ Observe that instruction `I4` (in its corresponding RS) is pending the result (i
 
 ### 26. Quiz 5 and Answers
 
+<center>
+<img src="./assets/08-081Q.png" width="650">
+</center>
+
+In cycle `C13`, instruction `I4` commences execution. Furthermore, instruction `I6` dispatches (correspondingly freeing its RS in the process) and will begin executing in the next cycle (i.e., `C14`) to produce its result (i.e., `3`) in cycle `C15` (as per `1` cycle requirement for instruction `ADD`).
+
+In addition to these events, what else occurs in cycle `C13`? (Provide corresponding updates to the `IEWC` tracker table and to the ROB.)
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-082A.png" width="650">
+</center>
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C12` | `C13` |
+| `I2` | `C2` | `C3` | `C6` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C13` | | |
+| `I5` | `C5` | `C6` | `C7` | |
+| `I6` | `C6` | `C13` | | |
+
+In cycle `C13` all instructions have been issued, and are additionally in progress of execution, as per the table shown above. Furthermore, neither instructions `I4` nor `I6` are able to write results at this point. However, by cycle `C13`, instruction `I1` is able to commit its result, and does so accordingly.
+
 ### 27. Quiz 6 and Answers
 
 ### 28. Quiz 7 and Answers
