@@ -1041,8 +1041,7 @@ What are the appropriate RS field entries for instruction `I4`, and what is the 
 <img src="./assets/08-075A.png" width="650">
 </center>
 
-The entry for the RAT is simply `R1`, i.e., the result register of instruction `I4`.
-
+The entry for the RAT is simply `R1`, i.e., the result register of instruction `I4`. (Note that correspondingly, here, `ROB4` will overwrite the existing value `ROB2` for entry `R1` in RAT.)
 
 | Op | Dst-Tag | Tag1 | Tag2 | Val1 | Val2 |
 |:-:|:-:|:-:|:-:|:-:|:-:|
@@ -1051,6 +1050,30 @@ The entry for the RAT is simply `R1`, i.e., the result register of instruction `
 Furthermore, the corresponding RS fields for instruction `I4` are as in the table shown above.
 
 ### 24. Quiz 3 and Answers
+
+<center>
+<img src="./assets/08-076Q.png" width="650">
+</center>
+
+In cycle `C5`, instruction `I5` issues, with corresponding occupation of the appropriate reservation station (RS) and entry in the reorder buffer (ROB) table, as in the figure shown above. Furthermore, instruction `I4` is still present in its corresponding RS.
+
+At this point, which instruction(s) (if any) is/are dispatched? (Specify the ROB entry.)
+
+Furthermore, which instruction(s) (if any) write results in this cycle? (Specify the ROB entry.)
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-077A.png" width="650">
+</center>
+
+In cycle `C5`, no instruction is able to be dispatched yet at the start of the cycle, as both instruction-occupied RSes have pending broadcasts for their respective operands.
+
+Furthermore, in cycle `C5`, instruction `I3` is now able to complete execution and consequently write its result (i.e., via corresponding tag `ROB3`). As a result of the write, entry `ROB3` has its `Done` bit set accordingly.
+
+Since the broadcast and capture are able to occur in the same cycle in this system, and furthermore since the RS can dispatch in the same cycle as it captures, instruction `I5` (via tag `ROB5`) can now dispatch from its RS, since it has now received its last-pending operand result (i.e., `ROB3`). Correspondingly, instruction `I5` will execute until cycle `C6` (as per `1` cycle requirement for instruction `SUB`).
+
+Observe that in this cycle, instruction `I5` is able to issue, capture, and dispatch all in the same cycle!
 
 ### 25. Quiz 4 and Answers
 
