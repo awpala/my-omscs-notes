@@ -1011,6 +1011,45 @@ Furthermore, the RAT entry is populated with entry `ROB1` for register `R2`.
 
 ### 23. Quiz 2 and Answers
 
+<center>
+<img src="./assets/08-072Q.png" width="650">
+</center>
+
+In cycle `C2`, instruction `I2` issues, with corresponding occupation of the appropriate reservation station (RS) and entry in the reorder buffer (ROB) table, as in the figure shown above. Furthermore, instruction `I1` commences execution in this cycle (producing result `4`) and frees its RS on dispatch accordingly, and will continue to execute until cycle `C12` (as per `10` cycles requirement for instruction `DIV`).
+
+Instruction `I2` obtains its operands directly from ARF, with assigned destination tag (Dst-Tag) `ROB2` for eventual broadcast.
+
+<center>
+<img src="./assets/08-073Q.png" width="650">
+</center>
+
+In cycle `C3`, instruction `I3` issues, with corresponding occupation of the appropriate reservation station (RS) and entry in the reorder buffer (ROB) table, as in the figure shown above. Furthermore, instruction `I2` commences execution in this cycle (producing result `8`) and frees its RS on dispatch accordingly, and will continue to execute until cycle `C6` (as per `3` cycles requirement for instruction `MUL`).
+
+Instruction `I3` obtains its operands directly from ARF, with assigned destination tag (Dst-Tag) `ROB3` for eventual broadcast.
+
+<center>
+<img src="./assets/08-074Q.png" width="650">
+</center>
+
+In cycle `C4`, instruction `I4` issues, with corresponding occupation of the appropriate reservation station (RS) and entry in the reorder buffer (ROB) table, as in the figure shown above. Furthermore, instruction `I3` commences execution in this cycle (producing result `3`) and frees its RS on dispatch accordingly, and will continue to execute until cycle `C5` (as per `1` cycle requirement for instruction `ADD`).
+
+What are the appropriate RS field entries for instruction `I4`, and what is the corresponding RAT entry? 
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-075A.png" width="650">
+</center>
+
+The entry for the RAT is simply `R1`, i.e., the result register of instruction `I4`.
+
+
+| Op | Dst-Tag | Tag1 | Tag2 | Val1 | Val2 |
+|:-:|:-:|:-:|:-:|:-:|:-:|
+| MUL | `ROB4` | `ROB2` | `ROB1` | `(N/A)` | `(N/A)` |
+
+Furthermore, the corresponding RS fields for instruction `I4` are as in the table shown above.
+
 ### 24. Quiz 3 and Answers
 
 ### 25. Quiz 4 and Answers
