@@ -626,7 +626,6 @@ Since this processor is capable of dispatching in the same cycle, instruction `I
 
 Cycle `C2` is depicted in the figure shown above.
 
-
 | Instruction | Issue | Execute | Write Result | Commit |
 |:-:|:-:|:-:|:-:|:-:|
 | `I1` | `C1` | `C2` | `C42` | |
@@ -641,11 +640,53 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
 | Instruction | Issue | Execute | Write Result | Commit |
 |:-:|:-:|:-:|:-:|:-:|
 | `I1` | `C1` | `C2` | `C42` | |
-| `I2` | `C2` | `C3` | | |
+| `I2` | `C2` | `C3` | `C13` | |
 
-Since this processor is capable of dispatching in the same cycle, instruction `I2` is issued in cycle `C2`, with corresponding execution in the subsequent cycle `C3` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above.
+Since this processor is capable of dispatching in the same cycle, instruction `I2` is issued in cycle `C2`, with corresponding execution in the subsequent cycle `C3` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above. Furthermore, the RS is freed, and the result will eventually be written in cycle `C13` (instruction `MUL` requires `10` cycles to execute).
 
 ### 17. Cycles 3-4
+
+<center>
+<img src="./assets/08-054.png" width="650">
+</center>
+
+Cycle `C3` is depicted in the figure shown above.
+
+At this point, there is nothing to dispatch (i.e., the RSes are empty), but the next instruction `I3` can be issued, and there is a correspondingly available RS for this purpose.
+  * The RS receives the destination tag (Dst-Tag) `ROB3`, which is the corresponding ROB entry.
+  * The operands `R7` and `R8` are retrieved directly from ARF, with the corresponding values (`1` and `2`, respectively) recorded in the respective RS fields.
+  * The entry in RAT is updated to `ROB3` for register `R3`.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+
+Since this processor is capable of dispatching in the same cycle, instruction `I3` is issued in cycle `C3`, with corresponding execution in the subsequent cycle `C4` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above. Furthermore, the RS is freed, and the result will eventually be written in cycle `C5` (instruction `ADD` requires `1` cycle to execute).
+
+<center>
+<img src="./assets/08-055.png" width="650">
+</center>
+
+Cycle `C4` is depicted in the figure shown above.
+
+At this point, there is nothing to dispatch (i.e., the RSes are empty), but the next instruction `I4` can be issued, and there is a correspondingly available RS for this purpose.
+  * The RS receives the destination tag (Dst-Tag) `ROB4`, which is the corresponding ROB entry.
+  * The operands `R1` and `R3` are retrieved from the ROB as per the RAT, with the corresponding ROB tags (`ROB2` and `ROB3`, respectively) recorded in the respective RS fields.
+    * ***N.B.*** In the figure shown above, the entries in the RS are abbreviated as `ROB2` and `ROB3` (*not* registers `R2` and `R3`, respectively).
+  * The entry in RAT is updated to `ROB4` for register `R1`.
+    * ***N.B.*** Beware that when updating the RAT in this manner, ensure to thoroughly review where the entry is being used elsewhere in the system before proceeding (e.g., in this case, `R1` is *not* a pending operand in any outstanding RSes). If an input register were to get overwritten inadvertently while conducting such analysis, this could invalidate an in-progress instruction; therefore, the current values in the RAT must be used *first* before renaming/overwriting the corresponding RAT entry (otherwise, the instruction will be "waiting for its own result," which is impossible). In this case, `ROB4` is indeed the latest occurring version of register `R1`, since the upstsream instruction `I2` (via `ROB2`) has indeed already entered execution with the appropriate operand value of `R1`.
+
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | | | |
+
+Instruction `I4` is *not* capable of executing yet, because both of its operands are still pending results at this point, as in the table shown above. 
 
 ### 18. Cycles 5-6
 
