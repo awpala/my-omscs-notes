@@ -596,7 +596,7 @@ When proceeding in this manner of analysis, be mindful of the fact that the resu
 <img src="./assets/08-051.png" width="650">
 </center>
 
-Consider the system having the configuration as in the figure shown above. In the current state (i.e., immediately prior to issuing the first instruction `I1`), both the register allocation table (RAT) and reorder buffer (ROB) are empty, implying the current register values are those of the register file (ARF). Furthermore, note the following execution cycle requirements:
+Consider the system having the configuration as in the figure shown above. In the current state (i.e., immediately prior to issuing the first instruction `I1`), both the register allocation table (RAT) and reorder buffer (ROB) are empty, implying the current register values are those of the architecture register file (ARF). Furthermore, note the following execution cycle requirements:
   * Instruction `ADD` requires `1` cycle to execute
   * Instruction `MUL` requires `10` cycles to execute
   * Instruction `DIV` requires `40` cycles to execute
@@ -876,6 +876,114 @@ At this point, to the programmer, instruction `I1` "appears" as completed. In re
 
 ### 21. Cycles 44-48
 
+<center>
+<img src="./assets/08-065.png" width="650">
+</center>
+
+Cycle `C44` is depicted in the figure shown above.
+
+At this point, instruction `I6` finally writes its result and broadcasts. The corresponding `Done` bit is set in the ROB for entry `ROB6`, with its value (i.e., `42`) broadcasted accordingly.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | `C43` |
+| `I2` | `C2` | `C3` | `C13` | `C44` |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | `C24` | |
+| `I5` | `C5` | `C25` | `C26` | |
+| `I6` | `C6` | `C43` | `C44` | |
+
+Furthermore, instruction `I2` can be committed in this cycle, as in the table shown above. Upon commit, the following occur:
+  * The value for `R1` (i.e., `12`) is written in ARF
+  * The RAT entry for `R1` is examined. Since it is pointing to `ROB6` (which is correspondingly the most recently updated value of `R1`), this entry is retained, because this is the most recent occurring result for `R1`, which is still pending a commit.
+  * The ROB entry `ROB2` is cleared
+  * Instruction `I2` is committed
+
+<center>
+<img src="./assets/08-066.png" width="650">
+</center>
+
+Cycle `C45` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | `C43` |
+| `I2` | `C2` | `C3` | `C13` | `C44` |
+| `I3` | `C3` | `C4` | `C5` | `C45` |
+| `I4` | `C4` | `C14` | `C24` | |
+| `I5` | `C5` | `C25` | `C26` | |
+| `I6` | `C6` | `C43` | `C44` | |
+
+At this point, instruction `I3` can be committed in this cycle, as in the table shown above. Upon commit, the following occur:
+  * The value for `R3` (i.e., `3`) is written in ARF
+  * The RAT entry for `R3` is examined. Since it is pointing to `ROB3` (which is correspondingly the most recently updated value of `R3`), the RAT entry can be cleared accordingly (i.e., indicating to reference the updated value in ARF directly).
+  * The ROB entry `ROB3` is cleared
+  * Instruction `I3` is committed
+
+<center>
+<img src="./assets/08-067.png" width="650">
+</center>
+
+Cycle `C46` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | `C43` |
+| `I2` | `C2` | `C3` | `C13` | `C44` |
+| `I3` | `C3` | `C4` | `C5` | `C45` |
+| `I4` | `C4` | `C14` | `C24` | `C46` |
+| `I5` | `C5` | `C25` | `C26` | |
+| `I6` | `C6` | `C43` | `C44` | |
+
+At this point, instruction `I4` can be committed in this cycle, as in the table shown above. Upon commit, the following occur:
+  * The value for `R1` (i.e., `36`) is written in ARF
+  * The RAT entry for `R1` is examined. Since it is pointing to `ROB6` (which is correspondingly the most recently updated value of `R1`), this entry is retained, because this is the most recent occurring result for `R1`, which is still pending a commit.
+  * The ROB entry `ROB4` is cleared
+  * Instruction `I4` is committed
+
+<center>
+<img src="./assets/08-068.png" width="650">
+</center>
+
+Cycle `C47` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | `C43` |
+| `I2` | `C2` | `C3` | `C13` | `C44` |
+| `I3` | `C3` | `C4` | `C5` | `C45` |
+| `I4` | `C4` | `C14` | `C24` | `C46` |
+| `I5` | `C5` | `C25` | `C26` | `C47`|
+| `I6` | `C6` | `C43` | `C44` | |
+
+At this point, instruction `I5` can be committed in this cycle, as in the table shown above. Upon commit, the following occur:
+  * The value for `R4` (i.e., `33`) is written in ARF
+  * The RAT entry for `R4` is examined. Since it is pointing to `ROB5` (which is correspondingly the most recently updated value of `R4`), the RAT entry can be cleared accordingly (i.e., indicating to reference the updated value in ARF directly).
+  * The ROB entry `ROB5` is cleared
+  * Instruction `I5` is committed
+
+<center>
+<img src="./assets/08-069.png" width="650">
+</center>
+
+Cycle `C48` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | `C43` |
+| `I2` | `C2` | `C3` | `C13` | `C44` |
+| `I3` | `C3` | `C4` | `C5` | `C45` |
+| `I4` | `C4` | `C14` | `C24` | `C46` |
+| `I5` | `C5` | `C25` | `C26` | `C47`|
+| `I6` | `C6` | `C43` | `C44` | `C48` |
+
+At this point, instruction `I6` can be committed in this cycle, as in the table shown above. Upon commit, the following occur:
+  * The value for `R1` (i.e., `42`) is written in ARF
+  * The RAT entry for `R1` is examined. Since it is pointing to `ROB6` (which is correspondingly the most recently updated value of `R1`), the RAT entry can be cleared accordingly (i.e., indicating to reference the updated value in ARF directly).
+  * The ROB entry `ROB6` is cleared
+  * Instruction `I6` is committed
+
+At this point, both the ROB and the RAT are empty, and the ARF contains the most-up-to-date values of the registers, thereby concluding this example.
 
 ## 22-29. ReOrder Buffer (ROB) Quizzes and Answers
 
