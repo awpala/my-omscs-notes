@@ -678,7 +678,6 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
   * The entry in RAT is updated to `ROB4` for register `R1`.
     * ***N.B.*** Beware that when updating the RAT in this manner, ensure to thoroughly review where the entry is being used elsewhere in the system before proceeding (e.g., in this case, `R1` is *not* a pending operand in any outstanding RSes). If an input register were to get overwritten inadvertently while conducting such analysis, this could invalidate an in-progress instruction; therefore, the current values in the RAT must be used *first* before renaming/overwriting the corresponding RAT entry (otherwise, the instruction will be "waiting for its own result," which is impossible). In this case, `ROB4` is indeed the latest occurring version of register `R1`, since the upstsream instruction `I2` (via `ROB2`) has indeed already entered execution with the appropriate operand value of `R1`.
 
-
 | Instruction | Issue | Execute | Write Result | Commit |
 |:-:|:-:|:-:|:-:|:-:|
 | `I1` | `C1` | `C2` | `C42` | |
@@ -689,6 +688,55 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
 Instruction `I4` is *not* capable of executing yet, because both of its operands are still pending results at this point, as in the table shown above. 
 
 ### 18. Cycles 5-6
+
+<center>
+<img src="./assets/08-056.png" width="650">
+</center>
+
+Cycle `C5` is depicted in the figure shown above.
+
+At this point, the next instruction `I5` can be issued, and there is a correspondingly available RS for this purpose.
+  * The RS receives the destination tag (Dst-Tag) `ROB5`, which is the corresponding ROB entry.
+  * The operand `R1` is retrieved from the ROB as per the RAT  with the corresponding ROB tags (`ROB4`) while the operand `R5` has its value (i.e., `3`) is taken directly from ARF; both operands are recorded accordingly in the respective RS fields.
+  * The entry in RAT is updated to `ROB5` for register `R4`.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | | | |
+| `I5` | `C5` | | | |
+
+Instruction `I5` is *not* capable of executing yet, because one of its operands is still pending results at this point, as in the table shown above (similarly, instruction `I4` is pending values for its operands, thereby precluding its execution as well).
+
+Furthermore, instruction `I3` is now ready to write its result (i.e., via `ROB3`) in cycle `C5`. The `Done` bit is updated correspondingly in the ROB (as denoted by the purple checkmark in the figure shown above), and this value is also broadcasted, with a corresponding capture occurring in the RS of instruction `I4`. Note that the RAT is not yet updated at this point (this will not occur until the commit).
+
+<center>
+<img src="./assets/08-057.png" width="650">
+</center>
+
+Cycle `C6` is depicted in the figure shown above.
+
+At this point, the next instruction `I6` can be issued, and there is a correspondingly available RS for this purpose.
+  * The RS receives the destination tag (Dst-Tag) `ROB6`, which is the corresponding ROB entry.
+  * The operands `R4` and `R2` are retrieved from the ROB as per the RAT, with the corresponding ROB tags (`ROB5` and `ROB1`, respectively) recorded in the respective RS fields.
+  * The entry in RAT is updated to `ROB6` for register `R1`.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | | | |
+| `I5` | `C5` | | | |
+| `I6` | `C6` | | | |
+
+Instruction `I6` is *not* capable of executing yet, because both of its operands are still pending results at this point, as in the table shown above (similarly, instructions `I4` and `I5` are pending values for their operands, thereby precluding their execution as well).
+
+Furthermore, note that at this point, while `I3` has completed execution and writing/broadcasting its result, it cannot yet commit its result, because it is still pending the writing of results and subsequent commits of its two upstream instructions (`I1` and `I2`).
+
+By cycle `C7`, there are no more instructions to issue. However, none of the in-progress instructions can execute yet, as they are pending the broadcast of dependent results. Therefore, based on this "gridlocked" situation, the next "eventful" cycle will not be until cycle `C13`, as described next.
 
 ### 19. Cycles 13-24
 
