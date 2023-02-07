@@ -1132,6 +1132,28 @@ In cycle `C13` all instructions have been issued, and are additionally in progre
 
 ### 27. Quiz 6 and Answers
 
+<center>
+<img src="./assets/08-083Q.png" width="650">
+</center>
+
+At the end of cycle `C13`, on commit of instruction `I1` (via `ROB1`), the corresponding update is made to ARF, with the RAT entry for register `R2` now blank (i.e., directing to ARF, rather than `ROB1`), with the value updated accordingly (i.e., `4`). Furthermore, entry `ROB1` is now also cleared in the ROB.
+
+<center>
+<img src="./assets/08-084Q.png" width="650">
+</center>
+
+In cycle `C14`, instruction `I6` is now able to write its result (i.e., `3`).
+
+What (if any) is/are the corresponding change(s) to the RAT in cycle `C14` consequently to the write result of instruction `I6`?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-085A.png" width="650">
+</center>
+
+As a result of the write result of instruction `I6`, there is *no* corresponding change to the RAT. It is ***important*** to understand that write result does *not* correspondingly update the RAT; the RAT is only updated *on commit*. This in turn ensures proper in program-order execution.
+
 ### 28. Quiz 7 and Answers
 
 ### 29. Quiz 8 and Answers
