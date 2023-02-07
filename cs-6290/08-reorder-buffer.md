@@ -791,7 +791,7 @@ At this point, instruction `I4` finally writes its result and broadcasts. The co
 | `I1` | `C1` | `C2` | `C42` | |
 | `I2` | `C2` | `C3` | `C13` | |
 | `I3` | `C3` | `C4` | `C5` | |
-| `I4` | `C4` | `C14` | | |
+| `I4` | `C4` | `C14` | `C24` | |
 | `I5` | `C5` | `C25` | | |
 | `I6` | `C6` | | | |
 
@@ -801,7 +801,81 @@ Note that at this point, none of the instructions with their `Done` bit set (i.e
 
 ### 20. Cycles 25-43
 
+<center>
+<img src="./assets/08-061.png" width="650">
+</center>
+
+Cycle `C25` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | `C24` | |
+| `I5` | `C5` | `C25` | `C26` | |
+| `I6` | `C6` | | | |
+
+At this point, instruction `I5` commences execution and continues to do so until cycle `C26` (via `1` cycle requirement for instruction `SUB`), as in the table shown above.
+
+<center>
+<img src="./assets/08-062.png" width="650">
+</center>
+
+Cycle `C26` is depicted in the figure shown above.
+
+At this point, instruction `I5` finally writes its result and broadcasts. The corresponding `Done` bit is set in the ROB for entry `ROB5`, with its value (i.e., `33`) broadcasted accordingly. Furthermore, the RS previously occupied by instruction `I5` is freed on dispatch.
+
+Instruction `I6` captures the broadcast value (i.e., `33`, via `ROB5`), but is still pending a value for its other operand (i.e., `ROB1`). 
+
+Furthermore, instruction `I6` still cannot dispatch at this point, as it is pending an operand result (`ROB1`); this "gridlock" persists in cycles `C27` through `C41`.
+
+<center>
+<img src="./assets/08-063.png" width="650">
+</center>
+
+Cycle `C42` is depicted in the figure shown above.
+
+At this point, instruction `I1` finally writes its result and broadcasts. The corresponding `Done` bit is set in the ROB for entry `ROB1`, with its value (i.e., `9`) broadcasted accordingly.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | `C24` | |
+| `I5` | `C5` | `C25` | `C26` | |
+| `I6` | `C6` | `C43` | | |
+
+Instruction `I6` captures the broadcast value (i.e., `9`, via `ROB1`), and now has sufficient operands information/values in order to dispatch accordingly, and is able to dispatch and execute in the subsequent cycle `C43`, as indicated in the table shown above. Furthermore, the RS previously occupied by `I6` is freed accordingly.
+
+<center>
+<img src="./assets/08-064.png" width="650">
+</center>
+
+Cycle `C43` is depicted in the figure shown above.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | `C43` |
+| `I2` | `C2` | `C3` | `C13` | |
+| `I3` | `C3` | `C4` | `C5` | |
+| `I4` | `C4` | `C14` | `C24` | |
+| `I5` | `C5` | `C25` | `C26` | |
+| `I6` | `C6` | `C43` | `C44` | |
+
+At this point, instruction `I6` commences execution and continues to do so until cycle `C44` (via `1` cycle requirement for instruction `ADD`), as in the table shown above.
+
+Furthermore, up to this point, commits have been "gridlocked" by instruction `I1`; however, now, instruction `I1` can be committed in this cycle (`C43`), as in the table shown above. Upon commit, the following occur:
+  * The value for `R2` (i.e., `9`) is written in ARF
+  * The RAT entry for `R2` is examined. Since it is pointing to `ROB1` (which is correspondingly the most recently updated value of `R2`), the RAT entry can be cleared accordingly (i.e., indicating to reference the updated value in ARF directly).
+  * The ROB entry `ROB1` is cleared
+  * Instruction `I1` is committed
+
+At this point, to the programmer, instruction `I1` "appears" as completed. In reality, all of the other instructions besides the last one are completed at this point as well, however, they are not completed yet in program-order (i.e., until they are committed).
+
 ### 21. Cycles 44-48
+
 
 ## 22-29. ReOrder Buffer (ROB) Quizzes and Answers
 
