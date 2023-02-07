@@ -1180,6 +1180,58 @@ Lastly, the ROB entry for `ROB2` can now be cleared on commit.
 
 ### 29. Quiz 8 and Answers
 
+<center>
+<img src="./assets/08-088Q.png" width="650">
+</center>
+
+In cycle `C15`, there are no write results, however, instruction `I3` is able to commit. Consequently, the following occur:
+  * ARF entry for `R3` is updated with the new value via `ROB3` (i.e., `3`)
+  * Since entry `R3` in RAT currently points back to `ROB3` itself, this entry is cleared (i.e., read `R3` directly from `ARF` now)
+  * The entry `ROB3` in the ROB is cleared
+
+When does the last instruction (i.e., `I6`) finally commit?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-089A.png" width="650">
+</center>
+
+Since instruction `I4` writes its result in cycle `C16`, the earliest it can commit is in the subsequent cycle (i.e., `C17`). Proceeding similarly, the next two instructions (i.e., `I5` and `I6`) can correspondingly commit in the subsequent cycles (i.e., cycles `C18` and `C19`, respectively). Therefore, the last instruction `I6` commits in cycle `C19`.
+  * ***N.B.*** Observe that in this case, this analysis was performed "by inspection," without requiring any further examination of the other elements in the system (i.e., ROB, RAT, and AFT). For the sake of thoroughness, the corresponding analysis is performed accordingly in the remainder of this section.
+
+In cycle `C17` (in which instruction `I4` commits), the following occur with respect to instruction `I4` (via `ROB4`):
+  * The `Done` bit is marked accordingly in the ROB for entry `ROB4`
+  * ARF is updated with the corresponding result (`32`) for register `R1`
+  * RAT has current entry `ROB6` (i.e., the most recent value of register `R1`), which differs from `ROB4`, so the former is left intact
+  * The ROB entry `ROB4` is cleared out
+
+<center>
+<img src="./assets/08-090A.png" width="650">
+</center>
+
+In cycle `C18` (in which instruction `I5` commits), the following occur with respect to instruction `I5` (via `ROB5`):
+  * The `Done` bit is marked accordingly in the ROB for entry `ROB5`
+  * ARF is updated with the corresponding result (`-1`) for register `R4`
+  * RAT has current entry `ROB5` (i.e., the most recent value of register `R4`), which is the same value, therefore, the RAT entry is cleared (i.e., indicating to retrieve the updated value directly from ARF)
+  * The ROB entry `ROB4` is cleared out
+
+<center>
+<img src="./assets/08-091A.png" width="650">
+</center>
+
+In cycle `C19` (in which instruction `I6` commits), the following occur with respect to instruction `I6` (via `ROB6`):
+  * The `Done` bit is marked accordingly in the ROB for entry `ROB6`
+  * ARF is updated with the corresponding result (`3`) for register `R1`
+  * RAT has current entry `ROB6` (i.e., the most recent value of register `R1`), which is the same value, therefore, the RAT entry is cleared (i.e., indicating to retrieve the updated value directly from ARF)
+  * The ROB entry `ROB6` is cleared out
+
+<center>
+<img src="./assets/08-092A.png" width="650">
+</center>
+
+Upon completion of cycle `C19`, the current state of the system is as in the figure shown above, i.e., with ARF holding the most up-to-date values, and with the RAT, ROB, and RSes all empty.
+
 ## 30. ReOrder Buffer (ROB) Timing Example
 
 ## 31-33. ReOrder Buffer (ROB) Timing Quizzes and Answers
