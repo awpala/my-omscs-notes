@@ -1234,6 +1234,115 @@ Upon completion of cycle `C19`, the current state of the system is as in the fig
 
 ## 30. ReOrder Buffer (ROB) Timing Example
 
+Following a similar approach to previously with respect to Tomasulo's algorithm (cf. Lesson 7), consider now a "timing analysis" of a ROB-based system.
+
+<center>
+<img src="./assets/08-093.png" width="650">
+</center>
+
+Consider the system as in the figure shown above.
+
+```mips
+DIV R2, R3, R4 # I1
+MUL R1, R5, R6 # I2
+ADD R3, R7, R8 # I3
+MUL R1, R1, R3 # I4
+SUB R4, R1, R5 # I5
+ADD R1, R4, R2 # I6
+```
+
+The instructions in the system are as shown above.
+
+The execution units are characterized as follows:
+  * Instructions `ADD` and `SUB` require `1` cycle to execute
+  * Instruction `MUL` requires `10` cycles to execute
+  * Instruction `DIV` requires `40` cycles to execute
+
+Furthermore, the processor operations are characterized as follows:
+  * Reservation stations (RSes) are freed on broadcast, *not* on dispatch
+    * ***N.B.*** In practice, this can occur in a speculative processor, wherein the instruction is retained until there is sufficient "certainty" that instruction execution is appropriate by that point
+  * Issue, capture, and dispatch operations can all occur in the *same* cycle, with consequent execution occurring in the *following* cycle
+    * ***N.B.*** This is similar to the processors of the previous examples
+
+Assume that there are arbitrarily many ROB entries available (i.e., at least `6` such entries), and that there are `2` RSes for operations `MUL`/`DIV` and `3` RSes for operations `ADD`/`SUB`.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C42` | `C43` | |
+
+In cycle `C1`, instruction `I1` is issued into one of the `MUL`/`DIV` RSes, as per the table shown above.
+
+Being the first instruction, `I1` has no dependencies "by inspection," therefore, it commences execution in the subsequent cycle `C2`. Furthermore, instruction `DIV` requires `40` cycles, therefore, the earliest possible write result would be in cycle `C42`, which is noted tentatively at this point.
+
+Furthermore, the commit will occur in the subsequent cycle (i.e., `C43`).
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C42` | `C43` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C13` | `C44` | |
+
+In cycle `C2`, instruction `I2` is issued into the other `MUL`/`DIV` RS, as per the table shown above.
+
+Instruction `I2` has no dependencies "by inspection," therefore, it commences execution in the subsequent cycle `C3`. Furthermore, instruction `MUL` requires `10` cycles, therefore, the earliest possible write result would be in cycle `C13`, which is noted tentatively at this point.
+
+Furthermore, the commit will be unable to occur until at least cycle `C44`, pending commit of the upstream instruction `I1`.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C42` | `C43` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C13` | `C44` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C45` | |
+
+In cycle `C3`, instruction `I3` is issued into one of the `ADD`/`SUB` RSes, as per the table shown above.
+
+Instruction `I3` has no dependencies "by inspection," therefore, it commences execution in the subsequent cycle `C4`. Furthermore, instruction `ADD` requires `1` cycle, therefore, the earliest possible write result would be in cycle `C5`, which is noted tentatively at this point.
+
+Furthermore, the commit will be unable to occur until at least cycle `C45`, pending commit of the upstream instruction `I2`.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C42` | `C43` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C13` | `C44` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C45` | |
+| `MUL` | `R1, R1, R3` | `C14` | `C15` | `C25` | `C46` | Requires a free RS in order to issue, must wait until `C14` |
+
+In cycle `C3`, instruction `I4` cannot be issued into one of the `MUL`/`DIV` RSes (which are both currently occupied pending execution of their respective instructions), therefore, the earliest possible issue of instruction `I4` is in cycle `C14`, as per the table shown above. 
+
+Furthermore, instruction `I4` has dependencies for both of its operands, however, both will have executed by the end of cycle `C14`, and therefore instruction `I4` can commence execution in cycle `C15`. Instruction `MUL` requires `10` cycles, therefore, the earliest possible write result would be in cycle `C25`, which is noted tentatively at this point.
+
+Furthermore, the commit will be unable to occur until at least cycle `C46`, pending commit of the upstream instruction `I3`.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C42` | `C43` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C13` | `C44` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C45` | |
+| `MUL` | `R1, R1, R3` | `C14` | `C15` | `C25` | `C46` | Requires a free RS in order to issue, must wait until `C14` |
+| `SUB` | `R4, R1, R5` | `C15` | `C26` | `C27` | `C47` | Execution depends on `R1` |
+
+In cycles `C4` and `C5`, instruction `I5` cannot be issued yet (i.e., to ensure issuing of instructions in program-order), therefore, the earliest possible issue of instruction `I5` is in cycle `C15`, as per the table shown above.
+
+Furthermore, instruction `I5` has a dependency via operand `R1`, whose value is not broadcasted until cycle `C25` (via instruction `I4`), and therefore instruction `I5` can commence execution in cycle `C26`. Instruction `SUB` requires `1` cycle, therefore, the earliest possible write result would be in cycle `C27`, which is noted tentatively at this point.
+
+Furthermore, the commit will be unable to occur until at least cycle `C47`, pending commit of the upstream instruction `I4`.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C42` | `C43` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C13` | `C44` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C45` | |
+| `MUL` | `R1, R1, R3` | `C14` | `C15` | `C25` | `C46` | Requires a free RS in order to issue, must wait until `C14` |
+| `SUB` | `R4, R1, R5` | `C15` | `C26` | `C27` | `C47` | Execution depends on `R1` |
+| `ADD` | `R1, R4, R2` | `C16` | `C43` | `C44` | `C48` | Execution depends on `R2`|
+
+In cycles `C5` and `C6`, instruction `I6` cannot be issued yet (i.e., to ensure issuing of instructions in program-order), therefore, the earliest possible issue of instruction `I6` is in cycle `C16`, as per the table shown above.
+
+Furthermore, instruction `I6` has dependencies for both of its operands, however, both will have executed by the end of cycle `C42`, and therefore instruction `I6` can commence execution in cycle `C43`. Instruction `ADD` requires `1` cycle, therefore, the earliest possible write result would be in cycle `C44`, which is noted tentatively at this point.
+
+Furthermore, the commit will be unable to occur until at least cycle `C48`, pending commit of the upstream instruction `I5`.
+
+This concludes the timing analysis of the system.
+
 ## 31-33. ReOrder Buffer (ROB) Timing Quizzes and Answers
 
 ### 31. Quiz 1 and Answers
