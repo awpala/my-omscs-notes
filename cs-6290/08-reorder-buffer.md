@@ -592,6 +592,59 @@ When proceeding in this manner of analysis, be mindful of the fact that the resu
 
 ### 16. Cycles 1-2
 
+<center>
+<img src="./assets/08-051.png" width="650">
+</center>
+
+Consider the system having the configuration as in the figure shown above. In the current state (i.e., immediately prior to issuing the first instruction `I1`), both the register allocation table (RAT) and reorder buffer (ROB) are empty, implying the current register values are those of the register file (ARF). Furthermore, note the following execution cycle requirements:
+  * Instruction `ADD` requires `1` cycle to execute
+  * Instruction `MUL` requires `10` cycles to execute
+  * Instruction `DIV` requires `40` cycles to execute
+
+***N.B.*** Note the formats of the fields per the legend in the figure shown above (i.e., register station [RS] fields in purple, ROB fields in orange).
+
+<center>
+<img src="./assets/08-052.png" width="650">
+</center>
+
+Cycle `C1` is depicted in the figure shown above.
+
+The instruction `I1` is issued. To do this, there must be an available RS and corresponding ROB entry; both are readily available at this point, and populated accordingly.
+  * The RS receives the destination tag (Dst-Tag) `ROB1`, which is the corresponding ROB entry (i.e., it is *not* the RS tag itself; this allows the RS to be freed relatively quickly upon dispatch).
+  * The operands `R3` and `R4` are retrieved directly from ARF, with the corresponding values (`45` and `5`, respectively) recorded in the respective RS fields.
+  * The entry in RAT is updated to `ROB1` for register `R2`.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | | |
+
+Since this processor is capable of dispatching in the same cycle, instruction `I1` is issued in cycle `C1`, with corresponding execution in the subsequent cycle `C2` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above.
+
+<center>
+<img src="./assets/08-053.png" width="650">
+</center>
+
+Cycle `C2` is depicted in the figure shown above.
+
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+
+The RS is freed, and the result of instruction `I1` (i.e., `9`) is recorded in the ROB for reference (technically, the execution has not yet completed). The result will eventually be written in cycle `C42` (instruction `DIV` requires `40` cycles to execute), as in the table shown above.
+
+At this point, there is nothing to dispatch (i.e., the RSes are empty), but the next instruction `I2` can be issued, and there is a correspondingly available RS for this purpose.
+  * The RS receives the destination tag (Dst-Tag) `ROB2`, which is the corresponding ROB entry.
+  * The operands `R5` and `R6` are retrieved directly from ARF, with the corresponding values (`3` and `4`, respectively) recorded in the respective RS fields.
+  * The entry in RAT is updated to `ROB2` for register `R1`.
+
+| Instruction | Issue | Execute | Write Result | Commit |
+|:-:|:-:|:-:|:-:|:-:|
+| `I1` | `C1` | `C2` | `C42` | |
+| `I2` | `C2` | `C3` | | |
+
+Since this processor is capable of dispatching in the same cycle, instruction `I2` is issued in cycle `C2`, with corresponding execution in the subsequent cycle `C3` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above.
+
 ### 17. Cycles 3-4
 
 ### 18. Cycles 5-6
