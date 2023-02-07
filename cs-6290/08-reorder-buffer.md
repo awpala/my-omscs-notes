@@ -1156,6 +1156,28 @@ As a result of the write result of instruction `I6`, there is *no* corresponding
 
 ### 28. Quiz 7 and Answers
 
+<center>
+<img src="./assets/08-086Q.png" width="650">
+</center>
+
+Further examining cycle `C14`, note that the `Done` bit is set appropriately for instruction `ROB6` (i.e., upon write result of corresponding instruction `I6`), with the corresponding result (`3`) broadcasted accordingly.
+
+Furthermore, at this point, instruction `I2` can now be committed.
+
+Which entry (if any) changes in the architectural registry file (ARF), and if so, what is the new value?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-087A.png" width="650">
+</center>
+
+On commit of instruction `I2`, the ARF entry is correspondingly updated for register `R1` with result/value is `8`.
+
+Furthermore, inspecting the RAT indicates current entry `ROB6`, which is the most recent value of register `R1`; since this entry differs from the currently committed instruction (i.e., `ROB2` via instruction `I2`), then the former entry is still retained in the RAT accordingly.
+
+Lastly, the ROB entry for `ROB2` can now be cleared on commit.
+
 ### 29. Quiz 8 and Answers
 
 ## 30. ReOrder Buffer (ROB) Timing Example
