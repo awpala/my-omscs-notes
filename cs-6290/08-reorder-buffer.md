@@ -1347,6 +1347,64 @@ This concludes the timing analysis of the system.
 
 ### 31. Quiz 1 and Answers
 
+<center>
+<img src="./assets/08-094Q.png" width="650">
+</center>
+
+Consider the system as in the figure shown above.
+
+```mips
+DIV R2, R3, R4 # I1
+MUL R1, R5, R6 # I2
+ADD R3, R7, R8 # I3
+MUL R1, R1, R2 # I4
+SUB R4, R2, R5 # I5
+ADD R1, R4, R3 # I6
+```
+
+The instructions in the system are as shown above.
+
+The execution units are characterized as follows:
+  * Instructions `ADD` and `SUB` require `1` cycle to execute
+  * Instruction `MUL` requires `2` cycles to execute
+  * Instruction `DIV` requires `4` cycles to execute
+
+Furthermore, the processor operations are characterized as follows:
+  * Broadcast of one `ADD`/`SUB` *and* one `MUL`/`DIV` can occur in the *same* cycle
+  * Up to two instructions can be committed in the *same* cycle
+  * The reservation station (RS) is freed on dispatch
+
+Assume that there are arbitrarily many ROB entries available (i.e., at least `6` such entries), and that there are `2` RSes for operations `MUL`/`DIV` and `3` RSes for operations `ADD`/`SUB`.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C6` | `C7` | |
+
+In cycle `C1`, instruction `I1` is issued into one of the `MUL`/`DIV` RSes, as per the table shown above.
+
+Being the first instruction, `I1` has no dependencies "by inspection," therefore, it commences execution in the subsequent cycle `C2`. Furthermore, instruction `DIV` requires `4` cycles, therefore, the earliest possible write result would be in cycle `C6`, which is noted tentatively at this point.
+
+Furthermore, the commit will occur in the subsequent cycle (i.e., `C7`).
+
+What is the corresponding analysis for the next cycle, cycle `C2`?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-095A.png" width="650">
+</center>
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C6` | `C7` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C5` | `C8` | |
+
+In cycle `C2`, instruction `I2` is issued into the other `MUL`/`DIV` RS, as per the table shown above.
+
+Instruction `I2` has no dependencies "by inspection," therefore, it commences execution in the subsequent cycle `C3`. Furthermore, instruction `MUL` requires `2` cycles, therefore, the earliest possible write result would be in cycle `C5`, which is noted tentatively at this point.
+
+Furthermore, the commit will be unable to occur until at least cycle `C8`, pending commit of the upstream instruction `I1`.
+
 ### 32. Quiz 2 and Answers
 
 ### 33. Quiz 3 and Answers
