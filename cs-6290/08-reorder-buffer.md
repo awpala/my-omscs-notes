@@ -1530,3 +1530,34 @@ Now, consider a real **superscalar** processor, as per the figure shown above. S
 Taking these characteristics in aggregate, among these, there will generally be a "weakest link," which will dictate the degree to which superscalar performance can actually be achieved (i.e,. performing *on average* `> 1` instruction per cycle across all of these operations).
 
 ## 36. Terminology Confusion
+
+One additional point of discussion regarding out-of-order processors involves the ***terminology*** used around these concepts, and potentially resulting confusion as a result of terms' use.
+
+<center>
+<img src="./assets/08-102.png" width="650">
+</center>
+
+Thus far we have used the following terms to denote stages of execution, as per the figure shown above:
+  * `Issue` → The reservation station (RS) is obtained via reorder buffer (ROB) entry
+  * `Dispatch` → The instruction is selected for execution
+  * `Commit` → The instruction has been committed (i.e., in program-order)
+
+The terms `Issue` and `Dispatch` were introduced in the original Tomasulo's algorithm, and `Commit` was subsequently introduced in the first paper discussing ROBs. Furthermore, these terms are still in common use within academia today.
+
+Furthermore, there are alternative terms used for each of these stages/operations.
+
+`Issue` is also called:
+  * `Allocate` → Resources (e.g., RSes) are allocated for the instructions
+  * `Dispatch` → The instruction is *dispatched* into the RS and corresopnding ROB entry
+
+`Dispatch` is also called:
+  * `Execute` → The instruction is *executed* by the execution unit
+  * `Issue` → The instruction is *issued* from the RS to the execution unit
+
+`Commit` is also called:
+  * `Complete` → This term is particularly confusing, since the instruction generally *completes* execution prior committing
+  * `Retire` → The instruction is *retired* from the processor
+  * `Graduate` → Also common in academic usage, for obvious reasons `:)`
+
+## 37. Out-of-Order?
+
