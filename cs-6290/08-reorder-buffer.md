@@ -1441,12 +1441,53 @@ Furthermore, the commit will occur subsequently thereafter in cycle `C8`.
 | `MUL` | `R1, R1, R2` | `C4` | `C7` | `C9` | `C10` | |
 
 In cycle `C4`, instruction `I4` is issued into one of the `ADD`/`SUB` RSes, as per the table shown above.
-  * ***N.B.*** The RS previously occupied by `I2` is now freed by this point.
 
 Furthermore, instruction `I4` has dependencies for both of its operands, however, both will have executed by the end of cycle `C6`, and therefore instruction `I4` can commence execution in cycle `C7`. Instruction `MUL` requires `2` cycles, therefore, the earliest possible write result would be in cycle `C9`, which is noted tentatively at this point.
 
 Furthermore, the commit will occur subsequently thereafter in cycle `C10`.
 
 ### 33. Quiz 3 and Answers
+
+<center>
+<img src="./assets/08-098Q.png" width="650">
+</center>
+
+Finally, in concluding the analysis of this system, in which cycle does the final instruction (i.e., `I6`) get committed?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-099A.png" width="650">
+</center>
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C6` | `C7` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C5` | `C8` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C8` | |
+| `MUL` | `R1, R1, R2` | `C4` | `C7` | `C9` | `C10` | |
+| `SUB` | `R4, R2, R5` | `C5` | `C7` | `C8` | `C10` | |
+
+In cycle `C5`, instruction `I5` is issued into one of the `ADD`/`SUB` RSes, as per the table shown above.
+
+Furthermore, instruction `I5` has a dependency via operand `R2`, whose value is not broadcasted until cycle `C6` (via instruction `I1`), and therefore instruction `I5` can commence execution in cycle `C7`. Instruction `SUB` requires `1` cycle, therefore, the earliest possible write result would be in cycle `C8`, which is noted tentatively at this point.
+
+Furthermore, the commit will occur subsequently thereafter in cycle `C10`.
+  * ***N.B.*** Commit of instruction `I5` can occur concurrently with instruction `I4` in cycle `C10`, since the processor supports up to two commits per cycle.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C6` | `C7` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C5` | `C8` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C8` | |
+| `MUL` | `R1, R1, R2` | `C4` | `C7` | `C9` | `C10` | |
+| `SUB` | `R4, R2, R5` | `C5` | `C7` | `C8` | `C10` | |
+| `ADD` | `R1, R4, R3` | `C6` | `C9` | `C10` | `C11` | |
+
+In cycle `C6`, instruction `I6` is issued into one of the `ADD`/`SUB` RSes, as per the table shown above.
+
+Furthermore, instruction `I6` has dependencies for both of its operands, however, both will have executed by the end of cycle `C8`, and therefore instruction `I6` can commence execution in cycle `C9`. Instruction `ADD` requires `1` cycle, therefore, the earliest possible write result would be in cycle `C10`, which is noted tentatively at this point.
+
+Furthermore, the commit will occur subsequently thereafter in cycle `C11`.
 
 ## 34. Unified Reservation Stations
