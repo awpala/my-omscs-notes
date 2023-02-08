@@ -1491,3 +1491,21 @@ Furthermore, instruction `I6` has dependencies for both of its operands, however
 Furthermore, the commit will occur subsequently thereafter in cycle `C11`.
 
 ## 34. Unified Reservation Stations
+
+Having seen how an reorder-buffer-based (ROB-based) processor works, which involves *separate* reservation stations, consider now the concept of the ***unified* reservation station**.
+
+<center>
+<img src="./assets/08-100.png" width="650">
+</center>
+
+As in the figure shown above, we have thus far seen configurations involving *separate* reservation stations (RSes) for each distinct execution unit (e.g., `3` RSes for execution unit `ADD`/`SUB`, and `2` RSes for execution unit `MUL`/`SUB`). With this type of configuration, it is possible for "bottlenecking" to occur, whereby one (or more) of the RSes becomes full with in-progress instructions at the point of the next-issuing instruction.
+
+Note that both types of reservation stations (i.e., across different execution units) are exactly the same, with the exception that they are feeding into different execution units (however, otherwise, the logic, monitoring, etc. of register values with respect to broadcast, capture, and issuing is identical).
+
+Therefore, to improve the ability use the RSes (a relatively expensive resource), a **unified reservation station** approach can be used, whereby *all* RSes are effectively "pooled" across the various execution units. On issuing, the next-in-line instruction then simply occupies the next-available RS, irrespectively of the target execution unit in question.
+  * The **benefit** of this approach is that as long as there are *anY* available RSes, then instructions can continue to be issued.
+  * However, the **drawback** of this approach is that the logic for dispatching the instructions into the corresponding execution units becomes more complicated to implement (in every cycle, there is additional overhead to evaluate the heterogeneous set of pending instructions among the RSes, as well as dispatching to the appropriate execution unit accordingly)
+
+In practice, processors typically use some variation of the unified reservation station (i.e., as opposed to strictly segregated/dedicated RSes).
+
+## 35. Superscalar
