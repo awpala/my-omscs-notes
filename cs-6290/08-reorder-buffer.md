@@ -1575,3 +1575,46 @@ Consider the processor pipeline as in the figure shown above. In an out-of-order
 Therefore, in an out-of-order processor, only a subset of the stages are actually occurring out-of-order. In contrast, a strictly in-order processor would additionally perform these subsets of (otherwise out-of-order) stages in program-order as well.
 
 ## 38. In-Order vs. Out-of-Order Quiz and Answers
+
+<center>
+<img src="./assets/08-105A.png" width="650">
+</center>
+
+| Stage | In-Order | Out-of-Order |
+|:-:|:-:|:-:|
+| Fetch | | |
+| Decode | | |
+| Issue | | |
+| Dispatch | | |
+| Execution Stage 1 | | |
+| Execution Stage 2 | | |
+| Broadcast | | |
+| Commit | | |
+| Release ROB Entry | | |
+
+Consider the processor described in the table shown above. For a given stage, indicate whether it occurs in either program-order or out-of-order, given an out-of-order processor.
+
+***Answer and Explanation***
+
+| Stage | In-Order | Out-of-Order |
+|:-:|:-:|:-:|
+| Fetch | `√` | |
+| Decode |`√` | |
+| Issue |`√` | |
+| Dispatch | |`√` |
+| Execution Stage 1 | |`√`|
+| Execution Stage 2 | |`√`|
+| Broadcast | |`√`|
+| Commit |`√`| |
+| Release ROB Entry |`√`| |
+
+As indicated previously (cf. Section 37), stages Fetch through Decode must occur strictly in program-order.
+
+Furthermore, stages Dispatch through Broadcast can occur out-of-order.
+  * ***N.B.*** In a strictly in program-order processor, these stages would also occur in program-order (i.e., rather than out-of-order).
+
+Lastly, as indicated previously (cf. Section 37), Commit must occur strictly in program-order, and thus it follows by natural consequence that the subsequent release of the ROB entry will occur in program-order as well. 
+
+## 39. Lesson Outro
+
+This lesson described the reorder buffer (ROB), which allows to correctly handle exceptions and branch mispredictions in out-of-order processors. This is quite important for actually making *real* programs work correctly; accordingly, virtually all modern high-performance processors include such a ROB.
