@@ -1561,3 +1561,17 @@ Furthermore, there are alternative terms used for each of these stages/operation
 
 ## 37. Out-of-Order?
 
+Finally, consider the notion of ***out-of-order*** in the context of a reorder-buffer-based (ROB-based) processor.
+
+<center>
+<img src="./assets/08-103.png" width="650">
+</center>
+
+Consider the processor pipeline as in the figure shown above. In an out-of-order processor, note that not all of these stages would occur strictly out-of-order.
+  * For stages `Fetch` through `Issue`, these do in fact occur strictly in program-order; this ensures that any dependencies inherent in the program are preserved accordingly.
+  * Upon issuing an instruction to a reservation station (RS) pending subsequent execution, the subsequent `Execute` operations wll occur in the order of data dependencies, which do not necessarily follow strictly in program-order. Furthermore, the consequent `Write`/`Broadcast` operation can correspondingly occur out-of-order in general.
+  * Finally, on `Commit` of the instruction, this must occur strictly in program-order, in order to ensure proper semantics of the program itself; the committing order of the instruction is effectively the "programmer's perspective" of the program itself.
+
+Therefore, in an out-of-order processor, only a subset of the stages are actually occurring out-of-order. In contrast, a strictly in-order processor would additionally perform these subsets of (otherwise out-of-order) stages in program-order as well.
+
+## 38. In-Order vs. Out-of-Order Quiz and Answers
