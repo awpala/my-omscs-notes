@@ -1306,7 +1306,7 @@ Furthermore, the commit will be unable to occur until at least cycle `C45`, pend
 | `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C45` | |
 | `MUL` | `R1, R1, R3` | `C14` | `C15` | `C25` | `C46` | Requires a free RS in order to issue, must wait until `C14` |
 
-In cycle `C3`, instruction `I4` cannot be issued into one of the `MUL`/`DIV` RSes (which are both currently occupied pending execution of their respective instructions), therefore, the earliest possible issue of instruction `I4` is in cycle `C14`, as per the table shown above. 
+In cycle `C4`, instruction `I4` cannot be issued into one of the `MUL`/`DIV` RSes (which are both currently occupied pending execution of their respective instructions), therefore, the earliest possible issue of instruction `I4` is in cycle `C14`, as per the table shown above. 
 
 Furthermore, instruction `I4` has dependencies for both of its operands, however, both will have executed by the end of cycle `C14`, and therefore instruction `I4` can commence execution in cycle `C15`. Instruction `MUL` requires `10` cycles, therefore, the earliest possible write result would be in cycle `C25`, which is noted tentatively at this point.
 
@@ -1406,6 +1406,46 @@ Instruction `I2` has no dependencies "by inspection," therefore, it commences ex
 Furthermore, the commit will be unable to occur until at least cycle `C8`, pending commit of the upstream instruction `I1`.
 
 ### 32. Quiz 2 and Answers
+
+<center>
+<img src="./assets/08-096Q.png" width="650">
+</center>
+
+With respect to the subsequent instructions `I3` and `I4`, in which cycle(s) do they issue, and in which cycle(s) to they commit?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/08-097A.png" width="650">
+</center>
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C6` | `C7` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C5` | `C8` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C8` | |
+
+In cycle `C3`, instruction `I3` is issued into one of the `ADD`/`SUB` RSes, as per the table shown above.
+
+Instruction `I3` has no dependencies "by inspection," therefore, it commences execution in the subsequent cycle `C4`. Furthermore, instruction `ADD` requires `1` cycle, therefore, the earliest possible write result would be in cycle `C5`, which is noted tentatively at this point.
+  * ***N.B.*** Since the processor is able to broadcast up to two instructions per cycle, this can occur concurrently with the broadcast of `I2` in cycle `C5`.
+
+Furthermore, the commit will occur subsequently thereafter in cycle `C8`.
+  * ***N.B.*** Commit of instruction `I3` can occur concurrently with instruction `I2` in cycle `C2`, since the processor supports up to two commits per cycle.
+
+| Instruction | Operands | Issue | Execute | Write Result | Commit | Comments |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| `DIV` | `R2, R3, R4` | `C1` | `C2` | `C6` | `C7` | |
+| `MUL` | `R1, R5, R6` | `C2` | `C3` | `C5` | `C8` | |
+| `ADD` | `R3, R7, R8` | `C3` | `C4` | `C5` | `C8` | |
+| `MUL` | `R1, R1, R2` | `C4` | `C7` | `C9` | `C10` | |
+
+In cycle `C4`, instruction `I4` is issued into one of the `ADD`/`SUB` RSes, as per the table shown above.
+  * ***N.B.*** The RS previously occupied by `I2` is now freed by this point.
+
+Furthermore, instruction `I4` has dependencies for both of its operands, however, both will have executed by the end of cycle `C6`, and therefore instruction `I4` can commence execution in cycle `C7`. Instruction `MUL` requires `2` cycles, therefore, the earliest possible write result would be in cycle `C9`, which is noted tentatively at this point.
+
+Furthermore, the commit will occur subsequently thereafter in cycle `C10`.
 
 ### 33. Quiz 3 and Answers
 
