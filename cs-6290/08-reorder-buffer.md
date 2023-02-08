@@ -1509,3 +1509,24 @@ Therefore, to improve the ability use the RSes (a relatively expensive resource)
 In practice, processors typically use some variation of the unified reservation station (i.e., as opposed to strictly segregated/dedicated RSes).
 
 ## 35. Superscalar
+
+Up to this point, the reorder-buffer-based (ROB-based) processors examined have *not* been **superscalar**, i.e., they have only issued *one* instruction per cycle (rather than *greater* than one). Even with a processor capable of *committing* up to two instructions per cycle (cf. Section 31), there will still be a "bottlenck" induced by the rate-limiting issue operation.
+
+<center>
+<img src="./assets/08-101.png" width="650">
+</center>
+
+Now, consider a real **superscalar** processor, as per the figure shown above. Such as processor is characterized as follows:
+
+| Superscalar Processor Characteristic | Description |
+|:-:|:-:|
+| Fetches `> 1` instruction per cycle | This effectively entails fetching more than one instruction's worth of memory for cycle (e.g., a `4`-byte memory word would require fetching of `>= 8` bytes per cycle) |
+| Decodes `> 1` instructions per cycle | This amounts to having more than one decoder available/present (i.e., in every cycle, the first decoder examines the first instruction, while the second decoder examines the second instruction fetched, etc.) |
+| Issues `> 1` instructions per cycle | Note that (as before) it is necessary to issue instruction in program-order, therefore, as a given instruction is being issued, the next instruction is also being examined for issuing, etc. Furthermore, if one of the next instructions *cannot* issue, then that will also preclude the subsequent downstream instruction(s) from issuing as well. |
+| Dispatches `> 1` instructions per cycle | As seen previously in this lesson, with multiple execution units available, it is possible to dispatch one instruction to each of these execution units, which effectively enables superscalar performance already. However, in practice, the imbalance in the distribution of the execution units (e.g., three `ADD`/`SUB` units vs. two `MUL`/`DIV` units) can result in "bottlenecking," therefore, it is generally necessary to have a more "even" distribution of the execution unit types in order to sustain superscalar performance over many cycles (i.e., to *consistently* perform `>= 2` issue and dispatch operations on average per cycle). |
+| Broadcasts `> 1` results per cycle | This involves not only having multiple (i.e., `>= 2`) broadcast buses, but also requires every reservation station to compare its waited-for tags among *all* of these buses (because in any given cycle, one or more of these buses can be producing a result(s) at that point). Correspondingly, this significantly complicates the implementation of the reservation stations accordingly, i.e., the implementation cost/complexity is directly proportional to the total number of broadcast operations that must be monitored (roughly `O(n)` cost in `n` broadcast operations). |
+| Commits `> 1` instructions per cycle | As seen previously in this lesson, and similarly as for the issue operation, the next-pending instruction for committing is evaluated while a corresponding "lookahead" occurs for the subsequent to-be-committed instruction, and so on. Furthermore, in performing this evaluation, program-order must be maintained, therefore, it is not permissible to commit a "downstream" instruction "prematurely," if a particular instruction under current inspection cannot yet be committed. |
+
+Taking these characteristics in aggregate, among these, there will generally be a "weakest link," which will dictate the degree to which superscalar performance can actually be achieved (i.e,. performing *on average* `> 1` instruction per cycle across all of these operations).
+
+## 36. Terminology Confusion
