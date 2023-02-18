@@ -162,8 +162,8 @@ Consider the following comparisons:
 
 | Prediction Strategy | Branch Instruction Penalty | Non-Branch Instruction Penalty |
 |:---:|:---:|:---:|
-| Refuse to predict | `3` cycles | `1` or `3` cycles, for "actually not taken" or "actually taken" (respectively) |
-| Predict as "not taken" | `2` cycles | `1` cycle ("not taken" prediction is always correct) |
+| Refuse to predict | `3` cycles | `2` cycles |
+| Predict as "not taken" |`1` or `3` cycles, for "actually not taken" or "actually taken" (respectively) | `1` cycle ("not taken" prediction is always correct) |
 
 As this suggests, predicting as "not taken" is *always* better than making no prediction at all.
   * For non-branching instructions, there is never a penalty incurred by the former
