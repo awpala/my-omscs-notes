@@ -970,9 +970,9 @@ For example, with a PC index comprised of `11` bits (with corresponding `11`-bit
 
 Consider the pattern `T T T T ...` (i.e., branch always taken). In this case, the corresponding entry in the PHT is `1 1 1 1 ...`, along with a fixed PC index for the branch. Therefore, performing the appropriate combination (i.e., via XOR), this requires only `1` counter (i.e., only `1` entry in the BHT table, using only one of its 2-bit counters). Even so, the total cost for this is the PHT entry (e.g., `11` bits) combined with the size of the 2-bit counter (which is still much less than `2`<sup>`n`</sup> combined with the 2-bit counter).
 
-By the same reasoning, the pattern `NT NT NT NT ...` (with corresponding PHT entry `0 0 0 0 ...`) requires only `1` counter.
+By the same reasoning, the pattern `N N N N ...` (with corresponding PHT entry `0 0 0 0 ...`) requires only `1` counter.
 
-The pattern `NT T NT T ...` generates two possible PHT entries `0 1 0 1 ...` and `1 0 1 0 ...`, and therefore requires `2` counters.
+The pattern `NT NT NT NT ...` generates two possible PHT entries `0 1 0 1 ...` and `1 0 1 0 ...`, and therefore requires `2` counters.
 
 In general, it is evident that many patterns will indeed have a small counter requirement. This leaves many available entries in the BHT for more complex patterns such as `NT NT NT NT T`, which may require the full `n` history bits (e.g., `16`), correspondingly using all `n` 2-bit counters. Therefore, this arrangement naturally allocates BHT entries proportionally to the requirements of the PHT. However, to avoid potential conflicts, the BHT should be large relative to the PHT (i.e., to avoid mapping to the *same* entry in the BHT via two different PC indices representing two distinct/different branches); by virtue of using a 2-bit-entry BHT, it is not difficult to have a large BHT in practice.
 
