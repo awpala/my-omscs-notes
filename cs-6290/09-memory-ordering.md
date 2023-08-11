@@ -140,3 +140,67 @@ Most modern processors today use the third option ("go anyway") because it yield
   * Furthermore, there are also entire schemes around attempting to predict when such an incorrect assumption will occur, thereby proceeding with load instructions only if this occurrence is unlikely.
 
 ## 6. Out-of-Order Load/Store Execution
+
+<center>
+<img src="./assets/09-010.png" width="450">
+</center>
+
+Now, consider what occurs with out-of-order execution of load and store instructions, following the "aggressive" approach of load instructions fetching from memory as soon as their computed address is known, if there is no preceding store instruction that has also computed the same address at the point of execution (which later turns out to resolve to the same address after all).
+
+Consider the following example program, a sequence of instructions in the load-store queue (LSQ):
+
+```mips
+LOAD  R3 = 0(R6)   # I1
+ADD   R7 = R3 + R9 # I2
+STORE R4 → 0(R7)   # I3
+SUB   R1 = R1 - R2 # I4
+LOAD  R8 = 0(R1)   # I5
+```
+
+In an out-of-order processor, when attempting to execute these instructions, the following might occur. (Assume for purposes of discussion that all of these instructions have already been fetched, decoded, etc.)
+
+<center>
+<img src="./assets/09-011.png" width="450">
+</center>
+
+For instruction `I1` (as in the figure shown above), because the `LOAD` only depends on `R6` (which is not otherwise produced by any other instructions), it can ***dispatch***. Therefore, it fetches from memory, and eventually returns the corresponding value for `R3`.
+
+However, in this scenario, there is a ***cache miss***. Consequently, the `LOAD` instruction will be delayed, pending reconciliation of the correct memory value, and therefore instruction `I1` *cannot* be dispatched until this occurs, thereby impacting the execution of downstream instructions `I2` and `I3` (via corresponding dependency on `R3`).
+
+<center>
+<img src="./assets/09-012.png" width="450">
+</center>
+
+Meanwhile, instruction `I4` *can* be dispatched (as in the figure shown above), thereby producing `R1` very quickly.
+
+<center>
+<img src="./assets/09-013.png" width="450">
+</center>
+
+At this point, `I5` *can* also subsequently dispatch (as in the figure shown above), which in this scenario results in a ***cache hit***. Consequently, the `LOAD` instruction is able to produce `R8` very quickly, thereby supplying it to downstream instructions accordingly.
+
+<center>
+<img src="./assets/09-014.png" width="450">
+</center>
+
+At this point in the program (as in the figure shown above):
+  * Instructions `I4` and `I5` have completed, and are pending commits
+  * Meanwhile, upstream instructions `I1`, `I2`, and `I3` are still pending execution, waiting on the instruction `LOAD` (`I1`) to complete 
+
+<center>
+<img src="./assets/09-015.png" width="550">
+</center>
+
+Eventually, the instruction `LOAD` (`I1`), completes (as in the figure shown above). The resulting value `R3` is subsequently fed into instruction `I2` (which in turn completes execution promptly thereafter), and similarly `R7` is fed from instruction `I2` to `I3` for its subsequent execution.
+
+Assuming the resulting address from instruction `I5` was `X`, then let's also assume in this scenario that the resulting address from instruction `X` is *not* `X` (i.e., the address addressed by `R7` in instruction `I3` is *different* from the address addressed by `R1` in downstream instruction `I5`). In this case, there will be *no* issue/conflict, since the instruction `STORE` in `I3` stores a different/unrelated address.
+
+<center>
+<img src="./assets/09-016.png" width="550">
+</center>
+
+Conversely, consider the situation in which instruction `I3` *does* compute the value `X` for `R7` (as in the figure shown above). In this case, the value stored in `R4` in instruction `I3` is the value which downstream instruction `I5` *should* actually be using (i.e., in operand `R1`), however, `I5` has already executed by this point, using a ***stale*** value loaded from memory.
+
+We will next discuss the resolution measures for this scenario.
+
+## 7. In-Order Load/Store Execution
