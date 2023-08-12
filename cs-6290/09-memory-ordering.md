@@ -109,7 +109,7 @@ The third instruction (`I3`) accesses the computed memory address `204`. In gene
 
 ***N.B.*** Store-to-load forwarding assumes that at the time of the load instruction, the upstream store instruction(s) has/have already been completed, and therefore the computed addresses are known/available at the point of the load instruction.
 
-### LSQ Part 2
+### 5. LSQ Part 2
 
 <center>
 <img src="./assets/09-008.png" width="450">
@@ -139,7 +139,7 @@ Following the third option, once the address is computed for the load instructio
 Most modern processors today use the third option ("go anyway") because it yields the ***best performance***. In practice, if we permit the load instructions to proceed without otherwise waiting for the store instructions, it turns out that most of the time this results in the ***correct*** instructions being executed, achieving a net speedup in performance (i.e., less overall "downtime" due to waiting on store instructions, despite the occasionally incurred cost of recovery in the case of an invalid assumption regarding the validity of the upstream store instruction's address).
   * Furthermore, there are also entire schemes around attempting to predict when such an incorrect assumption will occur, thereby proceeding with load instructions only if this occurrence is unlikely.
 
-## 6. Out-of-Order Load/Store Execution
+## 6. Out-of-Order Load-Store Execution
 
 <center>
 <img src="./assets/09-010.png" width="450">
@@ -203,4 +203,36 @@ Conversely, consider the situation in which instruction `I3` *does* compute the 
 
 We will next discuss the resolution measures for this scenario.
 
-## 7. In-Order Load/Store Execution
+## 7. In-Order Load-Store Execution
+
+<center>
+<img src="./assets/09-017.png" width="550">
+</center>
+
+The first solution to the problem encountered in the previous section is to simply avoid the strategy of out-of-order load-store execution altogether, and instead perform **in-order load-store execution**.
+
+<center>
+<img src="./assets/09-018.png" width="350">
+</center>
+
+In the case of in-order load-store execution (as in the figure shown above):
+  * The `LOAD` in instruction `I1` is a ***cache miss***, resulting in a stall of the subsequent two instructions (`ADD`/`I2` and `STORE`/`I3`, respectively) pending completion of instruction `I1`.
+  * The `SUB` in instruction `I4` completes, providing the address `R1` for subsequent `LOAD` in instruction `I5`. At this point, the load-store queue checks to determine whether any preceding instructions might resolve to the same address; or, even worse, whether *all* of the preceding instructions have even completed in the first place (i.e., if this is *not* the case, then the downstream `LOAD` will be stalled anyhow, pending completion of the upstream instructions). Consequently, the `LOAD` in instruction `I5` does ***not*** fetch from memory, despite having a resolved address available (i.e., `R1`).
+
+<center>
+<img src="./assets/09-019.png" width="450">
+</center>
+
+Eventually, the cache miss in instruction `I1` is resolved, and the instruction `LOAD` is able to proceed (as in the figure shown above). Consequently, instruction `I2` is able to computed `R7` promptly thereafter, and similarly instruction `I3` can now perform its corresponding instruction `STORE`. Furthermore, as instruction `I1` completes, instruction `I4` completes subsequently thereafter.
+
+<center>
+<img src="./assets/09-020.png" width="450">
+</center>
+
+Note that the `STORE` in instruction `I3` is not considered "completed" when it commits, but rather when its address operand `R7`becomes known, as well as computing the target address (i.e., `R4`); only at this point can the `LOAD` in instruction `I5` proceed, by checking the preceding instructions to determine whether any `STORE`s produced the necessary operand values (i.e., `R1`). Therefore, instruction `I5` can only execute after `I3`, which in turn only completes execution *after* the `LOAD` in instruction `I1` is completed.
+
+Effectively, most of the instructions are executed *out-of-order*, however, load and store instructions still proceed in-order. Of course, it is readily apparent that this is suboptimal if *different*/*distinct* addresses are involved among the load and store instructions, as this introduces otherwise unnecessary execution delays for downstream instructions not otherwise dependent on the upstream instructions' resolved addresses. This problem is further exacerbated if in addition to this delay, the downstream load instructions (e.g., `I5`) result in cache misses, thereby introducing additional execution delays.
+
+Therefore, this strictly in-order load-store execution is *not* a very high-performance resolution strategy, however, it does ensure program correctness.
+
+## 8. Memory Ordering Quiz and Answers
