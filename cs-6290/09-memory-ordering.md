@@ -289,3 +289,20 @@ Analogously, instruction `I5` does not proceed until cycle `C85`, with a corresp
 Therefore, with in-order execution, this program executes in `126` total cycles. This is a nearly 3× delay relative to out-of-order execution (cf. `44` total cycles). This demonstrates that there is a marked ***advantage*** in reordering load-store instructions, however, this carries a ***risk*** of potentially requiring **recovery** in the event of loading an incorrect memory value.
 
 ## 9. Store-to-Load Forwarding
+
+<center>
+<img src="./assets/09-023.png" width="650">
+</center>
+
+Before discussing how to recover from load operations performed prematurely, first consider the **store-to-load forwarding** problem.
+
+For a ***load*** instruction, we must consider: Which upstream store instruction does it retrieve the value from?
+  * Generally, there can be *multiple* store instructions corresponding to the *same* address, any/all of which pertain to the load instruction in question. Therefore, it is necessary to determine *which* of these in particular will supply the necessary value to the load instruction. 
+  * Furthermore, if *none* of the upstream store instructions matches, then this must be determined accordingly, in order to correspondingly fetch the instruction from memory (`MEM`).
+
+When a ***store*** instruction is finally resolved, we then must consider: Which downstream load instruction does it supply to value to?
+  * There might be a load instruction whose address is already determined; once the store instruction in question determines the corresponding address and value, it should correspondingly relay this value to the load instruction.
+
+Furthermore, note that there can be ***multiple*** downstream load instructions pending this store-instruction-produced value; in this case, how is this determined? This is done so via the **load-store queue (LSQ)**, as discussed next.
+
+## 10. Load-Store Queue (LSQ) Example
