@@ -47,13 +47,78 @@ Performing the instructions in this manner creates a dependency chain among the 
 To resolve this "bottleneck," the compiler performs tree height reduction as follows. The compiler determines that instead of sequential summing the numbers (thereby creating a dependency chain), it can alternatively group the instructions' additions as pairs `(R2 + R3)` and `(R4 + R5)`, with each pair being independently determinate/computable, resulting in the following modification of the program:
 
 ```mips
-ADD R8, R2, R3 # I1
-ADD R7, R4, R5 # I2
-ADD R8, R8, R7 # I3
+ADD R8, R2, R3 # I1ʹ
+ADD R7, R4, R5 # I2ʹ
+ADD R8, R8, R7 # I3ʹ
 ```
 
-This correspondingly allows for instructions `I1` and `I2` to be executed independently of each other, reducing the overall cycles requirement from `3` (strictly sequentially) to `2` (instructions `I1` and `I2` executing in parallel, followed by instruction `I3`).
+This correspondingly allows for instructions `I1′` and `I2′` to be executed independently of each other, reducing the overall cycles requirement from `3` (strictly sequentially) to `2` (instructions `I1′` and `I2′` executing in parallel, followed by instruction `I3′`).
 
 Note that tree height reduction is ***not*** always feasible. In this particular case, it exploits the intrinsic **associativity** of addition operations; however, ***not*** all operations are associative in this manner. Therefore, such a technique is only appropriate if it does ***not*** otherwise alter the intended/correct semantics of the (in-order-equivalent) program itself.
 
 ## 3. Tree Height Reduction Quiz and Answers
+
+<center>
+<img src="./assets/10-005A.png" width="650">
+</center>
+
+Consider the following program, which computes the arithmetic expression `R1 + R2 - R3 + R4 - R5 + R6 - R7`:
+
+```mips
+ADD R10, R1, R2  # I1
+SUB R10, R10, R3 # I2
+ADD R10, R10, R4 # I3
+SUB R10, R10, R5 # I4
+ADD R10, R10, R6 # I5
+SUB R10, R10, R7 # I6
+```
+
+Observe that a dependency chain forms in this program via `R10`. Correspondingly, the instruction-level parallelism (ILP) of this program is as follows:
+
+```
+6 instructions / 6 cycles = 1 instruction/cycle
+```
+
+Perform a tree height reduction on this program, in order to improve instruction-level parallelism (ILP), and compute the correspondingly improved ILP.
+
+***Answer and Explanation***
+
+To implement tree height reduction in this program, observe there are three addition operations (which *are* associative) and three subtraction operations (which are *not* associative). Correspondingly, we can reorder these operations to perform the additions first (and consequently in parallel), as well as use the distributive property with respect to the subtraction (i.e., correspondingly grouping the operands into upstream addition operations prior to subtracting), thereby transforming the target expression to the following: `((R1 + R2) + (R4 + R6)) - ((R3 + R5) + R7)`.
+
+The resulting modified program is as follows:
+
+```mips
+ADD R10, R1, R2   # I1′
+ADD R11, R4, R6   # I2′
+ADD R10, R10, R11 # I3′
+ADD R11, R3, R5   # I4′
+ADD R11, R11, R7  # I5′
+SUB R10, R10, R11 # I6′
+```
+
+The corresponding instruction-level parallelism (ILP) is as follows:
+* Instructions `I1′` and `I2′` have no dependencies between them, however, instruction `I3′` depends on these upstream instructions' results.
+* Instruction `I4′` has no upstream dependencies, and therefore can execute immediately on program start.
+* Instruction `I5′` is dependent on the result of upstream instruction `I4′`.
+* Instruction `I5′` is dependent on the results of upstream instructions `I3′` and `I5′`.
+
+Correspondingly, these instructions can be executed as follows:
+
+| Instruction | Earliest possible cycle of execution |
+|:--:|:--:|
+| `I1′` | `C1` |
+| `I2′` | `C2` |
+| `I3′` | `C1` |
+| `I4′` | `C1` |
+| `I5′` | `C2` |
+| `I6′` | `C3` |
+
+Therefore, the resulting ILP from this tree height reduction is:
+
+```
+6 instructions / 3 cycles = 2 instructions/cycle
+```
+
+Which is a 2× improvement over the original single-instruction-per-cycle (i.e., dependency-chain-limited) version of the program.
+
+## 4. Make Independent Instructions Easier to Find
