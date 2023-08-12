@@ -4,7 +4,8 @@
 
 Unit | Lesson | Topic |
 |:--:|:--:|:--:|
-| P1 | [1](./01-P1L2-introduction-to-operating-systems.md) | Introduction to Operating Systems |
+| P1 | 1 | Course Overview |
+| P1 | [2](./01-P1L2-introduction-to-operating-systems.md) | Introduction to Operating Systems |
 | P2 | [1](./02-P2L1-processes-and-process-management.md) | Processes and Process Management |
 | P2 | [2](./03-P2L2-threads-and-concurrency.md) | Threads and Concurrency |
 | P2 | [3](./04-P2L3-threads-case-study-pthreads.md) | Threads Case Study: Pthreads |
