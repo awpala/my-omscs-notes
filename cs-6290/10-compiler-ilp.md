@@ -163,7 +163,7 @@ In this case, the program sequence occurs as follows:
 
 <table style="width: 100%; text-align: center;">
   <tr>
-    <th>Cycle(s)</th>
+    <th>Cycle</th>
     <th>Instruction Executed</th>
     <th>Description</th>
   </tr>
@@ -214,4 +214,76 @@ In this case, the program sequence occurs as follows:
   </tr>
 </table>
 
-Now, consider the possible intervention by the compiler to improve the processor's performance with this program.
+<center>
+<img src="./assets/10-009.png" width="450">
+</center>
+
+Now, consider the possible intervention by the compiler to improve the processor's performance with this program. Given the same processor as before, how can the compiler reduce the overall cycles per loop iteration (i.e., `10` per above analysis)?
+
+The compiler can analyze the program as follows:
+  * Since the `ADD` in instruction `I2` cannot be performed *immediately* following the `LW` in instruction `I1` (i.e., due to the two-cycle requirement for the `ADD`), it can find an alternate instruction to place in the `I2` position which does *not* depend on the corresponding `LW`.
+  * The `SW` in instruction `I3` does depend on the operand of `I2` (i.e., `R2`), however, the `ADDI` in instruction `I4` does *not* have a dependency on the upstream `LW` in instruction `I1`, and therefore instruction `I4` could be placed "upstream" in the program relative to its current position, without otherwise affecting the semantics of the program itself
+
+In performing this modification (i.e., moving `ADDI R1, R1, 4` to upstream position/instruction `I2′`), there must also be a corresponding adjustment in the offset of the `SW` in instruction `I4` to account for this (i.e., new offset `-4`, rather than `0` as before), thereby maintaining the otherwise correct value of operand `R1` for subsequent/downstream instructions.
+
+<center>
+<img src="./assets/10-010.png" width="650">
+</center>
+
+Per the modified program as follows:
+
+```mips
+loop:
+  LW   R2, 0(R1)    # I1
+  ADDI R1, R1, 4    # I2′
+  ADD  R2, R2, R0   # I3′
+  SW   R2, -4(R1)   # I4′
+  BNE  R1, R3, Loop # I5
+```
+
+The corresponding cycles analysis is as follows:
+
+<table style="width: 100%; text-align: center;">
+  <tr>
+    <th>Cycle</th>
+    <th>Instruction Executed</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>C1</code></td>
+    <td><code>I1</code></td>
+    <td>Instruction <code>I1</code> requires two cycles to fetch the value from the cache and place it in register <code>R2</code></td>
+  </tr>
+  <tr>
+    <td><code>C2</code></td>
+    <td><code>I2′</code></td>
+    <td>Instruction <code>I2′</code> can proceed in cycle <code>C2</code>, with no upstream dependencies (and furthermore effectively eliminating the stall introduced by upstream instruction <code>I1</code>), however, this instruction introduces a two-cycle stall for its execution prior to executing subsequent instruction <code>I5</code></td>
+  </tr>
+  <tr>
+    <td><code>C3</code></td>
+    <td><code>I3′</code></td>
+    <td rowspan="3">Instruction <code>I3′</code> requires three cycles perform the addition operation (i.e., add <code>R0</code> to <code>R2</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R2</code>), thereby requiring a stall of two cycle prior to executing subsequent instruction <code>I4′</code></td>
+  </tr>
+  <tr>
+    <td><code>C4</code></td>
+    <td><code>stall</code></td>
+  </tr>
+  <tr>
+    <td><code>C5</code></td>
+    <td><code>stall</code></td>
+  </tr>
+  <tr>
+    <td><code>C6</code></td>
+    <td><code>I4′</code></td>
+    <td>Instruction <code>I4′</code> can proceed in cycle <code>C6</code>, after appropriate resolution of operand <code>R2</code> via upstream instruction <code>I3′</code></td>
+  </tr>
+  <tr>
+    <td><code>C7</code></td>
+    <td><code>I5</code></td>
+    <td>Instruction <code>I5</code> can proceed in cycle <code>C7</code>, after appropriate resolution of operand <code>R1</code> via upstream instruction <code>I2′</code> (furthermore, there is no stalls-induced delay, as the three-cycle execution of instruction <code>I2′</code> will have already completed by the start of upstream cycle <code>C5</code>)</td>
+  </tr>
+</table>
+
+In this compiler-facilitated instruction scheduling, several of the intermediate stalls have been (either explicitly or effectively) eliminated, resulting in a net reduction from `10` cycles to `7` cycles per loop iteration in this program.
+
+## 6. Instruction Scheduling Quiz and Answers
