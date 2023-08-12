@@ -23,3 +23,37 @@ For this purpose, there are ***two*** particular ways in which the compiler inde
       * As we shall see, The compiler can facilitate with resolving this issue, i.e., by placing such "distant" (but otherwise independent) instructions "closer" to each other, thereby achieving improved ILP (and correspondingly increased IPC, closer to the ideally achievable ILP).
 
 ## 3. Tree Height Reduction
+
+<center>
+<img src="./assets/10-002.png" width="650">
+</center>
+
+One example of a compiler-facilitated instruction-level parallelism (ILP) improvement in a program is the technique called **tree height reduction**.
+
+Consider the following program, which computes `R8 = R2 + R3 + R4 + R5`:
+
+```mips
+ADD R8, R2, R3 # I1
+ADD R8, R8, R4 # I2
+ADD R8, R8, R5 # I3
+```
+
+Performing the instructions in this manner creates a dependency chain among the three instructions via `R8`, which necessarily imposes a sequential, one-instruction-per-cycle execution of the three instructions in turn.
+
+<center>
+<img src="./assets/10-003.png" width="650">
+</center>
+
+To resolve this "bottleneck," the compiler performs tree height reduction as follows. The compiler determines that instead of sequential summing the numbers (thereby creating a dependency chain), it can alternatively group the instructions' additions as pairs `(R2 + R3)` and `(R4 + R5)`, with each pair being independently determinate/computable, resulting in the following modification of the program:
+
+```mips
+ADD R8, R2, R3 # I1
+ADD R7, R4, R5 # I2
+ADD R8, R8, R7 # I3
+```
+
+This correspondingly allows for instructions `I1` and `I2` to be executed independently of each other, reducing the overall cycles requirement from `3` (strictly sequentially) to `2` (instructions `I1` and `I2` executing in parallel, followed by instruction `I3`).
+
+Note that tree height reduction is ***not*** always feasible. In this particular case, it exploits the intrinsic **associativity** of addition operations; however, ***not*** all operations are associative in this manner. Therefore, such a technique is only appropriate if it does ***not*** otherwise alter the intended/correct semantics of the (in-order-equivalent) program itself.
+
+## 3. Tree Height Reduction Quiz and Answers
