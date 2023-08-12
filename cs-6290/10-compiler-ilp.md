@@ -122,3 +122,16 @@ Therefore, the resulting ILP from this tree height reduction is:
 Which is a 2× improvement over the original single-instruction-per-cycle (i.e., dependency-chain-limited) version of the program.
 
 ## 4. Make Independent Instructions Easier to Find
+
+<center>
+<img src="./assets/10-006.png" width="650">
+</center>
+
+In the following sections of this lesson, we will examine the **techniques** which make independent instructions within a program easier for a *real* processor to find (as opposed to an *ideal* processor, which is otherwise capable of examining an infinite number of instructions "ahead," unlike a real processor whose is limited to only a finite number of upcoming instructions).
+
+This will be examined in the context of the following two techniques in particular:
+  * **Instruction scheduling** for simple branch-free instruction sequences
+    * This includes loop-specific techniques, such as **loop unrolling** (and in particular how these techniques interact with instruction scheduling)
+  * **Trace scheduling**, an even more powerful technique
+
+## 5. Instruction Scheduling
