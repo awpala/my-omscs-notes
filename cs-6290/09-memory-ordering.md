@@ -426,3 +426,35 @@ Instruction `41779` commits, copying its value `0` to the corresponding data-cac
 Finally, the last-remaining load instructions commit.
 
 ## 11. Load-Store Queue (LSQ), ReOrder Buffer (ROB), and Reservation Stations (RSes)
+
+<center>
+<img src="./assets/09-041.png" width="650">
+</center>
+
+Consider the relationship between the **load-store queue (LSQ)**, the **reorder buffer (ROB)**, and **reservation stations (RSes)**.
+
+When **issuing** a load or store instruction, this requires the following:
+  * A ROB entry, which is required for every instruction in general
+  * An LSQ entry, which corresponds analogously (i.e., for load and store instructions specifically) to the RS in a ROB-based configuration
+
+When **issuing** instructions ***other*** than a load or store instruction, this requires the following:
+  * A ROB entry, which (as before) is required for every instruction in general
+  * An RS of the corresponding instruction type
+
+Note than a load or store instruction ***cannot*** be issued unless ***both*** a ROB entry ***and*** an LSQ entry are available for the instruction in question. Correspondingly, for instructions other than load or store instructions, the instruction in question cannot be issued unless ***both*** a ROB entry ***and*** an RS (of corresponding instruction type) are available.
+
+When **executing** a load or store instruction, this is comprised of two steps:
+  * 1 - Compute the address
+  * 2 -  Produce the value 
+
+For a load instruction, this entails first computing the address, and then subsequently retrieving the value from memory. Conversely, for a store instruction, these steps could be performed in either order; either way, a store instruction computes the address while also attempting to obtain the value of the register to target for storage of this computed-address value.
+
+The operation **write result** only occurs for load instructions; conversely, for a store instruction, there is no such corresponding operation (i.e., a store instruction does not write the result, but rather maintains the address and the value in the load-store queue [LSQ] for subsequent use by downstream load instructions, as well as for eventual committing to memory).
+  * As soon as a load instruction gets a result from an upstream store instruction, the load instruction subsequently **broadcasts** this result to downstream dependent instructions, thereby ensuring that all reservation stations (RSes) awaiting this register value can then proceed accordingly. In this manner, the LSQ provides an analogous role to the RSes.
+
+To subsequently **commit** the load or store instruction, the **ROB head** is advanced (thereby ***freeing*** the ROB entry accordingly), and correspondingly the **LSQ head** is advanced as well (thereby ***freeing*** the LSQ entry accordingly).
+
+Additionally, for store instructions, the write must be **sent** to memory (`MEM`).
+  * On commit, the (up to this point) retained address and value must now be finally updated in memory for the program itself.
+
+## 12. Memory Ordering Quiz 1 and Answers
