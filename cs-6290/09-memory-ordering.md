@@ -306,3 +306,123 @@ When a ***store*** instruction is finally resolved, we then must consider: Which
 Furthermore, note that there can be ***multiple*** downstream load instructions pending this store-instruction-produced value; in this case, how is this determined? This is done so via the **load-store queue (LSQ)**, as discussed next.
 
 ## 10. Load-Store Queue (LSQ) Example
+
+<center>
+<img src="./assets/09-024.png" width="650">
+</center>
+
+To illustrate the operation of the **load-store queue (LSQ)**, consider the example in the figure shown above. The load-store queue (LSQ) itself is ordered from ***oldest*** to ***newest*** instructions (stored ***in program-order***), and consists of the following entries:
+  * `L/S` - denotes a `LOAD` (`L`) or `STORE` (`S`) instruction
+  * `PC` - the **address** (per the **program counter**) from which the load or store instruction was fetched
+  * `Seq` - the **sequence number**, which is simply incremented with each instruction
+    * ***N.B.*** This section's text will reference instructions unambiguously by `Seq` (e.g., "instruction `41773`").
+  * `Addr` - the **address** to which the load or store instruction resolves to
+  * `Value` - the resulting **value** computed by the load or store instruction 
+
+<center>
+<img src="./assets/09-025.png" width="250">
+</center>
+
+Furthermore, the **data cache** content is also recorded here for additional reference, whose content is initialized as in the figure shown above.
+
+<center>
+<img src="./assets/09-026.png" width="650">
+</center>
+
+Instruction `41773` executes first, accessing address `0x3290` (via the data cache), producing the corresponding value `42`.
+
+Subsequently, instruction `41774` (prematurely) computes its result as `25` (i.e., tentative target of the store instruction going into memory), however, this value is not yet placed in the data cache, pending its own final commit prior to doing so.
+
+Similarly, instruction `41775` (prematurely) computes its result as `-17`.
+
+<center>
+<img src="./assets/09-027.png" width="650">
+</center>
+
+Instruction `41776` accesses address `0x3418` and determines if any of the upstream store instructions matches this address. Since no upstream store instruction matches, instruction `41776` consequently loads value `1234` from the data cache.
+
+<center>
+<img src="./assets/09-028.png" width="650">
+</center>
+
+Instruction `41777` accesses address `0x3290` and determines if any of the upstream store instructions matches this address. It determines that instruction `41775` matches (the most-recently-occurring upstream store instruction per this address), and correspondingly loads the value `-17` directly, rather than retrieving it from the data cache.
+
+<center>
+<img src="./assets/09-029.png" width="650">
+</center>
+
+Instruction `41778` accesses address `0x3300` and determines if any of the upstream store instructions matches this address. Since no upstream store instruction matches, instruction `41778` consequently loads value `1` from the data cache.
+
+<center>
+<img src="./assets/09-030.png" width="650">
+</center>
+
+Instruction `41779` (prematurely) computes its result as `0` (i.e., tentative target of the store instruction going into memory), however, this value is not yet placed in the data cache, pending its own final commit prior to doing so.
+
+<center>
+<img src="./assets/09-031.png" width="650">
+</center>
+
+Instruction `41780` accesses address `0x3410` and determines if any of the upstream store instructions matches this address. It determines that instruction `41774` matches (the most-recently-occurring upstream store instruction per this address), and correspondingly loads the value `25` directly, rather than retrieving it from the data cache.
+
+<center>
+<img src="./assets/09-032.png" width="650">
+</center>
+
+Instruction `41781` accesses address `0x3290` and determines if any of the upstream store instructions matches this address. It determines that instruction `41779` matches (the most-recently-occurring upstream store instruction per this address), and correspondingly loads the value `0` directly, rather than retrieving it from the data cache.
+  * Observe that by this point, there are several upstream store instructions corresponding to address `0x3290`, however, it is imperative to retrieve the *most recent* one. This ensures an in-order-like processing of the instructions (i.e., this would be the expected memory-location value at a given point in the program's execution). However, insofar as the *data cache* is concerned, the corresponding value is still `42`, despite several intermediate modifications having occurred up to this point since commencement of the first instruction (i.e., instruction `41773`), none of which have yet sent their corresponding value to the data cache up to this point.
+
+<center>
+<img src="./assets/09-033.png" width="650">
+</center>
+
+Finally, instruction `41782` accesses address `0x3300` and determines if any of the upstream store instructions matches this address. Since no upstream store instruction matches, instruction `41778` consequently loads value `1` from the data cache.
+  * ***N.B.*** Upstream instruction `41778`, which also accesses address `0x3300`, is a load instruction rather than a store instruction, and therefore does not impact this current instruction (i.e., instruction `41782`).
+
+<center>
+<img src="./assets/09-034.png" width="650">
+</center>
+
+At some later point, the load and store instructions commence with **committing**.
+
+Instruction `41773` commits, copying its value to the corresponding register, thereby advancing the **oldest pointer** to subsequent instruction `41774`.
+
+<center>
+<img src="./assets/09-035.png" width="650">
+</center>
+
+Instruction `41774` commits, copying its value `25` to the corresponding data-cache address (overriding its existing value `38`), thereby advancing the **oldest pointer** to subsequent instruction `41775`.
+
+<center>
+<img src="./assets/09-036.png" width="650">
+</center>
+
+Instruction `41775` commits, copying its value `17` (*sic*) to the corresponding data-cache address (overriding its existing value `42`), thereby advancing the **oldest pointer** to subsequent instruction `41776`.
+  * ***N.B.*** In the lecture video, `-17` is not explicitly used in the data cache, presumably a transposition error (as correspondingly suggested in the figure shown above).
+
+<center>
+<img src="./assets/09-037.png" width="650">
+</center>
+
+Recall that values are sent to memory or to cache *at the point of commit* (i.e., but *not* at the point of execution). The reason for this is as follows. Consider the scenario in which an ***exception*** has occurred at this point in the program (i.e., with **oldest pointer** currently pointing to store instruction `41776`). In such a case, we can simply ***flush*** this instruction from the load-store queue (LSQ), thereby maintaining the ***integrity*** of the current value in the data cache (i.e., this data-cache value is the *intended* value at this point in the program's execution, and more generally so at any given point in the program's execution as of the most-recent commit).
+  * This corresponds analogously to the architecture register file (ARF) seen previously (cf. Lesson 8), which similarly involved copying and committing of values to registers, thereby ensuring that at any given time, there is no ambiguity with respect to intended (i.e., committed) register value at that point in the program's execution.
+
+<center>
+<img src="./assets/09-038.png" width="650">
+</center>
+
+Proceeding accordingly, instruction `41776` commits, copying its value to the corresponding register, thereby advancing the **oldest pointer** to subsequent instruction `41777`, and correspondingly so for the subsequent two load instructions (i.e., load instructions `41777` and `41778`).
+
+<center>
+<img src="./assets/09-039.png" width="650">
+</center>
+
+Instruction `41779` commits, copying its value `0` to the corresponding data-cache address (overriding its existing value `17`), thereby advancing the **oldest pointer** to subsequent instruction `41775`.
+
+<center>
+<img src="./assets/09-040.png" width="650">
+</center>
+
+Finally, the last-remaining load instructions commit.
+
+## 11. Load-Store Queue (LSQ), ReOrder Buffer (ROB), and Reservation Stations (RSes)
