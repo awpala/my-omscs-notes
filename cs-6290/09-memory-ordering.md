@@ -236,3 +236,56 @@ Effectively, most of the instructions are executed *out-of-order*, however, load
 Therefore, this strictly in-order load-store execution is *not* a very high-performance resolution strategy, however, it does ensure program correctness.
 
 ## 8. Memory Ordering Quiz and Answers
+
+<center>
+<img src="./assets/09-022A.png" width="650">
+</center>
+
+Consider the following program:
+
+```mips
+LW R1, 0(R2) # I1
+SW R1, 4(R2) # I2
+LW R1, 0(R3) # I3
+SW R1, 4(R3) # I4
+LW R1, 0(R4) # I5
+SW R1, 4(R4) # I6
+```
+
+Assume that all of the load instructions (`LW`) are ***cache misses***, resulting in a `40`-cycle delay per cache miss.
+
+The execution proceeds as follows:
+
+| Instruction | Cycle of request to memory (`MEM`) | Cycle of response from memory (`MEM`) | Cycle of store execution |
+|:--:|:--:|:--:|:--:|
+| `I1` | `C1` | `C41` | (N/A) |
+| `I2` | (N/A) | (N/A) | `C42` | 
+| `I3` | `C2` | `C42` | (N/A) |
+| `I4` | (N/A) | (N/A) | `C43` | 
+| `I5` | `C3` | `C43` | (N/A) |
+| `I6` | (N/A) | (N/A) | `C44` | 
+
+Therefore, the overall execution requires `44` cycles in total. However, observe that load instructions (`LW`) are performed "***prematurely***" with respect to store instructions (`SW`), e.g., in the case of `I3`, since `R3 + 0 == R2 + 4` via `R2` in upstream instruction `I2`, then in actuality instruction `I3` must wait on instruction `I2` to obtain this correct memory value first (i.e., `R2`) before proceeding with `I3`'s own execution; and so on with respect to the remaining `LW`-`SW` instructions pairs.
+
+Therefore, modify this sequence accordingly for in-order execution to ensure program correctness (i.e., in which cycle does each instruction send a request to memory, and when is the corresponding result returned).
+
+***Answer and Explanation***:
+
+| Instruction | Cycle of request to memory (`MEM`) | Cycle of response from memory (`MEM`) | Cycle of store execution |
+|:--:|:--:|:--:|:--:|
+| `I1` | `C1` | `C41` | (N/A) |
+| `I2` | (N/A) | (N/A) | `C42` | 
+| `I3` | `C43` | `C83` | (N/A) |
+| `I4` | (N/A) | (N/A) | `C84` | 
+| `I5` | `C85` | `C125` | (N/A) |
+| `I6` | (N/A) | (N/A) | `C126` | 
+
+As before, instruction `I1` sends a request to memory (`MEM`) in cycle `C1`, with a corresponding response in cycle `C41`. However, instruction `I2` cannot proceed fully, pending `R1` via upstream instruction `I1`. This resolution occurs in cycle `C42`.
+
+Consequently, per the in-order execution requirement, instruction `I3` therefore cannot proceed until cycle `43`, with a corresponding response from `MEM` in cycle `83`. At this point, instruction `I4` can commence execution in cycle `C84`.
+
+Analogously, instruction `I5` does not proceed until cycle `C85`, with a corresponding response from `MEM` in cycle `C126`. Finally, instruction `I6` commences execution in cycle `C126`.
+
+Therefore, with in-order execution, this program executes in `126` total cycles. This is a nearly 3× delay relative to out-of-order execution (cf. `44` total cycles). This demonstrates that there is a marked ***advantage*** in reordering load-store instructions, however, this carries a ***risk*** of potentially requiring **recovery** in the event of loading an incorrect memory value.
+
+## 9. Store-to-Load Forwarding
