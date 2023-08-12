@@ -179,7 +179,7 @@ In this case, the program sequence occurs as follows:
   <tr>
     <td><code>C3</code></td>
     <td><code>I2</code></td>
-    <td rowspan="3">Instruction <code>I2</code> requires three cycles perform the addition operation (i.e., add <code>R0</code> to <code>R2</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R2</code>), thereby requiring a stall of two cycle prior to executing subsequent instruction <code>I3</code></td>
+    <td rowspan="3">Instruction <code>I2</code> requires three cycles to perform the addition operation (i.e., add <code>R0</code> to <code>R2</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R2</code>), thereby requiring a stall of two cycle prior to executing subsequent instruction <code>I3</code></td>
   </tr>
   <tr>
     <td><code>C4</code></td>
@@ -262,7 +262,7 @@ The corresponding cycles analysis is as follows:
   <tr>
     <td><code>C3</code></td>
     <td><code>I3′</code></td>
-    <td rowspan="3">Instruction <code>I3′</code> requires three cycles perform the addition operation (i.e., add <code>R0</code> to <code>R2</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R2</code>), thereby requiring a stall of two cycle prior to executing subsequent instruction <code>I4′</code></td>
+    <td rowspan="3">Instruction <code>I3′</code> requires three cycles to perform the addition operation (i.e., add <code>R0</code> to <code>R2</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R2</code>), thereby requiring a stall of two cycle prior to executing subsequent instruction <code>I4′</code></td>
   </tr>
   <tr>
     <td><code>C4</code></td>
@@ -287,3 +287,142 @@ The corresponding cycles analysis is as follows:
 In this compiler-facilitated instruction scheduling, several of the intermediate stalls have been (either explicitly or effectively) eliminated, resulting in a net reduction from `10` cycles to `7` cycles per loop iteration in this program.
 
 ## 6. Instruction Scheduling Quiz and Answers
+
+<center>
+<img src="./assets/10-011Q.png" width="650">
+</center>
+
+Consider the following program:
+
+```mips
+LW  R1, 0(R2)  # I1
+ADD R1, R1, R3 # I2
+SW  R1, 0(R2)  # I3
+LW  R1, 0(R4)  # I4
+ADD R1, R1, R5 # I5
+SW  R1, 0(R4)  # I6
+```
+
+With respect to instructions' execution, assume the following:
+  * Instruction `LW` requires `2` cycles to execute
+  * Instruction `ADD` requires `1` cycle to execute
+  * Instruction `SW` requires `1` cycle to execute
+
+Furthermore, assume that the processor is characterized as before (cf. Section 5), i.e., it performs strictly `1` instruction per cycle and executes in-program-order.
+
+How many cycles does this program require to execute as-is? How many cycles does this program require after modification via instruction scheduling in the compiler?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/10-012A.png" width="650">
+</center>
+
+First, consider the as-is scenario. The corresponding per-cycle analysis is as follows:
+
+<table style="width: 100%; text-align: center;">
+  <tr>
+    <th>Cycle</th>
+    <th>Instruction Executed</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>C1</code></td>
+    <td><code>I1</code></td>
+    <td rowspan="2">Instruction <code>I1</code> requires two cycles to fetch the value from the cache and place it in register <code>R1</code>, thereby requiring a stall of one cycle prior to executing subsequent instruction <code>I2</code></td>
+  </tr>
+  <tr>
+    <td><code>C2</code></td>
+    <td><code>stall</code></td>
+  </tr>
+  <tr>
+    <td><code>C3</code></td>
+    <td><code>I2</code></td>
+    <td>Instruction <code>I2</code> requires one cycle to perform the addition operation (i.e., add <code>R3</code> to <code>R1</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R1</code>)</td>
+  </tr>
+  <tr>
+    <td><code>C4</code></td>
+    <td><code>I3</code></td>
+    <td>Instruction <code>I3</code> requires one cycle to perform the store instruction</td>
+  </tr>
+  <tr>
+    <td><code>C5</code></td>
+    <td><code>I4</code></td>
+    <td rowspan="2">Instruction <code>I4</code> requires two cycles to fetch the value from the cache and place it in register <code>R1</code>, thereby requiring a stall of one cycle prior to executing subsequent instruction <code>I5</code></td>
+  </tr>
+  <tr>
+    <td><code>C6</code></td>
+    <td><code>stall</code></td>
+  </tr>
+  <tr>
+    <td><code>C7</code></td>
+    <td><code>I5</code></td>
+    <td>Instruction <code>I5</code> requires one cycle to perform the addition operation (i.e., add <code>R5</code> to <code>R1</code>, with corresponding dependency on upstream instruction <code>I4</code> with respect to operand <code>R1</code>)</td>
+  </tr>
+  <tr>
+    <td><code>C8</code></td>
+    <td><code>I6</code></td>
+    <td>Instruction <code>I6</code> requires one cycle to perform the store instruction</td>
+  </tr>
+</table>
+
+Therefore, as-is, this program requires `8` cycles.
+
+<center>
+<img src="./assets/10-013A.png" width="650">
+</center>
+
+Now, consider the compiler-facilitated instruction scheduling scenario. To avoid the stall in cycle `C2`, we must "move up" a downstream instruction which does not otherwise depend on instruction `I1` as-is. This can be achieved by moving instruction `I5` to the second-instruction position (and correspondingly using a non-conflicting register for its target operand, i.e., from `R1` to `R10`). The updated program is thus as follows:
+
+```mips
+LW  R1, 0(R2)    # I1
+LW  R10, 0(R4)   # I2′
+ADD R1, R1, R3   # I3′
+ADD R10, R10, R5 # I4′
+SW  R1, 0(R2)    # I5′
+SW  R10, 0(R4)   # I6′
+```
+
+The corresponding per-cycle analysis in the updated program is as follows:
+
+<table style="width: 100%; text-align: center;">
+  <tr>
+    <th>Cycle</th>
+    <th>Instruction Executed</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td><code>C1</code></td>
+    <td><code>I1</code></td>
+    <td>Instruction <code>I1</code> requires two cycles to fetch the value from the cache and place it in register <code>R1</code></td>
+  </tr>
+  <tr>
+    <td><code>C2</code></td>
+    <td><code>I2′</code></td>
+    <td>Instruction <code>I2′</code> requires two cycles to fetch the value from the cache and place it in register <code>R10</code></td>
+  </tr>
+  <tr>
+    <td><code>C3</code></td>
+    <td><code>I3′</code></td>
+    <td>Instruction <code>I3′</code> requires one cycle to perform the addition operation (i.e., add <code>R3</code> to <code>R1</code>, with corresponding dependency on upstream instruction <code>I1</code> with respect to operand <code>R1</code>), however, there is no stalls-induced delay, as the two-cycle execution of instruction <code>I1</code> will have already completed by the start of cycle <code>C3</code></td>
+  </tr>
+  <tr>
+    <td><code>C4</code></td>
+    <td><code>I4′</code></td>
+    <td>Instruction <code>I4′</code> requires one cycle to perform the addition operation (i.e., add <code>R5</code> to <code>R10</code>, with corresponding dependency on upstream instruction <code>I2′</code> with respect to operand <code>R10</code>), however, there is no stalls-induced delay, as the two-cycle execution of instruction <code>I2′</code> will have already completed by the start of cycle <code>C4</code></td>
+  </tr>
+  <tr>
+    <td><code>C5</code></td>
+    <td><code>I5′</code></td>
+    <td>Instruction <code>I5′</code> requires one cycle to perform the store instruction</td>
+  </tr>
+  <tr>
+    <td><code>C6</code></td>
+    <td><code>I6′</code></td>
+    <td>Instruction <code>I6′</code> requires one cycle to perform the store instruction</td>
+  </tr>
+</table>
+
+In this compiler-facilitated instruction scheduling, *both* of the intermediate stalls have been eliminated, resulting in a net reduction from `8` cycles to `6` cycles.
+
+## 7. Scheduling and If Conversion
