@@ -458,3 +458,23 @@ Additionally, for store instructions, the write must be **sent** to memory (`MEM
   * On commit, the (up to this point) retained address and value must now be finally updated in memory for the program itself.
 
 ## 12. Memory Ordering Quiz 1 and Answers
+
+<center>
+<img src="./assets/09-043A.png" width="650">
+</center>
+
+Given the following consecutive program instructions:
+
+```mips
+SW R1 → 0(R2)
+LW R2 ← 0(R2)
+```
+
+Does the instruction `LW` access cache or memory? (Indicate `Yes` or `No`.)
+  * `No`
+
+***Answer and Explanation***:
+
+The instruction `LW` does ***not*** access cache or memory. Since `R2` refers to the ***same*** address, the instruction `LW` will retrieve this value from the ***store***.
+
+## 13. Memory Ordering Quiz 1 and Answers
