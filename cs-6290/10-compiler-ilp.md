@@ -426,3 +426,19 @@ The corresponding per-cycle analysis in the updated program is as follows:
 In this compiler-facilitated instruction scheduling, *both* of the intermediate stalls have been eliminated, resulting in a net reduction from `8` cycles to `6` cycles.
 
 ## 7. Scheduling and If Conversion
+
+<center>
+<img src="./assets/10-014.png" width="650">
+</center>
+
+Having seen how compiler-facilitated instruction scheduling works, now consider how such compiler optimization interacts with **if conversion**.
+
+Recall (cf. Lesson 5) that if conversion transforms branching code as in the left portion of the figure shown above (where orange is the `if` branch, and green is the `else` branch).
+  * Before performing the if conversion, the code section upstream of the if-converted branches (uncolored in the figure shown above) can be ***easily*** rescheduled. Similarly, *within* the branched code sections (i.e., orange and green per the figure shown above) rescheduling can be performed easily, as well as in the code section downstream of the branches (uncolored in the figure shown above).
+  * However, rescheduling in if schedule becomes ***challenging*** for instructions spanning ***across*** the if-converted branches to the downstream code section (e.g., if the downstream code section contains an instruction to fill a store in the green section, then if branching ultimately directs to the orange section, then ultimately this downstream instruction is never executed).
+
+After if conversion is performed (as in the right portion of the figure shown above), the post-transformation code is effectively "inlined" into a branch-free sequence. Consequently, *all* of the instructions execute in turn, with appropriate predication applied. In this manner, instructions can "cross" the code sections readily without issue (e.g., green section to orange section, downstream section to green section, orange section to upstream section, and even downstream section up to upstream section).
+
+Therefore, overall, if conversion introduces many more opportunities for replacing stall cycles with useful instructions, thereby improving compiler-facilitated instruction scheduling in addition to the aforementioned (cf. Lesson 5) benefit with respect to branch prediction (i.e., avoiding otherwise unnecessary branch instructions).
+
+## 8. If Conversion for a Loop
