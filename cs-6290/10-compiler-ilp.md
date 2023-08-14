@@ -442,3 +442,17 @@ After if conversion is performed (as in the right portion of the figure shown ab
 Therefore, overall, if conversion introduces many more opportunities for replacing stall cycles with useful instructions, thereby improving compiler-facilitated instruction scheduling in addition to the aforementioned (cf. Lesson 5) benefit with respect to branch prediction (i.e., avoiding otherwise unnecessary branch instructions).
 
 ## 8. If Conversion for a Loop
+
+<center>
+<img src="./assets/10-015.png" width="650">
+</center>
+
+Having seen the performance improvement provided by if conversion, can this technique also be useful in a loop? Recall the loop program from Section 5, as in the figure shown above. Assume that each instruction requires `2` cycles to execute.
+  * Before the compiler-facilitated instruction scheduling (left side of the figure shown above), there are three stall cycles (denoted by left-directed magenta arrows in the figure shown above).
+  * After the compiler-facilitated instruction scheduling (right side of the figure shown above), there is still a necessary stall cycle, since the store instruction `SW` must be performed before the branching instruction `BNE`, and furthermore the instruction `SW` has an upstream dependency (`ADD R2, R2,  R3`, via operand `R2`) which introduces the necessary stall accordingly (i.e., to complete the instruction `ADD`).
+
+Examining the right-side code, in principle, if conversion would allow to perform the branching code immediately following the branching instruction `BNE`, thereby eliminating the branch via predication, possibly further eliminating the remaining stall. However, in such a scenario, a loop is ***not*** amenable to if conversion because for every subsequent iteration of the loop, it would be necessary to produce a new predicate, which in turn would add this additional overhead *per loop iteration*, with the resulting new predicates only becoming useful/relevant when the predicate is actually true. This in turn would have an adverse impact on performance (e.g., a million-iterations loop with only *one* predicate actually being true).
+
+Therefore, an alternative to if conversion for loops (i.e., moving things "upstream" from "future" iterations) with a similar synergistic improvement on compiler-facilitated instruction scheduling is desirable. This improvement *does* in fact exist: It is called **loop unrolling**, which is discussed next.
+
+## 9. Loop Unrolling Benefits
