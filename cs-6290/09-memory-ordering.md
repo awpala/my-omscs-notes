@@ -477,7 +477,7 @@ Does the instruction `LW` access cache or memory? (Indicate `Yes` or `No`.)
 
 The instruction `LW` does ***not*** access cache or memory. Since `R2` refers to the ***same*** address, the instruction `LW` will retrieve this value from the ***store***.
 
-## 13. Memory Ordering Quiz 1 and Answers
+## 13. Memory Ordering Quiz 2 and Answers
 
 <center>
 <img src="./assets/09-045A.png" width="650">
