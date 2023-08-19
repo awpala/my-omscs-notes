@@ -81,7 +81,7 @@ Observe that a dependency chain forms in this program via `R10`. Correspondingly
 
 Perform a tree height reduction on this program, in order to improve instruction-level parallelism (ILP), and compute the correspondingly improved ILP.
 
-***Answer and Explanation***
+***Answer and Explanation***:
 
 To implement tree height reduction in this program, observe there are three addition operations (which *are* associative) and three subtraction operations (which are *not* associative). Correspondingly, we can reorder these operations to perform the additions first (and consequently in parallel), as well as use the distributive property with respect to the subtraction (i.e., correspondingly grouping the operands into upstream addition operations prior to subtracting), thereby transforming the target expression to the following: `((R1 + R2) + (R4 + R6)) - ((R3 + R5) + R7)`.
 
@@ -798,3 +798,95 @@ CPU Execution Time = # instructions in the program × cycles per instruction × 
 The **net effect** is therefore a ***decrease*** in `CPU Execution` by reducing ***both*** `# instructions in the program` (via loop unrolling) ***and*** `cycles per instruction` (via compiler-facilitated instruction scheduling).
 
 ## 13. Loop Unrolling Quiz and Answers
+
+<center>
+<img src="./assets/10-036A.png" width="650">
+</center>
+
+Consider the following loop instructions, which computes the sume of the elements of an array:
+
+```mips
+Loop:
+  LW   R1, 0(R2)    # I1
+  ADD  R3, R3, R1   # I2
+  ADDI R2, R2, 4    # I3
+  BNE  R2, R4, Loop # I4
+```
+
+Furthermore, assume the given processor is specified as follows:
+  * in-order execution of `1` instruction per cycle
+  * Load operation `LW` requires `3` cycles
+  * Addition operations `ADD` and `ADDI` require `2` cycles
+
+After compiler-facilitated instruction scheduling (but without otherwise applying loop unrolling), how many cycles are required to perform `1000` loop iterations?
+
+Furthermore, after compiler-facilitated scheduling ***with*** once-unrolled loop unrolling, how many cycles are required to perform `1000` loop iterations?
+
+***Answer and Explanation***:
+
+(***N.B.*** The "solution" video is not officially published for this course, however, the corresponding solution is described in [video notes](https://learn.udacity.com/courses/ud007/lessons/e4e2a1d6-9603-4219-95d2-776ec78adfd0/concepts/7639dd97-5ac1-4de8-a11d-59502f0e0d78/quiz) for preceding "Quiz" video, reproduced here as follows.)
+
+In the unmodified code, the per-cycle analysis is as follows:
+
+| Instruction | `C1` | `C2` | `C3` | `C4` | `C5` | `C6` | `C7` | `C8` | ⋯ |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | commence execution | (`stall`) | (`stall`) | | | | | commence execution | ⋯ |
+| `I2` | | | | commence execution | (`stall`) | | | | ⋯ |
+| `I3` | | | | | commence execution | (`stall`) | | | ⋯ |
+| `I4` | | | | | | | commence execution |  | ⋯ |
+
+Note the corresponding dependencies between via mutual/common operands `R1` and `R2`. Furthermore, there are `3` net additional cycles introduced by `stall`s as per the cycle requirements for the corresponding operations. Also, note that this particular processor (as specified) can only execute strictly *one* instruction per cycle.
+
+Therefore, after the initial load (i.e., instruction `I1`), which incurs an initial three-cycle cost, on commencing the first loop iteration, there is a `7` cycle requirement ***per loop*** to perform all `4` of the loop instructions. Correspondingly, for `1000` loop iterations, this requires `7 × 1000 = 7000` total instructions.
+
+After ***compiler-facilitated instruction scheduling*** (but ***without*** otherwise applying loop unrolling), the modified instructions are as follows:
+
+```mips
+Loop:
+  LW   R1, 0(R2)    # I1
+  ADDI R2, R2, 4    # I2′
+  ADD  R3, R3, R1   # I3′
+  BNE  R2, R4, Loop # I4
+```
+
+In this manner, compiler-facilitated instruction scheduling provides an opportunity to partially "absorb" the inefficiency introduced by the `stall` cycles. The corresponding per-cycle analysis is as follows:
+
+| Instruction | `C1` | `C2` | `C3` | `C4` | `C5` | `C6` | ⋯ |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | commence execution | (`stall`) | (`stall`) | | | commence execution | ⋯ |
+| `I2′` | | commence execution | (`stall`) | | | | ⋯ |
+| `I3′` | | | | commence execution | (`stall`) | | ⋯ |
+| `I4` | | | | | commence execution  | | ⋯ |
+
+Based on reordering, there is a net reduction by `2` cycles, however, there is still a dependency via operand `R1` between instructions `I1` and `I3′` which necessitates a "`stall`s-only" cycle `C3`.
+
+Therefore, after the initial load (i.e., instruction `I1`), which incurs an initial one-cycle cost, on commencing the first loop iteration, there is a `5` cycle requirement ***per loop*** to perform all `4` of the loop instructions. Correspondingly, for `1000` loop iterations, this requires `5 × 1000 = 5000` total instructions.
+
+Next, after ***compiler-facilitated instruction scheduling*** along with applying ***once-unrolled loop unrolling***, the modified instructions are as follows:
+
+```mips
+Loop:
+  LW   R1, 0(R2)    # I1
+  LW   R8, 4(R2)    # I2″ - use operand `R8` to avoid dependency
+  ADD  R3, R3, R1   # I3″
+  ADDI R2, R2, 8    # I4″ - modify corresponding index/offset to `8`
+  ADD  R8, R3, R1   # I5″
+  BNE  R2, R4, Loop # I6″
+```
+
+In this manner, the "compounded" version of the loop provides an opportunity to additionally reduce the overall cycles (however, some inefficiency due to `stall`s still remains). The corresponding per-cycle analysis is as follows:
+
+| Instruction | `C1` | `C2` | `C3` | `C4` | `C5` | `C6` | `C7` | `C8` | ⋯ |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | commence execution | (`stall`) | (`stall`) | | | | | commence execution | ⋯ |
+| `I2″` | | commence execution | (`stall`) | (`stall`) | | | | | ⋯ |
+| `I3″` | | | | commence execution | (`stall`) | | | | ⋯ |
+| `I4″` | | | | | commence execution | (`stall`) | | | ⋯ |
+| `I5″` | | | | | |commence execution | (`stall`) | | ⋯ |
+| `I6″` | | | | | | | commence execution | | ⋯ |
+
+As before, there is still a dependency via operand `R1` between instructions `I1` and `I3″` which necessitates a "`stall`s-only" cycle `C3`.
+
+Therefore, after the initial load (i.e., instruction `I1`), which incurs an initial one-cycle cost, on commencing the first loop iteration, there is a `7` cycle requirement ***per loop*** to perform all `6` of the loop instructions. Correspondingly, for `1000` loop iterations, this requires `7 × 1000 = 7000` total instructions. However, note that with loop unrolling, the total number of loop iterations with once-unrolled loop unrolling is ***halved*** (i.e., each loop iteration performs ***twice*** the work of an equivalent not-unrolled loop), therefore, the equivalent number of iterations for the *same* program would be correspondingly only `7 × 500 = 3500`.
+
+## 14. Unrolling Downsides
