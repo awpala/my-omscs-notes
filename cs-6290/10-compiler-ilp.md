@@ -942,3 +942,24 @@ As before (cf. loop unrolling), the ***net effect*** of these benefits (i.e., pe
 However, there is a **downside** to function call inlining (which is correspondingly similar to that for loop unrolling), as discussed next.
 
 ## 16. Function Call Inlining Downside
+
+As with loop unrolling, a prominent **downside** of function call inlining is **code bloat**.
+
+<center>
+<img src="./assets/10-040.png" width="650">
+</center>
+
+Consider a program which performs successive function calls, as in the figure shown above. Here, the function in question (i.e., `FUNC`) comprises `10` instructions followed by a return.
+
+When performing function call inlining, the `10` instructions are placed inline within the program itself, thereby replacing the original function calls. 
+
+Before inlining, the total number of instructions required is `13`, comprised of:
+  * `10` for the function body
+  * `1` for the return from the function
+  * `2` calls made by the caller
+
+However, after inlining, the total number of instructions required is `20`, i.e., inlining of the `10` function-body instructions twice within the original program (i.e., replacing the original function-call statements accordingly). Therefore, while the overhead is eliminated, the program itself grows in size proportionally to the number of function calls. This is particularly pronounced in a program which may call such a function hundreds of times.
+
+Therefore, function call inlining must be applied **judiciously**, rather than simply applying it indiscriminantly (i.e., for *all* functions and correspondingly for *all* function calls). Generally, it is most ***advantageous*** to inline functions which are small. However, as the function body grows, this results in replication of a lot of code relative to the original non-inlined version (even when accounting for the overhead in the latter).
+
+## 17. Function Call Inlining Quiz and Answers
