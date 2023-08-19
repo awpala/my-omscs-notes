@@ -595,4 +595,206 @@ Next, let's consider the effect on the CPI.
 
 ### 11-12. Benefit: Reduction in Cycles per Instruction (CPI)
 
+<center>
+<img src="./assets/10-021.png" width="650">
+</center>
+
+As it turns out, another benefit of loop unrolling is a **reduction** in the cycles per instruction (i.e., in addition to reducing the overall number of instructions).
+
+To assess the effect of loop unrolling on cycles per instruction, consider a processor characterized as follows:
+  * `4`-issue, in-order
+    * capable of "looking ahead" at the next four instructions to determine which (if any) can be executed together
+  * perfect branch prediction
+
+First, consider a per-cycle analysis when executing the original/unrolled loop, to determine which instruction(s) can execute in a given cycle.
+  * ***N.B.*** In the figure shown above, the ***cycles*** correspond to the ***columns*** (i.e., one column per cycle).
+
+<center>
+<img src="./assets/10-022.png" width="450">
+</center>
+
+Recalling (cf. Section 9) the original/unrolled loop as follows (and correspondingly as in the figure shown above):
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  ADD  R2, R2, R3   # I2
+  SW   R2, 0(R1)    # I3
+  ADDI R1, R1, -4   # I4
+  BNE  R1, R5, Loop # I5
+```
+
+In cycle `C1`, instruction `I1` executes, however, `I2` cannot yet execute due to dependency on operand `R2` with respect to preceding instruction `I1`. Therefore, instruction `I2` does not commence execution until cycle `C2`.
+
+Similarly, instruction `I3` does not execute until cycle `C3`, due to its dependency on preceding instruction `I2` via common/mutual operand `R2`.
+
+Conversely, instruction `I4` does ***not*** depend on its preceding instruction, therefore, it can also execute in cycle `C3` accordingly.
+
+Lastly, instruction `I5` does depend on preceding instruction `I4` via common/mutual operand `R1`, and therefore `I5` cannot execute until cycle `C4` accordingly.
+
+<center>
+<img src="./assets/10-023.png" width="450">
+</center>
+
+Now, consider the next loop iteration (as in the figure shown above).
+
+Because of perfect branch prediction, the operation `LW` in instruction `I1` can actually be fetched from the ***next*** iteration without otherwise depending on the current/in-progress (first) branch, and therefore can be executed in cycle `C4` (i.e., simultaneously with instruction `I5`'s execution from the previous/first loop).
+
+For the subsequent per-loop instructions (i.e., `I2` through `I4`) the corresponding analysis from the previous loop holds as well, yielding a corresponding additional two cycles (i.e., cycles `C5` and `C6`).
+
+Therefore, generalizing across cycles, after the initial load (i.e., instruction `I1`), which occurs in a distinct cycle (i.e., `C1`) on commencing the first loop iteration, there is a `3` cycle requirement ***per loop*** to perform all `5` of the loop instructions. Correspondingly, on a per-loop basis, there is a CPI of `3/5`.
+
+<center>
+<img src="./assets/10-024.png" width="450">
+</center>
+
+Before considering the corresponding impact of unrolling the loop, first consider the effect of compiler-facilitated instruction scheduling, as in the figure shown above.
+
+Recall that there is a dependence between instructions `I1` and `I2` (i.e., via common/mutual operand `R2`). Furthermore, instruction `I5` must remain at the end of the loop in order to enforce program correctness. However, instruction `I4` can be reordered (i.e., "moved up") to improve cycles utilization without otherwise impacting the semantics of the program.
+
+<center>
+<img src="./assets/10-025.png" width="450">
+</center>
+
+In the correspondingly updated program (as in the figure shown above), the necessary adjustments are made as follows:
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  ADDI R1, R1, -4   # I2′
+  ADD  R2, R2, R3   # I3′
+  SW   R2, 4(R1)    # I4′ - adjust offset to `4` (i.e., "add back" 4 from upstream offset in instruction I2′)
+  BNE  R1, R5, Loop # I5
+```
+
+In this particular case, operation `ADDI` is the only instruction amenable to reordering in this manner, as otherwise there is a strict order-dependency among the other remaining instructions.
+
+<center>
+<img src="./assets/10-026.png" width="450">
+</center>
+
+Now, consider a corresponding per-cycle analysis of the compiler-facilitated scheduling, as in the figure shown above.
+
+In the first loop iteration, in cycle `C1`, both instructions `I1` and `I2′` can be performed simultaneously (i.e., there is no dependency between them). However, instruction `I3′` is dependent on instruction `I1` via common/mutual operand `R2`, and therefore instruction `I3′` cannot commence execution until cycle `C2`.
+
+Similarly, instruction `I4′` cannot commence execution until cycle `C3` due to dependency on operand `R2`. Furthermore, instruction `I5` can commence execution in cycle `C3` as well.
+
+<center>
+<img src="./assets/10-027.png" width="450">
+</center>
+
+In the subsequent loop iteration, as previously (i.e., in the not-unrolled baseline case), due to perfect branch prediction, the branching *can* proceed to the next iteration as the first/previous iteration is in progress, and therefore instruction `I1` commences execution in cycle `C3`. Furthermore, since there is no modification of common/mutual operand `R1`, instruction `I2′` can also commence execution in cycle `C3` as well.
+
+Therefore, generalizing across cycles, after the initial load (i.e., instruction `I1`), which occurs in a distinct cycle (i.e., `C1`) on commencing the first loop iteration, there is a `2` cycle requirement ***per loop*** to perform all `5` of the loop instructions. Correspondingly, on a per-loop basis, there is a(n improved) CPI of `2/5 = 0.4` via compiler-facilitated instruction scheduling (cf. CPI of `3/5 = 0.6` in the baseline case).
+
+Now, let's additionally consider the **compound** effects of compiler-facilitated instruction scheduling ***and*** loop unrolling on cycles per instruction.
+
+<center>
+<img src="./assets/10-028.png" width="650">
+</center>
+
+As before, consider a per-cycle analysis when executing the once-unrolled loop (but ***without*** compiler-facilitated instruction scheduling), to determine which instruction(s) can execute in a given cycle. Recall (cf. Section 9) that the once-unrolled modification of the loop is as follows:
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  ADD  R2, R2, R3   # I2
+  SW   R2, 0(R1)    # I3
+  LW   R2, -4(R1)   # I4
+  ADD  R2, R2, R3   # I5
+  SW   R2, -4(R1)   # I6
+  ADDI R1, R1, -8   # I7
+  BNE  R1, R5, Loop # I8
+```
+
+<center>
+<img src="./assets/10-029.png" width="450">
+</center>
+
+In the first loop iteration, there is a successive dependency in the first three instructions (i.e., `I1` through `I3`) via mutual/common operand `R2`, and therefore correspondingly these instructions executive in three successive cycles (i.e., `C1` through `C3`, respectively).
+
+Instruction `I4` can also commence execution in cycle `C3`, as it has no upstream dependency. However, the subsequent instructions `I5` and `I6` do have corresponding upstream dependencies (i.e., via mutual/common operand `R2`), and therefore occur in subsequent cycles `C4` and `C5` (respectively).
+
+Instruction `I7` can also commence in cycle `C5`, as it has no upstream dependency. However, the subsequent instruction `I8` has a corresponding upstream dependency (i.e., via mutual/common operand `R1`), and therefore occurs in subsequent cycle `C6`.
+
+
+<center>
+<img src="./assets/10-030.png" width="450">
+</center>
+
+In the subsequent loop iteration, as before, due to perfect branch prediction, instruction `I1` can also commence execution in cycle `C6` (i.e., proceed onto the next cycle as the first/current cycle finishes execution).
+
+Therefore, generalizing across cycles, after the initial load (i.e., instruction `I1`), which occurs in a distinct cycle (i.e., `C1`) on commencing the first loop iteration, there is a `5` cycle requirement ***per loop*** to perform all `8` of the loop instructions. Correspondingly, on a per-loop basis, there is a (comparable) CPI of `5/8 = 0.625` via once-unrolled loop unrolling (cf. CPI of `3/5 = 0.6` in the baseline case). Here, there is no particular benefit with respect to CPI, however, there is still a net improvement via the aforementioned reduction in overall program instructions (cf. Section 11).
+
+<center>
+<img src="./assets/10-031.png" width="650">
+</center>
+
+Now, consider a per-cycle analysis when executing the once-unrolled loop  ***with*** compiler-facilitated instruction scheduling, to determine which instruction(s) can execute in a given cycle. The corresponding modification (once-unrolled with compiler-facilitated instruction scheduling) of the loop is as follows:
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  LW   R10, -4(R1)  # I2′ - use register `R10` to avoid dependency via `R2`
+  ADD  R2, R2, R3   # I3′
+  ADD  R10, R10, R3 # I4′ - use register `R10` to avoid dependency via `R2`
+  ADDI R1, R1, -8   # I5′
+  SW   R2, 8(R1)    # I6′ - adust index/offset to `8` to match I5′
+  SW   R10, 4(R1)   # I7′ - use register `R10` to avoid dependency via `R2`, and adust index/offset to `4` to match I2′
+  BNE  R1, R5, Loop # I8
+```
+
+In analyzing the program, the downstream load operation (`LW`) can be moved up (i.e., to new position `I2′`) and performed in parallel with the initial load operation (i.e., instruction `I1`).
+
+Furthermore, the adding operations `ADD` and `ADDI` can be moved up per corresponding absence of upstream dependencies.
+
+The store operations (`SW`s) can then subsequently commence execution in turn. Note the corresponding adjustments in index/offset via their respectively paired common/mutual operand `R1` (which in turn is modified in upstream instruction `I5′`) per correspondingly matched/paired upstream load operations (`LW`s).
+
+Lastly, the branching operation `BNE` (instruction `I8`) occurs at the end, as before.
+
+<center>
+<img src="./assets/10-032.png" width="450">
+</center>
+
+In the first loop iteration, instructions `I1` and `I2′` occur in parallel in cycle `C1`. However, there is an upstream dependency via mutual/common operand `R2` which prevents instruction `I3′` from executing in this cycle, and therefore instruction `I3′` commences execution in the next cycle, `C2`.
+
+Nevertheless, due to the compiler-facilitated instruction scheduling, the subsequent addition operations (i.e., `I4′` and `I5′`) *can* also occur in the same cycle (i.e., `C2`) due to an absence of upstream dependencies.
+
+Similarly, instruction `I6′` cannot commence execution until the subsequent cycle `C3` (i.e., due to upstream dependency via mutual/common operand `R1`), however, the subsequent instructions (i.e., `I7′` and `I8`) can also occur in this same cycle, `C3`. 
+
+there is a successive dependency in the first three instructions (i.e., `I1` through `I3`) via mutual/common operand `R2`, and therefore correspondingly these instructions executive in three successive cycles (i.e., `C1` through `C3`, respectively).
+
+<center>
+<img src="./assets/10-033.png" width="450">
+</center>
+
+In the subsequent loop iteration, as before, due to perfect branch prediction, instruction `I1` can also commence execution in cycle `C3` (i.e., proceed onto the next cycle as the first/current cycle finishes execution).
+
+However, instruction `I2′` cannot yet execute at this point (i.e., there are already `4` in-progress instructions in cycle `C3`), and therefore instruction `I2′` does not commence execution until the next cycle, `C4`.
+
+From this point, the subsequent instructions/analysis generalize from the previous cycle, and so on.
+
+<center>
+<img src="./assets/10-034.png" width="650">
+</center>
+
+Therefore, generalizing across cycles, after the initial loads (i.e., instructions `I1` and `I2′`), which occur in a distinct cycle (i.e., `C1`) on commencing the first loop iteration, there is a `3` cycle requirement ***per loop*** to perform all `8` of the loop instructions. Correspondingly, on a per-loop basis, there is a (substantially improved) CPI of `3/8 = 0.375` via once-unrolled loop unrolling with compiler-facilitated instruction scheduling (cf. CPI of `3/5 = 0.6` in the baseline case).
+
+The effect on CPI for this loop is thus summarized as follows:
+
+| | No scheduling | With scheduling |
+|:--:|:--:|:--:|
+| No unrolling | 0.600 | 0.400 |
+| Once-unrolled | 0.625 | 0.375 |
+
+Effectively, when compounded in this manner, loop unrolling provides more prospective instructions for consequent compiler-facilitated instruction scheduling, thereby eliminating even more dependencies (with a net result of a reduction in cycles per instruction). This compounding can further enhance parallelism in this manner with increased unrolling (i.e., twice-unrolled, thrice-unrolled, etc.).
+
+Recalling the iron law (cf. Lesson 2):
+
+```
+CPU Execution Time = # instructions in the program × cycles per instruction × clock cycle time
+```
+
+The **net effect** is therefore a ***decrease*** in `CPU Execution` by reducing ***both*** `# instructions in the program` (via loop unrolling) ***and*** `cycles per instruction` (via compiler-facilitated instruction scheduling).
+
 ## 13. Loop Unrolling Quiz and Answers
