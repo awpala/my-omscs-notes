@@ -561,7 +561,37 @@ Therefore, the net change for a once-unrolled loop is to duplicate the looping i
 
 ## 10-12. Loop Unrolling Benefits
 
+Now, let's consider the ***benefits*** of loop unrolling, as discussed in turn in the following subsections.
+
 ### 10. Benefit: Reduction in Overall Instructions to Execute
+
+<center>
+<img src="./assets/10-020.png" width="650">
+</center>
+
+The first benefit of loop unrolling is a **reduction** in the overall number of program instructions.
+
+Recall from the previous section (cf. Section 9) that the corresponding unrolled-once loop (as in the figure shown above) yielded a reduction from:
+ ```
+ 5 instructions per iteration × 1000 loop iterations = 5000 instructions
+ ```
+
+to:
+```
+8 instructions per iteration × 500 loop iterations = 4000 instructions
+```
+
+This is a considerable reduction in the number of instructions required to perform this loop. This is accomplished here by reducing the **looping overhead** (i.e., trailing instruction `ADDI` and `BNE` to iterate to the next loop, which are only applied to half as many iterations with the once-unrolled modification).
+
+Recall the iron law (cf. Lesson 2) as follows:
+
+```
+CPU Execution Time = # instructions in the program × cycles per instruction × clock cycle time
+```
+
+Applying this formalism to the present example, the `clock cycle time` remains unchanged for a given processor, and the CPI (`cycles per instruction`) may or may not have changed. However, the most direct impact here from loop unrolling is with respect ot the `# instructions in the program`, i.e., its ***reduction*** yields a corresponding overall reduction in the `CPU Execution Time`.
+
+Next, let's consider the effect on the CPI.
 
 ### 11-12. Benefit: Reduction in Cycles per Instruction (CPI)
 
