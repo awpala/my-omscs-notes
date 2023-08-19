@@ -40,3 +40,26 @@ However, in the worst case (e.g., all instructions have dependencies), each equi
 Therefore, in practice, the corresponding program size will be somewhere in the range of these two (i.e., `4000` to `16000` bytes).
 
 ## 4. VLIW: The Good and the Bad
+
+Consider now the ***good*** vs. ***bad*** aspects of VLIW.
+
+<center>
+<img src="./assets/11-004.png" width="650">
+</center>
+
+The ***good*** aspects of VLIW are:
+  * The compiler performs the hard work
+    * Since the compiler only runs *once* whereas the program runs *many times*, the compiler has ample time to determine a suitable schedule. Conversely, in an out-of-order processor, there is comparatively much less time available to determine a suitable schedule, because as the program is executing, any time spent determining the schedule is accumulated as additional overhead to the total program execution time.
+  * The required hardware is comparatively simpler to that required to implement an out-of-order processor
+  * More energy efficient than a comparable out-of-order processor, since (all else equal) the hardware performs less per executed instruction
+  * Works really well on loops and so called **"regular" code** (e.g., array traversal, multiplying matrices, and other such patterns which are readily amenable to compiler analysis for subsequent schedule optimization)
+
+Conversely, the ***bad*** aspects of VLIW are:
+  * Latencies of instructions are not always uniform
+    * The compiler must assume sort of inherent latency in order to optimally schedule instructions, however, with non-uniform latencies, this becomes more challenging. For example, if planning around a cache hit latency, an incidental ***cache miss*** may introduce a much longer latency than originally anticipated.
+  * Many applications are irregular
+    * Almost every application which performs a lot of "decision making" (e.g., AI applications, applications working on pointers or pointer-intensive structures, etc.) are difficult for the compiler to effectively analyze.
+  * Code bloat
+    * Code for a VLIW-based program can become much larger than an equivalent out-of-order processor, due to insertion of many ***no-ops*** required to separate inter-dependent instructions in order to prevent them from being scheduled in the *same* VLIW instruction.
+
+## 5. VLIW Backward Compatibility Quiz and Answers
