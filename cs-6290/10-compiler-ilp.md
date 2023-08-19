@@ -455,4 +455,114 @@ Examining the right-side code, in principle, if conversion would allow to perfor
 
 Therefore, an alternative to if conversion for loops (i.e., moving things "upstream" from "future" iterations) with a similar synergistic improvement on compiler-facilitated instruction scheduling is desirable. This improvement *does* in fact exist: It is called **loop unrolling**, which is discussed next.
 
-## 9. Loop Unrolling Benefits
+## 9. Loop Unrolling
+
+<center>
+<img src="./assets/10-016.png" width="650">
+</center>
+
+Consider the following C code:
+
+```c
+for (i = 1000; i != 0; i--)
+  a[i] = a[i] + s;
+```
+
+The corresponding instructions are as follows:
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1 - `R1` is the pointer to the `i`th element of the array, i.e., `a[i]`
+  ADD  R2, R2, R3   # I2 - `R3` is the added quantity `s`
+  SW   R2, 0(R1)    # I3 - update `a[i]`
+  ADDI R1, R1, -4   # I4 - decrement pointer, i.e., `i--`
+  BNE  R1, R5, Loop # I5 - check if pointer has reached the beginning of the array, i.e., `a[0]` via check `i == 0`
+```
+
+Applying **loop unrolling** to this loop code ***once*** yields the following:
+
+```c
+for (i = 1000; i != 0; i--) {
+  a[i] = a[i] + s;
+  a[i] = a[i] + s;
+}
+```
+
+Here, with a ***single*** unrolling, each given iteration of the loop will also perform the work of the ***next*** loop iteration.
+
+<center>
+<img src="./assets/10-017.png" width="650">
+</center>
+
+However, this requires an additional adjustment to the indexes (i.e., to avoid simply doing the "same" work "twice") as follows:
+
+```c
+for (i = 1000; i != 0; i = i - 2) {
+  a[i] = a[i] + s;
+  a[i-1] = a[i-1] + s;
+}
+```
+
+Consequently, this ***new*** loop arrangement yields a corresponding ***halving*** of the necessary loop iterations, which each new loop performing ***twice*** the work of the original loop iterations.
+
+***N.B.*** This unrolling technique can be generalized (e.g., unrolling ***twice*** in order to ***triple*** the per-iteration work, etc.)
+
+For this once-unrolled loop example, the corresponding instructions are as follows (i.e., doubling of the per-iteration-work instructions):
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  ADD  R2, R2, R3   # I2
+  SW   R2, 0(R1)    # I3
+  LW   R2, 0(R1)    # I4
+  ADD  R2, R2, R3   # I5
+  SW   R2, 0(R1)    # I6
+  ⋮                 # previous instructions `ADDI ...` and `BNE ...` as before
+```
+
+<center>
+<img src="./assets/10-018.png" width="650">
+</center>
+
+However, this requires a corresponding "indexes adjustment" to avoid "double (redundant) work," as follows:
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  ADD  R2, R2, R3   # I2
+  SW   R2, 0(R1)    # I3
+  LW   R2, -4(R1)   # I4 - adjust index/offset to `-4`, i.e., `a[i-1]`
+  ADD  R2, R2, R3   # I5
+  SW   R2, -4(R1)   # I6 - adjust index/offset to `-4`, i.e., `a[i-1]`
+  ADDI R1, R1, -4   # I7
+  BNE  R1, R5, Loop # I8
+```
+
+<center>
+<img src="./assets/10-019.png" width="650">
+</center>
+
+Additionally, a similar adjustment must be made for the loop update (i.e., `i = i - 2`), as follows:
+
+```mips
+Loop:
+  LW   R2, 0(R1)    # I1
+  ADD  R2, R2, R3   # I2
+  SW   R2, 0(R1)    # I3
+  LW   R2, -4(R1)   # I4
+  ADD  R2, R2, R3   # I5
+  SW   R2, -4(R1)   # I6
+  ADDI R1, R1, -8   # I7 - adjust offset to `-8`, i.e., `i - 2`
+  BNE  R1, R5, Loop # I8
+```
+
+Therefore, the net change for a once-unrolled loop is to duplicate the looping instructions, and then make corresponding updates to the loop-iterating indexing logic; collectively, this is what is meant by "***unroll once***. By generalization, unrolling `n` times has a corresponding `n + 1` repetition of per-loop work (e.g., unrolling ***twice*** performs ***triple*** per-loop work, unrolling ***thrice*** performs ***quadruple*** per-loop work, etc.).
+  * ***N.B.*** By corollary, the "baseline loop" is effectively ***not unrolled*** (i.e., unrolled "***zero***" times, but ***not*** unrolled *once*, i.e., beware not to mix up the concepts of the loop logic itself vs. the corresponding level of unrolling!).
+
+## 10-12. Loop Unrolling Benefits
+
+### 10. Benefit: Reduction in Overall Instructions to Execute
+
+### 11-12. Benefit: Reduction in Cycles per Instruction (CPI)
+
+## 13. Loop Unrolling Quiz and Answers
