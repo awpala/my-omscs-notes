@@ -890,3 +890,19 @@ As before, there is still a dependency via operand `R1` between instructions `I1
 Therefore, after the initial load (i.e., instruction `I1`), which incurs an initial one-cycle cost, on commencing the first loop iteration, there is a `7` cycle requirement ***per loop*** to perform all `6` of the loop instructions. Correspondingly, for `1000` loop iterations, this requires `7 × 1000 = 7000` total instructions. However, note that with loop unrolling, the total number of loop iterations with once-unrolled loop unrolling is ***halved*** (i.e., each loop iteration performs ***twice*** the work of an equivalent not-unrolled loop), therefore, the equivalent number of iterations for the *same* program would be correspondingly only `7 × 500 = 3500`.
 
 ## 14. Unrolling Downsides
+
+<center>
+<img src="./assets/10-037.png" width="650">
+</center>
+
+Having now seen how loop unrolling can both reduce the overall workload as well as enhance compiler-facilitated instruction scheduling, it may seem tempting to simply perform unrolling ***indiscriminantly***. However, there are in fact **downsides** to such an approach:
+  * 1 - code bloat
+    * In general, loop unrolling results in more instructions all else equal (e.g., from `4` to `7` in the figure shown above). Furthermore, this increase in instructions-per-loop is amplified with increasing levels of loop unrolling (i.e., beyond once-unrolled to twice-unrolled, thrice-unrolled, etc.).
+  * 2 - the total number of iterations is unknown
+    * If the total number of iterations is unknown a priori (e.g., a `while` loop), then there is the additional challenge of determining when to ***exit*** from the looping construct.
+  * 3 - the total number of iterations is not an integer multiple
+    * This similarly introduces the additional challenge of introducing logic for when to ***exit*** a particular loop prematurely, as required by the program.
+
+***N.B.*** Solutions *do* exist for handling premature loop exit, however, these are beyond the scope of this course (these are covered in an advanced compiler course).
+
+## 15. Function Call Inlining
