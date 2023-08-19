@@ -63,3 +63,29 @@ Conversely, the ***bad*** aspects of VLIW are:
     * Code for a VLIW-based program can become much larger than an equivalent out-of-order processor, due to insertion of many ***no-ops*** required to separate inter-dependent instructions in order to prevent them from being scheduled in the *same* VLIW instruction.
 
 ## 5. VLIW Backward Compatibility Quiz and Answers
+
+Having seen some aspects of VLIW, let's further discuss the matter of **backward compatibility** in the form of a quiz.
+
+<center>
+<img src="./assets/11-006A.png" width="650">
+</center>
+
+Consider a simple VLIW processor, specified as follows:
+  * `64`-bit instructions comprising `2` operations
+  * Stages (e.g., fetch, decode, execute, etc.) perform `1` of these instructions per cycle (i.e., `2` corresponding operations per cycle)
+
+Now, consider a newly proposed "better" VLIW processor, specified as follows:
+  * `64`-bit instructions comprising `4` operations
+  * Stages (e.g., fetch, decode, execute, etc.) perform `2` of these instructions per cycle to maintain corresponding backwards compatibility (i.e., equivalently `4` corresponding operations per `2` cycles)
+
+So, then, is this new processor still a VLIW processor?
+
+***Answer and Explanation***:
+
+The new processor is ***not*** truly a VLIW processor.
+
+In a real/valid VLIW processor, the compiler determines which  operations can be performed in parallel, thereby placing them in the *same* instruction to minimize overall execution time (while still guaranteeing that each cycle performs independent operations).
+  * For programs run on the old processor, the compiler only guarantees that the two operations in the ***same*** instruction occur in parallel. Otherwise, if a dependency occurs (e.g., via operand `R1` in the figure shown above), then the compiler still places the operations  into ***separate*** VLIW instructions with corresponding no-ops (`NOP`) in each respective instruction to ensure necessarily independent execution (i.e., degeneration to `1` effective instruction per cycle).
+  * Correspondingly, for programs run on the new processor, if *two* such 64-bit instructions occur in this same program, it still cannot perform them simultaneously (i.e., despite the "enhanced" `2` VLIW instructions per cycle capability) without violating program correctness, and therefore the same degeneration to `1` effective instruction per cycle occurs.
+
+## 6. VLIW Instructions
