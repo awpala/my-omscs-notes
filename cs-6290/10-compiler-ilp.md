@@ -963,3 +963,88 @@ However, after inlining, the total number of instructions required is `20`, i.e.
 Therefore, function call inlining must be applied **judiciously**, rather than simply applying it indiscriminantly (i.e., for *all* functions and correspondingly for *all* function calls). Generally, it is most ***advantageous*** to inline functions which are small. However, as the function body grows, this results in replication of a lot of code relative to the original non-inlined version (even when accounting for the overhead in the latter).
 
 ## 17. Function Call Inlining Quiz and Answers
+
+<center>
+<img src="./assets/10-041Q.png" width="650">
+</center>
+
+Consider the following program:
+
+```mips
+LW   A0, 0(R1) # I1 - prepare argument `A0` for function call
+CALL AddSq     # I2
+SW   RV, 0(R2) # I3
+
+AddSq:
+  MUL A0, A0, A0 # IA - square the argument `A0`
+  ADD RV, A0, A1 # IB - add the arguments and return this value
+  RET            # IC
+```
+
+Furthermore, consider the processor characterized as follows:
+  * Instructions `LW`, `CALL`, and `RET` each require `2` cycles
+  * Instructions `SW` and `ADD` each require `1` cycle
+  * Instruction `MUL` requires `3` cycles
+
+After compiler-facilitated instruction scheduling, how many cycles are required to execute this program?
+
+Furthermore, after function call inlining and compiler-facilitated instruction scheduling, how many cycles are required to execute this program?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/10-042A.png" width="650">
+</center>
+
+In the case of compiler-facilitated instruction scheduling (but ***without*** function call inlining), this requires `10` total cycles.
+  * In the main program, there is no opportunity for reordering, since there is a strict order dependence in the instructions, including the function call `CALL`. Furthermore, each of these instructions requires `2` cycles apiece.
+  * Similarly, the function-call body does not provide opportunities for instruciton scheduling, either.
+
+The corresponding per-cycle analysis is as follows:
+
+| Instruction | `C1` | `C2` | `C3` | `C4` | `C5` | `C6` | `C7` | `C8` | `C9` | `C10` |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1` | commence execution | (`stall`) | | | | | | | | | |
+| `I2` | | commence execution | (`stall`) | | | | | | | |
+| `IA` | | | | commence execution | (`stall`) |  (`stall`) | | | | |
+| `IB` | | | | | | | commence execution | (`stall`) | | |
+| `IC` | | | | | | | | commence execution |  (`stall`) | | |
+| `I3` | | | | | | | | | | commence execution |
+
+<center>
+<img src="./assets/10-043A.png" width="650">
+</center>
+
+In the case of compiler-facilitated instruction scheduling (but ***without*** function call inlining), this requires only `7` total cycles.
+
+With inlining, the corresponding update to the instructions is as follows:
+
+```mips
+LW  R3, 0(R1)  # I1′
+MUL R3, R3, R3 # I2′
+ADD R5, R3, R4 # I3′
+SW  R5, 0(R2)  # I4′
+```
+
+The corresponding general-purpose register substitutions are as follows:
+
+| pre-inlining argument or return register | post-inlining general-purpose register |
+|:--:|:--:|
+| `A0` | `R3` |
+| `A1` | `R4` |
+| `RV` | `R5` |
+
+With this inlining, as before, there is still no opportunity for reordering, due to dependency via common/mutual operand `R3`.
+
+The corresponding per-cycle analysis is as follows:
+
+| Instruction | `C1` | `C2` | `C3` | `C4` | `C5` | `C6` | `C7` |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `I1′` | commence execution | (`stall`) | | | | | |
+| `I2′` | | | commence execution | (`stall`) | (`stall`) | | |
+| `I3′` | | | | | | commence execution | |
+| `I4′` | | | | | | | commence execution |
+
+Therefore, in this particular example, the net reduction in cycles is strictly due to the elimination of the function-call overhead (i.e., instructions `CALL` and `RET`).
+
+## 18. Other Compiler-Facilitated IPC Enhancements
