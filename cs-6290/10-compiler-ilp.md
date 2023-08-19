@@ -906,3 +906,39 @@ Having now seen how loop unrolling can both reduce the overall workload as well 
 ***N.B.*** Solutions *do* exist for handling premature loop exit, however, these are beyond the scope of this course (these are covered in an advanced compiler course).
 
 ## 15. Function Call Inlining
+
+An optimization similar to loop unrolling (insofar as benefits are concerned) is called **function call inlining**.
+
+<center>
+<img src="./assets/10-038.png" width="650">
+</center>
+
+Consider code involving a function call, as in the figure shown above. Typically, this involves the sequence:
+  * perform upstream work
+  * on approaching the function call, prepare the function parameters (i.e., place them in the corresponding registers, as per the calling convention)
+  * call the function (denoted by green arrows in the figure shown above)
+    * perform the function logic, typically involving the parameters via the caller (e.g., `ADD RV, A0, A1`, as per the figure shown above)
+    * return from the function call
+  * perform downstream work upon return from the function call
+
+Observe that here, there are inherently **overheads** introduced by calling the function and then subsequently returning from it. 
+
+<center>
+<img src="./assets/10-039.png" width="650">
+</center>
+
+To address this, **function call inlining** involves simply ***inlining*** the function-body logic ***directly*** inside of the caller (e.g., inlining the previous function-call logic directly as `ADD R7, R7, R8`, as in the figure shown above), thereby obviating the need to prepare the function parameters and then subsequently return from the function upon its completed execution.
+
+The **benefits** of function call inlining are as follows:
+  * Elimination of call/return overheads → reduction in `# instructions in the program`
+    * This includes not only the function-call and return instructions themselves, but also the upstream instructions required for preparing the function parameters (e.g., popping/pushing on the stack per calling conventions, etc.).
+  * Improved compiler-facilitated instruction scheduling → reduction in `cycles per instruction`
+    * As with loop unrolling, function call inlining also enhances/compounds the effect of compiler-facilitated instruction scheduling, by consolidating the code from three distinctly scheduled regions of code (i.e., upstream of function call, the function call itself, and then downstream of the function call) into one/consolidated scheduled region of code, thereby enhancing compiler-facilitated instruction scheduling by providing more possible candidate instructions for reordering.
+
+As before (cf. loop unrolling), the ***net effect*** of these benefits (i.e., per the iron law) is a ***decrease*** in `CPU Execution Time`. Furthermore, the smaller/simpler the function in question, the larger net effect:
+  * The overhead (i.e., function calling and subsequent return) is high for small functions, as the cost is not amortized by the function-body logic itself.
+  * Furthermore, a small function will not provide ample opportunities for instructions reordering to begin with.
+
+However, there is a **downside** to function call inlining (which is correspondingly similar to that for loop unrolling), as discussed next.
+
+## 16. Function Call Inlining Downside
