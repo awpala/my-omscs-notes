@@ -1048,3 +1048,20 @@ The corresponding per-cycle analysis is as follows:
 Therefore, in this particular example, the net reduction in cycles is strictly due to the elimination of the function-call overhead (i.e., instructions `CALL` and `RET`).
 
 ## 18. Other Compiler-Facilitated IPC Enhancements
+
+<center>
+<img src="./assets/10-044.png" width="650">
+</center>
+
+There are additional compiler optimizations which can further enhance instructions per cycle (IPC) performance, as discussed briefly here.
+  * ***N.B.*** For a more comprehensive coverage of these topics, consult an advanced compilers course (or equivalent).
+
+**Software pipelining** is a technique whereby loops are scheduled in such a manner which does not otherwise greatly increase the corresponding code size, but still yielding a similar to benefit to loop unrolling. The general premise of this technique is to treat the loop itself as a **pipeline** (i.e., comprised of corresponding stages), thereby scheduling the loop in such a manner whereby reordering of independent instructions promotes a "fuller" pipeline (i.e., more instructions executing per cycle).
+
+**Trace scheduling** is another technique, which is essentially an enhanced form of if conversion. Conceptually, code which is intrinsically branched is analyzed to determine a **common path**, which are then subsequently combined (i.e., with branching otherwise eliminated between them), thereby promoting compiler-facilitated instruction scheduling across this consolidated code. Furthermore, **checks** are placed within this common-path code in order to execute code which is otherwise branched (i.e., outside of the common path), which also requires corresponding "fixes" to "un-branch" the corresponding consolidated code when necessary.
+
+## 19. Lesson Outro
+
+This lesson introduced some of the more advanced compiler techniques that facilitate production of better programs more suited for modern processors characterized by branch prediction, out-of-order program execution, and execution of multiple instructions per cycle.
+
+In the next lesson, we will examine a type of processor which simplifies its own constituent hardware by relying more on such compiler support.

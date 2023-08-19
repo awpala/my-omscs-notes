@@ -13,6 +13,7 @@
 | [7](./07-instruction-scheduling.md) | Instruction Scheduling |
 | [8](./08-reorder-buffer.md) | ReOrder Buffer (ROB) |
 | [9](./09-memory-ordering.md) | Memory Ordering |
+| [10](./10-compiler-ilp.md) | Compiler ILP |
 
 ## Videos Reference
 
