@@ -132,3 +132,29 @@ Another example of where VLIW is used is in **digital signal processing (DSP)** 
 These two processors respective "case studies" demonstrate the fundamental difference between using VLIW as an "all-purpose" processor (negative overall outcome) via Itanium vs. as a specialized use via DSP applications (positive overall outcome).
 
 ## 8. VLIW Target Market Quiz and Answers
+
+<center>
+<img src="./assets/11-010A.png" width="650">
+</center>
+
+Among the following, which type of application is is VLIW best suited for? (Rank from `1`/best to `3`/worst.)
+  * Add many numbers together
+    * `1` - This comprises a small, predictable loop with well-controlled dependencies, and so on. 
+  * Determine the best path in a maze
+    * `3` - This involves a lot of decision making, along with corresponding if conversions, etc., and therefore VLIW will be relatively inefficient due many of the instructions being "predicated out"
+  * Count elements of a linked list
+    * `2` - This will likely involve many load instructions (with corresponding hits and misses), with corresponding impact on compiler scheduling (i.e., due to cache misses, etc.), however, otherwise there is still some semblance of "normalcy" otherwise in this program 
+
+***N.B.*** As discussed previously (cf. Section 4), VLIW is optimized for programs where the compiler can effectively analyze the instructions for consequent reordering (i.e., "normal" code).
+
+## 9. Lesson Outro
+
+In this lesson, we have discussed VLIW processors, including their Itanium "cousins."
+
+Furthermore, we have examined the pros and cons of these VLIW processors, as well as some of the reasons for the Itanium's high expectations and eventual demise.
+
+This lesson hereby concludes the first portion of the high-performance computer architecture course (i.e., CS 6290), where thus far we have learned how the modern processor's ***core*** itself works.
+
+In the next part of the course (i.e., starting with Lesson 12), we will learn how to achieve good performance even when the main memory is really ***slow***, and otherwise way too ***small*** relative to the size of the programs intended to run on it.
+
+Subsequently thereafter (i.e., starting with Lesson 18), we will conclude this course by learning how to assemble ***multiple*** processor cores together in order to achieve even better performance and energy efficiency.
