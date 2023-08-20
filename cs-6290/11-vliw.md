@@ -111,3 +111,24 @@ Lastly, there is often some type of **"compaction" mechanism** present for VLIW 
   * For example, given a set of four-operation instructions (as in the figure shown above), the actual resulting VLIW instruction may include some type of **stop bit** intercalated between (otherwise inter-dependent) instructions to allow "packing" into a single VLIW instruction, thereby reducing overall no-ops (`NOP`s) in the resulting executed program (and correspondingly reducing code bloat accordingly).
 
 ## 7. VLIW Examples
+
+<center>
+<img src="./assets/11-008.png" width="450">
+</center>
+
+Now, consider some "real world" examples of VLIW processors.
+
+The (probably) most famous example of how *not* to implement the VLIW concept is Intel's **Itanium** processors line, characterized by the following:
+  * ***Tons*** of instruction set architecture (ISA) features to enable compiler-facilitated instruction scheduling, etc.
+  * Consequently, the resulting processor hardware became ***very complicated***
+    * While it was no longer necessary to check fo dependencies between instructions, it correspondingly introduced so many other "bells and whistles" in the process of "achieving" this that resulting hardware was among the most complicated that was every conceived/built by Intel thus far
+    * And nevertheless, fundamentally, it is still ultimately a VLIW processor which is otherwise generally ill-suited for "irregular"/non-"normal" program code
+
+Another example of where VLIW is used is in **digital signal processing (DSP)** processors. DSP is characterized by ubiquitous floating-point work/instructions, typically involving regular/predictable loops comprised of a small amount of per-loop-iteration work but executed over many iterations. For this particular (specialized) use case, VLIW provides the following corresponding **benefits**:
+  * Excellent performance
+  * High energy efficiency
+    * There is not much power expended on determining dependencies and so on.
+
+These two processors respective "case studies" demonstrate the fundamental difference between using VLIW as an "all-purpose" processor (negative overall outcome) via Itanium vs. as a specialized use via DSP applications (positive overall outcome).
+
+## 8. VLIW Target Market Quiz and Answers
