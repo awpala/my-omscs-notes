@@ -89,3 +89,25 @@ In a real/valid VLIW processor, the compiler determines which  operations can be
   * Correspondingly, for programs run on the new processor, if *two* such 64-bit instructions occur in this same program, it still cannot perform them simultaneously (i.e., despite the "enhanced" `2` VLIW instructions per cycle capability) without violating program correctness, and therefore the same degeneration to `1` effective instruction per cycle occurs.
 
 ## 6. VLIW Instructions
+
+Now, consider a qualitative description of these ***VLIW instructions***.
+
+<center>
+<img src="./assets/11-007.png" width="650">
+</center>
+
+As we have seen, a VLIW processor really specifies *several* operations, each of which would have otherwise taken a *single* "normal" instruction in a "normal" superscalar processor. 
+  * Correspondingly, a VLIW processor typically has all of these **"normal" instruction set architecture (ISA) opcodes** available/present.
+
+Furthermore, a typical VLIW processor also provides **full predication**, or at least very extensive predication support.
+  * This is because it relies on the compiler to expose parallelism, and one of the ways that the compiler achieves this is via instruction scheduling; therefore, it is desirable for the compile to be able to predicate, thereby exposing more opportunities for such instruction scheduling.
+
+A VLIW processor (and corresponding ISA) also typically includes **many architectural registers**.
+  * The reason for this is that a lot of the instruction-scheduling optimizations require the use of additional registers, e.g., modifying existing registers to accommodate reordered instructions, as seen previously (cf. Lesson 10).
+
+Another frequently observed ISA support for compilers are **branch hints**, whereby the compiler can specify to the hardware what it "thinks" the branches will do, which in turn facilitates optimization by the branch predictor.
+
+Lastly, there is often some type of **"compaction" mechanism** present for VLIW instructions.
+  * For example, given a set of four-operation instructions (as in the figure shown above), the actual resulting VLIW instruction may include some type of **stop bit** intercalated between (otherwise inter-dependent) instructions to allow "packing" into a single VLIW instruction, thereby reducing overall no-ops (`NOP`s) in the resulting executed program (and correspondingly reducing code bloat accordingly).
+
+## 7. VLIW Examples
