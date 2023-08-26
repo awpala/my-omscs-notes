@@ -72,7 +72,38 @@ Which of the following memory locations has ***temporal*** locality in this code
 
 Recall (cf. Section 4) that temporal locality indicates that once a memory location is accessed, it is likely to be accessed again.
   * For `j`, this is true because it is used both as the `for` loop's iteration variable and in expression `arr[j]` in each loop iteration. Therefore, after a given iteration, it is generally likely that `j` will be accessed again soon; indeed, on initial access, it will be accessed *many* times (`1000` cumulatively) subsequently thereafter.
-  * For `sum`, this is true for similar reasons to `j`, i.e., it is initialized before the loop, and then is subsequently accessed for read and write operations on every loop iteration.
+  * For `sum`, this is true for similar reasons to `j`, i.e., `sum` is initialized before the loop, and then is subsequently accessed for read and write operations on every loop iteration.
   * Conversely, for any given element of array `arr` (i.e., `arr[j]`), with each element occupying a different (albeit adjacent-to-the-next) memory location, once it is accessed in a given loop iteration, it is no longer accessed again subsequently thereafter.
 
 ## 6. Spatial Locality Quiz and Answers
+
+<center>
+<img src="./assets/12-008A.png" width="650">
+</center>
+
+Returning to the previous example (cf. Section 5), as per the following code fragment:
+
+```c
+int sum = 0;
+for (int j = 0; j < 1000; j++)
+  sum = sum + arr[j];
+```
+
+Which of the following memory locations has ***spatial*** locality in this code? (Select all that apply.)
+  * `j`
+    * `DOES NOT APPLY`
+  * `sum`
+    * `DOES NOT APPLY`
+  * elements of `arr`
+    * `APPLIES`
+
+***Answer and Explanation***:
+
+Recall (cf. Section 4) that spatial locality indicates that once a memory location is accessed, it is likely that nearby memory locations will be accessed soon.
+  * For `j`, it is accessed repeatedly as the loop continues to iterate, however, this has no implications for spatial locality (i.e., in relation to adjacent memory locations)
+  * For `sum`, this is true for similar reasons to `j`, i.e., `sum` is accessed repeatedly as the loop continues to iterate, however, this has no implications for spatial locality (i.e., in relation to adjacent memory locations)
+  * Conversely, for any given element of array `arr` (i.e., `arr[j]`), with each element occupying an adjacent-to-the-neighboring-array-element memory location, when a given element `arr[j]` is accessed for a given loop iteration, it is also likely that an adjacent memory location will also be accessed soon (i.e., on the subsequent loop iteration, and so on)
+
+***N.B.*** Incidentally, when this program is compiled, typically it gives rise to some level of spatial locality between `j` and `sum` as well, i.e., both are likely to be allocated on the stack by the compiler in adjacent/nearby memory. Therefore, successive accesses of variables `sum` and `j` will also likely give rise to spatial locality.
+
+## 7. Locality and Data Accesses
