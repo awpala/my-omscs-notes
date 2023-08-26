@@ -33,3 +33,17 @@ Which of the following are ***not*** good examples of locality? (Select all that
     * `APPLIES` -  New Year's Eve occurring on a given day generally means it ***will not*** be New Year's Eve the following day, i.e., New Year's Eve is temporal phenomenon which does ***not*** generally have locality on a timescale of days (this is effectively "anti-locality" in the sense that it "predicts" precisely the *opposite* of what the locality principle implies/suggests)
 
 ## 4. Memory References
+
+<center>
+<img src="./assets/12-004.png" width="650">
+</center>
+
+In computer architecture, we are interested in the locality principle as applied to **memory references**.
+
+If we know that a processor as **accessed** address `X` recently, then the **locality principle** suggests that:
+  * It is likely to access the ***same*** address `X` again in the near future → This is known as **temporal locality**
+  * It is likely to access addresses proximally to `X` → This is known as **spatial locality** 
+
+Therefore, once a given address is accessed, it is also likely that the ***same*** address will be accessed again soon, along with nearby addresses.
+
+## 5. Temporal Locality Quiz and Answers
