@@ -47,3 +47,32 @@ If we know that a processor as **accessed** address `X` recently, then the **loc
 Therefore, once a given address is accessed, it is also likely that the ***same*** address will be accessed again soon, along with nearby addresses.
 
 ## 5. Temporal Locality Quiz and Answers
+
+<center>
+<img src="./assets/12-006A.png" width="650">
+</center>
+
+Consider the following code fragment:
+
+```c
+int sum = 0;
+for (int j = 0; j < 1000; j++)
+  sum = sum + arr[j];
+```
+
+Which of the following memory locations has ***temporal*** locality in this code? (Select all that apply.)
+  * `j`
+    * `APPLIES`
+  * `sum`
+    * `APPLIES`
+  * elements of `arr`
+    * `DOES NOT APPLY`
+
+***Answer and Explanation***:
+
+Recall (cf. Section 4) that temporal locality indicates that once a memory location is accessed, it is likely to be accessed again.
+  * For `j`, this is true because it is used both as the `for` loop's iteration variable and in expression `arr[j]` in each loop iteration. Therefore, after a given iteration, it is generally likely that `j` will be accessed again soon; indeed, on initial access, it will be accessed *many* times (`1000` cumulatively) subsequently thereafter.
+  * For `sum`, this is true for similar reasons to `j`, i.e., it is initialized before the loop, and then is subsequently accessed for read and write operations on every loop iteration.
+  * Conversely, for any given element of array `arr` (i.e., `arr[j]`), with each element occupying a different (albeit adjacent-to-the-next) memory location, once it is accessed in a given loop iteration, it is no longer accessed again subsequently thereafter.
+
+## 6. Spatial Locality Quiz and Answers
