@@ -107,3 +107,40 @@ Recall (cf. Section 4) that spatial locality indicates that once a memory locati
 ***N.B.*** Incidentally, when this program is compiled, typically it gives rise to some level of spatial locality between `j` and `sum` as well, i.e., both are likely to be allocated on the stack by the compiler in adjacent/nearby memory. Therefore, successive accesses of variables `sum` and `j` will also likely give rise to spatial locality.
 
 ## 7. Locality and Data Accesses
+
+Now that we know what locality is, let us see how it is used to improves **data accesses**.
+
+<center>
+<img src="./assets/12-009.png" width="650">
+</center>
+
+First, consider the example of borrowing books from a ***library***. Here, the library represents a data repository that is ***large*** in size, but ***very slow*** to access (i.e., we must first visit the building, then locate the book within the building, check out the book, return home, etc.).
+  * In this scenario, within the library, typically there is a lot of **temporal locality**
+    * For example, a student may often need to look up the definition of "locality" very often
+  * Furthermore, there is also a lot of **spatial locality** in using the books within the library
+    * For example, if a student looks up some type of "computer architecture" definition once, they will also likely look up other computer-architecture-related information as well in the near future
+
+<center>
+<img src="./assets/12-010.png" width="650">
+</center>
+
+Continuing with the library-based locality and data access example, we have thus far seen that the library is large but very slow to access, and that accesses to this information within the library has ***both*** temporal and spatial locality.
+
+Furthermore, when a ***student*** requires a piece of information from the library, they have the following available options:
+  * 1 - Go to the library, find the information once (i.e., during this visit), and then return back home
+  * 2 - Borrow the book, so that future accesses to the information in the book are much faster (i.e., available locally at home)
+  * 3 - Take all of the books home from the library, and build the library at home
+
+In the first option (round trip to the library), this incurs a lot of ***wasted time***, particularly if performing multiple round-trips to determine the *same* information. Furthermore, this approach does ***not*** benefit from locality (i.e., getting the *same* information one book via ***temporal locality*** and/or getting subject-matter-related information from multiple books via ***spatial locality***).
+  * Correspondingly, this is not a typical approach employed by a student, as it is not an efficient way to study the information via library resources.
+
+In the second option (borrowing the relevant book(s) from the library and taking it/them home), the book(s) is now locally available. This approach correspondingly benefits from locality (both temporally and spatially in the context of the particular book(s) in question), while also ***eliminating*** the ***problem*** of the library being large and slow.
+  * Correspondingly, this is typically the ***most commmon*** approach to solve this problem. `:)`
+
+The third approach (building the entire library at home) is very expensive, while conferring very little benefit in the process. While it *does* save the inconvenience of traveling round-trip to the library, it does *not* solve the problem of requiring to search among many books, locating them on the shelves, etc.
+  * Correspondingly, this is another ill-advised strategy, as it is generally ***desirable*** to have relatively few books of particular interest, rather than to have many books which require slow lookup.
+
+Therefore, just a student is faced with these choices regarding the library, similar principles apply to a **processor** requiring access to **main memory**: Rather than going to main memory to fetch *every* single memory location, instead it will only retrieve the content of the memory locations of particular interest (and only a limited amount of such content, to prevent from degenerating back to slow-access behavior).
+  * For this purpose, to store such a selected subset of useful information retrieved from main memory, the processors uses a small repository of such information which is called the **cache** in the context of such memory accesses.
+
+## 8. Cache Quiz Question and Answers
