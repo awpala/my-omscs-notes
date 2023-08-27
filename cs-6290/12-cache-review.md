@@ -181,3 +181,59 @@ Therefore, when a **processor** wants to **access** some memory, the following c
 Therefore, once the cache is "warmed up" (i.e., initial cache misses eventually producing subsequent improved cache hits), the slow-memory access caused by cache misses will otherwise occur relatively ***rarely*** as the program continues to execute (i.e., the running programming will predominantly use data from the cache).
 
 ## 10. Cache Performance
+
+<center>
+<img src="./assets/12-014.png" width="650">
+</center>
+
+Let us now consider the properties of a ***good*** (i.e., ***performant***) cache.
+
+### `AMAT`
+
+We want our system to have a good **average memory access time (AMAT)**, which is the access time to memory as seen from the perspective of the **processor**. The `AMAT` is defined as follows:
+
+```
+AMAT = Hit Time + Miss Rate × Miss Penalty
+```
+
+where:
+  * `Hit Time` is how quickly the cache can return the data when a **cache hit** occurs
+  * `Miss Rate` is how often a **cache miss** occurs
+  * `Miss Penalty` is the penalty per **cache miss**, which is effectively the main-memory access time
+
+In general, an optimal `AMAT` is that which is ***minimized*** (i.e., the lower the better, and ideally `0`). To achieve this, that requires the following:
+  * A ***low*** `Hit Time` → This requires a cache which is ***small*** and ***fast***
+  * A ***low*** `Miss Rate` → This requires a cache which is ***large*** and/or ***smart***
+    * A ***large*** cache is capable of fitting more data, thereby reducing cache misses
+    * A ***smart*** cache will be "better-aware" of what data in particular that it should store, thereby also reducing cache misses
+  * A ***low*** `Miss Penalty` → The penalty itself (i.e., due to requiring main-memory access) is typically ***very large*** (on the order of tens or even hundreds of processor cycles), but otherwise will be necessarily incurred in the event of a cache miss
+
+Therefore, when designing caches, this entails a ***balance*** between the `Hit Time` and the `Miss Rate`, i.e., small-and-fast vs. large-and-intelligent (respectively), with "intelligence" typically implying a slower operation in order to achieve this.
+  * Accordingly, some caches can be extremely small and fast and have a very good (i.e., small) `Hit Time`, but at the expense of having a larger `Miss Rate`.
+  * Conversely, other caches can have a relatively large `Hit Time`, but with the corresponding benefit of extremely low `Miss Rate` thereby reducing the overall contribution from the `Miss Penalty` as a result of necessary main-memory accesses
+
+### `Miss Time`
+
+Additionally, `Miss Time` is another characteristic of caches, which is the overall time it takes for a **cache miss** occurs. `Miss Time` is defined as follows:
+
+```
+Miss Time = Hit Time + Miss Penalty
+```
+
+If a cache miss occurs, resulting in an incurred `Miss Penalty`, which contributes to an effective increase in the `Hit Time`.
+
+`Miss Time` can also be considered/interpreted as the memory-access time elapsed due to the cache miss.
+
+### `AMAT`: Alternately Expressed
+
+Lastly, `AMAT` can also be alternately expressed only in terms of the `Hit Time` and `Miss Rate` (i.e., eliminating `Miss Penalty` from the previous/original equation via `Miss Penalty = Miss Time - Hit Time`) as follows:
+
+```
+AMAT = (1 - Miss Rate) × Hit Time + Miss Rate × Miss Time
+```
+
+Here, `(1 - Miss Rate)` is how often cache hits occur.
+
+Typically, we use the ***original form*** of the `AMAT` definition, simply because checking the `Miss Time` usually includes checking whether there is a cache hit (`Hit Time`) followed by what must be performed in the event of a cache miss (`Miss Penalty`). Furthermore, it will ***always*** be necessary to have the `Hit Time` on hand, and ***occasionally*** it will also be necessary to have the `Miss Penalty`.
+
+## 11. Hit Time Quiz and Answers
