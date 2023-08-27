@@ -144,3 +144,23 @@ Therefore, just a student is faced with these choices regarding the library, sim
   * For this purpose, to store such a selected subset of useful information retrieved from main memory, the processors uses a small repository of such information which is called the **cache** in the context of such memory accesses.
 
 ## 8. Cache Quiz Question and Answers
+
+<center>
+<img src="./assets/12-012A.png" width="650">
+</center>
+
+Let us now apply the concepts discussed previously (cf. Section 7) to an actual cache.
+
+We know that the **main memory** in a computer is large and very slow to access compared to the **processor**'s speed. Furthermore, we know that there is a lot of ***both*** spatial ***and*** temporal locality present in the data accesses (indeed, most programs exhibit a lot of spatial and temporal locality).
+
+Therefore, for an access operation to a main-memory location, which ***one*** of the following options should the processor perform?
+  * Go to main memory for every access
+  * Have small memory built into the processor core, and store retrieved information there (for faster subsequent access)
+    * `CORRECT`
+  * Have a huge memory store co-located adjacently to the processor chip (since it is too large to fit on/in the processor chip itself), and store all of the information there
+
+***Explanation***:
+
+These options correspond analogously to the library example seen previously (cf. Section 7). Correspondingly, **caches** overcome the problem of having a large but slow main memory, while also exploiting both spatial and temporal locality.
+
+## 9. Cache Lookups
