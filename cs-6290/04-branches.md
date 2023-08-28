@@ -887,7 +887,7 @@ For *`n`* values of `1`, `4`, `8`, and `16`:
   * How well does the predictor work on pattern `(NNNT)*`?
   * What is the number of 2-bit counters required for the pattern `(NT)*`?
 
-***Solution and Explanation***:
+***Answer and Explanation***:
 
 | *`n`* | Cost (bits) | Predicts Pattern `(NNNT)*` Accurately? | Number of 2-Bit Counters Required for Pattern `(NT)*` | Usage of Available 2-Bit Counters |
 |:---:|:---:|:---:|:---:|:---:|

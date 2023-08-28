@@ -348,4 +348,34 @@ Finally, consider a block size of `1 kilobyte`. In this case, *a lot* of data is
 Therefore, it turns out that indeed (at least for L1 caches) the optimal block size is one which is neither too large nor too small, with the optimum occurring around a block size of `32 bytes` to `128 bytes` accordingly.
   * This block size balances the aforementioned tradeoffs while still promoting better overall spatial locality.
 
-## 15. Block Size Quiz
+## 15. Block Size Quiz and Answers
+
+<center>
+<img src="./assets/12-025A.png" width="650">
+</center>
+
+Given a cache characterized as follows:
+  * Total size of `32 KB`
+  * Block size of `64 bytes`
+
+Consider a program which accesses variables `x1`, `x2`, ..., `xN` which are scalar values (i.e., not otherwise elements of the same array), and such that the program itself is characterized by the following with respect to these variables:
+  * Lots of temporal locality
+  * No spatial locality
+
+Per these specifications, what is the largest `N` (i.e., total count of such variables) that still results in a ***high*** cache hit rate?
+
+***Answer and Explanation***:
+
+When `x1` is brought into the cache, it will be brought in along with an entire block's worth of data (i.e., `64 bytes`), and because there is no spatial locality, that means that none of the other variables will be co-located in that same block. And similarly applies for retrievals of the variables `x2`, ..., `xN`.
+
+Therefore, every time any given variable is accessed, this will require retrieving the full `64 bytes` worth of data into the cache (i.e., the full line). Furthermore, in order to achieve a high cache-hit rate, because each variable (i.e., individually) has a lot of temporal locality, ideally they should *all* remain in the cache. To achieve this, this implies filling the entire cache, i.e.,:
+
+```
+32 KB / 64 bytes = 512
+```
+
+So, this cache can accommodate up to `512` such variables (i.e., with each occupying its own cache block, despite each variable itself only occupying perhaps `4` to `8` or so of those bytes, depending on the particular data type of the variables in question).
+
+***N.B.*** In order to improve this (i.e., fit more such variables), it is more ideal for them to be more spatially related to improve spatial locality (and correspondingly "better packing" of the cache entries).
+
+## 16. Cache Block Start Address
