@@ -242,7 +242,7 @@ Typically, we use the ***original form*** of the `AMAT` definition, simply becau
 <img src="./assets/12-016A.png" width="450">
 </center>
 
-Having now seen the relationship between `Hit Time`, `Miss Time`, and cache performance (cf. Section 10), consider the following.
+Having now seen the relationship between `Hit Time`, `Miss Time`, and cache performance (cf. Section 10), Recalling (cf. Section 9) that `Miss Time = Hit Time + Miss Penalty`, now consider the following.
 
 Which of the following properties characterize a ***well-designed*** cache? (Select all that apply.)
   * `Hit Time < Miss Time`
@@ -258,8 +258,28 @@ Which of the following properties characterize a ***well-designed*** cache? (Sel
     * `APPLIES`
       * Per definition of `Miss Time`, this is inherently true (regardless of how well or poorly the cache is designed), i.e., `Miss Time - Miss Penalty > 0 ` implies some positive, finite `Hit Time` constituting this difference.
 
-***N.B.*** Recall (cf. Section 9) that `Miss Time = Hit Time + Miss Penalty`.
-
 ***N.B.*** Essentially, in a well-designed cache, necessarily `Hit Time < Miss Time`. What's more, ideally `Hit Time << Miss Time`, thereby moving performance closer to `Miss Time == Miss Penalty` (which would be the case if `Hit Time` were `0`).
 
 ## 12. Miss Rate Quiz and Answers
+
+<center>
+<img src="./assets/12-018A.png" width="650">
+</center>
+
+Recall (cf. Section 10) that `Hit Rate` can be expressed as `Hit Rate = 1 - Miss Rate`. Given this, which of the following is/are true regarding a ***well-designed*** cache? (Select all that apply.)
+  * `Hit Rate > Miss Rate`
+    * `APPLIES`
+  * `Hit Rate < Miss Rate`
+    * `DOES NOT APPLY`
+  * `Hit Rate == Miss Rate`
+    * `DOES NOT APPLY`
+  * `Hit Rate` is almost `1`
+    * `APPLIES`
+  * `Miss Rate` is almost `1`
+    * `DOES NOT APPLY`
+
+***Explanation***:
+
+In a well-designed cache, the `Hit Rate` is ideally as high as possible and correspondingly the `Miss Rate` being as low as possible, because the `Hit Rate` determines how often there is only cache-hit-related latency while the `Miss Rate` is how often full-main-memory latency must be incurred. Therefore, in general, `Hit Rate` should be (much) larger than the `Miss Rate`, and ideally exactly `1` (i.e., a corresponding `Miss Rate` of `0`).
+
+## 13. Cache Size in Real Processors
