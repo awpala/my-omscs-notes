@@ -237,3 +237,29 @@ Here, `(1 - Miss Rate)` is how often cache hits occur.
 Typically, we use the ***original form*** of the `AMAT` definition, simply because checking the `Miss Time` usually includes checking whether there is a cache hit (`Hit Time`) followed by what must be performed in the event of a cache miss (`Miss Penalty`). Furthermore, it will ***always*** be necessary to have the `Hit Time` on hand, and ***occasionally*** it will also be necessary to have the `Miss Penalty`.
 
 ## 11. Hit Time Quiz and Answers
+
+<center>
+<img src="./assets/12-016A.png" width="450">
+</center>
+
+Having now seen the relationship between `Hit Time`, `Miss Time`, and cache performance (cf. Section 10), consider the following.
+
+Which of the following properties characterize a ***well-designed*** cache? (Select all that apply.)
+  * `Hit Time < Miss Time`
+    * `APPLIES`
+      * In a well-designed cache, `Hit Time` is significantly lower than `Miss Time` (which encompasses both the `Hit Time` itself as well as the `Miss Penalty`). In fact, this will also generally be true for a poorly designed cache as well (i.e., once a cache miss occurs, the `Miss Penalty` component of the `Miss Time` will predominate).
+  * `Hit Time > Miss Penalty`
+    * `DOES NOT APPLY`
+      * If the `Hit Time` exceeds the `Miss Penalty`, the cache is effectively useless as it is now even slower than the just fetching from main memory directly at that point.
+  * `Hit Time == Miss Penalty`
+    * `DOES NOT APPLY`
+      * For similar rationale to the case of `Hit Time > Miss Penalty`, this is essentially the critical point at which the cache is effectively just equivalent to the main memory itself.
+  * `Miss Time > Miss Penalty`
+    * `APPLIES`
+      * Per definition of `Miss Time`, this is inherently true (regardless of how well or poorly the cache is designed), i.e., `Miss Time - Miss Penalty > 0 ` implies some positive, finite `Hit Time` constituting this difference.
+
+***N.B.*** Recall (cf. Section 9) that `Miss Time = Hit Time + Miss Penalty`.
+
+***N.B.*** Essentially, in a well-designed cache, necessarily `Hit Time < Miss Time`. What's more, ideally `Hit Time << Miss Time`, thereby moving performance closer to `Miss Time == Miss Penalty` (which would be the case if `Hit Time` were `0`).
+
+## 12. Miss Rate Quiz and Answers
