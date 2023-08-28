@@ -298,3 +298,54 @@ Consider **L1 (Level 1) caches**, which are the caches that ***directly*** servi
     * cf. Main memory access generally requires on the order of hundreds of processor cycles
 
 ## 14. Cache Organization
+
+Now that we have a better understanding of the cache, and approximately how large it must be in real processors (cf. Section 13), let us now consider how the cache is ***organized*** internally.
+
+<center>
+<img src="./assets/12-020.png" width="650">
+</center>
+
+There are two pertinent ***questions*** to answer to better understand cache organization, which are as follows:
+  * 1 - How to determine if there is a cache hit vs. a cache miss?
+    * This entails determining what data is available in the cache, and then when the processor gives a requested address to the cache, it must be determined whether that data is or is not present in the cache (furthermore, this must be done very quickly).
+  * 2 - How to determine what to eject from the cache once it is full?
+    * Eventually, the data will need to be cycled through as the program executes, otherwise the cache will revert from a "hot" state (i.e., predominantly cache hits) back to a "cold" state (i.e., predominantly cache misses).
+
+With respect to the first question (i.e., determining cache hit vs. cache miss), this requires something that is ***very fast***. Typically this involves a table of some sort, which can be quickly indexed via certain address bits from the data; this is depicted in the figure shown above (whose constituent components are described in turn in the subsequent sub-figures).
+
+<center>
+<img src="./assets/12-021.png" width="150">
+</center>
+
+Conceptually, the cache is a table (as in the figure shown above).
+
+<center>
+<img src="./assets/12-022.png" width="450">
+</center>
+
+Furthermore, this table is indexed into with some fraction of bits taken from the address of the data (as in the figure shown above), which correspondingly indicate whether there is a cache hit.
+
+<center>
+<img src="./assets/12-023.png" width="450">
+</center>
+
+The remainder of the information in the **cache entry** (as in the figure shown above, denoted by `Data`) is the pertinent data in the event of a cache hit. The size of this data portion of the cache entry is called the **block size** (or **line size**, since an entry in the cache is also sometimes called a **line**), which specifies how many bytes are in each of these entries.
+
+A block size of `1 byte` means that the entry in the cache is only one byte, and therefore every single byte address will map to a different cache entry within the cache/table. This creates several ***problems***, because usually the processor can issue accesses not only to a single byte, but rather operations can generally operate on multiple bytes simultaneously.
+  * For example, `LW` and `SW` both capably access a `4`-byte location, in which case a single-byte access would require four corresponding lookups for different entries in the cache, thereby complicating and slowing down the cache considerably.
+
+Therefore, in general, the block size should be at least sufficiently large enough to perform a ***single*** access in a given cache entry, in order to find all of the data within the ***same*** cache entry most of the time.
+
+The next consideration is **spatial locality**. If there is a cache miss on a given access, then consequently the processor will retrieve an entire block's worth of memory into the cache.
+  * If there is no spatial locality, then it should only need to bring in what is currently being accessed.
+  * However if there is additionally spatial locality, then ideally it should bring in *more* than simply what is being accessed currently (i.e., the pertinent spatially-related data).
+
+For this purpose, typically block sizes of `32 bytes` to `128 bytes` work well, both from the perspective of their larger-than-a-typical-access size as well as their capturing of much of the spatial locality that exists in programs.
+
+Finally, consider a block size of `1 kilobyte`. In this case, *a lot* of data is fetched from memory every time a cache miss occurs, and if there is insufficient spatial locality then a lot of the additional/extra data will not be used anyways, thereby unnecessarily occupying extra space in the cache.
+  * Recall (cf. Section 13) that the cache is only approximately `16 kilobytes` to `64 kilobytes` in real processors, so this is a rather substantial fraction of the overall cache size, and only using it to fill with mostly unused data, no less.
+
+Therefore, it turns out that indeed (at least for L1 caches) the optimal block size is one which is neither too large nor too small, with the optimum occurring around a block size of `32 bytes` to `128 bytes` accordingly.
+  * This block size balances the aforementioned tradeoffs while still promoting better overall spatial locality.
+
+## 15. Block Size Quiz
