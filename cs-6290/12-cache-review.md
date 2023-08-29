@@ -458,3 +458,27 @@ Therefore, ideally, the block size should be one which:
   * Is relatively small compared to the cache size (i.e., to allow to fit many lines in the cache)
 
 ## 19. Block Offset and Block Number
+
+<center>
+<img src="./assets/12-035.png" width="550">
+</center>
+
+Consider now how to determine the **block offset** and the **block number**, given an **address**.
+
+Assume that the processor produces a `32 bit` address, with bits numbered from `0` through `31`. This address is the location that the processor is attempting to find in the cache.
+
+As before, the cache can be seen as an array of lines, each of a block size in size. In this example, assume a block size of `16 bytes`.
+
+<center>
+<img src="./assets/12-036.png" width="350">
+</center>
+
+As in the figure shown above, some bits of the address indicate the block, while others indicate in which particular block the data resides.
+
+With a block size of `16 bytes`, the processors must first determine how many bits indicate the location within the block. Since `16 = 2^4` (i.e., `log_2(16) = 4`), this requires `4 bits` to specify this accordingly.
+  * Correspondingly, bits `0` through `3` designate the **block offset** to indicate this information (i.e., once the particular block is found in the cache, which part of this block should be read).
+  * The remaining bits `4` through `31` indicate which particular block is being sought, i.e., the **block number**.
+
+Therefore, when accessing the cache, the processor accesses the cache by attempting to determine the block via the block number, and if found, then it uses the offset to retrieve the correct data (i.e., from the corresponding location within the block).
+
+## 20. Block Number Quiz and Answers
