@@ -422,3 +422,39 @@ Conversely, the **cache** can be considered as a number of slots where a **block
   * Therefore, to make a precise ***distinction*** between the "space" in a cache where a block can be placed vs. the actual memory content (i.e., the memory "block" itself) that is populated there, this "space" in the cache is correspondingly called a "line" to make this distinction. By corollary, the **line size** and the **block size** are the same to accommodate this accordingly.
 
 ## 18. Cache Line Sizes Quiz and Answers
+
+<center>
+<img src="./assets/12-033A.png" width="650">
+</center>
+
+Which of the following are ***not*** good line sizes in a `2 KB` cache? (Select all that apply.)
+  * `1 byte`
+    * `APPLIES`
+      * This size does not exploit spatial locality. Furthermore, word-size accesses will require accessing multiple blocks, or equivalently multiple lines in the cache. 
+  * `32 bytes`
+    * `DOES NOT APPLY`
+      * This size is suitable for a line size. It exploits spatial localities, is not too large, and is a power of 2, and is therefore amenable to easily locating blocks.
+  * `48 bytes`
+    * `APPLIES`
+      * This size, which suitable in terms of magnitude (i.e., neither too large nor too small), is not a power of 2, and therefore introduces issues with respect to alignment, requiring division by `48` rather than simple integer multiples of `2`.
+  * `64 bytes`
+    * `DOES NOT APPLY`
+      * This size is also suitable for a line size, per similar rationale as for a `32 byte` block size. While this would halve the possible total blocks relative to `32 byte` blocks, this would still provide a lot of blocks fitting in a `2 KB` cache.
+  * `1 KB`
+    * `APPLIES`
+      * This size, while suitable on the basis of being a power of 2, is not a good line size, because it would yield only two total lines in the cache due to its overly large size.
+
+***Additional Explanation***:
+
+<center>
+<img src="./assets/12-034A.png" width="250">
+</center>
+
+As an example, for a `32 byte` block (as in the figure shown above), the lowest `5` bits of the address indicate the location within the block, while the upper bits of the address correspond to the ***block number*** itself. Therefore, if (in this case) dividing by `32`, these lower-most bits are simply "discarded" to trivially compute the corresponding value. Conversely, a `48 byte` block would require an *actual* computation to determine the equivalent (i.e., rather than simple truncation of the bits).
+
+Therefore, ideally, the block size should be one which:
+  * Is a power of 2
+  * Exploits spatial locality
+  * Is relatively small compared to the cache size (i.e., to allow to fit many lines in the cache)
+
+## 19. Block Offset and Block Number
