@@ -482,3 +482,31 @@ With a block size of `16 bytes`, the processors must first determine how many bi
 Therefore, when accessing the cache, the processor accesses the cache by attempting to determine the block via the block number, and if found, then it uses the offset to retrieve the correct data (i.e., from the corresponding location within the block).
 
 ## 20. Block Number Quiz and Answers
+<center>
+<img src="./assets/12-038A.png" width="650">
+</center>
+
+Consider a cache characterized as follows:
+  * `32 bytes` block size
+  * `16 bit` addresses (i.e., via the processor)
+
+If the address in binary is given as follows:
+
+```
+1111 0000 1010 0101
+```
+
+What is the corresponding block number and block offset for this address? (Specified in binary.)
+
+***Answer and Explanation***:
+
+For a `32 bytes` block, the block offset will determine the location within the `32 bytes`. This requires `5 bits` to specify (i.e., `2^5 = 32`, or equivalently `log_2(32) = 5`). Given this, the `5` least significant bits indicate the following:
+
+```
+             |    |
+1111 0000 1010 0101
+```
+
+Therefore, the block offset is `00101` (i.e., the `5` least significant bits), and the block number is `11110000101` (i.e., the remaining `32 - 5` most significant bits).
+
+## 21. Cache Tags
