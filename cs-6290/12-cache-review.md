@@ -379,3 +379,33 @@ So, this cache can accommodate up to `512` such variables (i.e., with each occup
 ***N.B.*** In order to improve this (i.e., fit more such variables), it is more ideal for them to be more spatially related to improve spatial locality (and correspondingly "better packing" of the cache entries).
 
 ## 16. Cache Block Start Address
+
+<center>
+<img src="./assets/12-026.png" width="650">
+</center>
+
+Now that we know (cf. Section 14) that a cache miss results in fetching an entire block's worth of data from memory, consider where these blocks can actually ***begin*** in memory.
+
+One possible option is that a block can simply begin **anywhere**. For example, consider the case of `64 byte` blocks. In this case, the block may extend from byes `0` through `63`, `1` through `64`, `2` through `65`, and so on; in other words, if the **starting address** of the block can begin anywhere, then these would be the possible blocks fetched in the cache. However, this ***complicates*** matters considerably.
+
+<center>
+<img src="./assets/12-027.png" width="250">
+</center>
+
+Firstly, recall (cf. Section 14) that the cache is a table, as in the figure shown above. The table is indexed into using some constituent bits of the address being accessed.
+
+<center>
+<img src="./assets/12-028.png" width="250">
+</center>
+
+However, consider the case where the accessed address is `27`. The ***problem*** here is that the block can actually be found wherever the beginning of the block maps, as in the figure shown above. Block `0` through `63` might map at the top of the block, while block `1` through `64` maps below that, and so on. Therefore, there are ***many*** possible places where target address `27` may reside, by virtue of the fact that each of these blocks may map to these different locations depending on what its beginning address is.
+
+<center>
+<img src="./assets/12-030.png" width="250">
+</center>
+
+Secondly, there is another complication, which that these blocks overlap. Therefore, block `0` through `63` contains data that overlaps with most of what block `1` through `64` contains, as in the figure shown above (as depicted by the shaded regions, i.e., everything else excluding the unshaded circled region, which is particular to the block `1` through `64`). Now the ***problem*** is that while the situation for ***reading*** is simple (i.e., either "copy" can be read for target address `27`), conversely, when it comes to ***writing***, it must be determined which of the copies exist and then correspondingly write to *all* of them, in order to maintain integrity of the reading operations. Therefore, this problem is similarly undesirable.
+
+Therefore, in order to both reduce the complexity of accessing the cache and eliminate the problem of repeating data in the cache, we will only have caches where the blocks start at **block-aligned** addresses. Thus, for a `64 byte` block, this corresponds to a block extending from `0` through `63`, `64` through `127`, and so on. This ensures that any given byte address can only be found in ***one*** of these possible `64 byte` blocks at any given time, which in turn allows us to simply use some bits of the target address to indicate which of these blocks are being referenced for corresponding indexing into the cache for retrieval. For practical purposes, we will only assume block-aligned addresses for all "reasonable" caches.
+
+## 17. Blocks in Cache and Memory
