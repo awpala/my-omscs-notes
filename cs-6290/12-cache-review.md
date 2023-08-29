@@ -482,6 +482,7 @@ With a block size of `16 bytes`, the processors must first determine how many bi
 Therefore, when accessing the cache, the processor accesses the cache by attempting to determine the block via the block number, and if found, then it uses the offset to retrieve the correct data (i.e., from the corresponding location within the block).
 
 ## 20. Block Number Quiz and Answers
+
 <center>
 <img src="./assets/12-038A.png" width="650">
 </center>
@@ -510,3 +511,33 @@ For a `32 bytes` block, the block offset will determine the location within the 
 Therefore, the block offset is `00101` (i.e., the `5` least significant bits), and the block number is `11110000101` (i.e., the remaining `32 - 5` most significant bits).
 
 ## 21. Cache Tags
+
+
+With a better understanding of the block offset and the block number (cf. Sections 19 and 20), now consider **cache tags**, which are used to determine which blocks are actually ***present*** in the cache.
+
+<center>
+<img src="./assets/12-039.png" width="650">
+</center>
+
+As before, the cache can contain some number of lines, as in the figure shown above (which depicts a four-line cache, with each line having `64 bytes` of data, for the sake of example).
+
+Let us assume that any block from memory can be placed in any of the four lines. In this case, when given the address (i.e., `Addr` per the figure shown above), the least significant bits of the address will indicate the location within the line once the line itself is identified. However, generally, *any* of the four lines can contain *any* particular block number from main memory. So, then, how does the processor determine whether the access is actually a cache hit or not?
+
+The answer to this is that in addition to the **data** of the blocks, the cache also keeps a so-called **tag**, indicating which block is present in the corresponding line. In this particular cache, the tag will contain the ***block number*** that the cache has in each of these lines.
+
+Therefore, given the address, which is constituted by the block number (in addition to the block offset), the block number is ***compared*** to each of the tags in the cache. If one of the tags has value `1`, then this means that the tag ***matches*** the block number, and thus the corresponding data is located in this cache line.
+
+<center>
+<img src="./assets/12-040.png" width="650">
+</center>
+
+Consider the situation as in the figure shown above, where the third line has corresponding matching tag `1`. This means that there is a ***cache hit***, and correspondingly the data is located in the cache at this line.
+
+<center>
+<img src="./assets/12-041.png" width="650">
+</center>
+
+Now, the ***block offset*** can be used by the processor to determine where in that correspondingly line the data is located, as in the figure shown above.
+  * ***N.B.*** The block number is correspondingly called the **tag region** of the address. In the event of a cache miss, the corresponding tag-region data is placed into the cache line along with the block number being placed in the cache tag for subsequent searches. Furthermore, later, we will see that sometimes this tag region is ***not*** identical to the block number.
+
+## 22. Cache Tag Quiz
