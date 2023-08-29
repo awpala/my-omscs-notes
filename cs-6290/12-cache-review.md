@@ -540,4 +540,24 @@ Consider the situation as in the figure shown above, where the third line has co
 Now, the ***block offset*** can be used by the processor to determine where in that correspondingly line the data is located, as in the figure shown above.
   * ***N.B.*** The block number is correspondingly called the **tag region** of the address. In the event of a cache miss, the corresponding tag-region data is placed into the cache line along with the block number being placed in the cache tag for subsequent searches. Furthermore, later, we will see that sometimes this tag region is ***not*** identical to the block number.
 
-## 22. Cache Tag Quiz
+## 22. Cache Tag Quiz and Answers
+
+<center>
+<img src="./assets/12-043A.png" width="650">
+</center>
+
+Which of the following is/are ***always*** true of a cache tag? (Select all that apply.)
+  * Contains the entire address of the first byte
+    * `DOES NOT APPLY`
+      * This is not true, because the address supplied to the cache on an access contains the block offset in its least significant bits and the block number in the remaining most significant bits, as in the figure shown above. Furthermore, the cache tag only requires the block number portion of the address, and since the block always begins at an ***aligned*** address, thus the first byte of the block always has `0`s anyways and thus it is redundant to store these in the cache tag in the first place (instead, the cache tag contains only the bits required to identify the block).
+  * Contains at least one bit from the block offset
+    * `DOES NOT APPLY`
+      * This is not true per similar rational as above, i.e., only the bits for the block number are relevant (whereas the block offset identifies the location of the data within that block once it is identified).
+  * Contains at least one bit from the block number
+    * `APPLIES`
+      * As per the rationale above, the tag must contain at least one bit from the block number, because that is how the line is identified. In the example from the previous section (cf. Section 21), we saw that the *entire* block number can be a tag in that particular cache, however, this is not always/strictly true (i.e., more generally, the may be constituted from fewer than *all* of the block-number bits, but will contain *at least* one of them).
+  * Contains some bits from the block offset and some others from the block number
+    * `DOES NOT APPLY`
+      * Per the same rationale as above, the block offset is not relevant.
+
+## 23. Valid Bit
