@@ -409,3 +409,16 @@ Secondly, there is another complication, which that these blocks overlap. Theref
 Therefore, in order to both reduce the complexity of accessing the cache and eliminate the problem of repeating data in the cache, we will only have caches where the blocks start at **block-aligned** addresses. Thus, for a `64 byte` block, this corresponds to a block extending from `0` through `63`, `64` through `127`, and so on. This ensures that any given byte address can only be found in ***one*** of these possible `64 byte` blocks at any given time, which in turn allows us to simply use some bits of the target address to indicate which of these blocks are being referenced for corresponding indexing into the cache for retrieval. For practical purposes, we will only assume block-aligned addresses for all "reasonable" caches.
 
 ## 17. Blocks in Cache and Memory
+
+<center>
+<img src="./assets/12-031.png" width="450">
+</center>
+
+Now that we know cache blocks must be at aligned memory addresses (cf. Section 16), consider what the memory and cache looks like in terms of blocks (as in the figure shown above).
+
+The **memory** appears as a large array of memory locations, starting at address `0` and incrementing at `4` bytes (i.e., `0`, `4`, `8`, etc.). Furthermore, given a block size of `16 bytes`, this suggests a possible block in memory spanning addresses `0` through `15`, `16` through `31`, etc.
+
+Conversely, the **cache** can be considered as a number of slots where a **block** can fit. In this case, there is just a two-block cache (i.e., the cache is the size of two equivalent memory blocks). Furthermore, analogously to the blocks of data in memory, the cache has corresponding **lines**, which are essentially slots where a block can fit (e.g., the memory block starting at address `0` can be fetched into the cache and placed in corresponding line number `0`).
+  * Therefore, to make a precise ***distinction*** between the "space" in a cache where a block can be placed vs. the actual memory content (i.e., the memory "block" itself) that is populated there, this "space" in the cache is correspondingly called a "line" to make this distinction. By corollary, the **line size** and the **block size** are the same to accommodate this accordingly.
+
+## 18. Cache Line Sizes Quiz and Answers
