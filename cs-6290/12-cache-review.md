@@ -561,3 +561,33 @@ Which of the following is/are ***always*** true of a cache tag? (Select all that
       * Per the same rationale as above, the block offset is not relevant.
 
 ## 23. Valid Bit
+
+<center>
+<img src="./assets/12-044.png" width="450">
+</center>
+
+Another piece of information that the cache maintains about each of its constituent blocks is the so-called **valid bit**. Examining a cache with four lines of data along with their corresponding tags (as in the figure shown above), with the tags indicating which block is present in a given line, the question now is: What happens when the processor is turned on?
+
+When the processor is turned on initially, the cache contains ***no*** useful data, however, there may still be data present; furthermore, even if all of the bits in the line were `0`, it is still necessary to know that whatever address is produced does not match any of the current blocks.
+
+<center>
+<img src="./assets/12-045.png" width="450">
+</center>
+
+Furthermore, per corresponding matching of the tag (as in the figure shown above), if the tag is initially populated with all `0`s on turning on of the processor, what occurs if accessing an address such as `0x0000001C` (which incidentally contains a corresponding tag region of all `0`s)? In this case, there would be a corresponding match, with a resulting access of "garbage data" (i.e., not otherwise fetched from main memory first) in the cache.
+  * ***N.B.*** Any possible value such match would cause a similar issue, not just this particular case of all `0`s, which is simply shown here for demonstration purposes.
+
+<center>
+<img src="./assets/12-046.png" width="650">
+</center>
+
+To ***solve*** this issue, an additional bit of state is added to the cache for each line (as in the figure shown above, denoted by `V`). This additional state indicates whether the tag and data are **valid** via this corresponding **valid bit**. Initially (i.e., on processor turn on), the valid bits are set to `0`, indicating that if the tag matches the address, it should ***not*** otherwise be treated as a cache hit, but rather the data should be fetched from main memory instead.
+
+Correspondingly, the **hit condition** is more properly defined as:
+```
+Hit = (Tag == Block Number) & Valid Bit
+```
+
+Therefore, by setting the `Valid Bit` to `0` initially, this ensures no `Hit`, as intended in this scenario. Furthermore, this eliminates the problem of initializing the data and the tag in the first place. Later, as the cache becomes populated with the main-memory data, the `Valid Bit` is correspondingly set to `1`.
+
+## 24. Types of Caches
