@@ -591,3 +591,21 @@ Hit = (Tag == Block Number) & Valid Bit
 Therefore, by setting the `Valid Bit` to `0` initially, this ensures no `Hit`, as intended in this scenario. Furthermore, this eliminates the problem of initializing the data and the tag in the first place. Later, as the cache becomes populated with the main-memory data, the `Valid Bit` is correspondingly set to `1`.
 
 ## 24. Types of Caches
+
+<center>
+<img src="./assets/12-047.png" width="650">
+</center>
+
+There are several ***types*** of caches when it comes to which blocks can be placed where in the cache.
+  * The cache examples we have seen thus far are **fully associative caches**
+    * In this type of cache, ***any*** block from memory can be placed into ***any*** line in the cache (e.g., a cache with room for `16` lines may require a corresponding search of up to `16` tags to locate the corresponding block)
+  * The **direct-mapped caches** are essentially the opposite of fully-associated caches
+    * In this type of cache, for a given block, there is ***exactly one*** location in the cache where the block can reside (i.e., only one line in the cache must be checked to determine if the cache contains that particular block)
+    * In this arrangement, different blocks will still map to different lines, however, a particular block can only go into one particular location in the cache
+  * The **set-associative cache** is a "middle ground" between the two aforementioned types
+    * In this type of cache, there are `N` lines where a given block may be present within the cache, where `N` is typically greater than `1` but less than the total number of lines in the cache
+    * Effectively, the direct-mapped cache is a special case of this set-associative cache with `N == 1`, and correspondingly the fully associative cache is the case of `N == total lines in the cache`; however, what is conventionally referred to as a "set-associative cache" typically refers to such a cache wherein `N` is relatively small compared to the total lines in the cache (typically, and `N` of `2`, `4`, or `8`)
+
+The subsequent several sections will examine these various types of caches in turn.
+
+## 25. Direct-Mapped Cache
