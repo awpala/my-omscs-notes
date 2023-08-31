@@ -644,3 +644,24 @@ In this arrangement, an interesting question arises: Why does the tag region ***
   * In other words, if the index bits were otherwise stored within the tag region, then ***all*** of the tags could be possibly placed into a given cache line (with all having equivalently the "same" index bits, which thereby would not necessitate additional storage of these bits if they are already effectively "known")
 
 ## 26. Direct-Mapped Caches Pros and Cons
+
+<center>
+<img src="./assets/12-052.png" width="650">
+</center>
+
+Now, consider the upsides and downsides of direct-mapped caches.
+
+When accessing the direct-mapped cache, it is only necessary to look in only ***one*** place. This provides the following ***upsides***:
+  * The cache is ***fast*** (i.e., low `Hit Time`) → if data is present there at the one location, then it is a cache hit, otherwise it is a cache miss
+    * Conversely, looking in more than one place requires additional waiting/downtime in order to read out all of the additional locations, and then determine which one of them (if any) has the data, and so on
+  * The cache is ***cheaper*** than more complex caches → it is only necessary to do *one* comparison on every access to the cache (i.e., only requires one type of comparator, one valid-bit checker, etc.)
+  * The cache is ***energy-efficient*** → only quires one type of comparison and one valid-bit check per access, which requires less energy expenditure per access compared to checking more than one
+
+Conversely, the ***downsides*** of direct-mapped caches are related to the fact that the block ***must*** go into one location. To see why this is problematic, consider a processor accessing blocks `A` and `B` in direct succession (i.e., `A B A B ...` and so on), with both blocks `A` and `B` mapping to the ***same*** location in the cache.
+  * When `A` is accessed, it is brought into the cache.
+  * When `B` is accessed, it is brought into the cache, in the same location where `A` currently resides, thereby ejecting `A` in the process.
+  * This pattern continues when `A` accessed again, thereby ejecting `B`; and so on.
+
+Therefore, the downside of a direct-mapped cache is this particular situation of **conflicts** arising among the cache lines, with particular blocks "fighting" over a single spot in the cache, despite the cache itself having plenty of other underutilized locations available otherwise. Correspondingly, such conflicts consequently ***increase*** the `Miss Rate` (thereby potentially offsetting the benefit of a fast `Hit Time`).
+
+## 27. Direct-Mapped Cache Quiz 1 and Answers
