@@ -609,3 +609,38 @@ There are several ***types*** of caches when it comes to which blocks can be pla
 The subsequent several sections will examine these various types of caches in turn.
 
 ## 25. Direct-Mapped Cache
+
+Having had exposure to fully associative caches previously in this lesson, now let us consider the other "extreme", i.e., **direct-mapped caches**.
+
+<center>
+<img src="./assets/12-048.png" width="450">
+</center>
+
+Consider a memory containing block numbers `0`, `1`, `2`, etc. (as in the figure shown above), along with the corresponding cache which is able to accommodate four such blocks (similarly numbered `0`, `1`, `2`, and `3`).
+
+<center>
+<img src="./assets/12-049.png" width="450">
+</center>
+
+ in a direct-mapped cache, memory block `0` (if present in the cache at all), must be located in cache line `0`; memory block `1` (if present in the cache at all), must be located in cache line `1`; and so on, as in the figure shown above (depicted by color correspondences between memory blocks and cache lines).
+
+<center>
+<img src="./assets/12-050.png" width="450">
+</center>
+
+ Now, for memory block `4`, it "rolls over" and is correspondingly mapped to cache line `0`; and so on, as in the figure shown above. Therefore, for any given memory block address, there is only ***one*** corresponding location in the cache where that address is located.
+
+<center>
+<img src="./assets/12-051.png" width="650">
+</center>
+
+Examining the **address** itself more closely (as in the figure shown above):
+  * The least significant bit still denote the **block offset** as before, indicating where within the block the data is present (assuming such a block is found in the cache)
+  * The **block number** region itself is composed of of:
+    * A few bits indicating the **index**, i.e., where in the cache the block is located, with sufficient detail to unambiguously identify the specific cache line in question (e.g., a four-line cache would require at least `2 bits` to uniquely identify a cache line)
+    * The remaining most-significant bits constitute the **tag** region
+
+In this arrangement, an interesting question arises: Why does the tag region ***not*** include the full block number (i.e., extending into the index bits as well)? The reason for this is that the tag region needs to identify the cache line in the first place, and considering that the index bits must uniquely identify ***one*** location within the cache, then the tag region correspondingly does not otherwise need to (over-)specify the index bits, i.e., by examining a particular cache line, it has already been determined that the index bits must be the ones corresponding to that particular cache line. Therefore, the tag region simply needs to indicate which of the lines could be possible candidates, as from there, the index bits can identify unambiguously among those.
+  * In other words, if the index bits were otherwise stored within the tag region, then ***all*** of the tags could be possibly placed into a given cache line (with all having equivalently the "same" index bits, which thereby would not necessitate additional storage of these bits if they are already effectively "known")
+
+## 26. Direct-Mapped Caches Pros and Cons
