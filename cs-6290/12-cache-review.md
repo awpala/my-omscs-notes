@@ -665,3 +665,58 @@ Conversely, the ***downsides*** of direct-mapped caches are related to the fact 
 Therefore, the downside of a direct-mapped cache is this particular situation of **conflicts** arising among the cache lines, with particular blocks "fighting" over a single spot in the cache, despite the cache itself having plenty of other underutilized locations available otherwise. Correspondingly, such conflicts consequently ***increase*** the `Miss Rate` (thereby potentially offsetting the benefit of a fast `Hit Time`).
 
 ## 27. Direct-Mapped Cache Quiz 1 and Answers
+
+Let us now check our knowledge of direct-mapped caches and how they handle conflicts.
+
+<center>
+<img src="./assets/12-054A.png" width="650">
+</center>
+
+Consider a `16 KB` direct-mapped cache with `256-byte` blocks. Given this, which of the following addresses conflict with `0x12345678`? (Select all that apply.)
+  * `0x12345677`
+    * `DOES NOT APPLY`
+  * `0x11335577`
+    * `DOES NOT APPLY`
+  * `0x11115678`
+    * `APPLIES`
+  * `0x12341666`
+    * `APPLIES`
+
+***Answer and Explanation***:
+
+The key to solving these types of problems is to determine the breakdown of the address in question into its constituent offset, index, and tag regions.
+
+With a `256-byte` block size, this means that there are `8 bits` constituting the block offset, as depicted in the figure shown above. In hexadecimal notation, this corresponds to the two least-significant digits. These can be conveniently ignored, with additional focus then placed on the directly index bits.
+
+Conflicts occur where different blocks have the ***same*** index bits. To determine the number of bits in the index region, this can be determined via the number of blocks in the cache as per `16 KB / 256 bytes = 64 blocks`, and correspondingly `64 = 2^6` or equivalently `log_2(64) = 6` bits required to specify the index bits (as in the figure shown above).
+
+Therefore, for the target address `0x12345678`, the corresponding index bits are as follows (via `0x...56...`, with `|...|` denoting the six particular index bits in question):
+
+```
+      |     |
+... 0101 0110 ...
+```
+
+By inspection, conflicts may arise with prospective conflicts having similar form `0x...56...` (i.e., `0x12345677` and `0x11115678`), however, to determine if an actual conflict occurs, it must also occur in a ***different*** block.
+  * In particular, address `0x12345677` does ***not*** conflict (despite having the same index bits), because they are in the ***same*** block (i.e., having the same block number via `0x123456...`), thereby mapping to the same block but otherwise not conflicting among blocks.
+  * Conversely, `0x11115678` is in a ***different*** block which maps to the ***same*** index bits, so this does result in a conflict.
+
+Further examining `0x11335577`:
+
+```
+      |     |
+... 0101 0101 ...
+```
+
+Since the index bits are different, the block does not conflict.
+
+Finally, examining `0x12341666`:
+
+```
+      |     |
+... 0001 0110 ...
+```
+
+These index bits ***do*** match, thereby mapping to the ***same*** place in the cache as `0x12345678` (but otherwise in a different block) and therefore causing a conflict accordingly.
+
+## 28. Direct-Mapped Cache Quiz 2 and Answers
