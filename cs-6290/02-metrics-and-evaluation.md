@@ -382,7 +382,7 @@ this does ***not*** apply here. This is because `Frac`<sub>`ENH`</sub> is only w
 <img src="./assets/02-028.png" width="650">
 </center>
 
-Let us know examine the implications of Amdahl's Law with respect to system improvements.
+Let us now examine the implications of Amdahl's Law with respect to system improvements.
 
 Recall Amdahl's law (cf. Section 19), as follows:
 ```
