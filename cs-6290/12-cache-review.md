@@ -720,3 +720,52 @@ Finally, examining `0x12341666`:
 These index bits ***do*** match, thereby mapping to the ***same*** place in the cache as `0x12345678` (but otherwise in a different block) and therefore causing a conflict accordingly.
 
 ## 28. Direct-Mapped Cache Quiz 2 and Answers
+
+Now, consider an example of accessing direct-mapped caches.
+
+<center>
+<img src="./assets/12-056A.png" width="650">
+</center>
+
+Consider a direct-mapped cache with eight lines (as in the figure shown above), numbered `0`, `1`, ..., `7` accordingly, each of which is `32 bytes` in size.
+
+Furthermore, the processor produces the following sequence of accesses, one at a time:
+```
+0x3F1F
+0x3F2F
+0x3F2E
+0x3E1F
+```
+
+What is the content of the cache ***after*** these four sequential accesses?
+
+***Answer and Explanation***:
+
+The address breakdown will be as follows (as depicted in green in the figure shown above), in respective least-to-most significant bits order (i.e., right-to-left in the corresponding figure):
+  * `5 bits` offset region (via `32 = 2^5` or equivalently `log_2(32) = 5`)
+  * `3 bits` index bits region (to uniquely identify each cache line, via `8 = 2^3` or equivalently `log_2(8) = 3`)
+  * The remaining bits constitute the tag region
+
+Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `8 = 3 + 5 bits`, or equivalently the two least-significant hex digits, as follows:
+
+| Hex Address (`\|` delimits least-signficant bytes) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Cache Line per Index Bits |
+|:--:|:--:|:--:|
+| `0x3F\|1F` | `... 000\|1 1111` | `0` |
+| `0x3F\|2F` | `... 001\|0 1111` | `1` |
+| `0x3F\|2E` | `... 001\|0 1110` | `1`, same block as `0x3F2F`, co-located within ***same*** block |
+| `0x3E\|1F` | `... 000\|1 1111` | `0`, same block as `0x3F1F`, however, with replacement due to ***conflicting*** block |
+
+Therefore, the final content of the cache is as follows:
+
+| Cache Line | Content |
+|:--:|:--:|
+| `0` | `0x3E1F` |
+| `1` | `0x3F2F`, `0x3F2E` |
+| `2` | (empty) |
+| `3` | (empty) |
+| `4` | (empty) |
+| `5` | (empty) |
+| `6` | (empty) |
+| `7` | (empty) |
+
+## 29. Set-Associative Caches
