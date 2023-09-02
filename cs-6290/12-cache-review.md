@@ -782,3 +782,20 @@ Furthermore, *within* a set, there could be a number of lines that contain a blo
   * ***N.B.*** Here, "2-way" associative is therefore referring to the two blocks within a given set, rather than referring to the number of sets (i.e., four total in this particular case, as per the figure shown above).
 
 ## 30. Offset, Index, Tag for Set-Associative Caches
+
+Now, consider how to form the offset, index, and tag bit regions in the address for set-associative caches.
+
+<center>
+<img src="./assets/12-058.png" width="650">
+</center>
+
+Given a two-way set-associative cache with four sets (as in the figure shown above), when the processor produces an address:
+  * The least-significant bits (indicating the location within in the block) are still determined by the block size, thereby giving the **offset**
+  * The next-least-significant bits are the **index** bits, indicating the particular set in question (as denoted by the green arrow in the figure shown above)
+    * Therefore, the number of index bits is determined by how many sets are present in the cache (e.g., in the case of four sets, this requires two index bits to uniquely identify a given set)
+  * The remaining bits (i.e., the most-significant bits) are the **tag** region
+
+As with a direct-mapped cache, once a line has been placed in a given set (e.g., set `0`, as denoted by right-side green bracket in the figure shown above), it is determinate that everything that maps to this particular set will have the corresponding index bits set (e.g., `00`), so it is redundant/unnecessary to store this information in the tag itself; rather, within the set itself, it is only necessary to ensure that the content therein corresponds to the most-significant bits of the address (i.e., tag region), but not the index bits themselves.
+  * ***N.B.*** Interestingly, a direct-mapped cache of the same size would have one additional index bit, thereby effectively reducing the tag region by one bit.
+
+## 31. 2-Way Set-Associative Quiz and Answers
