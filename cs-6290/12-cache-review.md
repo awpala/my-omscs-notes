@@ -1197,3 +1197,142 @@ So, then, how can it be determined which of these two scenarios occurs in a writ
     * A dirty bit of `1` indicates that the block is "***dirty***", i.e., the block ***was*** written to since last being brought in from memory, thereby necessitating a write-back to main memory on block replacement when the block in question is ejected from the cache.
 
 ## 39. Write-Back Cache Example
+
+Consider an example of a write-back cache.
+
+<center>
+<img src="./assets/12-072.png" width="550">
+</center>
+
+Consider a small four-entry direct-mapped cache (as in the figure shown above), comprised of the following **component**:
+  * **valid bit**
+  * **tag** region
+  * **dirty bit**
+  * **data** region
+
+***N.B.*** A least recently used (LRU) counter is *not* needed here, as this is a direct-mapped cache (i.e., the replaced block is already determinate as-is).
+
+Furthermore, consider the following sequence of accesses performed by the processor:
+
+```
+WR A
+RD A
+RD B
+RD C
+WR C
+```
+
+where `A`, `B`, and `C` map to ***different*** sets in the cache.
+
+<center>
+<img src="./assets/12-073.png" width="650">
+</center>
+
+In the initial access `WR A` (as in the figure shown above), there is a cache miss, resulting in a setting of `0` for all the valid bits in the cache as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 0 | | | |
+| 1 | 0 | | | |
+| 2 | 0 | | | |
+| 3 | 0 | | | |
+
+<center>
+<img src="./assets/12-074.png" width="650">
+</center>
+
+On initial `WR A` (as in the figure shown above), the cache is updated as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 1 | A | 1 | A |
+| 1 | 0 |  | | |
+| 2 | 0 |  | | |
+| 3 | 0 |  | | |
+
+Because this is a write operation, on populating the cache with the data for `A`, the processor will also correspondingly set the dirty bit to `1`. 
+
+In the subsequent access `RD A`, the processor checks the tag and valid bit, correspondingly detects the match in tag `A` and the valid bit being set to `1` already, and therefore the processor simply uses this cache line for `A` (furthermore, the fact that the dirty bit is `1` does not change this, either).
+
+<center>
+<img src="./assets/12-075.png" width="650">
+</center>
+
+In the subsequent access `RD B` (as in the figure shown above), there is a cache miss (as per corresponding lack of entries for `B` with valid bit `1`), the cache is updated as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 1 | A | 1 | A |
+| 1 | 1 | B | 0 | B |
+| 2 | 0 |  | | |
+| 3 | 0 |  | | |
+
+Because this is a read operation, on populating the cache with the data for `B`, the processor will also correspondingly set the dirty bit to `0`. 
+
+<center>
+<img src="./assets/12-076.png" width="650">
+</center>
+
+In the subsequent access `RD C` (as in the figure shown above), there is a cache miss (as per corresponding lack of entries for `C` with valid bit `1`), the cache is updated as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 1 | A | 1 | A |
+| 1 | 1 | B | 0 | B |
+| 2 | 1 | C | 0 | C |
+| 3 | 0 |  | | |
+
+Because this is a read operation, on populating the cache with the data for `C`, the processor will also correspondingly set the dirty bit to `0`.
+
+<center>
+<img src="./assets/12-077.png" width="650">
+</center>
+
+In the subsequent access `WR C` (as in the figure shown above), there is a cache hit (as per corresponding preexisting entry for `C` with valid bit `1`), the cache is updated as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 1 | A | 1 | A |
+| 1 | 1 | B | 0 | B |
+| 2 | 1 | C | 1 | C |
+| 3 | 0 |  | | |
+
+Because this is a write operation, on populating the cache with the data for `C`, the processor will also correspondingly set the dirty bit to `1`. 
+
+At this point, the dirt bit for every line in the cache simply indicates whether or not the line was ever written since being last brought into the cache.
+
+<center>
+<img src="./assets/12-078.png" width="650">
+</center>
+
+Now, consider a subsequent access operation `RD E` (as in the figure shown above), whereby `E` maps to the same line as `A`, for which there is a cache miss (as per corresponding lack of entries for `E` with valid bit `1`); the cache is updated as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 1 | E | 0 | E |
+| 1 | 1 | B | 0 | B |
+| 2 | 1 | C | 1 | C |
+| 3 | 0 |  | | |
+
+`E` correspondingly ejects `A` from the cache. However, prior to this, the data for `A` (which has been written to the cache already, but not yet to main memory) is sent to main memory as a write, since its dirty bit is set to `1`.
+
+Furthermore, on eventual replacement with `E`, because this is a read operation, on populating the cache with the data for `E`, the processor will also correspondingly set the dirty bit to `0`.
+
+<center>
+<img src="./assets/12-079.png" width="650">
+</center>
+
+Finally, consider a subsequent access operation `RD F` (as in the figure shown above), whereby `E` maps to the same line as `B`, for which there is a cache miss (as per corresponding lack of entries for `F` with valid bit `1`); the cache is updated as follows:
+
+| Cache Line | Valid Bit | Tag | Dirty Bit | Data |
+|:--:|:--:|:--:|:--:|:--:|
+| 0 | 1 | E | 0 | E |
+| 1 | 1 | F | 0 | F |
+| 2 | 1 | C | 1 | C |
+| 3 | 0 |  | | |
+
+`F` correspondingly ejects `B` from the cache. Since the data for `B` has dirty bit is set to `0`, `B` does ***not*** get sent to main memory for writing prior to this replacement occurring, but rather gets ejected and overwritten by `F` directly.
+
+Furthermore, on replacement with `F`, because this is a read operation, on populating the cache with the data for `F`, the processor will also correspondingly set the dirty bit to `0`.
+
+## 40. Write-Back Cache Quiz and Answers
