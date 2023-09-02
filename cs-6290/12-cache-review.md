@@ -871,3 +871,27 @@ Correspondingly, for all of these caches, the address that the processor supplie
 Therefore, when attempting to determine which bits are the index bits, it is also necessary to determine the offset bits as well, in order to determine the corresponding specifications of these respective bits regions (i.e., among the least significant bits of a given address).
 
 ## 34. Cache Replacement
+
+Now that it is apparent how caches ***find*** the data when searching for it, consider what occurs when it is necessary to ***replace*** something from the cache to make room for new data (i.e., due to a cache miss).
+
+<center>
+<img src="./assets/12-063.png" width="650">
+</center>
+
+The situation which necessitates **cache replacement** is typically when the target set for the data is currently ***full***. This results in a **cache miss**, which thereby requires placing a ***new*** block (i.e., which yields **cache hits**) that is consequently brought into the cache. However, in order to accomplish this, the question is: ***Which*** existing block should be correspondingly ejected from the cache? There are several possible **replacement policies** for this purpose.
+
+The first such replacement policy is **random**: Simply eject a randomly selected block from among those already present in the set.
+
+<center>
+<img src="./assets/12-064.png" width="150">
+</center>
+
+Another replacement policy is **first in, first out (FIFO)** (as in the figure shown above), whereby the block that has been present the ***longest*** is consequently ejected (e.g., with existing blocks `A` and `B`, bringing in `C` ejects `A`; subsequently bringing in `D` ejects `B`; subsequently bringing in `E` ejects `C`; and so on).
+
+Another replacement policy is **least recently used (LRU)**, whereby the block that has not been used for the longest time period (i.e., the "least recently used" block) is ejected, followed by the next-most-recently-used block, and so on.
+  * ***N.B.*** As a corollary, it would ***not*** be sensible to eject the "most recently used" block, since presumably such a block is correspondingly generating cache hits.
+
+As it turns out, **least recently used (LRU)** is indeed a very good policy. Accordingly, there are several policies which attempt to approximate it (since actually accomplishing "true" LRU is not easy to do in practice).
+  * For example, one such policy is **not most recently used (NMRU)**, which tracks just those blocks which have been used most recently, and then selecting randomly from among the remaining blocks besides those (i.e., without otherwise tracking ***all*** of the blocks to definitively determine *the* most recently used blocks).
+
+## 35. Implementing Least Recently Used (LRU)
