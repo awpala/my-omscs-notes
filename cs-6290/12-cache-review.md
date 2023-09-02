@@ -135,7 +135,7 @@ In the first option (round trip to the library), this incurs a lot of ***wasted 
   * Correspondingly, this is not a typical approach employed by a student, as it is not an efficient way to study the information via library resources.
 
 In the second option (borrowing the relevant book(s) from the library and taking it/them home), the book(s) is now locally available. This approach correspondingly benefits from locality (both temporally and spatially in the context of the particular book(s) in question), while also ***eliminating*** the ***problem*** of the library being large and slow.
-  * Correspondingly, this is typically the ***most commmon*** approach to solve this problem. `:)`
+  * Correspondingly, this is typically the ***most common*** approach to solve this problem. `:)`
 
 The third approach (building the entire library at home) is very expensive, while conferring very little benefit in the process. While it *does* save the inconvenience of traveling round-trip to the library, it does *not* solve the problem of requiring to search among many books, locating them on the shelves, etc.
   * Correspondingly, this is another ill-advised strategy, as it is generally ***desirable*** to have relatively few books of particular interest, rather than to have many books which require slow lookup.
@@ -176,7 +176,7 @@ Now that we know that the **cache** is a small memory section inside of the proc
 Therefore, when a **processor** wants to **access** some memory, the following can occur:
   * A **cache hit**, whereby that which was sought from the cache has been ***found*** in the cache (i.e., the main-memory location of interest is already ***present*** in the cache, thereby obviating the need to access main memory) → This results in a ***fast*** access operation, as ***desired***
   * A **cache miss**, whereby that which was sought from the cache has ***not*** been found in the cache (i.e., the main-memory location of interest is ***absent*** from the cache, thereby presenting the need to access main memory instead), a direct consequence of the cache's small size → This results in a ***slow*** access operation, which is ***undesirable***
-    * When a cache miss does occur, the processor consequently ***copies*** this location from main memory to the cache, to (hopefully) improve locality for the subsequent memory access of this location (i.e., resulting in a cache hit at that point, rather than a cache miss); in this regard, (occassional) cache misses are "necessary" in order to progressively populate the cache with "useful" memory (i.e., that which improves cache hits overall and consequently correspondingly improved locality)
+    * When a cache miss does occur, the processor consequently ***copies*** this location from main memory to the cache, to (hopefully) improve locality for the subsequent memory access of this location (i.e., resulting in a cache hit at that point, rather than a cache miss); in this regard, (occasional) cache misses are "necessary" in order to progressively populate the cache with "useful" memory (i.e., that which improves cache hits overall and consequently correspondingly improved locality)
 
 Therefore, once the cache is "warmed up" (i.e., initial cache misses eventually producing subsequent improved cache hits), the slow-memory access caused by cache misses will otherwise occur relatively ***rarely*** as the program continues to execute (i.e., the running programming will predominantly use data from the cache).
 
@@ -1063,3 +1063,90 @@ Furthermore, with respect to ***energy*** consumption, this adds an additional p
 Therefore, LRU approximations attempt to minimize the number of counters used, as well as perform fewer per-access updates (particularly on cache hits) in order to reduce energy consumption.
 
 ## 36. Least Recently Used (LRU) Quiz
+
+<center>
+<img src="./assets/12-069A.png" width="650">
+</center>
+
+Consider a single set within a eight-way set-associative cache (as in the figure shown above). Assume that the eight blocks are initially populated as follows (along with initial LRU counters state):
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0 | A | 7 |
+| 1 | B | 3 |
+| 2 | C | 2 |
+| 3 | D | 6 |
+| 4 | E | 5 |
+| 5 | F | 1 |
+| 6 | G | 4 |
+| 7 | H | 0 |
+
+What is the ***new*** content of the cache, subsequently to the following sequence of accesses?
+
+```
+A
+B
+A
+D
+K
+```
+
+***Answer and Explanation***:
+
+On initial access of `A` (the most recently used block), the counters retain their original values.
+
+On subsequent access of `B`, the LRU counters update as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0 | A | 6 |
+| 1 | ***B*** | ***7*** |
+| 2 | C | 2 |
+| 3 | D | 5 |
+| 4 | E | 4 |
+| 5 | F | 1 |
+| 6 | G | 3 |
+| 7 | H | 0 |
+
+On subsequent re-access of `A`, the LRU counters update as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0 | ***A*** | ***7***  |
+| 1 | B | 6 |
+| 2 | C | 2 |
+| 3 | D | 5 |
+| 4 | E | 4 |
+| 5 | F | 1 |
+| 6 | G | 3 |
+| 7 | H | 0 |
+
+On subsequent access of `D`, the LRU counters update as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0 | A | 6 |
+| 1 | B | 5 |
+| 2 | C | 2 |
+| 3 | ***D*** | ***7*** |
+| 4 | E | 4 |
+| 5 | F | 1 |
+| 6 | G | 3 |
+| 7 | H | 0 |
+
+On subsequent access of `K` (resulting in a cache miss), `H` (the least recently used block, with corresponding LRU counter value `0`) is ejected and replaced, and the LRU counters are update as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0 | A | 5 |
+| 1 | B | 4 |
+| 2 | C | 1 |
+| 3 | D | 6 |
+| 4 | E | 3 |
+| 5 | F | 0 |
+| 6 | G | 2 |
+| 7 | ***K*** | ***7*** |
+
+This is the final state of the cache following the sequential accesses.
+
+## 37. Write Policy
