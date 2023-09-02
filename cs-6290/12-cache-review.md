@@ -1336,3 +1336,117 @@ Finally, consider a subsequent access operation `RD F` (as in the figure shown a
 Furthermore, on replacement with `F`, because this is a read operation, on populating the cache with the data for `F`, the processor will also correspondingly set the dirty bit to `0`.
 
 ## 40. Write-Back Cache Quiz and Answers
+
+<center>
+<img src="./assets/12-080Q.png" width="650">
+</center>
+
+Consider a direct-mapped cache (as in the figure shown above), with a given entry in the cache in its initial state as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 0 | 1 | A |
+
+Furthermore, all accesses map to this same single entry.
+
+The processor performs the following sequence of accesses:
+
+```
+RD A
+RD B
+WR B
+RD C
+RD D
+WR D
+```
+
+with all of these accesses mapping to the *same* single entry in the cache.
+
+After this sequence of accesses, what is the new state of the cache? Furthermore, how many cache misses occur in the sequence, and how many write-backs to main memory are performed?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/12-081A.png" width="650">
+</center>
+
+In the initial access `RD A` (as in the figure shown above), there is a cache miss (`1` total cache miss), resulting in a setting of `0` for the valid bit in the cache.
+  * ***N.B.*** Because the initial valid bit is `0`, the fact that the dirty bit was `1` is irrelevant here.
+
+<center>
+<img src="./assets/12-082A.png" width="650">
+</center>
+
+On initial `RD A` (as in the figure shown above), the cache is updated as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 1 | 0 | A |
+
+Because this is a read operation, on populating the cache with the data for `A`, the processor will also correspondingly set the dirty bit to `0`. 
+
+<center>
+<img src="./assets/12-083A.png" width="650">
+</center>
+
+In the subsequent access `RD B` (as in the figure shown above), there is a cache miss (`2` total cache misses), and the cache is updated as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 1 | 0 | B |
+
+Because this is a read operation, on populating the cache with the data for `B`, the processor will also correspondingly set the dirty bit to `0`. Furthermore, since the previous entry for `A` had dirty bit `0`, there is no corresponding write-back operation immediately preceding ejection of `A` and subsequent replacement by `B`.
+
+<center>
+<img src="./assets/12-084A.png" width="650">
+</center>
+
+In the subsequent access `WR B` (as in the figure shown above), there is a cache hit, and the cache is updated as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 1 | 1 | B |
+
+Because this is a write operation, on populating the cache with the data for `B`, the processor will also correspondingly set the dirty bit to `1`.
+
+<center>
+<img src="./assets/12-085A.png" width="650">
+</center>
+
+In the subsequent access `RD C` (as in the figure shown above), there is a cache miss (`3` total cache misses), and the cache is updated as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 1 | 0 | C |
+
+Because this is a read operation, on populating the cache with the data for `C`, the processor will also correspondingly set the dirty bit to `0`. Furthermore, since the previous entry for `B` had dirty bit `1`, there is a corresponding write-back operation immediately preceding ejection of `B` and subsequent replacement by `C` (`1` total write-back).
+
+<center>
+<img src="./assets/12-086A.png" width="650">
+</center>
+
+In the subsequent access `RD D` (as in the figure shown above), there is a cache miss (`4` total cache misses), and the cache is updated as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 1 | 0 | D |
+
+Because this is a read operation, on populating the cache with the data for `D`, the processor will also correspondingly set the dirty bit to `0`. Furthermore, since the previous entry for `C` had dirty bit `0`, there is no corresponding write-back operation immediately preceding ejection of `C` and subsequent replacement by `D`.
+
+<center>
+<img src="./assets/12-087A.png" width="650">
+</center>
+
+In the subsequent access `WR D` (as in the figure shown above), there is a cache hit, and the cache is updated as follows:
+
+| Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|
+| 1 | 1 | D |
+
+Because this is a write operation, on populating the cache with the data for `D`, the processor will also correspondingly set the dirty bit to `1`.
+
+This is the final state of the cache on execution of the sequential accesses. Furthermore, the summary of the upstream operations is as follows:
+  * `4` total cache misses
+  * `1` total write-backs
+
+## 41. Cache Summary
