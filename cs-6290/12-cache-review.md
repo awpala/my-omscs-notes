@@ -769,3 +769,16 @@ Therefore, the final content of the cache is as follows:
 | `7` | (empty) |
 
 ## 29. Set-Associative Caches
+
+Now, consider **set-associative caches**.
+
+<center>
+<img src="./assets/12-057.png" width="650">
+</center>
+
+A cache is said to be **N-way set-associative** when a particular block can reside in one of `N` possible candidate lines. The overall cache is divided into regions called **sets** (as in the figure shown above, which has four such sets), and a given block can reside in one of the sets (i.e., as designated by the corresponding bits denoting the block's address).
+
+Furthermore, *within* a set, there could be a number of lines that contain a block. In this particular case (as in the figure shown above), there is a **2-way set-associative** cache (i.e., `N = 2`), corresponding to the two possible candidate cache lines within a given set (the block can reside in either of these lines for a given set). Therefore, different blocks may be mapped to different sets, but within a particular set, the block will select among the two lines in that set.
+  * ***N.B.*** Here, "2-way" associative is therefore referring to the two blocks within a given set, rather than referring to the number of sets (i.e., four total in this particular case, as per the figure shown above).
+
+## 30. Offset, Index, Tag for Set-Associative Caches
