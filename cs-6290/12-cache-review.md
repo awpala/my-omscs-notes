@@ -1176,3 +1176,24 @@ The second component of the write policy concerns the question: When a write hit
 Furthermore, note that there is a relationship between the choices of **write-allocate** and **write-back** caches as the constituents of the collective write policy: Selecting write-back cache begets selection of a write-allocate cache, because minimizing writes to main memory (by correspondingly predominantly writing *only* to the cache via write-back) is particularly useful for **write misses** (in which case, it is desireable for future writes to occur in the cache via write-allocate).
 
 ## 38. Write-Back Caches
+
+<center>
+<img src="./assets/12-071.png" width="650">
+</center>
+
+Now, consider what exactly occurs in a write-back cache.
+
+Write-through is fairly straightforward: Simply write to main memory, and then the cache otherwise works as expected.
+
+Conversely, in a **write-back** cache:
+  * There can be a block that was (re)written to subsequently to fetching it from main memory. In this case, when the block is ***replaced***, it must be correspondingly ***written*** to main memory as well.
+  * However, there is also the possibility that there were ***no*** writes since last fetching from main memory. Since such a block has only been ***read*** in the cache, there is no corresponding need to ***write*** that block back to main memory.
+
+So, then, how can it be determined which of these two scenarios occurs in a write-back cache?
+  * One possibility is that this is simply ***indeterminate***, in which case a write will simply occur every time the block is replaced.
+    * Unfortunately, there is a lot of read-only data that ultimately will not necessitate a write to main memory, but will be (re)written repeatedly to main memory regardless, if following this approach.
+  * Conversely, another possibility is to include a **dirty bit** in every block in the cache, which indicates whether or not the block has been written to main memory since being placed in the cache.
+    * A dirty bit of `0` indicates that the block is "***clean***", i.e., the block was ***not*** written to since last being brought in from main memory.
+    * A dirty bit of `1` indicates that the block is "***dirty***", i.e., the block ***was*** written to since last being brought in from memory, thereby necessitating a write-back to main memory on block replacement when the block in question is ejected from the cache.
+
+## 39. Write-Back Cache Example
