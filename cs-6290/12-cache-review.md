@@ -852,3 +852,22 @@ Given an eight-entry cache (as in the figure shown above), a fully associative c
   * The remaining most-significant bits consequently correspond to the **tag** region
 
 ## 33. Direct-Mapped vs. Full Associative Caches
+
+<center>
+<img src="./assets/12-062.png" width="650">
+</center>
+
+As mentioned previously (cf. Section 24), direct-mapped and fully associative caches can be considered ***special cases*** of set-associative caches.
+  * A direct-mapped cache is essentially a one-way set-associative cache
+  * A fully associative cache is an `N`-way set-associative cache, where `N` corresponds to the number of cache lines
+
+Correspondingly, for all of these caches, the address that the processor supplies (as in the figure shown above) is broken down into the following components:
+  * **offset** → the number of bits are specified by `log_2(block size)`, indicating the location within the block (of size `block size`)
+  * **index** → the number of bits are specified by `log_2(number of sets)`
+    * In a direct-mapped cache, `number of sets` corresponds directly to the number of blocks
+    * In a fully associative cache, `number of sets` is simply `1` (i.e., `log_2(1) = 0`), and therefore no resulting index bits
+  * **tag** → the remaining most-significant bits
+
+Therefore, when attempting to determine which bits are the index bits, it is also necessary to determine the offset bits as well, in order to determine the corresponding specifications of these respective bits regions (i.e., among the least significant bits of a given address).
+
+## 34. Cache Replacement
