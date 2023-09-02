@@ -748,7 +748,7 @@ The address breakdown will be as follows (as depicted in green in the figure sho
 
 Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `8 = 3 + 5 bits`, or equivalently the two least-significant hex digits, as follows:
 
-| Hex Address (`\|` delimits least-signficant bytes) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Cache Line per Index Bits |
+| Hex Address (`\|` delimits least-significant bytes) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Cache Line per Index Bits |
 |:--:|:--:|:--:|
 | `0x3F\|1F` | `... 000\|1 1111` | `0` |
 | `0x3F\|2F` | `... 001\|0 1111` | `1` |
@@ -799,3 +799,43 @@ As with a direct-mapped cache, once a line has been placed in a given set (e.g.,
   * ***N.B.*** Interestingly, a direct-mapped cache of the same size would have one additional index bit, thereby effectively reducing the tag region by one bit.
 
 ## 31. 2-Way Set-Associative Quiz and Answers
+
+<center>
+<img src="./assets/12-060A.png" width="650">
+</center>
+
+Consider a 2-way set-associative cache (as in the figure shown above) characterized as follows:
+  * `32 bytes` block size
+  * Four sets with two blocks per set
+
+Furthermore, the processor produces the following sequence of accesses, one at a time:
+```
+0xF303
+0xF503
+0xF563
+0xEF63
+```
+
+What is the content of the cache ***after*** these four sequential accesses?
+
+***Answer and Explanation***:
+
+As before (cf. Section 28), this will require determining which bits in the address correspond to the content in the cache.
+
+The address breakdown will be as follows (as depicted in magenta in the figure shown above), in respective least-to-most significant bits order (i.e., right-to-left in the corresponding figure):
+  * `5 bits` offset region (via `32 = 2^5` or equivalently `log_2(32) = 5`)
+  * `2 bits` index bits region (to uniquely identify each set, via `4 = 2^2` or equivalently `log_2(4) = 2`)
+  * The remaining bits constitute the tag region
+
+Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `7 = 2 + 5 bits`, or equivalently the two least-significant hex digits, as follows:
+
+| Hex Address (`\|` delimits least-significant bytes) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Set:Line per Index Bits (where Line is `0` or `1` for a given Set) |
+|:--:|:--:|:--:|
+| `0xF3\|03` | `... 0\|00\|0 0011` | `0`:`0` |
+| `0xF5\|03` | `... 0\|00\|0 0011` | `0`:`1`, same set as `0xF303`, but placed in the other line within the set |
+| `0xF5\|63` | `... 0\|11\|0 0011` | `3`:`0` |
+| `0xEF\|63` | `... 0\|11\|0 0011` | `3`:`1`, same set as `0xF563`, but placed in the other line within the set |
+
+Therefore, with the 2-way set-associative cache, it is possible to place more than one block mapping to given location (i.e., set) within the cache, without otherwise yielding conflicts as a result. Indeed, this **conflicts reduction** is a key ***desirable property*** of an N-way set-associative cache. However, using this approach also complicates the tag-region checks, because now there are `N` corresponding locations for the processor to search within a given set before locating the data (or otherwise determining that a cache miss has occurred).
+
+## 32. Fully Associative Cache
