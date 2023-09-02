@@ -1150,3 +1150,29 @@ On subsequent access of `K` (resulting in a cache miss), `H` (the least recently
 This is the final state of the cache following the sequential accesses.
 
 ## 37. Write Policy
+
+<center>
+<img src="./assets/12-070.png" width="650">
+</center>
+
+The final aspect concerning caches' operation is the **write policy**. There are two **components** to this.
+
+The first component of the write policy is the so called **allocate policy**, which concerns the question: Do we insert (i.e., ***allocate*** and enter the cache) for blocks that are written (i.e., if there is a **write miss**, should the block be brought into the cache or not?)? For this purpose, there are two ***types*** of caches, as follows:
+  * **write-allocate**
+    * This type of cache brings the block that is written into the cache 
+  * **no-write-allocate**
+    * This type of cache does ***not*** bring the block that is written into the cache (i.e., in the case of a **read miss**, the block is brought into the cache, but otherwise in the case of a **write miss**, the block is *not* brought into the cache)
+
+Most modern caches are **write-allocate**, simply because there is generally inherent ***locality*** among read and write operations (i.e., data that is written is also likely to be read). Accordingly, write-allocate improves read hits, even in the event of a write miss.
+
+The second component of the write policy concerns the question: When a write hit occurs, should the write be performed *only* in the cache, or *also* in main memory as well? For this purpose, there are two ***types** of caches, as follows:
+  * **write-through**
+    * This type of cache updates the main memory immediately (i.e., a write to the cache correspondingly propagates up to the main memory as well, thereby "writing through" the cache)
+  * **write-back**
+    * This type of cache only writes to the cache, but otherwise only writes to main memory when the block is ***replaced*** in the cache (i.e., the block cannot be discarded until the most recently version of the block is finally written to the main memory, however, otherwise the "current" state is maintained exclusively within the cache up to and immediately prior to this point)
+
+**Write-through** caches are relatively unpopular; instead, **write-back** caches are used much more commonly. This is due to the fact that writes (which have a lot of intrinsic locality) will update the cache possibly many times, only sending a write to main memory *once* as the block is replaced. This correspondingly prevents the main memory from becoming "overwhelmed" with write operations from the cache.
+
+Furthermore, note that there is a relationship between the choices of **write-allocate** and **write-back** caches as the constituents of the collective write policy: Selecting write-back cache begets selection of a write-allocate cache, because minimizing writes to main memory (by correspondingly predominantly writing *only* to the cache via write-back) is particularly useful for **write misses** (in which case, it is desireable for future writes to occur in the cache via write-allocate).
+
+## 38. Write-Back Caches
