@@ -895,3 +895,171 @@ As it turns out, **least recently used (LRU)** is indeed a very good policy. Acc
   * For example, one such policy is **not most recently used (NMRU)**, which tracks just those blocks which have been used most recently, and then selecting randomly from among the remaining blocks besides those (i.e., without otherwise tracking ***all*** of the blocks to definitively determine *the* most recently used blocks).
 
 ## 35. Implementing Least Recently Used (LRU)
+
+So, then, how is the **least recently used (LRU)** cache replacement policy actually ***implemented***?
+
+The LRU cache replacement policy works really well because it exploits locality well, i.e., the most recently used data is correspondingly more likely to be used very soon afterwards (while the opposite is true for the data which has not been used recently).
+
+<center>
+<img src="./assets/12-065.png" width="650">
+</center>
+
+Consider a four-way set-associative cache (as in the figure shown above), focusing on a particular set composed of these four constituent blocks. Each such block has the following ***components***:
+  * **tag**
+  * **valid bit**
+  * **LRU counter** → tracks which block was accessed when
+    * The LRU counter stores a value corresponding to the size of the set (i.e., `0` through `3`, inclusive)
+
+<center>
+<img src="./assets/12-066.png" width="650">
+</center>
+
+The LRU counter is initialized as follows:
+
+| Line Number | LRU Counter |
+|:--:|:--:|
+| 0 | 0 |
+| 1 | 1 |
+| 2 | 2 |
+| 3 | 3 |
+
+***N.B.*** At any given time, all of the LRU counter values must be ***unique*** (i.e., different from each other).
+
+When it is time to replace data in the cache, the first replacement occurs in the block with corresponding LRU counter value `0`, which is the least recently used block.
+
+First, consider placement of a candidate block `A`. This will correspondingly be placed in the line with current LRU counter value `0`, as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | ***A*** | ***0*** |
+| 1 | (N/A) | 1 |
+| 2 | (N/A) | 2 |
+| 3 | (N/A) | 3 |
+
+With this placement, upon accessing by the processor, block `A` now becomes the most recently used, with a corresponding update to the LRU counter values as follows (via corresponding decrementing of the other counters):
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | ***A*** | ***3*** |
+| 1 | (N/A) | 0 |
+| 2 | (N/A) | 1 |
+| 3 | (N/A) | 2 |
+
+Next, candidate block `B` is placed into the cache, similarly in the line with current LRU counter value `0`, as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | A | 3 |
+| 1 | ***B*** | ***0*** |
+| 2 | (N/A) | 1 |
+| 3 | (N/A) | 2 |
+
+With this placement, upon accessing by the processor, block `B` now becomes the most recently used, with a corresponding update to the LRU counter values as follows (via corresponding decrementing of the other counters):
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | A | 2 |
+| 1 | ***B*** | ***3*** |
+| 2 | (N/A) | 0 |
+| 3 | (N/A) | 1 |
+
+Next, candidate block `C` is placed into the cache, similarly in the line with current LRU counter value `0`, as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | A | 2 |
+| 1 | B | 3 |
+| 2 | ***C*** | ***0*** |
+| 3 | (N/A) | 1 |
+
+With this placement, upon accessing by the processor, block `C` now becomes the most recently used, with a corresponding update to the LRU counter values as follows (via corresponding decrementing of the other counters):
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | A | 1 |
+| 1 | B | 2 |
+| 2 | ***C*** | ***3*** |
+| 3 | (N/A) | 0 |
+
+Next, candidate block `D` is placed into the cache, similarly in the line with current LRU counter value `0`, as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | A | 1 |
+| 1 | B | 2 |
+| 2 | C | 3 |
+| 3 | ***D*** | ***0*** |
+
+With this placement, upon accessing by the processor, block `D` now becomes the most recently used, with a corresponding update to the LRU counter values as follows (via corresponding decrementing of the other counters):
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | A | 0 |
+| 1 | B | 1 |
+| 2 | C | 2 |
+| 3 | ***D*** | ***3*** |
+
+This correspondingly reverts the LRU counters effectively to their initial state.
+
+<center>
+<img src="./assets/12-067.png" width="650">
+</center>
+
+Now, given candidate block `E` being placed into the cache, it is correspondingly placed the line with current LRU counter value `0` (and correspondingly ejecting existing block `A` in the process), as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | ***E*** | ***0*** |
+| 1 | B | 1 |
+| 2 | C | 2 |
+| 3 | D | 3 |
+
+With this placement, upon accessing by the processor, block `E` now becomes the most recently used, with a corresponding update to the LRU counter values as follows (via corresponding decrementing of the other counters):
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | ***E*** | ***3*** |
+| 1 | B | 0 |
+| 2 | C | 1 |
+| 3 | D | 2 |
+
+Now, consider the scenario where `B` (which is currently the least recently used block) is ***re-accessed***. In this case, the LRU counters are reset as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | E | 2 |
+| 1 | ***B*** | ***3*** |
+| 2 | C | 0 |
+| 3 | D | 1 |
+
+Furthermore, what if `B` is accessed yet again? In that case, these LRU counter values persist in the same state.
+
+Now, consider the scenario where `D` (which is neither the most nor least recently used block) is ***re-accessed***. In this case, the LRU counters are reset as follows:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | E | 1 |
+| 1 | B | 2 |
+| 2 | C | 0 |
+| 3 | ***D*** | ***3*** |
+
+Note that in this situation, there is not a simple decrement of ***all*** of the other LRU counters, but rather the values are updated such that they are only decremented when the original values were ***above*** the original counter value in the accessed block (e.g., above `1`, in the case of block `D` here), while otherwise the counter values previously ***below*** this value retain their previous/original value (e.g., block `C` retains its original value of `0`, which is below `D`'s original value of `1` pre-increment). This ensures uniqueness of the LRU counter values.
+
+As another example of this scenario, a subsequent re-access of "intermediately used" block `B` yields the following:
+
+| Line Number | Data Block | LRU Counter |
+|:--:|:--:|:--:|
+| 0  | E | 1 |
+| 1 | ***B*** | ***3*** |
+| 2 | C | 0 |
+| 3 | D | 2 |
+
+Here, `B` is incremented, `D` is correspondingly decremented, but `E` and `C` remain unchanged.
+
+As is evident, maintaining the LRU cache replacement policy is fairly complicated. For an `N`-way set-associative cache, it requires `N` LRU counters of size `log_2(N)` (e.g., with `N == 4`, this requires `log_2(4) = 2 bit` counters). Therefore, for a highly associative cache (e.g., `N == 32`), this will require a corresponding number of bits (e.g., `log_2(32) = 5 bit` counters, with `32` such counters per set). This adds a corresponding ***cost***.
+
+Furthermore, with respect to ***energy*** consumption, this adds an additional problem: There is a necessary modification of up to `N` counters ***on each access*** (even for frequently occurring ***cache hits***).
+
+Therefore, LRU approximations attempt to minimize the number of counters used, as well as perform fewer per-access updates (particularly on cache hits) in order to reduce energy consumption.
+
+## 36. Least Recently Used (LRU) Quiz
