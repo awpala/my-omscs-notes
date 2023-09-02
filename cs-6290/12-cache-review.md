@@ -839,3 +839,16 @@ Now, consider the mapping of the sequential accesses into the cache, as per the 
 Therefore, with the 2-way set-associative cache, it is possible to place more than one block mapping to given location (i.e., set) within the cache, without otherwise yielding conflicts as a result. Indeed, this **conflicts reduction** is a key ***desirable property*** of an N-way set-associative cache. However, using this approach also complicates the tag-region checks, because now there are `N` corresponding locations for the processor to search within a given set before locating the data (or otherwise determining that a cache miss has occurred).
 
 ## 32. Fully Associative Cache
+
+Finally, now consider the **fully associative cache**.
+
+<center>
+<img src="./assets/12-061.png" width="650">
+</center>
+
+Given an eight-entry cache (as in the figure shown above), a fully associative cache is one in which ***any*** block can map to ***any*** of the available cache lines. In this case, the address is simply composed of the following:
+  * The least-significant bits **offset** region, of size corresponding to the number of bits required to uniquely specify each cache line (e.g., `3` bits in the case of an eight-entry cache, via `8 = 2^3` or equivalently `log_2(8) = 3`)
+  * Correspondingly, there are ***no*** index bits, since the offset already uniquely specifies the cache line in question
+  * The remaining most-significant bits consequently correspond to the **tag** region
+
+## 33. Direct-Mapped vs. Full Associative Caches
