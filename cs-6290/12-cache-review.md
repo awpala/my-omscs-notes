@@ -1462,7 +1462,7 @@ Having seen multiple aspects of how caches work, let us now summarize them for a
 Consider a cache characterized as follows (as in the figure shown above):
   * `4 KB` in total size
     * four-way set-associative
-    * `64 byte` lines size
+    * `64 bytes` line size
     * a write policy characterized by write-back, write-allocate
   * `64 bit` addresses created by the processor to access the cache
 
@@ -1530,4 +1530,30 @@ As is evident now, all of the aforementioned cache-related activities occur esse
 
 ### 43. Cache Summary Quiz 1 and Answers
 
-### 44. Cache Summary Quiz 2 and Answers
+<center>
+<img src="./assets/12-095A.png" width="550">
+</center>
+
+Consider a cache characterized as follows:
+  * `256 bytes` in total size
+    * `32 bytes` line size
+    * twp-way set-associative
+    * a write policy characterized by write-back, write-allocate
+  * `32 bit` addresses created by the processor to access the cache
+    * These bits are numbered `0` through `31`
+
+What are the corresponding bits regions of the address for this cache (in order from most to least significant bits)?
+  * tag bits
+    * `7` through `31`
+  * index bits
+    * `5` through `6`
+  * offset bits
+    * `0` through `4`
+
+***Explanation***:
+
+Considering the bits regions in least to most significant bits, starting with the **offset**, this can be determined as `32 = 2^5` or equivalently `log_2(32)  = 5`, thereby requiring `5 bits` to specify the offset (via corresponding bits `0` through `4`).
+
+Next, the **index** bits can be determined via `256 bytes total / 32 bytes per line = 8 lines`. Furthermore, for a two-way set-associative cache, there are `8 lines / 2 lines per set  = 4 sets`, which can be correspondingly uniquely specified by `4 = 2^2` or equivalently `log_2(4) = 2`, thereby requiring `2` bits to specify the index (via corresponding bits `5` through `6`).
+
+The remaining bits are therefore used for the **tag** bits (i.e., bits `7` through `31`).
