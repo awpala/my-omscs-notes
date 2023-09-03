@@ -1453,7 +1453,7 @@ This is the final state of the cache on execution of the sequential accesses. Fu
 
 Having seen multiple aspects of how caches work, let us now summarize them for a more realistic cache.
 
-### Part 1
+### 41. Part 1
 
 <center>
 <img src="./assets/12-088.png" width="650">
@@ -1487,5 +1487,47 @@ In the cache, for each given block, it is specified as follows:
 
 As per the table above, there are `58 bits` (1 + 1 + 54 + 2) in addition to the `64 bytes` of data, thereby adding some ***overhead***. Furthermore, note that the cache size is usually expressed in terms of how much ***data*** it contains, whereas the ***actual*** cache size (i.e., in terms of the cache lines themselves) is typically larger than this, in order to accommodate this extra information on a per-cache-line basis.
 
-### Part 2
+### 42. Part 2
 
+<center>
+<img src="./assets/12-089.png" width="650">
+</center>
+
+Given the same cache as specified previously (cf. Section 41), as in the figure shown above, now consider how the address is used to access the cache.
+
+To simplify the representation, a lines in a given set are represented horizontally, spanning the `16` total sets accordingly (i.e., sets `0` through `15`, respectively).
+
+<center>
+<img src="./assets/12-090.png" width="650">
+</center>
+
+In order to ***access*** the cache (as in the figure shown above), the **index** bits are used to identify the corresponding set (e.g., set `0`). Next, the **tag** is read for corresponding **invalid** bits across ***all*** of the blocks in the corresponding set. These read tag bits are compared to the tag data of the lines within the cache, along with the corresponding **valid** bit.
+  * ***N.B.*** These reads/comparisons are performed for ***all*** of the lines in the set ***simultaneously***.
+
+In order for a **cache hit** to occur, the valid bit must be read as `1` (along with corresponding `OR` comparison with the tag itself).
+
+<center>
+<img src="./assets/12-091.png" width="650">
+</center>
+
+If a **cache hit** is found (as in the figure shown above), the corresponding line in the set has its corresponding block data read out. Once this (`64 bytes` of) data is read out, the **offset** from the address is correspondingly used to determine where the actual data itself is located, in order to return it to the processor itself.
+  * In the case of a ***write*** operation, the offset indicates where to write. Furthermore, a corresponding **dirty bit** is changed to `1` in the corresponding line of the set.
+    * ***N.B.*** The dirty bit is not checked/updated to `0` regardless in the case of a write operation, as a write operation will necessitate an update to `1` either way (i.e., such overhead is otherwise non-value-added relative to simply updating directly to `1` in the event of a write operation).
+
+<center>
+<img src="./assets/12-092.png" width="650">
+</center>
+
+Conversely, in the case of a **cache miss** (as in the figure shown above), i.e., all `OR`-wise comparisons yield `0`, the **LRU counters** are consequently checked in order to determine which line to eject from the cache for the set in question.
+  * Furthermore, if the **dirty bit** of the line in question is `0`, then replacement will occur directly.
+  * Otherwise, if the **dirty bit** of the line in question is `1`, then the data must first be written to main memory prior to ejection and subsequent replacement.
+
+On update/replacement of the block, the LRU counters are correspondingly updated accordingly, and the data is subsequently provided to the processor as usual from there.
+
+As is evident now, all of the aforementioned cache-related activities occur essentially ***simultaneously** on every access operation, with appropriate contingencies for cache hits vs. cache misses accordingly.
+
+## 43-44. Cache Summary Quizzes and Answers
+
+### 43. Cache Summary Quiz 1 and Answers
+
+### 44. Cache Summary Quiz 2 and Answers
