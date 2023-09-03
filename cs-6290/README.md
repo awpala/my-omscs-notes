@@ -15,6 +15,7 @@
 | [9](./09-memory-ordering.md) | Memory Ordering |
 | [10](./10-compiler-ilp.md) | Compiler ILP |
 | [11](./11-vliw.md) | Very Long Instruction Word (VLIW) |
+| [12](./12-cache-review.md) | Cache Review |
 
 ## Videos Reference
 

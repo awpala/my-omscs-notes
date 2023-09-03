@@ -1654,3 +1654,5 @@ This is the final state of the cache on execution of the sequential accesses. Fu
   * `0` total write-backs
 
 ## 45. Lesson Outro
+
+This lesson has reviewed how caches work, along with the concerns and choices pertaining to designing caches. This knowledge will be used in most of the subsequent lessons in the course, starting with the lessons on virtual memory and advanced caches (cf. Lessons 13 and 14, respectively). Furthermore, this knowledge will also be necessary for successful completion of the course projects.
