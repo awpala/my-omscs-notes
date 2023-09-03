@@ -1557,3 +1557,100 @@ Considering the bits regions in least to most significant bits, starting with th
 Next, the **index** bits can be determined via `256 bytes total / 32 bytes per line = 8 lines`. Furthermore, for a two-way set-associative cache, there are `8 lines / 2 lines per set  = 4 sets`, which can be correspondingly uniquely specified by `4 = 2^2` or equivalently `log_2(4) = 2`, thereby requiring `2` bits to specify the index (via corresponding bits `5` through `6`).
 
 The remaining bits are therefore used for the **tag** bits (i.e., bits `7` through `31`).
+
+### 44. Cache Summary Quiz 2 and Answers
+
+<center>
+<img src="./assets/12-096Q.png" width="650">
+</center>
+
+As a follow-up to the previous quiz (cf. Section 43), with the same previously specified cache, consider the following sequence of accesses:
+
+```
+LW 0xBCDE0000
+LW 0xCDEF0000
+SW 0xBCDE0000
+SW 0xCDEF0004
+SW 0xBCDE0000
+```
+
+Furthermore, assume the cache is completely empty at start (i.e., with all valid bits set to `0`).
+
+How many cache misses occur in this sequence? How many blocks are written back to main memory in this sequence?
+
+***Answer and Explanation***:
+
+Recall (cf. Section 43) that the least-significant `5 bits` correspond to the offset, and the next-least-significant `2 bits` correspond to the index. By inspection, all of the addresses in the given sequence have the ***same*** index bits, indicating that they correspondingly map to the ***same*** cache set (having two lines) as well. Therefore, it is only necessary to consider this particular set in question for purposes of this analysis.
+
+In the initial access `LW 0xBCDE0000`, there is a cache miss (`1` total cache miss), resulting in a setting of `0` for the valid bit in the cache.
+
+<center>
+<img src="./assets/12-097A.png" width="650">
+</center>
+
+On initial `LW 0xBCDE0000` (as in the figure shown above), the cache is updated as follows:
+
+| Cache Line | Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|:--:|
+| 0 | 1 | 0 | `0xBCDE0000` |
+| 1 | 0 |  | |
+
+Because this is a read operation, on populating the cache with the data for `0xBCDE0000`, the processor will also correspondingly set the dirty bit to `0`. 
+
+<center>
+<img src="./assets/12-098A.png" width="650">
+</center>
+
+In the subsequent access `LW 0xCDEF0000` (as in the figure shown above), there is a cache miss (`2` total cache misses), and the cache is updated as follows:
+
+| Cache Line | Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|:--:|
+| 0 | 1 | 0 | `0xBCDE0000` |
+| 1 | 1 | 0 | `0xCDEF0000` |
+
+Because this is a read operation, on populating the cache with the data for `0xCDEF0000`, the processor will also correspondingly set the dirty bit to `0`. 
+
+<center>
+<img src="./assets/12-099A.png" width="650">
+</center>
+
+In the subsequent access `SW 0xBCDE0000` (as in the figure shown above), there is a cache hit, and the cache is updated as follows:
+
+| Cache Line | Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|:--:|
+| 0 | 1 | 1 | `0xBCDE0000` |
+| 1 | 1 | 0 | `0xCDEF0000` |
+
+Because this is a write operation, on populating the cache with the data for `0xBCDE0000`, the processor will also correspondingly set the dirty bit to `1`.
+
+<center>
+<img src="./assets/12-100A.png" width="650">
+</center>
+
+In the subsequent access `SW 0xCDEF0004` (as in the figure shown above), there is a cache hit, and the cache is updated as follows:
+
+| Cache Line | Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|:--:|
+| 0 | 1 | 1 | `0xBCDE0000` |
+| 1 | 1 | 1 | `0xCDEF0000` |
+
+Because this is a write operation, on populating the cache with the data for `0xCDEF0004`, the processor will also correspondingly set the dirty bit to `1`.
+
+<center>
+<img src="./assets/12-101A.png" width="650">
+</center>
+
+In the subsequent (and final) access `SW 0xBCDE0000` (as in the figure shown above), there is a cache hit, and the cache is updated as follows:
+
+| Cache Line | Valid Bit | Dirty Bit | Tag |
+|:--:|:--:|:--:|:--:|
+| 0 | 1 | 1 | `0xBCDE0000` |
+| 1 | 1 | 1 | `0xCDEF0000` |
+
+Because this is a write operation, on populating the cache with the data for `0xBCDE0000`, the processor will also correspondingly set the dirty bit to `1`.
+
+This is the final state of the cache on execution of the sequential accesses. Furthermore, the summary of the upstream operations is as follows:
+  * `2` total cache misses
+  * `0` total write-backs
+
+## 45. Lesson Outro
