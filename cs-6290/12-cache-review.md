@@ -1449,4 +1449,43 @@ This is the final state of the cache on execution of the sequential accesses. Fu
   * `4` total cache misses
   * `1` total write-backs
 
-## 41. Cache Summary
+## 41-42. Cache Summary
+
+Having seen multiple aspects of how caches work, let us now summarize them for a more realistic cache.
+
+### Part 1
+
+<center>
+<img src="./assets/12-088.png" width="650">
+</center>
+
+Consider a cache characterized as follows (as in the figure shown above):
+  * `4 KB` in total size
+    * four-way set-associative
+    * `64 byte` lines size
+    * a write policy characterized by write-back, write-allocate
+  * `64 bit` addresses created by the processor to access the cache
+
+When accessing this cache, the `64 bit` address will be divided into the following regions (from least- to most-significant bits):
+  * **offset** (bits `0` through `5`, `6 bits` total)
+    * For a `64 byte` line, this requires `log_2(64) = 6` bits to specify uniquely the location within the cache block
+  * **index** (bits `6` through `9`, `4 bits` total)
+    *  For a `4 KB` cache (`2^12` bytes total), the total number of blocks (given `64 byte` line size, or `2^6`) is therefore `2^12 / 2^6 = 2^6` blocks in the cache, correspondingly uniquely specified by `6` bits.
+    * Furthermore, for a four-way set-associative cache (with each line specified uniquely via `4 = 2^2` bits within a given set, thereby constituting the **index** bits region of the address), this gives `2^6 / 2^2 = 2^4 = 16` total sets. 
+  * **tag** (bits `10` through `63`, `54` bits total)
+    * These are the remaining most significant bits after the offset and index bits are specified.
+
+In the cache, for each given block, it is specified as follows:
+
+| Line-Entry Region | Size | Comment |
+|:--:|:--:|:--:|
+| Valid Bit | 1 bit | (N/A) |
+| Dirty Bit | 1 bit | Required for a write-back cache |
+| Tag | 54 bits |  (N/A) |
+| Least Recently Used (LRU) Counter | 2 bits | In a set-associative cache, a replacement policy is required, therefore, here we are using LRU accordingly (and in the case of a four-way set associative cache, this requires `log_2(4) = 2 bits` to uniquely specify each cache line) |
+| Data | 64 bytes | The remaining area contains the data itself | 
+
+As per the table above, there are `58 bits` (1 + 1 + 54 + 2) in addition to the `64 bytes` of data, thereby adding some ***overhead***. Furthermore, note that the cache size is usually expressed in terms of how much ***data*** it contains, whereas the ***actual*** cache size (i.e., in terms of the cache lines themselves) is typically larger than this, in order to accommodate this extra information on a per-cache-line basis.
+
+### Part 2
+
