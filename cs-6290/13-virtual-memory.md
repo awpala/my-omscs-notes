@@ -180,3 +180,33 @@ The remaining pages in fact are mapped to the **hard disk** (as in the figure sh
 These hard-drive-stored pages ***cannot*** be accessed directly by the processor, because the processor can only directly access memory via load and store operation on the physical memory itself. Therefore, if the processor must access the hard-drive-stored pages, these pages must first be brought into physical memory from the hard disk prior to being accessed (this will be described shortly). Correspondingly, in general, among the available (virtual) memory a given program "thinks" that it "has," some of this will be located in the hard disk (i.e., rather than in virtual memory) at any given time as the program/process is running.
 
 ## 9. Virtual-to-Physical Translation
+
+Now that it is apparent that the program generates virtual addresses while processor actually uses physical addresses to access the memory, consider now how the processor performs this **virtual-to-physical address translation**.
+
+<center>
+<img src="./assets/13-016.png" width="650">
+</center>
+
+When the program generates a **virtual address** (e.g., via load operation), as in the figure shown above, the processor divides this virtual address into two **components** as follows:
+  * **page offset** → indicates the the location within the page
+  * **virtual page number** → identifies the specific page of the program/process in question
+
+Given a `4 KB` page size, the `12` least significant bits will correspond to the page offset (via `4*(2^10) = 2^12` or equivalently `log_2(4*(2^10)) = log_2(2^12) = 12`), while the remaining bits indicate the virtual page number.
+
+<center>
+<img src="./assets/13-017.png" width="650">
+</center>
+
+For example, given a `32 bit` address `0xFC51908B` (as in the figure shown above), the least-significant `12 bits` (`0x08B`) indicate the page offset, while the remaining most-significant bits (`0x0FC519`) identify the virtual page number.
+
+From there, the virtual page number is used to index into the **page table**, which corresponds to a particular **physical frame number** in the page table (e.g., `00152` in the figure shown above).
+
+<center>
+<img src="./assets/13-018.png" width="650">
+</center>
+
+From there, the **physical frame number** is ***combined*** with the page offset to form a **physical address** (e.g., `0x0015208B`),as in the figure shown above. This physical address in turn is used to actually access the **physical memory** at the corresponding address location.
+
+Note that the page offset is present in ***both*** the virtual ***and*** physical addresses (i.e., the least-significant bits from the virtual address correspondingly occur in the least-significant bits of the physical address as well). Conversely, the virtual page number of the virtual address is effectively "translated" into the physical-page-frame counterpart in the corresponding physical address.
+
+## 10. Address Translation Quiz and Answers
