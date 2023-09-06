@@ -136,3 +136,27 @@ Furthermore, given another running process (as depicted on the right side in the
 So, then, how is it decided how this virtual-memory-to-physical-memory mapping will occur? This is dictated by the **operating system** itself (as in the figure shown above). The corresponding mechanism for this mapping is called a **page table**, which is a table that indicates where each page in a given process will map to physical memory. Furthermore, ***each process*** has a corresponding page table for this purpose.
 
 ## 7. Page Size Quiz and Answers
+
+<center>
+<img src="./assets/13-013A.png" width="650">
+</center>
+
+Consider a system with the following specifications:
+  * Physical memory size is `2 GB`
+  * Virtual memory size is `4 GB`
+  * Page size is `4 KB`
+
+How many page frames are available in this system?
+  * `2^19`
+
+How many entries are present in each page table? (Recall that a page-table entry maintains the mapping for the virtual-memory page to the corresponding physical-memory frame.)
+  * `2^20`
+
+***Explanation***:
+
+To determine the number of page frames, this follows directly from `2 GB physical memory / 4 KB per page = [2*(2^30)] / [4*(2^10)] = 2^19`.
+
+To determine the number of entries present in each table, this follows directly from `4 GB virtual memory / 4 KB per entry = [4*(2^30)] / [4*(2^10)] = 2^20` (i.e., one "mega/M entry").
+  * ***N.B.*** Recall (cf. Section 6) that a ***separate*** page table is necessary for ***each*** `4 GB` process. Therefore, ***each*** process running on the system will require a corresponding `2^20` entry page table (i.e., of approximately `1 MB` in size).
+
+## 8. Where Is the "Missing" Memory?
