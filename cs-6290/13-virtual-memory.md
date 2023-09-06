@@ -32,3 +32,25 @@ The matter complicates even more when considering the fact that in general, a gi
 Therefore, **virtual memory** is a way to ***reconcile*** these differences between the programmer's view vs. the physical hardware's view; this topic will be further elaborated upon in this lesson accordingly.
 
 ## 3. Virtual Memory Quiz and Answers
+
+<center>
+<img src="./assets/13-003A.png" width="650">
+</center>
+
+Consider a computer with `16` active applications, with each application having a `32 bit` address space (i.e., the application generates `32 bit` addresses, giving rise to a potential `2^32 = 4 GB` of memory).
+
+Which of the following actual/physical memory configurations does the system have? (Select all that apply.)
+  * Two `2 GB` memory modules
+    * `APPLIES`
+  * Four `4 GB` memory modules
+    * `APPLIES`
+  * Eight `8 GB` memory modules
+    * `APPLIES`
+  * One `16 GB` memory module
+    * `APPLIES`
+
+***Explanation***:
+
+All of these options are potential candidates. When using virtual memory, what a given application "perceives" as its memory vs. what the physical hardware itself supports can be completely decoupled.
+
+## 4. Processor's View of Memory
