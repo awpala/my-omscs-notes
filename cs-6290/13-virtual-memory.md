@@ -71,3 +71,39 @@ Therefore, in general, it can be concluded from these observations that the amou
 Lastly, note that the **addresses** that the processor uses for the physical memory have a **one-to-one mapping** to the bytes/words in the physical memory (i.e., a given processor address always maps to the ***same*** physical-memory location).
 
 ## 5. Program's View of Memory
+
+Now, consider how the **program** views the memory.
+
+<center>
+<img src="./assets/13-005.png" width="650">
+</center>
+
+The program sees a large amount of memory (as in the figure shown above), and usually some contiguous regions of this memory are actually used by the program. Furthermore, there is a large region in the middle, between the heap and the stack (as denoted by oppositely directed green arrows in the figure shown above), that the program will generally not access unless the heap incidentally grows in that manner during run-time (however, in practice, the heap is usually small relative to the corresponding `2^64` address space, i.e., the program "thinks" it has a lot of this memory available but ultimately does not access most of it). This large (e.g., `2^64`) address space is what is correspondingly called **virtual memory** (i.e., the program "virtually" has "a lot" of memory available, but in practice only a small fraction of this exists as actual, physical memory).
+
+Correspondingly, a separate smaller program also has its own virtual-memory address space (as depicted on the right side of the figure shown above, with relatively more memory in the heap region, which it similarly "under-utilizes" relative to the "full virtual-memory size"). Similarly, the "idea" that this program has about the corresponding virtual memory is that it "can always use more."
+
+<center>
+<img src="./assets/13-006.png" width="650">
+</center>
+
+With both programs running simultaneously, consider now how this corresponds to the **physical memory** itself, as in the figure shown above.
+
+When the first/larger program generates a memory-access operation that should access a given address in its virtual-memory address space (as denoted by purple in the figure shown above), how is it determined ***where*** exactly this maps in the physical-memory address space? Furthermore, when the second/smaller program correspondingly generates a memory-address operation with the ***same*** address, how is it determined ***where*** exactly this maps in the physical-memory address space as well?
+
+The second/smaller program might go to a ***different*** location in physical memory (e.g., if the two programs are completely independent of each other).
+
+<center>
+<img src="./assets/13-007.png" width="650">
+</center>
+
+Conversely, the second/smaller program might go to the ***same*** location in phsyical memory (e.g., if the two programs are sharing data), as in the figure shown above.
+
+<center>
+<img src="./assets/13-008.png" width="650">
+</center>
+
+In fact, **data sharing** among programs is ***not*** constrained to strictly placing data in the ***same*** virtual-memory address space; instead, the second/smaller program can place the data in a different address in its virtual-memory address space (as in the figure shown above), while otherwise sharing the ***same*** physical-memory address space (i.e., mapping to the ***same*** location in the physical-memory address space).
+
+So, then, how can such differences be reconciled? This is discussed next.
+
+## 6. Mapping Virtual Memory to Physical Memory
