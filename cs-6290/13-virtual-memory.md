@@ -210,3 +210,58 @@ From there, the **physical frame number** is ***combined*** with the page offset
 Note that the page offset is present in ***both*** the virtual ***and*** physical addresses (i.e., the least-significant bits from the virtual address correspondingly occur in the least-significant bits of the physical address as well). Conversely, the virtual page number of the virtual address is effectively "translated" into the physical-page-frame counterpart in the corresponding physical address.
 
 ## 10. Address Translation Quiz and Answers
+
+<center>
+<img src="./assets/13-020A.png" width="650">
+</center>
+
+Consider a process with a page table having only four frame-number entries, as follows:
+
+Page Table Index/Position (Binary) | Page Table Entry |
+|:--:|:--:|
+| `00` | `0x1F` |
+| `01` | `0x3F` |
+| `10` | `0x23` |
+| `11` | `0x17` |
+
+Furthermore, suppose that the machine running this process has a `16 bit` virtual address space and a `20 bit` physical address space.
+
+Given the following `16 bit` virtual addresses, what are the corresponding physical addresses?
+  * `0xF0F0`
+    * `0x05F0F0`
+  * `0x001F`
+    * `0x07C01F`
+
+***Explanation***:
+
+Relative to the page-table entries, the most-significant two bits of the `16 bit` virtual addresses correspond to the virtual page number, while the remaining least-significant `14 bits` correspond to the page offset.
+
+Examining the binary form of address `0xF0F0` as follows:
+
+```
+||
+1111 0000 1111 0000
+```
+
+this indicates a virtual page number of binary `11`, or equivalently page-table entry `0x17` (binary `0001 0111`).
+
+Similarly, examining the binary form of address `0x001F` as follows:
+
+```
+||
+0000 0000 0001 1111
+```
+
+this indicates a virtual page number of binary `00`, or equivalently page-table entry `0x1F` (binary `0001 1111`).
+
+Therefore, the respective `8 bit` page-table frame entries can be combined with the corresponding least-significant `14 bits` of the virtual addresses to yield the `20 bit` physical addresses as follows (via the least-significant `20 bits`):
+
+```
+   |                      | 
+00 0101 1111 0000 1111 0000 → 0x5F0F0
+
+   |                      | 
+00 0111 1100 0000 0001 1111 → 0x7C01F
+```
+
+## 11. Size of Flat Page Table
