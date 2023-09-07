@@ -297,3 +297,27 @@ Another ***problem*** with flat page tables is that if the virtual memory is a `
 Nevertheless, modern processors *do* in fact operate on such a large virtual address space. To reconcile this problem, the page table must be reorganized to accommodate this accordingly, which will be discussed shortly.
 
 ## 12. Flat Page Table Size Quiz and Answers
+
+<center>
+<img src="./assets/13-023A.png" width="650">
+</center>
+
+Consider a flat page table system characterized as follows:
+  * `8 bytes` per entry in a `64 bit` physical address space
+  * `4 KB` page size
+  * two processes running on the system
+  * `2 GB` of physical memory
+  * `32 bit` virtual addresses created by the programs
+  * the first process uses `1 MB` of its available virtual memory address space
+  * the second process uses `1 GB` of its available virtual memory address space
+
+What is the total size of the page tables for the two processes in the system?
+  * `16 MB`
+
+***Explanation***:
+
+The overall size of the page table per process is `[2^32 virtual addresses / 4*(2^10) page size] × 8 bytes per entry = 8 * 2^20`. Furthermore, there are two processes, and thus the total size of the page tables is `2 * 8 * 2^20 = 16 MB`.
+
+***N.B.*** The respective virtual-memory address space usages of the processes (i.e., `1 MB` and `1 GB`) is inconsequential here, because a flat page table will have an entry for ***every*** possible page irrespectively of a given process's ***actual*** memory usage. Furthermore, the available **physical memory** is similarly inconsequential here (since anything in excess of this will simply be stored on hard disk). Instead, the ***critical factor*** here is the **per-entry size** (i.e., `8 bytes` in this case), as this dictates the size of the physical address which can be accommodated by the system (i.e., up to a `64 bit` physical addresses in this case). Such an arrangement in turn allows to expand its memory as necessary (e.g., by adding additional physical memory modules).
+
+## 13. Multi-Level Page Tables
