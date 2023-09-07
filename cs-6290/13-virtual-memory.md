@@ -265,3 +265,35 @@ Therefore, the respective `8 bit` page-table frame entries can be combined with 
 ```
 
 ## 11. Size of Flat Page Table
+
+Up to this point, discussion has revolved around so-called **flat page tables**, wherein for every page number, there is a corresponding entry in the table.
+
+<center>
+<img src="./assets/13-021.png" width="650">
+</center>
+
+ Now, consider the **size** for such a flat page table. A flat page table has `1` entry per page in the entire virtual address space, even for pages in the address space that the program ***never*** actually accesses/uses (e.g., those pages located between the heap and the stack).
+
+ The **entry** in such a page table contains a *combination* of the **frame number** *and* a few bits (e.g., protection bits, present vs. not present bit, etc.) that indicate whether the page is accessible. In such a scenario, the entry in the page table is typically ***similar in size*** to the actual physical address itself.
+  * This similarity in size is due to the fact that the entry must contain the frame number (which comprises the majority of the bits in the physical address, excluding the page offset, but otherwise including the additional aforementioned bits).
+  * Therefore, for a physical address size of `32 bits`, the corresponding page-table entry will also likely be `32 bits` in size as well. And similar correspondence for a `64 bit` physical address vs. corresponding `64 bit` page-table entry.
+
+Thus, the **overall size** of a page table is defined as:
+
+```
+(virtual memory of the process / page size) × size of a single entry
+```
+
+Where the factor `(virtual memory of the process / page size)` constitutes the number of entries in the page table.
+
+For example, given a virtual memory of `4 GB`, a page size of `4 KB`, and a single-entry size of `4 bytes`, the corresponding overall size of the page table is `(4 GB / 4 KB) × 4 bytes = 4 MB` per process.
+  * ***N.B.*** A given process might actually use ***less*** than `4 MB` of virtual memory (because most of hte pages are unused in such a process), however, the page table must still nevertheless have size `4 MB` in such a flat-page-table configuration.
+
+Therefore, an apparent ***problem*** with flat page tables is that the corresponding page table is considerably large relative to a given process's actual usage of its available virtual memory.
+
+Another ***problem*** with flat page tables is that if the virtual memory is a `64 bit` address space (i.e., the corresponding virtual memory is `2^64 bytes`), then the corresponding page table size now ***explodes*** to `4 MB * 2^32` per process (which is ***much larger*** than the available memory)!
+  * Correspondingly, such a page table cannot fit in memory at all to begin with (i.e., for a *single* process, let alone *multiple* processes running simultaneously).
+
+Nevertheless, modern processors *do* in fact operate on such a large virtual address space. To reconcile this problem, the page table must be reorganized to accommodate this accordingly, which will be discussed shortly.
+
+## 12. Flat Page Table Size Quiz and Answers
