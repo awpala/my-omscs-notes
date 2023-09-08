@@ -572,23 +572,23 @@ Consider a five-stage pipeline comprised of the following stages:
 
 The following program executes in the pipeline:
 ```mips
-BNE R1, R0, Label  # L1
-ADD R4, R5, R6     # L2 - begin control hazard
-SUB R5, R4, R3     # L3 - end control hazard
-MUL R1, R2, R3     # L4 - begin data dependency A (via `R1`)
-LW  R1, 0(R1)      # L5 - end data dependency A, begin data dependency B (via `R1`)
-ADD R1, R1, R1     # L6 - end data dependency B
+BNE R1, R0, Label  # I1
+ADD R4, R5, R6     # I2 - begin control hazard
+SUB R5, R4, R3     # I3 - end control hazard
+MUL R1, R2, R3     # I4 - begin data dependency A (via `R1`)
+LW  R1, 0(R1)      # I5 - end data dependency A, begin data dependency B (via `R1`)
+ADD R1, R1, R1     # I6 - end data dependency B
 ```
 
-***N.B.*** A control hazard occurs here because after instruction `L1`, we fetch two incorrect instructions (`L2` and `L3`) before finally fetching the correct instruction `L4`.
+***N.B.*** A control hazard occurs here because after instruction `I1`, we fetch two incorrect instructions (`I2` and `I3`) before finally fetching the correct instruction `I4`.
 
 For each group of instructions, should we flush, stall, and/or forward?
 
 | Instructions Group | Flush | Stall | Forward |
 |:---:|:---:|:---:|:---:|
-| `L2` & `L3` | `√` - We must flush to resolve a control dependency | Stalling cannot be used for control dependencies | Forwarding cannot be used for control dependencies |
-| `L4` & `L5` | Flushing cannot be used for data dependencies | Since forwarding is a viable corrective action, it is preferred over stalling | `√` - In cycle C1 (see below), instruction `LW` reads register `R1` in stage `R` while instruction `MUL` writes the value in stage `A/B`, therefore, this value can be forwarded accordingly so that it is available to instruction `LW` upon its entry into stage `A/B` |
-| `L5` & `L6` | Flushing cannot be used for data dependencies | `√` - In cycle C2 (see below), when the instruction `ADD` reads register `R1` in stage `R`, the instruction `LW` (in stage `A/B`) is computing the address and still has not accessed memory at this point. Subsequently, in cycle C3 (see below), the instruction `ADD` is computing using the *inoorrect*/stale value in register `R1`, while instruction `LW` is still loading the memory (which it does not complete until the end of this cycle). Therefore, due to this "temporal mismatch," it is necessary to stall.  | `√` - After stalling for a cycle (i.e., in cycle C3, see below), we can forward in order to avoid additional stalling |
+| `I2` & `I3` | `√` - We must flush to resolve a control dependency | Stalling cannot be used for control dependencies | Forwarding cannot be used for control dependencies |
+| `I4` & `I5` | Flushing cannot be used for data dependencies | Since forwarding is a viable corrective action, it is preferred over stalling | `√` - In cycle C1 (see below), instruction `LW` reads register `R1` in stage `R` while instruction `MUL` writes the value in stage `A/B`, therefore, this value can be forwarded accordingly so that it is available to instruction `LW` upon its entry into stage `A/B` |
+| `I5` & `I6` | Flushing cannot be used for data dependencies | `√` - In cycle C2 (see below), when the instruction `ADD` reads register `R1` in stage `R`, the instruction `LW` (in stage `A/B`) is computing the address and still has not accessed memory at this point. Subsequently, in cycle C3 (see below), the instruction `ADD` is computing using the *incorrect*/stale value in register `R1`, while instruction `LW` is still loading the memory (which it does not complete until the end of this cycle). Therefore, due to this "temporal mismatch," it is necessary to stall.  | `√` - After stalling for a cycle (i.e., in cycle C3, see below), we can forward in order to avoid additional stalling |
 
 | Cycle | `F` | `R` | `A/B` | `M` | `W` |
 |:---:|:---:|:---:|:---:|:---:|:---:|
