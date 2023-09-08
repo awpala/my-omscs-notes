@@ -351,8 +351,8 @@ Explanation:
 |:---:|:---:|:---:|:---:|
 | `I1` → `I2` | `√` | ("freebie" given initially in the prompt) | ("freebie" given initially in the prompt) |
 | `I1` → `I3` | There are no shared registers between these instructions | `I3` does not write a result into a register that is previously read by `I1` | `√` - `I3` overwrites the result produced by `I1` in register `R1` |
-| `I1` → `I4` | `I4` reads register `R1`, however, the value it reads is *not* that produced by `I1` (but rather that produced by `I3`) | `I4` does not write a result into a register that is previously read by `I1` | `I4` writes to register `R4`, which is not used by `I1`; furthermore, even if `I4` were to have written to register `R1`, this would have been a data dependency with `I3` rather than with `R1` |
-| `I2` → `I3` | `I2` does not write to a register that is subsequently read by `I3` | `√` - `I3` overwrites register `R1`, which is previously read by `I2` | `I3` and `I4` each access *different* registers for writing (`R1` and `R4`, respectively) |
+| `I1` → `I4` | `I4` reads register `R1`, however, the value it reads is *not* that produced by `I1` (but rather that produced by `I3`) | `I4` does not write a result into a register that is previously read by `I1` | `I4` writes to register `R4`, which is not used by `I1`; furthermore, even if `I4` were to have written to register `R1`, this would have been a data dependency with `I3` (via register `R1`) rather than with `I1` |
+| `I2` → `I3` | `I2` does not write to a register that is subsequently read by `I3` | `√` - `I3` overwrites register `R1`, which is previously read by `I2` | `I3` and `I2` each access *different* registers for writing (`R1` and `R4`, respectively) |
 
 ## 13. Dependencies and Hazards
 
