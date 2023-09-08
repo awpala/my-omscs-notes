@@ -515,7 +515,7 @@ What (if any) dependencies are there between instructions `I1` and the others? (
 | C2 | `MUL` | `DIV` | `SUB` |
 | C3 | `...` | `MUL` | `DIV` |
 
-***N.B.*** Recall that dependencies (do not) exist irrespectively of the pipeline, and therefore can be determined on the basis of the program alone. Conversely, hazards must be analyzed with respect to the pipeline, which is determined by the relationship between the stages in which the corresponding read and write operations occur.
+***N.B.*** Recall that dependencies can exist irrespectively of the pipeline, and therefore can be determined on the basis of the ***program*** alone. Conversely, hazards must be analyzed with respect to the ***pipeline***, which is determined by the relationship between the stages in which the corresponding read and write operations occur.
 
 ## 15. Handling of Hazards
 
