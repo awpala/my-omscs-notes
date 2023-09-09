@@ -492,7 +492,7 @@ There are `16` entries in the BHT, which can be accessed via the offset least-si
 
 ***N.B.*** If `15` were reached in this manner, the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
 
-### 19. BTB and BHT 3 Quiz and Answers
+### 19. Quiz 3 and Answers
 
 <center>
 <img src="./assets/04-027A.png" width="650">
