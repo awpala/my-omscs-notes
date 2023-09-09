@@ -849,7 +849,7 @@ Observe that:
 
 Therefore, eventually the 2-bit history predictor becomes a perfect predictor for this pattern.
 
-## 31. Properties and Generalized *N*-Bit History Predictor
+### 31. Properties and Generalized *N*-Bit History Predictor
 
 <center>
 <img src="./assets/04-044.png" width="650">
