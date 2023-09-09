@@ -492,7 +492,7 @@ There are `16` entries in the BHT, which can be accessed via the offset least-si
 
 ***N.B.*** If `15` were reached in this manner, the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
 
-## 19. BTB and BHT 3 Quiz and Answers
+### 19. BTB and BHT 3 Quiz and Answers
 
 <center>
 <img src="./assets/04-027A.png" width="650">
@@ -517,7 +517,7 @@ The BTB table is only accessed if the branch history table (BHT) indicates to ta
 
 Therefore, by inspection, all non-branching instructions do not access the BTB table at all. The instruction `B Loop` at instruction `0xC01C` is *always* taken, and this occurs `100` times in the program loop. Furthermore, with respect to the instruction `BEQ R1, R2, Done` at instruction address `0xC008`, in every iteration that stays in the loop (i.e., when `R1` and `R2` are not equal, which occurs for `100` iterations, as per the quiz in Section 17), the branch is not taken and therefore the BTB table is not accessed; conversely, when `R1` and `R2` become equal (i.e., both having the value `100`, which occurs once in the final iteration), this causes an access of the BTB table (and consequent branch to `Done`).
 
-## 20. Quiz 4 and Answers
+### 20. Quiz 4 and Answers
 
 <center>
 <img src="./assets/04-029A.png" width="650">
@@ -542,7 +542,7 @@ Recall from the previous quiz (cf. Section 19) that only the branching instructi
 
 To determine the BHT entries of the branching instructions, this can be achieved by examining their instruction addresses. Since the BTB table has `4` entries, we use the four least-significant bits (LSBs) offset by two bits (i.e., `00`, which is are common to all of the instructions).
 
-## 21. Quiz 5 and Answers
+### 21. Quiz 5 and Answers
 
 <center>
 <img src="./assets/04-031A.png" width="650">
