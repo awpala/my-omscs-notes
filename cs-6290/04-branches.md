@@ -55,7 +55,7 @@ Therefore, in general, it is not advantageous *not* fetch a new instruction afte
 
 Another thing that is important to note is that at the end of the stage `F` (fetch) (where the instruction `BEQ` is fetched), we do not know anything about this instruction yet at this point. All we have obtained is the instruction word (the 4 bytes representing the instruction), but he have not yet begun to decode the branch. Therefore, in the next cycle, we must fetch the next instruction based only on the knowledge of the branch instruction's address, but otherwise we are unaware of whether or not it is a branch instruction at this point; this means there is insufficient information to make a prediction regarding whether or not to branch.
 
-# 3. Branch Prediction Requirements
+## 3. Branch Prediction Requirements
 
 <center>
 <img src="./assets/04-002.png" width="650">
@@ -361,7 +361,7 @@ For example, consider a loop composed of `100` program instructions. To account 
 
 Now that the BTB table is populated, consider the performance of timing experiments, which determine that only `1024` entries can be accessed in one cycle. This gives rise to the following question: Since there are many possible PC address values, how do we map *each* PC address value to an entry in the BTB table in a manner which avoids conflicts among different PC address values mapping to the *same* table entry? Furthermore, note that the mapping function must be relatively simple, because any additional delay/overhead incurred from computing the mapping function will further constrain the possible size for the BTB table (i.e., to ensure that the operation will still complete in one cycle).
 
-To achieve this objective, consider the composition of the 64-bit input address `PC`<sub>`NOW`</sub>. `log`<sub>`2`</sub>`(1024) = 10` bits are required to index into the BTB table. Therefore, we can dedicate the 10 least-significant bits (LSBs) to store the index into the BTB table. Such a mapping function is very fast, as it involves a simple/direct indexing into the table via the LSBs.
+To achieve this objective, consider the composition of the 64-bit input address `PC`<sub>`NOW`</sub>. `log_2(1024) = 10` bits are required to index into the BTB table. Therefore, we can dedicate the 10 least-significant bits (LSBs) to store the index into the BTB table. Such a mapping function is very fast, as it involves a simple/direct indexing into the table via the LSBs.
   * ***N.B.*** Here, we are using the least-significant bits (LSBs) rather than the most-significant bits (MSBs) because the MSBs typically resemble each other, particularly within the same part of a given program (e.g., within a loop), for example *`0x24`*`AC` (`ADD`), *`0x24`*`B0` (`MUL`), etc. This in turn would give rise to ambiguous inputs with respect to mapping into the BTB table (i.e., resulting in unintended conflicts/overwrites of existing values). Conversely, LSBs will generally be more dissimilar, even among "nearby" instructions within the program.
 
 ## 15. BTB Quiz and Answers
