@@ -720,13 +720,13 @@ Consider a 2-bit predictor having the four states as described previously (cf. S
 Assume we start at state `00` (Strong Not-Taken).
 
 Is there a sequence of branch outcomes that results in ***never*** predicting correctly? If so, indicate the first five steps of the state transitions sequence.
-  * `Yes`: `T` → `T` → `NT` → `T` → `NT`
+  * `Yes`: `T` → `T` → `N` → `T` → `N`
 
 ***Explanation***:
 ```
 SN WN WT WN WT ...
 00 01 10 01 10 ...
-T  T  NT T  NT ...
+T  T  N  T  N  ...
 X  X  X  X  X  ...
 ```
 
@@ -754,9 +754,9 @@ So, then, if adding more bits does not provide additional benefits beyond a cert
 <img src="./assets/04-039.png" width="650">
 </center>
 
-**History-based predictors** attempt to predict patterns with frequent changes in branching behavior, with changes occurring in a repeated pattern (as in the figure shown above). Such patterns are therefore ***predictable***, however, they are ineffectively predicted by *n*-bit predictors.
+**History-based predictors** attempt to predict patterns with frequent changes in branching behavior, with changes occurring in a repeated pattern (as in the figure shown above), e.g., `N` predicts `T` and `T` predicts `N`. Such patterns are therefore ***predictable***, however, they are ineffectively predicted by *n*-bit predictors.
 
-To solve this issue, history-based predictors "learn the pattern" over time. To accomplish this, rather than focusing solely on the "majority" outcome, history-based predictors examine the ***branch history*** as the program executes (as in the figure shown above). This history in turn refines the predictive pattern in response the *current* branching behavior, until the prediction eventually becomes accurate for the inherent underlying branching pattern (which may involve more complex "mappings", e.g., `NT NT` predicts `T`, `T NT` predicts `NT`, etc.).
+To solve this issue, history-based predictors "learn the pattern" over time. To accomplish this, rather than focusing solely on the "majority" outcome, history-based predictors examine the ***branch history*** as the program executes (as in the figure shown above). This history in turn refines the predictive pattern in response the *current* branching behavior, until the prediction eventually becomes accurate for the inherent underlying branching pattern (which may involve more complex "mappings", e.g., `N N` predicts `T`, `N T` predicts `N`, and `T N` predicts `N` via the preceding *two* decisions).
 
 ## 28. 1-Bit History Predictor with 2-Bit Counters
 
@@ -768,27 +768,18 @@ As a more concrete example, consider a history-based predictor comprised of a 1-
 
 Consider the following sequence:
 
-| Sequence | Predictor State | Prediction | Actual Branch Outcome | Correct Prediction? |
-|:---:|:---:|:---:|:---:|:---:|
-| S1 | `(0, SN, SN)` | `NT` | `T` | `X` |
-| S2 | `(1, WN, SN)` | `NT` | `NT` | `√` |
-| S3 | `(0, WN, SN)` | `NT` | `T` | `X` |
-| S4 | `(1, WT, SN)` | `NT` | `NT` | `√` |
-| S5 | `(0, WT, SN)` | `T` | `T` | `√` |
-| S6 | `(1, ST, SN)` | `NT` | `NT` | `√` |
-| S7 | `(0, ST, SN)` | `T` | `T` | `√` |
+| Sequence | Predictor State | Prediction | Actual Branch Outcome | Correct Prediction? | Comment |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| S1 | `(0, SN, SN)` | `N` | `T` | `X` | In the initial state (`(0, SN, SN)`, sequence S1), the history bit `0` indicates to use the *first* 2-bit predictor (`SN`), resulting in a prediction of `N` (not taken). However, since this differs from the actual branch outcome (`T`/taken), there is a misprediction. Since the prediction is incorrect, the history bit indexes into the first 2-bit predictor and changes it to `WN`, and then also flips itself to `1` (i.e., the actual outcome, `T`). |
+| S2 | `(1, WN, SN)` | `N` | `N` | `√` | In the next prediction (`(1, WN, SN)`, sequence S2), the history bit `1` indicates to use the *second* 2-bit predictor (`SN`), resulting in a prediction of `N`, which is correct. Therefore, the 2-bit predictors remain unchanged. Furthermore, the history bit is changed to `0`, consistently with the actual branch outcome (`N`). |
+| S3 | `(0, WN, SN)` | `N` | `T` | `X` | In the next prediction (`(0, WN, SN)`, sequence S3), the history bit `0` indicates to use the *first* 2-bit predictor (`WN`), resulting in a prediction of `N`, which is incorrect. Since the prediction is incorrect, the history bit indexes into the first 2-bit predictor and changes it to `WT`, and then also flips itself to `1` (i.e., the actual outcome, `T`). |
+| S4 | `(1, WT, SN)` | `N` | `N` | `√` | In the next prediction (`(1, WT, SN)`, sequence S4), the history bit `1` indicates to use the *second* 2-bit predictor (`SN`), resulting in a prediction of `N`, which is correct. Therefore, the 2-bit predictors remain unchanged. Furthermore, the history bit is changed to `0`, consistently with the actual branch outcome (`N`). |
+| S5 | `(0, WT, SN)` | `T` | `T` | `√` | In the next prediction (`(0, WT, SN)`, sequence S5), the history bit `0` indicates to use the *first* 2-bit predictor (`WT`), resulting in a prediction of `T`, which is correct. Since the prediction is correct, the history bit indexes into the first 2-bit predictor and changes it to `ST`, and then also flips itself to `1` (i.e., the actual outcome, `T`). |
+| S6 | `(1, ST, SN)` | `N` | `N` | `√` | (see below ) |
+| S7 | `(0, ST, SN)` | `T` | `T` | `√` | (see below ) |
+| ⋮ | ⋮ | ⋮ | ⋮ | ⋮ | ⋮ |
 
-In the initial state (`(0, SN, SN)`, sequence S1), the history bit `0` indicates to use the *first* 2-bit predictor (`SN`), resulting in a prediction of `NT` (not taken). However, since this differs from the actual branch outcome (`T`/taken), there is a misprediction. Since the prediction is incorrect, the history bit indexes into the first 2-bit predictor and changes it to `WN`, and then also flips itself to `1` (i.e., the actual outcome, `T`).
-
-In the next prediction (`(1, WN, SN)`, sequence S2), the history bit `1` indicates to use the *second* 2-bit predictor (`SN`), resulting in a prediction of `NT`, which is correct. Therefore, the 2-bit predictors remain unchanged. Furthermore, the history bit is changed to `0`, consistently with the actual branch outcome (`NT`).
-
-In the next prediction (`(0, WN, SN)`, sequence S3), the history bit `0` indicates to use the *first* 2-bit predictor (`WN`), resulting in a prediction of `NT`, which is incorrect. Since the prediction is incorrect, the history bit indexes into the first 2-bit predictor and changes it to `WT`, and then also flips itself to `1` (i.e., the actual outcome, `T`).
-
-In the next prediction (`(1, WT, SN)`, sequence S4), the history bit `1` indicates to use the *second* 2-bit predictor (`SN`), resulting in a prediction of `NT`, which is correct. Therefore, the 2-bit predictors remain unchanged. Furthermore, the history bit is changed to `0`, consistently with the actual branch outcome (`NT`).
-
-In the next prediction (`(0, WT, SN)`, sequence S5), the history bit `0` indicates to use the *first* 2-bit predictor (`WT`), resulting in a prediction of `T`, which is correct. Since the prediction is correct, the history bit indexes into the first 2-bit predictor and changes it to `ST`, and then also flips itself to `1` (i.e., the actual outcome, `T`).
-
-From this point on, there is perfect prediction, with the 2-bit predictors set to "strong" states, and the history bit flipping accordingly with the actual branch outcome to reference the appropriate 2-bit predictor. Therefore, at this point, the branching pattern has been "learned" by the predictor.
+From this point on (i.e., sequences S6, S7, and beyond), there is perfect prediction, with the 2-bit predictors set to "strong" states, and the history bit flipping accordingly with the actual branch outcome to reference the appropriate 2-bit predictor. Therefore, at this point, the branching pattern has been "learned" by the predictor.
 
 ## 29. 1-Bit History Predictor Quiz and Answers
 
@@ -818,6 +809,7 @@ Consider the corresponding sequence as follows:
 | S5 | `(0, WN, SN)` | `N` | `N` | `√` |
 | S6 | `(0, SN, SN)` | `N` | `T` | `X` |
 | S7 | `(0, SN, SN)` | `N` | `N` | `√` |
+| ⋮ | ⋮ | ⋮ | ⋮ | ⋮ |
 
 Since sequence S7 has the same state and prediction behavior as the initial state (i.e., sequence S1), it can be inferred by inspection that this pattern will continue. Therefore, in the overall `300` sequences, a third of these will be incorrect predictions (i.e., each third of the triplets, e.g., `S3` in `S1` to `S3`, `S6` in `S4` to `S6`, etc.), or `100` total. Therefore, a 1-bit history predictor is not particularly effective for this pattern.
 
@@ -835,7 +827,7 @@ For a 2-bit history predictor, as before, the program counter (PC) indexes into 
 
 Consider the operation of the 2-bit history predictor as follows (by generalizing the behavior of the 1-bit history predictor from the previous section):
 ```
-NT NT T   NT  NT  T   NT  NT  T   ...
+N  N  T   N   N   T   N   N   T   ⋯
       00  01  10  00  01  10  00
       C0↑         C0↑         C0↑
           C1↓         C1↓
@@ -844,7 +836,7 @@ NT NT T   NT  NT  T   NT  NT  T   ...
 
 Observe that:
   * Counter `C0` always increments, therefore, it quickly begins to consistently predict branch taken (`T`) and it converges on strongly taken (`ST`)
-  * Counters `C1` and `C2` always decrement, therefore, they quickly begin to consistently predict branch not taken (`NT`) and converge on strongly not taken (`SN`)
+  * Counters `C1` and `C2` always decrement, therefore, they quickly begin to consistently predict branch not taken (`N`) and converge on strongly not taken (`SN`)
   * Counter `C3` is never accessed, because the pattern `11` (i.e., via `TT`) does not occur in the history bits
 
 Therefore, eventually the 2-bit history predictor becomes a perfect predictor for this pattern.
@@ -859,7 +851,7 @@ The previous section demonstrated that after the initial "warmup" period, the 2-
 
 Furthermore, consider the pattern `(NT)*` using the 2-bit history predictor:
 ```
-NT T NT  T   NT  T   ...
+N T  N   T   N   T   ⋯
      01  10  01  10  
      C1↓     C1↓         
          C2↑     C2↑      
@@ -902,13 +894,13 @@ With respect to the 2-bit counters requirement:
 
 (*1-bit history predictor*)
 ```
-NT T NT ...
-   0 1
+N T N ⋯
+  0 1
 ```
 (*4-bit history predictor*)
 ```
-NT T NT T NT   T    NT   ...
-          0101 1010 0101
+N T N T N    T    N    ⋯
+        0101 1010 0101
 ```
   * uses patterns `01` and `10` exclusively, thereby requiring ***two*** 2-bit counters (i.e., from the available `2`<sup>`4`</sup>` = 16`)
 
@@ -936,7 +928,7 @@ How many history bits should each entry have?
 How many 2-bit counters should each entry have?
   * `2`<sup>`8`</sup>` = 256` 2-bit counters
 
-***N.B.*** The pattern of the outer-`for` loop's condition-check branch statement is `(NT NT NT NT NT NT NT NT T)*`. Therefore, using `256` will result in many unused/wasted bits, since realistically only `9` are required to effectively predict this pattern.
+***N.B.*** The pattern of the outer-`for` loop's condition-check branch statement is `(N N N N N N N N T)*`. Therefore, using `256` will result in many unused/wasted bits, since realistically only `9` are required to effectively predict this pattern.
 
 ## 34-36. History with Shared Counters
 
@@ -970,11 +962,11 @@ For example, with a PC index comprised of `11` bits (with corresponding `11`-bit
 
 Consider the pattern `T T T T ...` (i.e., branch always taken). In this case, the corresponding entry in the PHT is `1 1 1 1 ...`, along with a fixed PC index for the branch. Therefore, performing the appropriate combination (i.e., via XOR), this requires only `1` counter (i.e., only `1` entry in the BHT table, using only one of its 2-bit counters). Even so, the total cost for this is the PHT entry (e.g., `11` bits) combined with the size of the 2-bit counter (which is still much less than `2`<sup>`n`</sup> combined with the 2-bit counter).
 
-By the same reasoning, the pattern `NT NT NT NT ...` (with corresponding PHT entry `0 0 0 0 ...`) requires only `1` counter.
+By the same reasoning, the pattern `N N N N ...` (with corresponding PHT entry `0 0 0 0 ...`) requires only `1` counter.
 
-The pattern `NT T NT T ...` generates two possible PHT entries `0 1 0 1 ...` and `1 0 1 0 ...`, and therefore requires `2` counters.
+The pattern `N T N T ...` generates two possible PHT entries `0 1 0 1 ...` and `1 0 1 0 ...`, and therefore requires `2` counters.
 
-In general, it is evident that many patterns will indeed have a small counter requirement. This leaves many available entries in the BHT for more complex patterns such as `NT NT NT NT T`, which may require the full `n` history bits (e.g., `16`), correspondingly using all `n` 2-bit counters. Therefore, this arrangement naturally allocates BHT entries proportionally to the requirements of the PHT. However, to avoid potential conflicts, the BHT should be large relative to the PHT (i.e., to avoid mapping to the *same* entry in the BHT via two different PC indices representing two distinct/different branches); by virtue of using a 2-bit-entry BHT, it is not difficult to have a large BHT in practice.
+In general, it is evident that many patterns will indeed have a small counter requirement. This leaves many available entries in the BHT for more complex patterns such as `N N N N T`, which may require the full `n` history bits (e.g., `16`), correspondingly using all `n` 2-bit counters. Therefore, this arrangement naturally allocates BHT entries proportionally to the requirements of the PHT. However, to avoid potential conflicts, the BHT should be large relative to the PHT (i.e., to avoid mapping to the *same* entry in the BHT via two different PC indices representing two distinct/different branches); by virtue of using a 2-bit-entry BHT, it is not difficult to have a large BHT in practice.
 
 ## 37. Pshare
 
@@ -1083,14 +1075,12 @@ are combined with a **meta-predictor** (another array of 2-bit counters, which i
 
 The individual predictors are "trained" as before. However, the meta-predictor is trained differently. Rather than incrementing when the branch is taken and decrementing when the branch not taken, the meta-predictor is trained based on the performance of the two predictors, as depicted in the following table:
 
-| Predictor 1 | Predictor 2 | Meta-Predictor |
+| Predictor 1 (gshare) | Predictor 2 (pshare) | Meta-Predictor |
 |:--:|:--:|:--:|
 | correct prediction | correct prediction | no change |
-| correct prediction | incorrect prediction | decrement |
-| incorrect prediction | correct prediction | increment |
+| correct prediction | incorrect prediction | decrement (towards gshare) |
+| incorrect prediction | correct prediction | increment (towards pshare) |
 | incorrect prediction | incorrect prediction | no change |
-
-(where here Predictor 1 is the gshare, and Predictor 2 is the pshare)
 
 Therefore, in the meta-predictor, the prediction bit of the 2-bit counter indicates which of the two predictors to select. The hysteresis is present just in case gshare is overall more accurate but sometimes pshare beats it (or vice versa). Furthermore, note that each branch has its own meta-predictor entry (via corresponding PC index), and therefore this decision process depends on the branches themselves (i.e., correspondingly with the particular program behavior during its execution).
 
@@ -1122,7 +1112,7 @@ Consider the Pentium M processor, which represents a real-world hierarchical pre
   * ***local history*** - stores a local history for each branch, along with an array of 2-bit counters for different histories
   * ***global history*** - stores a global history (which is longer than the local-history predictor), along with an array of 2-bit counters
 
-To ***predict*** a single branch, first, look up the PC in the 2-bit counter array, as well as in the local and global history predictors
+To ***predict*** a single branch, first, look up the PC in the 2-bit counter array, as well as in the local and global history predictors.
 
 <center>
 <img src="./assets/04-059.png" width="350">
@@ -1166,9 +1156,9 @@ So, then, how do we determine whether the branch is present or not? To accomplis
 </center>
 
 Consider a program with the following characteristics, which uses a multi-predictor scheme to combine decisions:
-  * A 2-bit predictor which works well for 95% of instructions
-  * A pshare predictor which works well for the same 95% of instructions, and for an additional 2% not covered by the 2-bit predictor (i.e., giving an overall 97% prediction)
-  * A gshare predictor which works well for the same 95% of instructions, as well as for an additional 3% not covered by either the 2-bit predictor or the pshare predictor (i.e., giving an overall 98% prediction)
+  * A 2-bit predictor which works well for `95%` of instructions
+  * A pshare predictor which works well for the same `95%` of instructions, and for an additional `2%` not covered by the 2-bit predictor (i.e., giving an overall `97%` prediction)
+  * A gshare predictor which works well for the same `95%` of instructions, as well as for an additional `3%` not covered by either the 2-bit predictor or the pshare predictor (i.e., giving an overall `98%` prediction)
 
 Therefore, cumulatively, the three predictors can predict virtually 100% of instructions.
 
@@ -1177,7 +1167,7 @@ How can we describe such a multi-predictor? (Given options: `2-bit predictor`, `
 
 ***Explanation***:
 
-Because the 2-bit counter is the cheapest predictor which can cover the most branches, it is sensible to use it ot predict most of the branches. In such a multi-predictor scheme, the 2-bit counter is combined with a (more expensive) tournament predictor, which is reserved for branches which are mispredicted by the 2-bit counter. The tournament predictor in turn is composed of a pshare and gshare, which have complementary prediction capabilities (i.e., covering the remaining 5% of mispredictions) but are otherwise not advantageous relative to one another.
+Because the 2-bit counter is the cheapest predictor which can cover the most branches, it is sensible to use it ot predict most of the branches. In such a multi-predictor scheme, the 2-bit counter is combined with a (more expensive) tournament predictor, which is reserved for branches which are mispredicted by the 2-bit counter. The tournament predictor in turn is composed of a pshare and gshare, which have complementary prediction capabilities (i.e., covering the remaining `5%` of mispredictions) but are otherwise not advantageous relative to one another.
 
 ## 44-45. Return Address Stack (RAS)
 
@@ -1205,19 +1195,19 @@ As we have seen, there are several different types of branches requiring predict
 To resolve the issue with respect to predicting a return address correctly, we use a **return address stack (RAS)**, which is a separate predictor dedicated to predicting return addresses from a function call.
 
 <center>
-<img src="./assets/04-066.png" width="650">
+<img src="./assets/04-066.png" width="450">
 </center>
 
 The RAS works via a small hardware stack with a corresponding pointer. When a function call is executed (e.g., `CALL FUN` at address `0x1230`), the return address (i.e., `0x1234`) is pushed onto the RAS and the pointer is moved up.
 
 <center>
-<img src="./assets/04-067.png" width="650">
+<img src="./assets/04-067.png" width="450">
 </center>
 
 Within the function, upon reaching the instruction `RET`, the pointer is popped.
 
 <center>
-<img src="./assets/04-068.png" width="650">
+<img src="./assets/04-068.png" width="450">
 </center>
 
 Similarly, upon reaching `CALL FUN` at address `0x1250`, the return address (`0x1254`) is pushed on the RAS, and the pointer is moved up. Upon reaching the instruction `RET`, the pointer is popped.
@@ -1235,7 +1225,7 @@ What happens when we exceed the size of the RAS? (i.e., What resolution measures
 ## 46. RAS Quiz and Answers
 
 <center>
-<img src="./assets/04-071A.png" width="650">
+<img src="./assets/04-071A.png" width="550">
 </center>
 
 Which approach is better for resolving a full RAS stack?
