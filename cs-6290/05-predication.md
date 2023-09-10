@@ -96,14 +96,13 @@ MOV x, x1
 ⋮
 ```
 
-If we convert statement `x = cond ? x1 : x2;` (as shown above) into a conditional expression  that still branches based on the condition and then performs the move of `x2` into `x` or otherwise moves `x` into `x1`, then we haven't really done much; we have simply converted one branch into another, and now we have this branch twice (unless we have some sort of correlating predictor, such as the global history predictor), resulting in possibly *two* missed predictions, rather than only the *one* that could have resulted.
+If we convert statement `x = cond ? x1 : x2;` (as shown above) into a conditional expression  that still branches based on the condition and then performs the move of `x2` into `x` or otherwise moves `x` into `x1`, then we have not really done much; we have simply converted one branch into another, and now we have this branch twice (unless we have some sort of correlating predictor, such as the global history predictor), resulting in possibly *two* missed predictions, rather than only the *one* that could have resulted.
 
 <center>
 <img src="./assets/05-006.png" width="450">
 </center>
 
 Therefore, if this is the *only* possibility, then  if conversion is simply ***not*** performed.
-
 
 In order for if conversion to work here, what is need is an instruction such as `MOV x, x1, cond` via flag `cond` indicating `true`.
 
