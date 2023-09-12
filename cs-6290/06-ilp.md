@@ -21,6 +21,7 @@ In the most ***ideal*** situation, all instructions pending execution simply go 
 | `R6 = R7 ⨁ R8` (XOR) | `F` | `D` | `E` | `⋯` | `WB` |
 | `R5 = R8 × R9` | `F` | `D` | `E` | `⋯` | `WB` |
 | `R4 = R8 + R9` | `F` | `D` | `E` | `⋯` | `WB` |
+| ⋮ | ⋮ | ⋮ | ⋮ | ⋮ | ⋮ | 
 
 ****N.B.*** Using simplified high-level-language-like notation here instead of opcodes (i.e., assembly-style notation) for brevity.
 
@@ -92,7 +93,7 @@ Therefore, in general, the RAW dependencies will dictate the lower limit of the 
 ## 5. WAW Dependencies
 
 <center>
-<img src="./assets/06-006.png" width="450">
+<img src="./assets/06-006.png" width="550">
 </center>
 
 | Instruction | C5 | C6 | C7 | C8 |
@@ -113,13 +114,13 @@ Consequently, in this five-stage pipeline, by cycle `C6`, there is a "relative l
 Observe that the root cause of this ***problem*** is the delay induced from the upstream RAW dependency.
 
 <center>
-<img src="./assets/06-007.png" width="450">
+<img src="./assets/06-007.png" width="550">
 </center>
 
 | Instruction | C5 | C6 | C7 | C8 | C9 |
 |:--:|:--:|:--:|:--:|:--:|:--:|
 | `R1 = ...` | `E` | `M` | `WB R1` |`⋯` |`⋯` |
-| `R4 = ...` | `-` | `E` | `M` | `WB R4` |`⋯` |
+| `R4 = ...` | `(...)` | `E` | `M` | `WB R4` |`⋯` |
 | `R7 = ...` | `E` | `M` | `WB R7` |`⋯` |`⋯` |
 | `R8 = ...` | `E` | `M` | `WB R8` |`⋯` |`⋯` |
 | `R4 = ...` | `E` | `M` |`(...)`|`(...)`| `WB R4` |
@@ -132,11 +133,11 @@ To resolve this problem, on solution would be to delay the writing in the fifth 
 <img src="./assets/06-009A.png" width="450">
 </center>
 
-Now that we have seen two types of depdendencies (i.e., read-after-write/RAW and write-after-write/WAW) and how they can affect the scheduling of instructions in a processor attempting to perform at `CPI > 1`, consider the following scenario.
+Now that we have seen two types of dependencies (i.e., read-after-write/RAW and write-after-write/WAW) and how they can affect the scheduling of instructions in a processor attempting to perform at `CPI > 1`, consider the following scenario.
 
 A processor is given with a classical five-stage pipeline (`F`, `D`, `E`, `M`, `W`) and which can also perform ***forwarding*** (i.e., if the result has been produced, it is fed into the instruction correctly, even though it has not been written to a register yet). Furthermore, each stage can execute `10` instructions (i.e., ideally, it can perform all `10` instructions within `5` cycles--assuming no dependencies, etc.).
 
-Given this processor, in which cycle does the operation `WB` (write back) occur for the following instructions)?
+Given this processor, in which cycle does the operation `WB` (write back) occur for the following instructions?
 
 | Instruction | `E` | `WB` |
 |:--:|:--:|:--:|
@@ -178,18 +179,18 @@ In the sixth instruction, there is a dependency (via `R1` and `R4`) on the upstr
 ### 7. Introduction to False Dependencies
 
 Thus far we have seen that:
-  * read-after-write (RAW) dependencies are of concern due to having to feed the required value from a previous instruction, thereby causing a delay
-  * write-after-write (WAW) dependencies are of concern due to ensuring that the downstream-most instruction indeed occurs intended (i.e., writes a valid value to the register)
+  * **read-after-write (RAW)** dependencies are of concern due to having to feed the required value from a previous instruction, thereby causing a delay
+  * **write-after-write (WAW)** dependencies are of concern due to ensuring that the downstream-most instruction indeed occurs intended (i.e., writes a valid value to the register)
 
-Anti-dependencies (cf. Lesson 3) are also of concern here, because it is undesirable to overwrite results *before* the instructions requiring the results have a chance to actually use them.
+**Anti-dependencies** (cf. Lesson 3) are also of concern here, because it is undesirable to overwrite results *before* the instructions requiring the results have a chance to actually use them.
 
 <center>
-<img src="./assets/06-010.png" width="350">
+<img src="./assets/06-010.png" width="450">
 </center>
 
 Additionally, consider the removal of **false dependencies** (also called **name dependencies**).
-  * Read-after-write (RAW) is a **true dependency**, because it *must* be obeyed in order to produce a valid program (i.e., there is inter-dependency among the data shared by the instruction programs, which is consequential to the intended semantics of the program itself).
-  * Conversely, **write-after-read (WAR)** and **write-after-write (WAW)** are examples of **false dependencies**. This designation is due to the fact that there is nothing *fundamental* about them: They simply arise naturally by virtue of using the *same* register for two *different* results (e.g., as seen previously in this lesson, two instructions writing to the same register results in a WAW dependency; if the second/later instruction were to use another register to write this value instead, then the WAR dependency would cease to occur).
+  * **Read-after-write (RAW)** is a **true dependency**, because it *must* be obeyed in order to produce a valid program (i.e., there is inter-dependency among the data shared by the instruction programs, which is consequential to the intended semantics of the program itself).
+  * Conversely, **write-after-read (WAR)** and **write-after-write (WAW)** are examples of **false dependencies** (also called **name dependencies**). This designation is due to the fact that there is nothing *fundamental* about them: They simply arise naturally by virtue of using the *same* register for two *different* results (e.g., as seen previously in this lesson, two instructions writing to the same register results in a WAW dependency; if the second/later instruction were to use another register to write this value instead, then the WAR dependency would cease to occur).
 
 Therefore, when dealing with a ***true*** dependency, it is ***necessary*** to perform a delay in order to resolve it (i.e., there is no other possible resolution measure available, such as using an alternate/unused register). Conversely, false dependencies *do* have potential resolution measures, as discussed next.
 
@@ -229,7 +230,7 @@ However, throughout this time, the fourth instruction *is* otherwise capable of 
 
 Consider which value of `R4` will occur in the downstream-most instruction, as shown above.
 
-The second instruction will proceed from the stage `E` into the subsequent stages in the corresponding cycles (i.e., `M`/`C102` and `WB`/`C103`). Meanwhile, the fourth instruction proceeds similarly, but earlier on (i.e., `E`/`C100`, `M`/`C101`, and `WB`/`C102`). Because the second instruction writes to `R4` in a *later* cycle (i.e., CYCLE `C103`), this is the value ultimately received by the downstream-most instruction; however, this is ***not*** the intended semantics of the program, i.e., the value of `R4` should be that written in the fourth instruction.
+The second instruction will proceed from the stage `E` into the subsequent stages in the corresponding cycles (i.e., `M`/`C102` and `WB`/`C103`). Meanwhile, the fourth instruction proceeds similarly, but earlier on (i.e., `E`/`C100`, `M`/`C101`, and `WB`/`C102`). Because the second instruction writes to `R4` in a *later* cycle (i.e., cycle `C103`), this is the value ultimately received by the downstream-most instruction; however, this is ***not*** the intended semantics of the program, i.e., the value of `R4` should be that written in the fourth instruction.
 
 To resolve this issue, a possible **solution** here is to simply **duplicate** the value, i.e., the second instruction writes to *one* version of `R4`, while the fourth instruction writes to *another* version of `R4`, whereby both versions are stored for later recall. In this manner, rather than storing only *one* value in the register (e.g., `R4`), *multiple* such values are stored instead. Then, a subsequent instruction must **search** all of these possible values when attempting to read it later--i.e., that which occurred in the most recent *instruction* (e.g., the fourth instruction), but not necessarily the most recent *cycle* (e.g., cycle `C103`, via the second instruction; and similarly for the third instruction's reading of `R4` from the previous/second instruction rather than that of the earlier-cycle-occurring fourth instruction).
 
@@ -466,7 +467,7 @@ ILP can be defined as the instructions per cycle (IPC) resulting from the follow
 
 In other words, ILP describes the ideal performance of a processor which is only constrained by the existence of true dependencies within the program.
 
-In order to ***compute*** the ILP for a program, perform the following steps:
+In order to ***compute*** the ILP for a program, perform the following **steps**:
 1. Rename the registers as applicable
 2. Evaluate the program as if it is fully "executed," taking true dependencies into account in order to characterize the full (effective) set of instructions
 
@@ -477,7 +478,7 @@ A **key principle** of ILP to bear in mind (i.e., in order to conceptualize it p
 ### 14. ILP Example
 
 <center>
-<img src="./assets/06-021.png" width="650">
+<img src="./assets/06-021.png" width="550">
 </center>
 
 ```mips
@@ -539,7 +540,7 @@ ADD R1, R7, R7 # I7 - C1
 Ignoring output and anti dependencies, the following true dependencies occur in the program:
   * `I1` and `I2` via register `R1`
   * `I2` and `I3` via register `R2`
-    * ***N.B.*** There is also dependency between `I1` and `I3` via register `R1`, however, both are effectively "bottlenecking" similarly with respect to instruction `I3`
+    * ***N.B.*** There is also dependency between `I1` and `I3` via register `R1`, however, both `R1` and `R2` are effectively "bottlenecking" similarly with respect to instruction `I3`
   * `I3` and `I5` via register `R3`
   * `I1` and `I6` via register `R1`
 
@@ -554,7 +555,7 @@ ILP = 7 instructions / 4 cycles = 1.75
 <img src="./assets/06-024.png" width="650">
 </center>
 
-We have seen that when determining the ILP for a program, false dependencies among data dependencies can be effectively ignored, and instead only considering true dependencies (also called flow dependencies, or read-after-write [RAW] data dependencies). Therefore, instruction-level parallelism (ILP) on considers these types of data dependencies; however, note that there are additionally two other types of data dependencies of concern: **Structural dependencies** and **control dependencies**. How, then, do these latter dependencies affect ILP?
+We have seen that when determining the ILP for a program, false dependencies among data dependencies can be effectively ignored, and instead only considering true dependencies (also called flow dependencies, or read-after-write [RAW] data dependencies). Therefore, instruction-level parallelism (ILP) only considers these types of data dependencies; however, note that there are additionally two other types of data dependencies of concern: **Structural dependencies** and **control dependencies**. How, then, do these latter dependencies affect ILP?
 
 Firstly, when performing ILP analysis, there are *no* **structural dependencies** to consider. Structural dependencies occur when there is insufficient hardware available to perform all necessary tasks in the *same* cycle. However, when determining the ILP, *ideal* hardware is assumed, therefore, such an "implementation detail" is not a relevant consideration. Therefore, ignoring structural dependencies effectively implies that any instruction that *could* possibly execute in the cycle *will* execute accordingly (and not otherwise wait on another resource, e.g., being rate-limited by a single adder, etc.).
 
@@ -654,7 +655,7 @@ In this case, the IPC is only half that of the ILP. Therefore, in general, `ILP 
 ## 18. IPC & ILP Quiz and Answers
 
 <center>
-<img src="./assets/06-029A.png" width="450">
+<img src="./assets/06-029A.png" width="550">
 </center>
 
 ```mips
@@ -716,7 +717,7 @@ IPC = 6 instructions / 3 cycles = 2
 ## 19. ILP & IPC Discussion
 
 <center>
-<img src="./assets/06-030.png" width="450">
+<img src="./assets/06-030.png" width="650">
 </center>
 
 Having seen what ILP is and how it relates to IPC, we can now further discuss them comparatively.
