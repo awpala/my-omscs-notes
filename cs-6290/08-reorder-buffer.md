@@ -241,7 +241,7 @@ The reorder buffer (ROB) is required in order to (Select all applicable choices)
   * Determine which instruction goes to which execution unit
     * `DOES NOT APPLY` → The ROB is typically unified (i.e., *all* instructions go to the ROB, but they generally receive different/distinct entries in the ROB itself); therefore, it is evident/unambiguous which execution unit the instructions are directed to, because different execution units have distinct/dedicated reservation stations, and thus when an instruction is issued, it is sent to the *intended* set of reservations stations (which in turn dictate the corresponding execution unit)
 
-## 11. Branch Misprediction Recovery
+## 11-12. Branch Misprediction Recovery
 
 Recall that the reorder buffer (ROB) is necessary in order to have precise exceptions, as well as to facilitate recovery from branch mispredictions; the latter is the topic of section.
 
@@ -359,7 +359,7 @@ Overall, the **recovery** in a ROB-based processor consists of the following fea
   * Emptying out the mispredicted/incorrect ROB entries in the ROB after committing (i.e., via corresponding relocation of the pointer `Issue`)
   * Emptying out mispredicted/incorrect instructions in their respective reservation stations and correspondingly preventing execution units (e.g., `ALU`, etc.) from broadcasting results in the future
 
-## 12. ROB and Exceptions
+## 13. ROB and Exceptions
 
 Now, consider how a reorder buffer (ROB) fixes exception-handling issues.
 
@@ -393,7 +393,7 @@ To mitigate this issue, the ROB will designate the instruction `DIV` as an "exce
 
 Therefore, the ***key point*** with respect to exception handling is that the ROB simply treats the exception itself as a(n invalid) ***result***, with a corresponding ***delay*** in the actual handling of the exception itself until the exception-generating instruction commits (at which point, the exact "resume point" for the exception handler is already determined). Furthermore, this approach mitigates any possible phantom exceptions resulting from branching.
 
-## 13. Outside View of "Executed"
+## 14. Outside View of "Executed"
 
 <center>
 <img src="./assets/08-030.png" width="650">
@@ -468,7 +468,7 @@ Subsequently, the program will commence with the processor fetching from `Label`
 
 Therefore, the operation `Commit` effectively denotes "***official execution***" of the program, insofar as the programmer's perspective is concerned (which in general can differ from the *actual* execution occurring immediately prior to broadcasting of the result; thus, the internal state of the processor may not be reflected exactly "as-is" to the programmer).
 
-## 14. Exceptions with ReOrder Buffer (ROB) Quiz and Answers
+## 15. Exceptions with ReOrder Buffer (ROB) Quiz and Answers
 
 <center>
 <img src="./assets/08-042A.png" width="650">
@@ -509,7 +509,7 @@ To perform this "rollback," since the first instruction `ADD` is already committ
 
 At this point, the instruction `DIV` now carries the exception condition into the status Commit itself; therefore, upon attempting to commit the instruction, it is determined that this cannot be done, and the exception is consequently generated. Therefore, now, the processor ceases committing further and instead flushes all subsequent instructions from the pipeline, resulting in these latter instructions being effectively Unexecuted (i.e., insofar as the programmer is concerned, these instructions were "never" fetched in the first place). Now, the program can proceed transfer of control to the exception handler (as denoted by the purple right-pointing arrow in the figure shown above).
 
-## 15. Register Allocation Table (RAT) Updates on Commit
+## 16. Register Allocation Table (RAT) Updates on Commit
 
 <center>
 <img src="./assets/08-043.png" width="650">
@@ -588,9 +588,9 @@ At this point, with an empty ROB, the state of RAT is as expected, i.e., all reg
 
 When proceeding in this manner of analysis, be mindful of the fact that the results are copied ***directly*** from ROB to REGS, irrespectively of the RAT entry, however, the RAT is correspondingly updated accordingly on commit (but only if there is a necessary rename from the ROB entry to the register/REGS entry; otherwise, an existing ROB entry in RAT *is* the intended entry, i.e., one which is pending an upcoming commit).
 
-## 16-21. ReOrder Buffer (ROB) Example
+## 17-22. ReOrder Buffer (ROB) Example
 
-### 16. Cycles 1-2
+### 17. Cycles 1-2
 
 <center>
 <img src="./assets/08-051.png" width="650">
@@ -644,7 +644,7 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
 
 Since this processor is capable of dispatching in the same cycle, instruction `I2` is issued in cycle `C2`, with corresponding execution in the subsequent cycle `C3` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above. Furthermore, the RS is freed, and the result will eventually be written in cycle `C13` (instruction `MUL` requires `10` cycles to execute).
 
-### 17. Cycles 3-4
+### 18. Cycles 3-4
 
 <center>
 <img src="./assets/08-054.png" width="650">
@@ -687,7 +687,7 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
 
 Instruction `I4` is *not* capable of executing yet, because both of its operands are still pending results at this point, as in the table shown above. 
 
-### 18. Cycles 5-6
+### 19. Cycles 5-6
 
 <center>
 <img src="./assets/08-056.png" width="650">
@@ -738,7 +738,7 @@ Furthermore, note that at this point, while `I3` has completed execution and wri
 
 By cycle `C7`, there are no more instructions to issue. However, none of the in-progress instructions can execute yet, as they are pending the broadcast of dependent results. Therefore, based on this "gridlocked" situation, the next "eventful" cycle will not be until cycle `C13`, as described next.
 
-### 19. Cycles 13-24
+### 20. Cycles 13-24
 
 <center>
 <img src="./assets/08-058.png" width="650">
@@ -799,7 +799,7 @@ Instruction `I5` captures the broadcast value (i.e., `36`, via `ROB4`), and now 
 
 Note that at this point, none of the instructions with their `Done` bit set (i.e., instructions `I2` through `I4`) can commit yet, as they are all pending a commit by the upstream instruction `I1`. Accordingly, no commit will occur until this "bottleneck" is resolved (i.e., in cycle `C43`, as per the table shown above).
 
-### 20. Cycles 25-43
+### 21. Cycles 25-43
 
 <center>
 <img src="./assets/08-061.png" width="650">
@@ -874,7 +874,7 @@ Furthermore, up to this point, commits have been "gridlocked" by instruction `I1
 
 At this point, to the programmer, instruction `I1` "appears" as completed. In reality, all of the other instructions besides the last one are completed at this point as well, however, they are not completed yet in program-order (i.e., until they are committed).
 
-### 21. Cycles 44-48
+### 22. Cycles 44-48
 
 <center>
 <img src="./assets/08-065.png" width="650">
@@ -985,9 +985,9 @@ At this point, instruction `I6` can be committed in this cycle, as in the table 
 
 At this point, both the ROB and the RAT are empty, and the ARF contains the most-up-to-date values of the registers, thereby concluding this example.
 
-## 22-29. ReOrder Buffer (ROB) Quizzes and Answers
+## 23-30. ReOrder Buffer (ROB) Quizzes and Answers
 
-### 22. Quiz 1 and Answers
+### 23. Quiz 1 and Answers
 
 <center>
 <img src="./assets/08-071A.png" width="650">
@@ -1009,7 +1009,7 @@ At this point, both of instruction `I1`s operands (i.e., `R3` and `R4`) are dire
 
 Furthermore, the RAT entry is populated with entry `ROB1` for register `R2`.
 
-### 23. Quiz 2 and Answers
+### 24. Quiz 2 and Answers
 
 <center>
 <img src="./assets/08-072Q.png" width="650">
@@ -1049,7 +1049,7 @@ The entry for the RAT is simply `R1`, i.e., the result register of instruction `
 
 Furthermore, the corresponding RS fields for instruction `I4` are as in the table shown above.
 
-### 24. Quiz 3 and Answers
+### 25. Quiz 3 and Answers
 
 <center>
 <img src="./assets/08-076Q.png" width="650">
@@ -1075,7 +1075,7 @@ Since the broadcast and capture are able to occur in the same cycle in this syst
 
 ***N.B.*** Observe that in this cycle, instruction `I5` is able to issue, capture, and dispatch all in the *same* cycle!
 
-### 25. Quiz 4 and Answers
+### 26. Quiz 4 and Answers
 
 <center>
 <img src="./assets/08-078Q.png" width="650">
@@ -1103,7 +1103,7 @@ Observe that instruction `I4` (in its corresponding RS) is pending the result (i
 
 ***N.B.*** At this point, the system is "logjammed" (.e., via pending result `ROB1`) until cycle `C13`, so this cycle will be the focus of the next quiz accordingly.
 
-### 26. Quiz 5 and Answers
+### 27. Quiz 5 and Answers
 
 <center>
 <img src="./assets/08-081Q.png" width="650">
@@ -1130,7 +1130,7 @@ In addition to these events, what else occurs in cycle `C13`? (Provide correspon
 
 In cycle `C13` all instructions have been issued, and are additionally in progress of execution, as per the table shown above. Furthermore, neither instructions `I4` nor `I6` are able to write results at this point. However, by cycle `C13`, instruction `I1` is able to commit its result, and does so accordingly.
 
-### 27. Quiz 6 and Answers
+### 28. Quiz 6 and Answers
 
 <center>
 <img src="./assets/08-083Q.png" width="650">
@@ -1154,7 +1154,7 @@ What (if any) is/are the corresponding change(s) to the RAT in cycle `C14` conse
 
 As a result of the write result of instruction `I6`, there is *no* corresponding change to the RAT. It is ***important*** to understand that write result does *not* correspondingly update the RAT; the RAT is only updated *on commit*. This in turn ensures proper in program-order execution.
 
-### 28. Quiz 7 and Answers
+### 29. Quiz 7 and Answers
 
 <center>
 <img src="./assets/08-086Q.png" width="650">
@@ -1178,7 +1178,7 @@ Furthermore, inspecting the RAT indicates current entry `ROB6`, which is the mos
 
 Lastly, the ROB entry for `ROB2` can now be cleared on commit.
 
-### 29. Quiz 8 and Answers
+### 30. Quiz 8 and Answers
 
 <center>
 <img src="./assets/08-088Q.png" width="650">
@@ -1232,7 +1232,7 @@ In cycle `C19` (in which instruction `I6` commits), the following occur with res
 
 Upon completion of cycle `C19`, the current state of the system is as in the figure shown above, i.e., with ARF holding the most up-to-date values, and with the RAT, ROB, and RSes all empty.
 
-## 30. ReOrder Buffer (ROB) Timing Example
+## 31. ReOrder Buffer (ROB) Timing Example
 
 Following a similar approach to previously with respect to Tomasulo's algorithm (cf. Lesson 7), consider now a "timing analysis" of a ROB-based system.
 
@@ -1343,9 +1343,9 @@ Furthermore, the commit will be unable to occur until at least cycle `C48`, pend
 
 This concludes the timing analysis of the system.
 
-## 31-33. ReOrder Buffer (ROB) Timing Quizzes and Answers
+## 32-34. ReOrder Buffer (ROB) Timing Quizzes and Answers
 
-### 31. Quiz 1 and Answers
+### 32. Quiz 1 and Answers
 
 <center>
 <img src="./assets/08-094Q.png" width="650">
@@ -1405,7 +1405,7 @@ Instruction `I2` has no dependencies "by inspection," therefore, it commences ex
 
 Furthermore, the commit will be unable to occur until at least cycle `C8`, pending commit of the upstream instruction `I1`.
 
-### 32. Quiz 2 and Answers
+### 33. Quiz 2 and Answers
 
 <center>
 <img src="./assets/08-096Q.png" width="650">
@@ -1446,7 +1446,7 @@ Furthermore, instruction `I4` has dependencies for both of its operands, however
 
 Furthermore, the commit will occur subsequently thereafter in cycle `C10`.
 
-### 33. Quiz 3 and Answers
+### 34. Quiz 3 and Answers
 
 <center>
 <img src="./assets/08-098Q.png" width="650">
@@ -1490,7 +1490,7 @@ Furthermore, instruction `I6` has dependencies for both of its operands, however
 
 Furthermore, the commit will occur subsequently thereafter in cycle `C11`.
 
-## 34. Unified Reservation Stations
+## 35. Unified Reservation Stations
 
 Having seen how an reorder-buffer-based (ROB-based) processor works, which involves *separate* reservation stations, consider now the concept of the ***unified* reservation station**.
 
@@ -1508,7 +1508,7 @@ Therefore, to improve the ability use the RSes (a relatively expensive resource)
 
 In practice, processors typically use some variation of the unified reservation station (i.e., as opposed to strictly segregated/dedicated RSes).
 
-## 35. Superscalar
+## 36. Superscalar
 
 Up to this point, the reorder-buffer-based (ROB-based) processors examined have *not* been **superscalar**, i.e., they have only issued *one* instruction per cycle (rather than *greater* than one). Even with a processor capable of *committing* up to two instructions per cycle (cf. Section 31), there will still be a "bottlenck" induced by the rate-limiting issue operation.
 
@@ -1529,7 +1529,7 @@ Now, consider a real **superscalar** processor, as per the figure shown above. S
 
 Taking these characteristics in aggregate, among these, there will generally be a "weakest link," which will dictate the degree to which superscalar performance can actually be achieved (i.e,. performing *on average* `> 1` instruction per cycle across all of these operations).
 
-## 36. Terminology Confusion
+## 37. Terminology Confusion
 
 One additional point of discussion regarding out-of-order processors involves the ***terminology*** used around these concepts, and potentially resulting confusion as a result of terms' use.
 
@@ -1559,7 +1559,7 @@ Furthermore, there are alternative terms used for each of these stages/operation
   * `Retire` → The instruction is *retired* from the processor
   * `Graduate` → Also common in academic usage, for obvious reasons `:)`
 
-## 37. Out-of-Order?
+## 38. Out-of-Order?
 
 Finally, consider the notion of ***out-of-order*** in the context of a reorder-buffer-based (ROB-based) processor.
 
@@ -1574,7 +1574,7 @@ Consider the processor pipeline as in the figure shown above. In an out-of-order
 
 Therefore, in an out-of-order processor, only a subset of the stages are actually occurring out-of-order. In contrast, a strictly in-order processor would additionally perform these subsets of (otherwise out-of-order) stages in program-order as well.
 
-## 38. In-Order vs. Out-of-Order Quiz and Answers
+## 39. In-Order vs. Out-of-Order Quiz and Answers
 
 <center>
 <img src="./assets/08-105A.png" width="650">
@@ -1615,6 +1615,6 @@ Furthermore, stages Dispatch through Broadcast can occur out-of-order.
 
 Lastly, as indicated previously (cf. Section 37), Commit must occur strictly in program-order, and thus it follows by natural consequence that the subsequent release of the ROB entry will occur in program-order as well. 
 
-## 39. Lesson Outro
+## 40. Lesson Outro
 
 This lesson described the reorder buffer (ROB), which allows to correctly handle exceptions and branch mispredictions in out-of-order processors. This is quite important for actually making *real* programs work correctly; accordingly, virtually all modern high-performance processors include such a ROB.
