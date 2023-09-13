@@ -407,7 +407,7 @@ Therefore, because all of these operations *can* (and do) occur in every cycle, 
   * Is it possible to update the RAT entry for *both* `Issue` and `Write Result` (aka `Broadcast`) in the *same* cycle? → ***yes***.
     * An instruction that is issued may need to update the RAT, in order to change the entry belonging to its destination operand. Meanwhile, the instruction that is broadcasting also needs to update the RAT entry corresponding to its destination operand. Therefore, if the instruction being issued and the instruction writing its result *both* have the *same* destination-register entry in the RAT, then the RAT entry must be effectively "updated twice"; this *can* indeed be done. Rather than writing the entry once and then writing it again, it must be ensured that the instruction that issuing ends up being the one whose value is ultimately retained in the RAT; this is because the broadcast instruction is pointing other RSes to the read the corresponding register in the REGS, but since the issuing instruction is later-occurring in the program-order, the latter instructs the RSes to examine *its* own RS for the result. Because the (downstream) instructions that read the RAT are the ones that issue even later, then they need to see the *latest* value of the register upon their issuing, i.e., that which is produced by the currently issuing instruction (rather than the broadcasting instruction). Therefore, there is no ambiguity, and the issuing instruction can simply be used to update the RAT entry accordingly.
 
-## 16-19. One-Cycle Quizzes
+## 16-18. One-Cycle Quizzes
 
 ### Introduction
 
