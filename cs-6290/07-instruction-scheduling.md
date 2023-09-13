@@ -409,11 +409,11 @@ Therefore, because all of these operations *can* (and do) occur in every cycle, 
 
 ## 16-19. One-Cycle Quizzes
 
-### 16. Introduction
+### Introduction
 
 The following set of quizzes tests understanding of what occurs in one cycle via Tomasulo's algorithm.
 
-### 17. Part 1 Question and Answers
+### 16. Part 1 Question and Answers
 
 <center>
 <img src="./assets/07-038A.png" width="650">
@@ -438,7 +438,7 @@ These events can be analyzed in any arbitrary order, however, their resulting ef
 
 Lastly, the entry `F1` in REGS remains unchanged, since neither event affected that value.
 
-### 18. Part 2 Question and Answers
+### 17. Part 2 Question and Answers
 
 <center>
 <img src="./assets/07-040A.png" width="650">
@@ -463,7 +463,7 @@ With respect to the broadcast from `ALU`:
     * `RS1` entry for `RS0` is captured as `4.4`
     * `RS2` entry (which was issued in this same cycle) for `RS0` is captured as `4.4`; furthermore, this is necessary to occur in the *same* cycle, because with `RS0` freed, that value is now stale/invalid. `RS0` entry for `RS1` is still pending a result (which is permissible here, since `RS1` has not yet executed).
 
-### 19. Part 3 Question and Answers
+### 18. Part 3 Question and Answers
 
 <center>
 <img src="./assets/07-042A.png" width="650">
@@ -483,7 +483,7 @@ Recall (cf. Section 18) that `RS0` will free its reservation station and is in p
 
 ***N.B.*** In this case, since there is only *one* available instruction for dispatch, there is no ambiguity here. However, if there were *more than one* instructions available for dispatch, some type of mechanism (e.g., oldest first) would have to be devised/implemented to select among these, since there is only one execution unit (`ALU`) available.
 
-## 20. Tomasulo's Algorithm Quiz and Answers
+## 19. Tomasulo's Algorithm Quiz and Answers
 
 <center>
 <img src="./assets/07-044A.png" width="650">
@@ -497,7 +497,26 @@ Which of the following is ***not*** true regarding Tomasulo's algorithm?
   * It writes results in program-order
     * `APPLIES` - This is not necessarily true. Results can be written in the order in which they are *produced*, which may be out-of-program-order. 
 
-## 21-27. Tomasulo's Algorithm - Long Example
+## 20. Load and Store Instructions
+
+<center>
+<img src="./assets/07-046.png" width="650">
+</center>
+
+Here, let us briefly consider what occurs during load and store instructions.
+
+Just as we have previously seen data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies vai **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
+  * A **read-after-write (RAW)** dependency occurs if there is an operation `SW` (store word) to some address in memory, which is then followed by an operation `LW` (load word) from the same address (i.e., the `LW` uses the value stored by `SW`).
+  * A **write-after-read (WAR)** (false) dependency occurs if the program first performs `LW`, followed by `SW`; if these operations were reordered, then the `LW` reads a stale value (i.e., preceding that which is otherwise updated by the subsequent operation `SW`).
+  * A **write-after-write (WAW)** dependency occurs if there are successive  `SW` operations to the *same* address; here, the latest-occurring `SW` should be the value at the end, but a "stale" value can occur if these `SW` operations are reordered.
+
+Obviously, dependencies in memory must be similarly obeyed (and/or otherwise eliminated) just as for data dependencies in registers. To **resolve** these memory dependencies, Tomasulo's algorithm does the following:
+  * Perform instructions load and store **in-order**, i.e., do not reorder them at all, but rather insert them into the load/store queue in first-in, first-out order (e.g., a load does not execute if there is a previous store pending, even if the load is ready to execute at that point).
+    * In practice, this is the resolution method of choice for Tomasulo's algorithm.
+  * Identify the dependencies between load and store instructions, and correspondingly **reorder** them (as with any other instruction).
+    * This turns out to be rather complicated to implement in practice (i.e., relative to more straightforward approach to reordering register dependencies). However, this *is* in fact implemented on modern processors (i.e., including for load and store instructions).
+
+## 21-26. Tomasulo's Algorithm - Long Example
 
 ### 21. Introduction
 
@@ -554,26 +573,7 @@ Lastly, the reservation stations (RSes) are as follows:
 | `ML1` | | | | | | | |
 | `ML2` | | | | | | | |
 
-### 22. Load and Store Instructions
-
-<center>
-<img src="./assets/07-046.png" width="650">
-</center>
-
-Here, let us briefly consider what occurs during load and store instructions.
-
-Just as we have previously seen data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies vai **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
-  * A **read-after-write (RAW)** dependency occurs if there is an operation `SW` (store word) to some address in memory, which is then followed by an operation `LW` (load word) from the same address (i.e., the `LW` uses the value stored by `SW`).
-  * A **write-after-read (WAR)** (false) dependency occurs if the program first performs `LW`, followed by `SW`; if these operations were reordered, then the `LW` reads a stale value (i.e., preceding that which is otherwise updated by the subsequent operation `SW`).
-  * A **write-after-write (WAW)** dependency occurs if there are successive  `SW` operations to the *same* address; here, the latest-occurring `SW` should be the value at the end, but a "stale" value can occur if these `SW` operations are reordered.
-
-Obviously, dependencies in memory must be similarly obeyed (and/or otherwise eliminated) just as for data dependencies in registers. To **resolve** these memory dependencies, Tomasulo's algorithm does the following:
-  * Perform instructions load and store **in-order**, i.e., do not reorder them at all, but rather insert them into the load/store queue in first-in, first-out order (e.g., a load does not execute if there is a previous store pending, even if the load is ready to execute at that point).
-    * In practice, this is the resolution method of choice for Tomasulo's algorithm.
-  * Identify the dependencies between load and store instructions, and correspondingly **reorder** them (as with any other instruction).
-    * This turns out to be rather complicated to implement in practice (i.e., relative to more straightforward approach to reordering register dependencies). However, this *is* in fact implemented on modern processors (i.e., including for load and store instructions).
-
-### 23. Cycles 1-2
+### 22. Cycles 1-2
 
 <center>
 <img src="./assets/07-047.png" width="650">
@@ -653,7 +653,7 @@ The other operand `F2` is placed into the RAT (via corresponding RS `LD2`), as i
 
 Furthermore, note that instruction `I1` is dispatched in cycle `C2`, noted above in the corresponding tables for `C2`. Furthermore, recall (cf. Section 21) that a load instruction requires `2` cycles; here, we shall assume that the write back occurs *after* execution of the second cycle (from initiation) is completed (i.e., two cycles after `C2`, or `C4`).
 
-### 24. Cycles 3-4
+### 23. Cycles 3-4
 
 <center>
 <img src="./assets/07-049.png" width="650">
@@ -792,7 +792,7 @@ To recap, in cycle `C4`:
   * Instruction `I4` is issued
   * Instruction `I1` is dispatched and written back
 
-### 25. Cycles 5-6
+### 24. Cycles 5-6
 
 <center>
 <img src="./assets/07-052.png" width="650">
@@ -916,7 +916,7 @@ In summary, in cycle `C6`:
   * Result of instruction `I2` is broadcasted
   * No dispatch occurs yet
 
-### 26. Cycles 7-9
+### 25. Cycles 7-9
 
 <center>
 <img src="./assets/07-055.png" width="650">
@@ -985,7 +985,7 @@ With respect to broadcast and corresponding capture/latch, the RAT is updated as
 
 Furthermore, with respect to broadcast and corresponding capture/latch, `AD1` entry in RS `AD2` is updated accordingly (i.e., with result `-9.6`).
 
-### 27. Cycles 10-end
+### 26. Cycles 10-end
 
 <center>
 <img src="./assets/07-057.png" width="650">
@@ -1153,7 +1153,7 @@ Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e.,
 
 This concludes execution of the program via Tomasulo's algorithm.
 
-## 28. Tomasulo's Algorithm - Timing Example
+## 27. Tomasulo's Algorithm - Timing Example
 
 As a practical matter (e.g., exam questions), it is typically most noteworthy to focus on **timing** of particular events (i.e., cycles in which dispatches, executions, broadcasts, etc. occur).
 
@@ -1229,9 +1229,9 @@ Lastly, with respect to instruction `I6` (as in the table shown above), by inspe
 
 As a final "sanity check," to ensure proper ordering of instructions, examine the "Cycle of `Write Result`" to ensure there are no inconsistencies and/or nonsensical entries (e.g., two instructions attempting to write simultaneously in the *same* cycle). Here, no such inconsistencies result, so the proposed tentative values can be finalized. (Conversely, if such collisions had occurred, it would be necessary to reevaluate the cycles, e.g., postponing certain cycles to allow proper write results ordering.)
 
-## 29-31. Tomasulo's Algorithm Timing Quizzes
+## 28-29. Tomasulo's Algorithm Timing Quizzes
 
-### 29. Introduction
+### Introduction
 
 <center>
 <img src="./assets/07-063Q.png" width="650">
@@ -1266,7 +1266,7 @@ ADD F1, F3, F4
 
 The quiz which analyzes this processor via Tomasulo's algorithm is split into two parts, as covered in the following subsections.
 
-### 30. Part 1 Quiz and Answers
+### 28. Part 1 Quiz and Answers
 
 <center>
 <img src="./assets/07-064A.png" width="650">
@@ -1326,7 +1326,7 @@ With respect to instruction `I3` (as in the table shown above), it cannot dispat
 
 Finally, with respect to instruction `I4` (as in the table shown above), it cannot dispatch in the same cycle as its issue (i.e., cycle `C3`); furthermore, it has dependencies with respect to its operands `F2` (via `I2`) and `F6` (via `I3`), which further precludes dispatch. Since the earliest-available result is in cycle `C10` (via `I3`), and additionally per the hardware restriction of not having simultaneous capture and dispatch in the same cycle, the earliest-possible dispatch for instruction `I3` is cycle `C11`. Furthermore, a tentative write result can occur in cycle `C12` for this operation (which requires `1` cycle to execute).
 
-### 31. Part 2 Quiz and Answers
+### 29. Part 2 Quiz and Answers
 
 <center>
 <img src="./assets/07-066A.png" width="650">
@@ -1379,7 +1379,7 @@ With respect to instruction `I5` (as in the table shown above), it cannot issue 
 
 Finally, with respect to instruction `I6` (as in the table shown above), it cannot issue yet in cycle `C12`, because no reservation station is available yet at this point (i.e., execution of instructions `I4` and `I5` is ongoing at this point); furthermore, a reservation station cannot be reallocated simultaneously as the previously-executing instruction is dispatched from it, so the earliest-possible issue for instruction `I6` is cycle `C13` (via freed RS of instruction `I4`, which frees in cycle `C12`). There are no dependencies, however, it cannot dispatch in the same cycle as its issue (i.e., cycle `C13`), therefore, dispatch can only occur as soon as cycle `C14`. Furthermore, a tentative write result can occur in cycle `C15` for this operation (which requires `1` cycle to execute).
 
-## 32. Lesson Outro
+## 30. Lesson Outro
 
 This lesson examined how the processor can rename and reorder instructions in order to work around data dependencies.
 
