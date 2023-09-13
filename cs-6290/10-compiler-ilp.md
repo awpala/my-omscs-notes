@@ -56,7 +56,7 @@ This correspondingly allows for instructions `I1′` and `I2′` to be executed 
 
 Note that tree height reduction is ***not*** always feasible. In this particular case, it exploits the intrinsic **associativity** of addition operations; however, ***not*** all operations are associative in this manner. Therefore, such a technique is only appropriate if it does ***not*** otherwise alter the intended/correct semantics of the (in-order-equivalent) program itself.
 
-## 3. Tree Height Reduction Quiz and Answers
+## 4. Tree Height Reduction Quiz and Answers
 
 <center>
 <img src="./assets/10-005A.png" width="650">
@@ -121,7 +121,7 @@ Therefore, the resulting ILP from this tree height reduction is:
 
 Which is a 2× improvement over the original single-instruction-per-cycle (i.e., dependency-chain-limited) version of the program.
 
-## 4. Make Independent Instructions Easier to Find
+## 5. Make Independent Instructions Easier to Find
 
 <center>
 <img src="./assets/10-006.png" width="650">
@@ -134,7 +134,7 @@ This will be examined in the context of the following two techniques in particul
     * This includes loop-specific techniques, such as **loop unrolling** (and in particular how these techniques interact with instruction scheduling)
   * **Trace scheduling**, an even more powerful technique
 
-## 5. Instruction Scheduling
+## 6. Instruction Scheduling
 
 <center>
 <img src="./assets/10-007.png" width="450">
@@ -286,7 +286,7 @@ The corresponding cycles analysis is as follows:
 
 In this compiler-facilitated instruction scheduling, several of the intermediate stalls have been (either explicitly or effectively) eliminated, resulting in a net reduction from `10` cycles to `7` cycles per loop iteration in this program.
 
-## 6. Instruction Scheduling Quiz and Answers
+## 7. Instruction Scheduling Quiz and Answers
 
 <center>
 <img src="./assets/10-011Q.png" width="650">
@@ -425,7 +425,7 @@ The corresponding per-cycle analysis in the updated program is as follows:
 
 In this compiler-facilitated instruction scheduling, *both* of the intermediate stalls have been eliminated, resulting in a net reduction from `8` cycles to `6` cycles.
 
-## 7. Scheduling and If Conversion
+## 8. Scheduling and If Conversion
 
 <center>
 <img src="./assets/10-014.png" width="650">
@@ -441,7 +441,7 @@ After if conversion is performed (as in the right portion of the figure shown ab
 
 Therefore, overall, if conversion introduces many more opportunities for replacing stall cycles with useful instructions, thereby improving compiler-facilitated instruction scheduling in addition to the aforementioned (cf. Lesson 5) benefit with respect to branch prediction (i.e., avoiding otherwise unnecessary branch instructions).
 
-## 8. If Conversion for a Loop
+## 9. If Conversion for a Loop
 
 <center>
 <img src="./assets/10-015.png" width="650">
@@ -455,7 +455,7 @@ Examining the right-side code, in principle, if conversion would allow to perfor
 
 Therefore, an alternative to if conversion for loops (i.e., moving things "upstream" from "future" iterations) with a similar synergistic improvement on compiler-facilitated instruction scheduling is desirable. This improvement *does* in fact exist: It is called **loop unrolling**, which is discussed next.
 
-## 9. Loop Unrolling
+## 10. Loop Unrolling
 
 <center>
 <img src="./assets/10-016.png" width="650">
@@ -559,11 +559,11 @@ Loop:
 Therefore, the net change for a once-unrolled loop is to duplicate the looping instructions, and then make corresponding updates to the loop-iterating indexing logic; collectively, this is what is meant by "***unroll once***. By generalization, unrolling `n` times has a corresponding `n + 1` repetition of per-loop work (e.g., unrolling ***twice*** performs ***triple*** per-loop work, unrolling ***thrice*** performs ***quadruple*** per-loop work, etc.).
   * ***N.B.*** By corollary, the "baseline loop" is effectively ***not unrolled*** (i.e., unrolled "***zero***" times, but ***not*** unrolled *once*, i.e., beware not to mix up the concepts of the loop logic itself vs. the corresponding level of unrolling!).
 
-## 10-12. Loop Unrolling Benefits
+## 11-13. Loop Unrolling Benefits
 
 Now, let's consider the ***benefits*** of loop unrolling, as discussed in turn in the following subsections.
 
-### 10. Benefit: Reduction in Overall Instructions to Execute
+### 11. Benefit: Reduction in Overall Instructions to Execute
 
 <center>
 <img src="./assets/10-020.png" width="650">
@@ -593,7 +593,7 @@ Applying this formalism to the present example, the `clock cycle time` remains u
 
 Next, let's consider the effect on the CPI.
 
-### 11-12. Benefit: Reduction in Cycles per Instruction (CPI)
+### 12-13. Benefit: Reduction in Cycles per Instruction (CPI)
 
 <center>
 <img src="./assets/10-021.png" width="650">
@@ -797,7 +797,7 @@ CPU Execution Time = # instructions in the program × cycles per instruction × 
 
 The **net effect** is therefore a ***decrease*** in `CPU Execution` by reducing ***both*** `# instructions in the program` (via loop unrolling) ***and*** `cycles per instruction` (via compiler-facilitated instruction scheduling).
 
-## 13. Loop Unrolling Quiz and Answers
+## 14. Loop Unrolling Quiz and Answers
 
 <center>
 <img src="./assets/10-036A.png" width="650">
@@ -889,7 +889,7 @@ As before, there is still a dependency via operand `R1` between instructions `I1
 
 Therefore, after the initial load (i.e., instruction `I1`), which incurs an initial one-cycle cost, on commencing the first loop iteration, there is a `7` cycle requirement ***per loop*** to perform all `6` of the loop instructions. Correspondingly, for `1000` loop iterations, this requires `7 × 1000 = 7000` total instructions. However, note that with loop unrolling, the total number of loop iterations with once-unrolled loop unrolling is ***halved*** (i.e., each loop iteration performs ***twice*** the work of an equivalent not-unrolled loop), therefore, the equivalent number of iterations for the *same* program would be correspondingly only `7 × 500 = 3500`.
 
-## 14. Unrolling Downsides
+## 15. Unrolling Downsides
 
 <center>
 <img src="./assets/10-037.png" width="650">
@@ -905,7 +905,7 @@ Having now seen how loop unrolling can both reduce the overall workload as well 
 
 ***N.B.*** Solutions *do* exist for handling premature loop exit, however, these are beyond the scope of this course (these are covered in an advanced compiler course).
 
-## 15. Function Call Inlining
+## 16. Function Call Inlining
 
 An optimization similar to loop unrolling (insofar as benefits are concerned) is called **function call inlining**.
 
@@ -941,7 +941,7 @@ As before (cf. loop unrolling), the ***net effect*** of these benefits (i.e., pe
 
 However, there is a **downside** to function call inlining (which is correspondingly similar to that for loop unrolling), as discussed next.
 
-## 16. Function Call Inlining Downside
+## 17. Function Call Inlining Downside
 
 As with loop unrolling, a prominent **downside** of function call inlining is **code bloat**.
 
@@ -962,7 +962,7 @@ However, after inlining, the total number of instructions required is `20`, i.e.
 
 Therefore, function call inlining must be applied **judiciously**, rather than simply applying it indiscriminantly (i.e., for *all* functions and correspondingly for *all* function calls). Generally, it is most ***advantageous*** to inline functions which are small. However, as the function body grows, this results in replication of a lot of code relative to the original non-inlined version (even when accounting for the overhead in the latter).
 
-## 17. Function Call Inlining Quiz and Answers
+## 18. Function Call Inlining Quiz and Answers
 
 <center>
 <img src="./assets/10-041Q.png" width="650">
@@ -1047,7 +1047,7 @@ The corresponding per-cycle analysis is as follows:
 
 Therefore, in this particular example, the net reduction in cycles is strictly due to the elimination of the function-call overhead (i.e., instructions `CALL` and `RET`).
 
-## 18. Other Compiler-Facilitated IPC Enhancements
+## 19. Other Compiler-Facilitated IPC Enhancements
 
 <center>
 <img src="./assets/10-044.png" width="650">
@@ -1060,7 +1060,7 @@ There are additional compiler optimizations which can further enhance instructio
 
 **Trace scheduling** is another technique, which is essentially an enhanced form of if conversion. Conceptually, code which is intrinsically branched is analyzed to determine a **common path**, which are then subsequently combined (i.e., with branching otherwise eliminated between them), thereby promoting compiler-facilitated instruction scheduling across this consolidated code. Furthermore, **checks** are placed within this common-path code in order to execute code which is otherwise branched (i.e., outside of the common path), which also requires corresponding "fixes" to "un-branch" the corresponding consolidated code when necessary.
 
-## 19. Lesson Outro
+## 20. Lesson Outro
 
 This lesson introduced some of the more advanced compiler techniques that facilitate production of better programs more suited for modern processors characterized by branch prediction, out-of-order program execution, and execution of multiple instructions per cycle.
 
