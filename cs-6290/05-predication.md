@@ -241,9 +241,9 @@ To summarize, in the aforementioned approach involving conditional move instruct
 
 Per above features, those designated `not strictly necessary` can be mitigated/resolved by updating the ISA to make ***all*** instructions conditional (i.e., every instruction computes its result and then either does or does not write it to the destination register, depending on whether or not a condition is or is not true [respectively]). Such an approach is called **full predication**, which requires extensive ISA support to perform; this approach is discussed next.
 
-## 8-9. Full Predication
+## 9-10. Full Predication
 
-### 8. Hardware Support
+### 9. Hardware Support
 
 <center>
 <img src="./assets/05-014.png" width="650">
@@ -259,7 +259,7 @@ For example, the Intel **Itanium** instruction set has full predication (as in t
   * Here, an instruction such as `ADD r1=r2, r3` identifies the source registers (`r1` and `r2`), the destination register (`r1`), the instruction/opcode (`ADD`), and also includes a field (`qp`) within the instruction itself in order to specif the so-called **qualifying predicate** (which, here, identifies the location of the condition for performing the write to the register `r1`).
   * An Itanium instruction is comprised of 41 bits, wherein the six least-significant bits specify the qualifying predicate. In Itanium, these bits are actually small 1-bit registers, which enable to perform a condition check, whose result can be stored in this 1-bit register; correspondingly, these six bits indicate which of the 64-bit conditional registers will be used (i.e., in order to determine whether or not to write to `r1`).
 
-### 9. Example
+### 10. Example
 
 <center>
 <img src="./assets/05-015.png" width="650">
@@ -284,7 +284,7 @@ With this conversion scheme:
 
 Collectively, this provides a post-conversion instructions overhead (i.e., `3` instructions via full predication) at closer parity to original/unconverted (i.e., `3*0.5 + 2*0.5 = 2.5` instructions); the net overhead occurs simply by virtue of still requiring to do the work of *both* paths via full predication, rather than just *one* (but otherwise no additional instructions required to select the results, as in conditional-move-based if conversion).
 
-## 10. Full Predication Quiz and Answers
+## 11. Full Predication Quiz and Answers
 
 <center>
 <img src="./assets/05-017A.png" width="650">
@@ -333,7 +333,7 @@ Regarding the critical threshold for accuracy:
 
 Critically, these two schemes perform equally when the cost of mispredictions is `1.5 - 1.25 = 0.25` cycles per branch (i.e., this net loss can be incurred on average in the critical case). Since the misprediction penalty is `10` cycles, this implies a critical misprediction rate of `(0.25 cycles/branch)/(10 cycles) = 1/40` (i.e., 1 in 40 branches mispredicted, or `2.5%`). Therefore, the critical threshold is `1 - 0.025 = 0.975` (`97.5%`), i.e., the correct prediction rate must be at least 97.5% to avoid performing the if conversion via full predication.
 
-## 11. Lesson Outro
+## 12. Lesson Outro
 
 This lesson discussed if conversion, wherein difficult-to-predict branches are converted into equivalent code that longer but which excludes branches.
 
