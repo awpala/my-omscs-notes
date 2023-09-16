@@ -320,9 +320,33 @@ The overall size of the page table per process is `[2^32 virtual addresses / 4*(
 
 ***N.B.*** The respective virtual-memory address space usages of the processes (i.e., `1 MB` and `1 GB`) is inconsequential here, because a flat page table will have an entry for ***every*** possible page irrespectively of a given process's ***actual*** memory usage. Furthermore, the available **physical memory** is similarly inconsequential here (since anything in excess of this will simply be stored on hard disk). Instead, the ***critical factor*** here is the **per-entry size** (i.e., `8 bytes` in this case), as this dictates the size of the physical address which can be accommodated by the system (i.e., up to a `64 bit` physical addresses in this case). Such an arrangement in turn allows to expand its memory as necessary (e.g., by adding additional physical memory modules).
 
-## 13. Multi-Level Page Tables
+## 13-15. Multi-Level Page Tables
+
+### 13. Introduction
+
+Having seen that flat page tables can be quite large (even for `32 bit` address spaces, let alone for `64 bit` address spaces which are too large to even fit entirely in physical memory at all), now consider **multi-level page tables**, which are used to reduce the size of a page table when dealing with these large address spaces.
 
 <center>
 <img src="./assets/13-024.png" width="650">
 </center>
 
+The fundamental **problem** with flat page tables is that their ***size*** is directly proportional to ***address space*** (i.e., how much memory a given application *can* possibly address, rather than necessarily how much it *actually* uses during run-time).
+  * For a `32 bit` virtual address space, this results in a reasonably sized flat page table on the order of several MB.
+    * Note that even a relatively small `32 bit` application requiring only a few KB of memory will still require a page table of this size, as the page table size itself is unrelated to the actual run-time memory usage, but rather how much the application in question can potential address in that virtual address space.
+  * For a `64 bit` virtual address space, the resulting flat page table is simply too large for practical purposes (i.e., relative to physical storage), e.g., many GB *per page table*.
+
+**Multi-level page tables** are designed to overcome *both* of these issues, i.e.,:
+  * The overall size of the page table should be proportional to the amount of memory used at run-time
+  * The page table should be amenable to working with `64 bit` virtual addresses, as long as the `64 bit` program in question is not actually using *all* of this virtual address space during run-time (which in practice is virtually impossible/impractical)
+
+The ***premise*** behind the operation of multi-level pages has to do with how the **virtual address space** is actually used by the applications. Recall (cf. Section 5) that from the application's perspective, it "perceives" an addressable (virtual) address memory space of `2^64` addresses (as in the figure shown above).
+
+However, in reality, the running application only allocates a small subset of this address space with corresponding regions (e.g., `code`, `data`, `heap`, `stack`, etc.). What's more is that even if these regions are several GB apiece, in a `64 bit` virtual address space, there will still be many, many TB worth of ***unused*** addresses within the virtual address space itself. In a flat page table, there is still a page table entry for ***each*** of these addresses, including the (many) unused ones.
+
+Conversely, in a multi-level page table, the following two ***ideas*** are combined:
+  * Use bits from the virtual address in order to index the table (i.e., similarly to a flat page table), which is readily accomplished using hardware (i.e., indexing into an array)
+  * Avoid the use of (excessive) table entries for this corresponding indexing of ***each*** table (i.e., including the vastly unused virtual memory regions)
+
+Next, we will examine how this idea is actually organized/implemented.
+
+### 14. Multi-Level Page Table Structure
