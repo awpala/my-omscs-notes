@@ -350,3 +350,37 @@ Conversely, in a multi-level page table, the following two ***ideas*** are combi
 Next, we will examine how this idea is actually organized/implemented.
 
 ### 14. Multi-Level Page Table Structure
+
+<center>
+<img src="./assets/13-025.png" width="650">
+</center>
+
+The multi-level page stable (similarly to previously) views the **virtual address** in distinct ***segments***:
+  * **page offset**
+  * **page number**
+
+However, a ***key difference*** is that the page number region, rather than representing an *entire* (large) page table entry, instead is partitioned into two ***subsections*** (as in the figure shown above):
+ * **outer page table number** → indicates which part of the larger (i.e., flat-page-table-equivalent) page table is used
+ * **inner page table number** → which specific entry of the larger page table is used
+
+Effectively, the outer page table number indexes into the **outer page table** (a subset of the larger page table), and then each of these entries in turn indicate where to locate the so called **inner page table**.
+
+<center>
+<img src="./assets/13-026.png" width="650">
+</center>
+
+Once the **inner page table** is located, the **inner page table number** is used to index into the inner page table (as in the figure shown above), in order to identify the corresponding **frame number** in question (i.e., corresponding to the original virtual address).
+
+<center>
+<img src="./assets/13-027.png" width="650">
+</center>
+
+Similarly, a different outer page table entry will point to a correspondingly different inner page table (as in the figure shown above). Therefore, effectively, the outer page table number identifies the particularly relevant inner page table in question, while the inner page table number itself in turn identifies the location within the inner page table containing the frame number in question.
+
+Nominally, this appears as simply a "more complicated" way to effectively access the same/equivalent (flat) page table, i.e., there is still essentially a 1:1 correspondence between the inner page table number and the frame number, and correspondingly the cumulative size of the inner page tables is equivalent to the resulting "composite" flat page table (with the additional "overhead" of an added intermediate-level outer page table).
+
+This, then, begs the question: What kind of "savings" are resulting here (i.e., using multi-level page tables relative to flat page tables), exactly?
+
+### 15. Two-Level Page Table Example
+
+To understand the net benefit of multi-level page tables with respect to "saving space," consider a two-level page table.
