@@ -320,7 +320,7 @@ The overall size of the page table per process is `[2^32 virtual addresses / 4*(
 
 ***N.B.*** The respective virtual-memory address space usages of the processes (i.e., `1 MB` and `1 GB`) is inconsequential here, because a flat page table will have an entry for ***every*** possible page irrespectively of a given process's ***actual*** memory usage. Furthermore, the available **physical memory** is similarly inconsequential here (since anything in excess of this will simply be stored on hard disk). Instead, the ***critical factor*** here is the **per-entry size** (i.e., `8 bytes` in this case), as this dictates the size of the physical address which can be accommodated by the system (i.e., up to a `64 bit` physical addresses in this case). Such an arrangement in turn allows to expand its memory as necessary (e.g., by adding additional physical memory modules).
 
-## 13-15. Multi-Level Page Tables
+## 13-16. Multi-Level Page Tables
 
 ### 13. Introduction
 
@@ -383,4 +383,38 @@ This, then, begs the question: What kind of "savings" are resulting here (i.e., 
 
 ### 15. Two-Level Page Table Example
 
-To understand the net benefit of multi-level page tables with respect to "saving space," consider a two-level page table.
+To understand the net benefit of multi-level page tables with respect to "saving space," consider a **two-level page table**.
+
+<center>
+<img src="./assets/13-028.png" width="650">
+</center>
+
+Consider an example consisting of a small virtual address (as in the figure shown above), comprised of `4 bits` for the page number and `4 bits` for the offset. In a corresponding flat page table, `2^4 = 16` entries (numbered `0` through `15`, inclusive) are required to address the page table. Indexing in this manner will yield a frame number from the flat page table, as before.
+
+<center>
+<img src="./assets/13-029.png" width="650">
+</center>
+
+In a **two-level page table** (as in the figure shown above), the `4 bit` page number is split into two `2 bit` sections. Correspondingly, the same/equivalent virtual address is still comprised of `4 bit` page numbers, however, the `2 bit` outer region of the page number indexes into a `2^2 = 4` entries **outer page table**, with each entry pointing to a `2^2 = 4` entry **inner page table**.
+
+<center>
+<img src="./assets/13-030.png" width="650">
+</center>
+
+Once the corresponding inner page table is identified (as in the figure shown above), the `2 bit` inner region of the page number identifies the specific entry for the given inner page table, thereby yielding the target **frame number**.
+
+As seen previously (cf. Section 14), the cumulative size of all of the inner page tables is the same/equivalent to the original flat page table (e.g., `16` total entries in both cases in the example from this section), and what's more is that the outer page table even adds *additional* space/entries (e.g., `4` entries in this example). So, then, where are the ***savings*** in a two-level page table relative to the flat-page-table equivalent (i.e., with respect to entries/memory usage)?
+
+<center>
+<img src="./assets/13-031.png" width="650">
+</center>
+
+The savings derive from the fact that if there is an unused entry in the outer page table (i.e., such that none of the constituent inner-page-table entries correspond to actual/in-use physical memory), then the outer page table is simply marked as "unnecessary," thereby eliminating the need to use its constituent inner page table in the first place.
+
+In this manner, in a large virtual address space, the outer page table will contain many such pointers, most of which will point to such "eliminated" inner page tables. This yields ***one*** reasonably sized outer page table (i.e., which ***can*** fit in physical memory), with a correspondingly ***small*** number of constituent inner page tables (each of which in turn are similarly "reasonably" size, i.e., sufficiently within the bounds of physical memory).
+
+### 16. Two-Level Page Table Size
+
+<center>
+<img src="./assets/13-032.png" width="650">
+</center>
