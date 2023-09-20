@@ -535,21 +535,21 @@ Correspondingly, for the ***flat*** page table, the size is (via `8 = 2^3 bytes`
 
 As for the ***four-level*** page table, the `64 bit` is split into four equally sized constituent regions of `(48 pages)/4 = 12 bits` apiece, to correspondingly index into the four levels of page tables.
 
-To determine the overall page table size, the easiest way to accomplish this to first determine the number of innermost page tables required for the program in question. Accordingly, `4 GB = 2^32 bytes` worth of memory is required for the program itself, corresponding to:
+To determine the overall page table size, the easiest way to accomplish this is to first determine the number of innermost page tables required for the program in question. Accordingly, `4 GB = 2^32 bytes` worth of memory is required for the program itself, corresponding to:
 
 ```
 (2^32 entries) / (2^16 bytes per page) = 2^16 pages
 ```
 
-Consequently, one innermost page table comprises `2^12` entries. Therefore, the total number of these innermost page tables is:
+One innermost page table comprises `2^12` entries. Consequently, the total number of these innermost page tables is therefore:
 
 ```
 (2^16 pages) / (2^12 entries per page) = 2^4 = 16 innermost page tables
 ```
 
-At the next page table level, the corresponding number of page table entries pointing to these `16` innermost page tables is simply `1` by inspection, since the available sizing is up to `2^12` entries (per aforementioned "equally sized" bit regions of the virtual address), which is plentifully sufficient to address only `16` of these innermost page tables. 
+At the next page table level, the corresponding number of page table entries pointing to these `16` innermost page tables is simply `1` by inspection, since the available sizing is up to `2^12` entries (per aforementioned "equally sized" `12 bit` regions of the virtual address), which is plentifully sufficient to address only `16 = 2^4` of these innermost page tables. 
 
-Generalizing in this manner, the page table sizes (from outermost to innermost, respectively) are as follows (as in the figure shown above):
+Generalizing in this manner, the page table sizes (from *outermost* to *innermost*, respectively) are as follows (as in the figure shown above):
   * (*outermost*) `1` entry used of `2^12 = 1024` available
   * `1` entry used of `2^12 = 1024` available
   * `16` entries used of `2^12 = 1024` available
@@ -558,9 +558,36 @@ Generalizing in this manner, the page table sizes (from outermost to innermost, 
 Accordingly, the cumulative size of this four-level page table configuration is:
 
 ```
-[1 + 1 + 1 + 16 page tables] × [(2^12 page table entries) * (2^3 bytes per page table entry)] = [19] × [2^15] = 608 KB
+[1 + 1 + 1 + 16 page tables] × [(2^12 page table entries) * (2^3 bytes per page table entry)] = [19 page tables] × [2^15 bytes per page table] = 608 KB
 ```
 
 ***N.B.*** This is substantially less than the corresponding flat page table (cf. `2^51 bytes`). Correspondingly, this is why practically all modern processors use multi-level page tables accordingly (typically, at least `3` levels of paging).
 
 ## 18. Choosing the Page Size
+
+<center>
+<img src="./assets/13-035.png" width="650">
+</center>
+
+As demonstrated in most examples thus far in this lesson, page sizes typically are on the order of `4 KB` to `64 KB`. This begs the question: How exactly do we choose the page size supported by a given processor?
+
+Consider a comparison of larger vs. smaller page sizes as follows:
+
+| Page Size | Benefits | Drawbacks |
+|:--:|:--:|:--:|
+| Smaller | Less prone to **internal fragmentation**. | Smaller page sizes result in larger (innermost) page tables. |
+| Larger | Larger page sizes result in a smaller (innermost) page table, whereby each page table requires generally only one entry per non-innermost page table (i.e., pointing to the next-innermost page table). | Suffers from **internal fragmentation**.  |
+
+In practice, memory can only be allocated to applications on a per-unit basis of pages. Therefore, with a very large page size (and correspondingly very small innermost page tables in a multi-level page table configuration), this will result in **internal fragmentation**, which occurs when the application requests some amount of memory with is a non-integer-multiple of the page size (as in the figure shown above), whereby multiple pages must be allocated, with resulting "deadweight"/unused memory area among the allocated page(s) (denoted by red bracket and blue shading in the figure shown above). 
+  * ***N.B.*** Bear in mind that this "deadweight" is physical memory which is allocated to the application, but otherwise unutilized. Furthermore, when the page is on disk, the corresponding memory is also "wasted" (i.e., the entire page is also stored on disk in this manner), though in practice this may be less of an issue on disk, since typically disk space is much larger than main memory (i.e., RAM).
+
+So, then, how do we choose the page size, given these apparent tradeoffs (i.e., optimizing between page table size vs. potential internal fragmentation)? As with block sizing of caches (cf. Lesson 12), there is a ***compromise*** to reach here with respect to optimizing these parameters. As it turns out, a generally "acceptable" compromise in this context is to use page sizes ranging from ***a few kilobytes*** to ***a few megabytes***.
+  * Correspondingly, x86 processors typically use a page size of `4 KB`, since contemporaneously to their initial design, bias was more towards smaller pages due to concerns regarding wasted memory.
+  * More recently, for `64 bit` processors in the era of `GB` to `TB` sized memories (i.e., 2010s and beyond), a page size on the order of `1 MB` is still relatively small and relatively "not wasteful"
+
+## 19. Memory Access Time with Virtual-to-Physical Address Translation
+
+<center>
+<img src="./assets/13-036.png" width="650">
+</center>
+
