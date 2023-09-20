@@ -96,7 +96,7 @@ The second/smaller program might go to a ***different*** location in physical me
 <img src="./assets/13-007.png" width="650">
 </center>
 
-Conversely, the second/smaller program might go to the ***same*** location in phsyical memory (e.g., if the two programs are sharing data), as in the figure shown above.
+Conversely, the second/smaller program might go to the ***same*** location in physical memory (e.g., if the two programs are sharing data), as in the figure shown above.
 
 <center>
 <img src="./assets/13-008.png" width="650">
@@ -415,6 +415,84 @@ In this manner, in a large virtual address space, the outer page table will cont
 
 ### 16. Two-Level Page Table Size
 
+Consider now how large a two-level page table can grow with respect to size.
+
 <center>
 <img src="./assets/13-032.png" width="650">
 </center>
+
+Consider a two-level page table characterized as follows:
+  * `32 bit` virtual address space
+  * `4 KB` page size
+  * `1024` entry outer page table
+  * `1024` entry inner page tables (up to `1024` total inner tables)
+  * `8 bytes` per page table entry
+  * the program uses virtual memory addressed in address-space regions:
+    * `0x00000000` through `0x00010000` (top region of address space)
+    * `0xFFFF0000` through `0xFFFFFFFF` (bottom region of address space)
+
+Given these characteristics, let us now compare/contrast the flat page table size versus the corresponding two-level page table size.
+
+In the flat page table, there is one entry for each possible page. Accordingly, this gives:
+
+```
+(2^32 pages) / (4 * 2^10 bytes per page table entry) = 2^20 entries
+```
+
+Therefore, the ***total size*** of the flat page table is:
+
+```
+(2^20 entries) × (8 bytes per page table entry) = 8 MB
+```
+
+Conversely, in the two-level page table, first we must determine the total number of inner page tables there are across the two aforementioned address-space regions.
+
+Note that the virtual address is composed of the following regions (as in the figure shown above):
+  * `10 bit` outer page number region to index into the `1024` entry outer page table (i.e., `log_2(1024) = 10`)
+  * `10 bit` inner page number region to index into the `1024` entry inner page tables (i.e., `log_2(1024) = 10`)
+  * `12 bit` offset to index into the `4 KB` page
+
+***N.B.*** This correspondingly comprises a `32 bit` address (i.e., `10 + 10 + 12`), as per the original specification.
+
+Given these virtual address bits regions, the outer page table will be ***sized*** as follows:
+
+```
+(2^10 entries) × (8 bytes per page table entry) = 8 KB
+```
+
+Now, the question is: Which of these outer page table entries need to point to actual inner page table entries, with the other remaining entries indicating no inner page table?
+
+To answer this, it is necessary to determine which of the inner page table entries are needed to point to actual pages of memory. To do this, the given virtual-address-space address regions' virtual addresses can be decomposed into offset (least significant bits) and page number (most significant bits) components as follows:
+
+(*top region* → `0x00000|000` through `0x00010|000`)
+```
+                         |
+0000 0000 0000 0000 0000   0000 0000 0000
+⋮
+0000 0000 0000 0001 0000   0000 0000 0000
+```
+
+(*bottom region* → `0xFFFF0|000` through `0xFFFFF|FFF`)
+```
+                         |
+1111 1111 1111 1111 0000   0000 0000 0000
+⋮
+1111 1111 1111 1111 1111   1111 1111 1111
+```
+
+For the respective page number regions (i.e., highest `10` least significant bits), observe that these are common across the addresses for each respective region:
+  * top region → `0000 0000 00...` (first outer page table entry)
+  * bottom region → `1111 1111 11...` (last outer page table entry)
+
+Correspondingly, this will require two distinct entries in the outer page table, representing each respective region (and corresponding inner page table), while the remaining outer page table entries will be empty/unused.
+  * ***N.B.*** There are `1024` entries in the outer page table, thus these require only `2` of these outer page table entries to be used (i.e., the remaining `1024 - 2 = 1022` are empty/unused).
+
+With respect to sizing of the inner page tables, this gives:
+
+```
+(2 inner page tables) × (2^10 entries) × (8 bytes per page table entry) = 16 KB
+```
+
+Combining this with the outer page table size (`8 KB`), this gives a cumulative size of `16 KB + 8 KB = 24 KB` for the two-level page table (cf. `8 MB` for the equivalent flat page table). Given this substantial reduction in size (i.e., relative to the equivalent flat page table), multi-level page tables are almost exclusively used in modern processors, especially when dealing with a `64 bit` virtual address space (for which an equivalent flat page table is much larger than what can actually fit in physical memory).
+
+## 17. Four-Level Page Table Quiz and Answers
