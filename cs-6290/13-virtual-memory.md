@@ -576,14 +576,14 @@ Consider a comparison of larger vs. smaller page sizes as follows:
 | Page Size | Benefits | Drawbacks |
 |:--:|:--:|:--:|
 | Smaller | Less prone to **internal fragmentation**. | Smaller page sizes result in larger (innermost) page tables. |
-| Larger | Larger page sizes result in a smaller (innermost) page table, whereby each page table requires generally only one entry per non-innermost page table (i.e., pointing to the next-innermost page table). | Suffers from **internal fragmentation**.  |
+| Larger | Larger page sizes result in a smaller (innermost) page table, whereby each non-innermost page table generally requires only one entry (i.e., pointing to the next-non-innermost page table). | Suffers from **internal fragmentation**.  |
 
 In practice, memory can only be allocated to applications on a per-unit basis of pages. Therefore, with a very large page size (and correspondingly very small innermost page tables in a multi-level page table configuration), this will result in **internal fragmentation**, which occurs when the application requests some amount of memory with is a non-integer-multiple of the page size (as in the figure shown above), whereby multiple pages must be allocated, with resulting "deadweight"/unused memory area among the allocated page(s) (denoted by red bracket and blue shading in the figure shown above). 
   * ***N.B.*** Bear in mind that this "deadweight" is physical memory which is allocated to the application, but otherwise unutilized. Furthermore, when the page is on disk, the corresponding memory is also "wasted" (i.e., the entire page is also stored on disk in this manner), though in practice this may be less of an issue on disk, since typically disk space is much larger than main memory (i.e., RAM).
 
 So, then, how do we choose the page size, given these apparent tradeoffs (i.e., optimizing between page table size vs. potential internal fragmentation)? As with block sizing of caches (cf. Lesson 12), there is a ***compromise*** to reach here with respect to optimizing these parameters. As it turns out, a generally "acceptable" compromise in this context is to use page sizes ranging from ***a few kilobytes*** to ***a few megabytes***.
   * Correspondingly, x86 processors typically use a page size of `4 KB`, since contemporaneously to their initial design, bias was more towards smaller pages due to concerns regarding wasted memory.
-  * More recently, for `64 bit` processors in the era of `GB` to `TB` sized memories (i.e., 2010s and beyond), a page size on the order of `1 MB` is still relatively small and relatively "not wasteful"
+  * More recently, for `64 bit` processors in the era of `GB` to `TB` sized memories (i.e., 2010s and beyond), a page size on the order of `1 MB` is still relatively small and relatively "not wasteful."
 
 ## 19. Memory Access Time with Virtual-to-Physical Address Translation
 
