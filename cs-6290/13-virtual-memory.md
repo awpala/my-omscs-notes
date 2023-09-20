@@ -496,3 +496,71 @@ With respect to sizing of the inner page tables, this gives:
 Combining this with the outer page table size (`8 KB`), this gives a cumulative size of `16 KB + 8 KB = 24 KB` for the two-level page table (cf. `8 MB` for the equivalent flat page table). Given this substantial reduction in size (i.e., relative to the equivalent flat page table), multi-level page tables are almost exclusively used in modern processors, especially when dealing with a `64 bit` virtual address space (for which an equivalent flat page table is much larger than what can actually fit in physical memory).
 
 ## 17. Four-Level Page Table Quiz and Answers
+
+<center>
+<img src="./assets/13-034A.png" width="650">
+</center>
+
+Consider a four-level page table characterized as follows:
+  * `64 bit` virtual address space
+  * `64 KB` page size
+  * `8 bytes` per page table entry
+  * the program uses virtual memory addressed in address-space regions `0` through `4 GB` (`4 * 2^30 = 2^32`) only
+  * the page number is split equally (i.e., the bits of the page-number region of the virtual address are divided into four equal groups for accessing the constituent page tables)
+
+What is the equivalent flat page table size?
+  * `2^51` entries
+
+What is the size of the four-level page table?
+  * `608 KB`
+
+***Answer and Explanation***:
+
+Per the table characteristics, there are:
+  * `2^64` addresses/entries in the virtual address space
+  * `64 * 2^10 = 2^16 bytes` per page
+
+Therefore, in the virtual address space, there are:
+
+```
+(2^64 entries) / (2^16 bytes per page) = 2^48 pages
+```
+
+Correspondingly, for the ***flat*** page table, the size is (via `8 = 2^3 bytes` per page table entry):
+
+```
+(2^48 pages) × (2^8 bytes per page table entry) = 2^51 bytes
+```
+* ***N.B.*** This is an enormously sized page table (i.e., `2048 TB = 2 PB`).
+
+As for the ***four-level*** page table, the `64 bit` is split into four equally sized constituent regions of `(48 pages)/4 = 12 bits` apiece, to correspondingly index into the four levels of page tables.
+
+To determine the overall page table size, the easiest way to accomplish this to first determine the number of innermost page tables required for the program in question. Accordingly, `4 GB = 2^32 bytes` worth of memory is required for the program itself, corresponding to:
+
+```
+(2^32 entries) / (2^16 bytes per page) = 2^16 pages
+```
+
+Consequently, one innermost page table comprises `2^12` entries. Therefore, the total number of these innermost page tables is:
+
+```
+(2^16 pages) / (2^12 entries per page) = 2^4 = 16 innermost page tables
+```
+
+At the next page table level, the corresponding number of page table entries pointing to these `16` innermost page tables is simply `1` by inspection, since the available sizing is up to `2^12` entries (per aforementioned "equally sized" bit regions of the virtual address), which is plentifully sufficient to address only `16` of these innermost page tables. 
+
+Generalizing in this manner, the page table sizes (from outermost to innermost, respectively) are as follows (as in the figure shown above):
+  * (*outermost*) `1` entry used of `2^12 = 1024` available
+  * `1` entry used of `2^12 = 1024` available
+  * `16` entries used of `2^12 = 1024` available
+  * (*innermost*) `16 * 2^12 = 2^16` entries used of `16 * 2^12 = 2^16` available
+
+Accordingly, the cumulative size of this four-level page table configuration is:
+
+```
+[1 + 1 + 1 + 16 page tables] × [(2^12 page table entries) * (2^3 bytes per page table entry)] = [19] × [2^15] = 608 KB
+```
+
+***N.B.*** This is substantially less than the corresponding flat page table (cf. `2^51 bytes`). Correspondingly, this is why practically all modern processors use multi-level page tables accordingly (typically, at least `3` levels of paging).
+
+## 18. Choosing the Page Size
