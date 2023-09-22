@@ -633,3 +633,13 @@ As it stands, virtual-to-physical address translation is incurring a cost which 
 To understand the impact of virtual-to-physical address translation on performance, consider the following two quizzes.
 
 ### 20. Virtual-to-Physical Address Translation Quiz 1 and Answers
+
+<center>
+<img src="./assets/13-038A.png" width="650">
+</center>
+
+### 21. Virtual-to-Physical Address Translation Quiz 1 and Answers
+
+<center>
+<img src="./assets/13-040A.png" width="650">
+</center>
