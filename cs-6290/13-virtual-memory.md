@@ -793,3 +793,9 @@ Additionally, with respect to ***size***, it is desirable for the translation lo
     * The second level, or **level 2 (L2) translation look-aside buffer (TLB)**, is activated if a TLB miss occurs in the L1 TLB, and correspondingly achieves a "corrective" hit on the order of several cycles. This in turn is still a considerably faster "correction" than using main memory to perform the corresponding translation. Furthermore, the L2 TLB is relatively large (on the order of several thousand entries), which in turn supports relatively high hit rates (albeit not within a single cycle).
 
 ## 26. TLB Performance Quiz and Answers
+
+Having now seen how a translation look-aside buffer (TLB) works, consider a quiz on its performance.
+
+<center>
+<img src="./assets/13-050A.png" width="650">
+</center>
