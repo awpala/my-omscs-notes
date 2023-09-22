@@ -681,3 +681,64 @@ With cached page tables, the per-level access is reduced, and thus the overall c
 As this example demonstrates, virtual-to-physical address translation is still relatively expensive with cached page tables.
 
 ## 22. Translation Look-Aside Buffer (TLB)
+
+<center>
+<img src="./assets/13-041.png" width="650">
+</center>
+
+To speed up the virtual-to-physical address translation, the processor contains a structure called the **translation look-aside buffer (TLB)**. The translation look-aside buffer (TLB) is essentially a ***cache for these translations. This then begs the question: How exactly is the translation look-aside buffer (TLB) better than just using the cache itself directly?
+
+For one thing, the cache is relatively ***large*** in size.
+  * It could potentially store a lot of translations, if that were the only thing it stores; however, that is not the case, but rather the majority of the cache content is program data, with one translation in the cache accounting for an *entire page* of such data.
+
+Conversely, the translation look-aside buffer (TLB) is comparatively ***small*** in size.
+  * Accordingly, the translation look-aside buffer (TLB) caches these translations *exclusively*, thereby allowing the translation look-aside buffer (TLB) itself to be correspondingly very small but ***very fast***.
+    * For example, given a program which accesses `16 KB` of data, in order to operate efficiently with a cache, this would require a `16 KB` cache; however, this corresponds to `4` pages given a page size of `4 KB`. Conversely, the corresponding translation look-aside buffer (TLB) only requires `4` entries to cover the equivalent amount of translation-related program memory, which is a very small size that can be covered extremely quickly (i.e., much less than one cycle per translation).
+
+Additionally, recall (cf. Section 19) that in a multi-level page table, the cache is accessed for *each* level of the page table (i.e., a "drill-down" to the final translation entry in the innermost page table).
+
+Conversely, a translation look-aside buffer (TLB) only stores the ***final*** translation (i.e., the innermost page table, corresponding to the **frame number**), including in the case of a multi-level page table.
+  * Accordingly, in a four-level page table, using a cache requires four distinct accesses to perform the full translation, whereas a translation look-aside buffer (TLB) will only require *one* equivalent access to perform this same translation (i.e., irrespectively of the level of paging).
+
+Collectively, when using a translation look-aside buffer (TLB), to perform a load/store operation, the processor simply needs to:
+  * 1 - Form the address
+  * 2 - Access the translation look-aside buffer (TLB) to locate the translation
+  * 3 - Access the cache to retrieve the data
+
+In the event of *both* a ***TLB hit*** *and* a **cache hit**, this sequence can be performed in one or two cycles.
+
+<center>
+<img src="./assets/13-042.png" width="650">
+</center>
+
+However, what about if a ***TLB miss*** occurs (i.e., what if the translation is ***not*** present in the translation look-aside buffer (TLB))? In this case, the corresponding corrective-action sequence is:
+  * 1 - Perform translation using a page table(s)
+  * 2 - Place the resulting translation into the translation look-aside buffer (TLB) for subsequent use by the processor
+
+## 23. What If We Have a TLB Miss? (Quiz and Answers)
+
+***N.B.*** This section is presented as a "quiz," however, the subject matter herein is strictly "expositional" in nature and hence treated as a "lecture section" for purposes of these notes.
+
+As discussed at the end of the previous section, a ***translation look-aside buffer (TLB) miss*** requires corrective action. However, this begs the question: Which entity/entities should be responsible for this?
+
+<center>
+<img src="./assets/13-044A.png" width="650">
+</center>
+
+For this purpose, there are two prospective candidates, both of which are suitable:
+  * The **operating system** (i.e., determining the contents of the page tables using a software-based approach or equivalent)
+  * The **processor** itself automatically (i.e., without intervention from the operating system or otherwise) reads the page table(s) and consequently updates the translation look-aside buffer (TLB) accordingly
+
+The operating-system-based approach is called **software translation look-aside buffer (TLB) mishandling**, and has the ***advantage*** of allowing the operating system to use any type of page table that it want to, since the hardware itself does not require direct access to the page table itself (i.e., the hardware has the translation look-aside buffer (TLB) already for this purpose).
+  * Furthermore, the job of the operating system is to place the correct translation into the translation look-aside buffer (TLB) in this arrangement, however, it can do so flexibly via any of its available capabilities. For example, the operating system may not even have the page table in a "table" form, but rather may use an alternative data structure for this purpose (e.g., binary tree, hash table, etc.).
+  * This approach effectively performs a "sub-program" to fill the translation look-aside buffer (TLB).
+
+The processor-based approach is called **hardware translation look-aside buffer (TLB) mishandling**.
+  * In this case, the page tables must be in a form that is easily accessible by the hardware (i.e., a flat or multi-level page table, as seen previously in this lesson).
+  * This approach has the ***disadvantage*** of requiring additional hardware because the hardware must now access the page tables, sequentially access the page-table levels, etc., however, it has the corresponding ***advantage*** of being faster than software-based handling, as it is effectively more akin to hardware-based handling of a cache miss.
+
+Because the latter hardware-based approach is faster, and because modern hardware is relatively cheap, most high-performance processors (e.g., x86) use this approach accordingly.
+
+However, some embedded processors use software-based TLB mishandling, due to concern over the corresponding hardware cost to use the hardware-based approach. Furthermore, in these embedded processors, TLB misses occur less frequently in practice due to the comparatively simpler applications running on them.
+
+## 24. TLB Size Quiz
