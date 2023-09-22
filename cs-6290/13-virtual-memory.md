@@ -686,7 +686,7 @@ As this example demonstrates, virtual-to-physical address translation is still r
 <img src="./assets/13-041.png" width="650">
 </center>
 
-To speed up the virtual-to-physical address translation, the processor contains a structure called the **translation look-aside buffer (TLB)**. The translation look-aside buffer (TLB) is essentially a ***cache for these translations. This then begs the question: How exactly is the translation look-aside buffer (TLB) better than just using the cache itself directly?
+To speed up the virtual-to-physical address translation, the processor contains a structure called the **translation look-aside buffer (TLB)**. The translation look-aside buffer (TLB) is essentially a ***cache*** for these translations. This then begs the question: How exactly is the translation look-aside buffer (TLB) better than just using the cache itself directly?
 
 For one thing, the cache is relatively ***large*** in size.
   * It could potentially store a lot of translations, if that were the only thing it stores; however, that is not the case, but rather the majority of the cache content is program data, with one translation in the cache accounting for an *entire page* of such data.

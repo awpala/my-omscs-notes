@@ -895,7 +895,7 @@ Therefore, after the initial load (i.e., instruction `I1`), which incurs an init
 <img src="./assets/10-037.png" width="650">
 </center>
 
-Having now seen how loop unrolling can both reduce the overall workload as well as enhance compiler-facilitated instruction scheduling, it may seem tempting to simply perform unrolling ***indiscriminantly***. However, there are in fact **downsides** to such an approach:
+Having now seen how loop unrolling can both reduce the overall workload as well as enhance compiler-facilitated instruction scheduling, it may seem tempting to simply perform unrolling ***indiscriminately***. However, there are in fact **downsides** to such an approach:
   * 1 - code bloat
     * In general, loop unrolling results in more instructions all else equal (e.g., from `4` to `7` in the figure shown above). Furthermore, this increase in instructions-per-loop is amplified with increasing levels of loop unrolling (i.e., beyond once-unrolled to twice-unrolled, thrice-unrolled, etc.).
   * 2 - the total number of iterations is unknown
@@ -960,7 +960,7 @@ Before inlining, the total number of instructions required is `13`, comprised of
 
 However, after inlining, the total number of instructions required is `20`, i.e., inlining of the `10` function-body instructions twice within the original program (i.e., replacing the original function-call statements accordingly). Therefore, while the overhead is eliminated, the program itself grows in size proportionally to the number of function calls. This is particularly pronounced in a program which may call such a function hundreds of times.
 
-Therefore, function call inlining must be applied **judiciously**, rather than simply applying it indiscriminantly (i.e., for *all* functions and correspondingly for *all* function calls). Generally, it is most ***advantageous*** to inline functions which are small. However, as the function body grows, this results in replication of a lot of code relative to the original non-inlined version (even when accounting for the overhead in the latter).
+Therefore, function call inlining must be applied **judiciously**, rather than simply applying it indiscriminately (i.e., for *all* functions and correspondingly for *all* function calls). Generally, it is most ***advantageous*** to inline functions which are small. However, as the function body grows, this results in replication of a lot of code relative to the original non-inlined version (even when accounting for the overhead in the latter).
 
 ## 18. Function Call Inlining Quiz and Answers
 
