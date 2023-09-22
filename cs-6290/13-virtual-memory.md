@@ -799,3 +799,51 @@ Having now seen how a translation look-aside buffer (TLB) works, consider a quiz
 <center>
 <img src="./assets/13-050A.png" width="650">
 </center>
+
+Consider a program characterized as follows:
+  * A `1 MB` array, read `1` byte at a time from start to end, with this full-array read occurring `10` times total
+  * No other memory accesses occur (i.e., other than the aforementioned `1 MB` array) during program execution
+
+Furthermore, the processor in question running this program is characterized as follows:
+  * `4 KB` page size
+  * `128` entries L1 TLB
+  * `1024` entries L2 TLB
+  * The TLBs are initially empty (i.e., no translations are cached immediately prior to commencing the array-reading operations for the program)
+  * The array is page-aligned (i.e., the array begins at the start of a page)
+  * The TLBs are direct-mapped
+
+In the L1 TLB, how many TLB hits and misses occur?
+  * `10,483,200` hits, `2560` misses
+
+And in the L2 TLB, how many TLB hits and misses occur?
+  * `2304` hits, `256` misses
+
+***Explanation***:
+
+Firstly, the amount of pages can be determined as follows (via `1 MB = 2^20 bytes` for the array in question):
+
+```
+2^20 bytes / (4 * 2^10 bytes per page) = 2^8 pages = 256 pages
+```
+
+Once the first-byte array access occurs, there is both an L1 TLB miss and an L2 TLB miss, since the TLBs are initially empty. Consequently, a translation will be generated and subsequently placed in both TLBs.
+
+Next, when accessing the second byte of the array, there is a TLB hit because that byte is in the *same* page as the previous byte. Therefore, after the initial (i.e., first-byte) TLB miss, there will be subsequent TLB hits for the remainder of the same corresponding `4 KB` page.
+  * Correspondingly, in the initial sweep-through of the array, there will be `256` L1 TLB misses (i.e., one per page) and `(4096 - 1)*256 = 1,048,320` L1 TLB hits.
+
+After this initial sweep-through, the L1 TLB contains the entries for the second half of the array, because the full array requires `256` pages, but the L1 TLB only contains `128` entries. However, the L2 TLB contains the mappings for the *entire* array, since it has sufficient size (i.e., `1024` entries) to hold entries for these `256` pages.
+
+Proceeding in this manner, after the initial sweep-through, the L1 TLB will continue performing `256` misses and `1,048,320` hits per array sweep-through, however, the L2 TLB will subsequently hit exclusively.
+
+In summary:
+
+| Array sweep-through iteration | L1 TLB hits | L1 TLB misses | L2 TLB hits* | L2 TLB misses |
+|:--:|:--:|:--:|:--:|:--:|
+| Initial Iteration | `(4096 - 1)*256 = 1,048,320` | `256` | `0` | `256` |
+| Cumulative (Iterations 1-10) | `10*(4096 - 1)*256 = 10,483,200` | `10*256 = 2560` | `(10 - 1)*256 = 2304` | `256 + 9*0 = 256` |
+
+****N.B.*** With respect to the L2 TLB hits, in the initial iteration of array sweep-through, there are no hits because this is covered by the L1 TLB's hits (i.e., in this first iteration, the L2 TLB is simply populated), however, in the subsequent (i.e., `10 - 1 = 9`) iterations, the L2 TLB covers for the corresponding L1 TLB's per-iterative-sweep-through misses.
+
+## 27. Lesson Outro
+
+The knowledge of virtual memory gained in this lesson is important in its own right, and will also be necessary to understand the subject matter of the next lesson, regarding advanced caching optimizations.

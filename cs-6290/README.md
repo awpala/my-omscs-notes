@@ -16,6 +16,7 @@
 | [10](./10-compiler-ilp.md) | Compiler ILP |
 | [11](./11-vliw.md) | Very Long Instruction Word (VLIW) |
 | [12](./12-cache-review.md) | Cache Review |
+| [13](./13-virtual-memory.md) | Virtual Memory |
 
 ## Videos Reference
 
