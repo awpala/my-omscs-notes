@@ -638,8 +638,46 @@ To understand the impact of virtual-to-physical address translation on performan
 <img src="./assets/13-038A.png" width="650">
 </center>
 
-### 21. Virtual-to-Physical Address Translation Quiz 1 and Answers
+Consider a processor characterized as follows:
+  * `1` cycle is required to compute the virtual address for a load/store instruction
+  * `1` cycle is required to access the cache (i.e., on a cache hit)
+  * `10` cycles are required to access memory (i.e., on a cache miss)
+  * `90%` hit rate on data access attempt
+  * Page table entries are ***not*** cached (i.e., ***must*** be exclusively accessed via main memory instead)
+
+How many cycles are required for a load operation (e.g., `LW R1, 4(R2)`) if using a three-level page table?
+  * `33` cycles
+
+***Explanation***:
+
+Note that in a three-level page table, the `10` cycles requirement for memory access applies to *each* of these levels. Given this, the overall cycles requirement is as follows:
+
+```
+1 + 3×10 + 1 + (1 - 0.90)×10 = 33
+```
+
+Of these `33` cycles, `30` are required just to access the page table!
+
+### 21. Virtual-to-Physical Address Translation Quiz 2 and Answers
 
 <center>
 <img src="./assets/13-040A.png" width="650">
 </center>
+
+Now, consider the same processor as in the previous quiz (cf. Section 20), but with the page tables ***cached*** (i.e., rather than exclusively accessed via main memory), similarly to the data.
+
+Given this change, how many cycles are required for a load operation (e.g., `LW R1, 4(R2)`) if using a three-level page table?
+  * `9`
+
+***Explanation***:
+
+With cached page tables, the per-level access is reduced, and thus the overall cycles requirement is now updated as follows:
+
+```
+1 + 3×[1 + (1 - 0.90)×10] + 1 + (1 - 0.90)×10 = 9
+```
+  * ***N.B.*** cf. factor `3×[1 + (1 - 0.90)×10] = 6` (cached) vs. `3×10 = 30` (not cached, from previous quiz in Section 20). This factor accounts for the virtual-to-physical address translation.
+
+As this example demonstrates, virtual-to-physical address translation is still relatively expensive with cached page tables.
+
+## 22. Translation Look-Aside Buffer (TLB)
