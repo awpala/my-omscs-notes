@@ -729,6 +729,10 @@ For this purpose, there are two prospective candidates, both of which are suitab
   * The **operating system** (i.e., determining the contents of the page tables using a software-based approach or equivalent)
   * The **processor** itself automatically (i.e., without intervention from the operating system or otherwise) reads the page table(s) and consequently updates the translation look-aside buffer (TLB) accordingly
 
+<center>
+<img src="./assets/13-045A.png" width="650">
+</center>
+
 The operating-system-based approach is called **software translation look-aside buffer (TLB) mishandling**, and has the ***advantage*** of allowing the operating system to use any type of page table that it want to, since the hardware itself does not require direct access to the page table itself (i.e., the hardware has the translation look-aside buffer (TLB) already for this purpose).
   * Furthermore, the job of the operating system is to place the correct translation into the translation look-aside buffer (TLB) in this arrangement, however, it can do so flexibly via any of its available capabilities. For example, the operating system may not even have the page table in a "table" form, but rather may use an alternative data structure for this purpose (e.g., binary tree, hash table, etc.).
   * This approach effectively performs a "sub-program" to fill the translation look-aside buffer (TLB).
@@ -741,4 +745,33 @@ Because the latter hardware-based approach is faster, and because modern hardwar
 
 However, some embedded processors use software-based TLB mishandling, due to concern over the corresponding hardware cost to use the hardware-based approach. Furthermore, in these embedded processors, TLB misses occur less frequently in practice due to the comparatively simpler applications running on them.
 
-## 24. TLB Size Quiz
+## 24. TLB Size Quiz and Answers
+
+<center>
+<img src="./assets/13-047A.png" width="650">
+</center>
+
+Consider a processor characterized as follows:
+  * `32 KB` cache with a `64 bytes` block size
+  * `4 KB` page size for virtual-to-physical address translation
+
+How many translation look-aside buffer (TLB) entries should be used to achieve similar miss rates between the cache and the translation look-aside buffer (TLB)? (Choose the best option.)
+  * `8` to `512`
+    * `CORRECT`
+  * `64` to `32768`
+    * `INCORRECT`
+  * `< 64`
+    * `INCORRECT`
+  * `> 256`
+    * `INCORRECT`
+
+***Explanation***:
+
+If the processor is only accessing up to `32 KB` of memory via the cache, then the translation look-aside buffer (TLB) must cover this same amount of memory as the cache, i.e., correspondingly `8` pages (via `32 KB cache / 4 KB per page = 8 pages`).
+
+Correspondingly, `< 64` entries seems like the most appropriate choice, however, if the processor is not accessing *all* of the data in *each* of the pages, then this will require *more* pages to otherwise cover the *same* amount of `32 KB` cache memory, because in the cache (with a block size of `64 bytes`) this will fit `512` different blocks (i.e., `32 KB cache / 64 bytes per block = 512 blocks`, via `32 KB = 2^15 bytes = 32768 bytes`), which in turn can be spread across the entire cache memory. Conversely, with `8` entries in the translation look-aside buffer (TLB), only *eight* different pages can be accessed at any given time, while these `512` blocks in question could in principle be located in `512` different/distinct pages.
+
+Therefore, in this case, the translation look-aside buffer (TLB) must have up to `512` different entries in order to ensure a hit rate on par with the cache.
+  * In reality, the number of entries required for a parity hit rate with the cache will be somewhere in this range, i.e., between `8` and `512` entries.
+
+## 25. TLB Organization
