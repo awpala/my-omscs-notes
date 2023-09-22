@@ -775,3 +775,21 @@ Therefore, in this case, the translation look-aside buffer (TLB) must have up to
   * In reality, the number of entries required for a parity hit rate with the cache will be somewhere in this range, i.e., between `8` and `512` entries.
 
 ## 25. TLB Organization
+
+Since a translation look-aside buffer (TLB) is inherently a cache-like structure, consider now how it is organized in terms of **cache-like properties**.
+
+<center>
+<img src="./assets/13-048.png" width="650">
+</center>
+
+Firstly, consider whether a translation look-aside buffer (TLB) is direct-mapped, fully associative, or somewhere in between.
+  * Since the translation look-aside buffer (TLB) is ***small***, it is inherently very ***fast***, and therefore tends to be either ***fully or highly associative***.
+  * Conversely, it is unusual for a translation look-aside buffer (TLB) to be direct-mapped, because that would otherwise sacrifice the hit rate for speed, but this is not a relevant requirement here since the translation look-aside buffer (TLB) is already inherently fast due to its small size.
+
+Additionally, with respect to ***size***, it is desirable for the translation look-aside buffer (TLB) to have a hit rate which is *at least* on par with the cache, which in turn requires coverage of *more* memory than that present in the cache.
+  * Accordingly, the translation look-aside buffer (TLB) is typically on the order of `64` to `512` entries.
+  * However, if *more* entries than this are required to achieve a particular target high hit rate, there is a corresponding ***tradeoff*** to consider with respect to making it too large (thereby degenerating towards slow performance); in this case, a **two-level translation look-aside buffer (TLB)** can be used.
+    * The first level, or **level 1 (L1) translation look-aside buffer (TLB)**, is fast, achieving a hit in a single cycle.
+    * The second level, or **level 2 (L2) translation look-aside buffer (TLB)**, is activated if a TLB miss occurs in the L1 TLB, and correspondingly achieves a "corrective" hit on the order of several cycles. This in turn is still a considerably faster "correction" than using main memory to perform the corresponding translation. Furthermore, the L2 TLB is relatively large (on the order of several thousand entries), which in turn supports relatively high hit rates (albeit not within a single cycle).
+
+## 26. TLB Performance Quiz and Answers
