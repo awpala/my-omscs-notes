@@ -587,7 +587,49 @@ So, then, how do we choose the page size, given these apparent tradeoffs (i.e., 
 
 ## 19. Memory Access Time with Virtual-to-Physical Address Translation
 
+Having seen how paging and virtual-to-physical address translation work, now consider the **memory access time** with respect to this translation process.
+
 <center>
 <img src="./assets/13-036.png" width="650">
 </center>
 
+Typically, a program performs operations such as the following:
+
+```mips
+LOAD R1 = 4(R2)
+```
+
+where `R1` is loaded from the address computed by adding `4` to the address location stored in `R2`. When `4(R2)` is correspondingly computed, this yields the ***virtual address*** to be accessed in the program.
+
+Therefore, to perform a load/store operation, the processor must perform the following sequential ***operations***:
+  * 1 - Compute the virtual address
+    * This is typically a ***fast*** operation (i.e., addition of two values which are already known by the processor, comprised of a constant fetch operation for the instruction and reading of the register present in the processor)
+  * 2 - Compute the page number
+    * This is also a ***fast*** operation (i.e., reading bits regions from the virtual address)
+  * 3 - Access the cache (and sometimes main memory, if there is a cache miss)
+    * This is also a ***fast*** operation, with the ***exception*** of occasional cache misses
+
+However, note that these are the operations *in the absence of virtual-to-physical address translation*. Conversely, if additionally accounting for **virtual-to-physical address translation**, the corresponding ***operations*** are as follows:
+  * 1 - Compute the virtual address
+  * 2 - Compute the page number
+  * 3 - Compute the physical address of the page table entry
+    * This is accomplished by adding the computed page number (i.e., from the previous step) to the beginning address of the page table, which is a ***fast*** operation (i.e., simple addition operation)
+  * 4 - Read the page table entry
+    * The speed of this operation depends on ***where*** exactly the page table is present
+      * If the page table is inside the processor, then access is ***fast***
+      * Otherwise, if the page table is in main memory (or disk), then access is ***slow***
+    * Furthermore, recall from previously in this section that a page table can be fairly large
+      * For a multi-level page table, the page table may be on the order of `1 MB` which is relatively small, however, theoretically, in can be extremely large as well, and therefore in general it cannot be guaranteed that the page table for even *one* process will *always* fit in the processor (i.e., in general, the page table will likely be ***in memory***)
+  * 5 - Compute the physical address
+    * This is accomplished by combining the physical frame number (i.e., from the page table entry) with the page offset from the virtual address, which is a ***fast*** operation (i.e., simple addition operation)
+
+A key **implication** of these operations (more specifically, the third) is that for ***each*** load/store operation there will be a slow/rate-limiting memory-access operation, which is practically as slow as a cache miss itself (which was precisely what was intended to be avoided by using page tables in the first place).
+  * This issue is further exacerbated in a multi-level page table (e.g., in a four-level page table, operations 3-5 would require *four* such operations *per load/store operation*, i.e., one per each paging level!).
+
+As it stands, virtual-to-physical address translation is incurring a cost which is on par with (or perhaps even worse than) a cache miss with respect to memory access...
+
+## 20-21. Virtual-to-Physical Address Translation Quizzes and Answers
+
+To understand the impact of virtual-to-physical address translation on performance, consider the following two quizzes.
+
+### 20. Virtual-to-Physical Address Translation Quiz 1 and Answers
