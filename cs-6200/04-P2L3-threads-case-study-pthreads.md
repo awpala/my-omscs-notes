@@ -55,7 +55,7 @@ A key mechanism not originally described by Birrell is  **detachable threads**.
 <img src="./assets/P02L03-001.png" width="300">
 </center>
 
-In PThreads, the the default behavior of thread creation is just as Birrell described, i.e., the threads are ***joinable***. With joinable threads, the parent thread creates children threads, which can then be subsequently joined at a later time. Furthermore, the parent thread should *not* terminate until *all* children threads have completed their respective operations have been subsequently joined back to the parent thread.
+In PThreads, the default behavior of thread creation is just as Birrell described, i.e., the threads are ***joinable***. With joinable threads, the parent thread creates children threads, which can then be subsequently joined at a later time. Furthermore, the parent thread should *not* terminate until *all* children threads have completed their respective operations have been subsequently joined back to the parent thread.
 
 <center>
 <img src="./assets/P02L03-002.png" width="350">

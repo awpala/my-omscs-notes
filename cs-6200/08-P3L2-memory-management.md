@@ -425,7 +425,7 @@ Recall that in addition to paging, virtual-to-physical address memory mapping ca
 
 With segments, the address space is divided into components of arbitrary granularity (i.e., of arbitrary size), and typically the different segments correspond to logically meaningful components of the address space (e.g., code, heap, data, stack, etc.).
 
-Therefore, a **virtual address** (i.e,. the **logical address** in the figure shown above) in the segmented memory mode includes a segment descriptor (the **selector**) and the **offset**.
+Therefore, a **virtual address** (i.e., the **logical address** in the figure shown above) in the segmented memory mode includes a segment descriptor (the **selector**) and the **offset**.
   * The **segment descriptor** is used in combination with the **descriptor table** to produce information regarding the physical address of the segment.
   * The segment descriptor is ***combined*** with the **offset** to produce the linear address of the memory address.
 

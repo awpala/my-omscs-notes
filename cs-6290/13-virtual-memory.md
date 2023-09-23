@@ -19,9 +19,9 @@ Conversely, in the ***programmer's view***, the memory is a ***large array***, a
   * **code** → the actual program instructions
   * **data** → static data
   * **heap** → data allocated at run-time (e.g., via `malloc()` or equivalent), growing "downwards" (i.e., towards larger addresses)
-  * **stack** → data pre-allocated at compile-time, typically "lower" in the address array (i.e., at relatively large addresses), and growing "updwards" (i.e., towards smaller addresses)
+  * **stack** → data pre-allocated at compile-time, typically "lower" in the address array (i.e., at relatively large addresses), and growing "upwards" (i.e., towards smaller addresses)
 
-However, in general, the programmer does not bother by matters such as the remaining space between the heap and the stack, but rather the programmer simply wants to to perform `malloc()` operations (via the heap), push data onto the stack, etc. on an ad hoc basis, with no concern for "running out of memory" otherwise.
+However, in general, the programmer does not bother by matters such as the remaining space between the heap and the stack, but rather the programmer simply wants to perform `malloc()` operations (via the heap), push data onto the stack, etc. on an ad hoc basis, with no concern for "running out of memory" otherwise.
   * Furthermore, in a `64 bit` address space, the likelihood is indeed high that such a "running out of memory" is relatively low in practice.
   * Nevertheless, there is still the ***fundamental issue*** of the actual (i.e., physical) memory (on which the program is running) being substantially smaller than this "large-array" address space (or for a small program, the physical memory may also *exceed* the memory requirements substantially as well).
 
@@ -188,7 +188,7 @@ Now that it is apparent that the program generates virtual addresses while proce
 </center>
 
 When the program generates a **virtual address** (e.g., via load operation), as in the figure shown above, the processor divides this virtual address into two **components** as follows:
-  * **page offset** → indicates the the location within the page
+  * **page offset** → indicates the location within the page
   * **virtual page number** → identifies the specific page of the program/process in question
 
 Given a `4 KB` page size, the `12` least significant bits will correspond to the page offset (via `4*(2^10) = 2^12` or equivalently `log_2(4*(2^10)) = log_2(2^12) = 12`), while the remaining bits indicate the virtual page number.
@@ -287,7 +287,7 @@ Thus, the **overall size** of a page table is defined as:
 Where the factor `(virtual memory of the process / page size)` constitutes the number of entries in the page table.
 
 For example, given a virtual memory of `4 GB`, a page size of `4 KB`, and a single-entry size of `4 bytes`, the corresponding overall size of the page table is `(4 GB / 4 KB) × 4 bytes = 4 MB` per process.
-  * ***N.B.*** A given process might actually use ***less*** than `4 MB` of virtual memory (because most of hte pages are unused in such a process), however, the page table must still nevertheless have size `4 MB` in such a flat-page-table configuration.
+  * ***N.B.*** A given process might actually use ***less*** than `4 MB` of virtual memory (because most of the pages are unused in such a process), however, the page table must still nevertheless have size `4 MB` in such a flat-page-table configuration.
 
 Therefore, an apparent ***problem*** with flat page tables is that the corresponding page table is considerably large relative to a given process's actual usage of its available virtual memory.
 

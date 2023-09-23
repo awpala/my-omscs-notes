@@ -734,7 +734,7 @@ The **clients** using the Web server are concerned with **response time** (i.e.,
 The **operators** of the Web server are concerned with **throughput** (i.e., how many total client requests can see the Web page over a period of time).
 
 Therefore, this illustrates that it is most likely necessary to justify the solution using criteria that are pertinent to these stakeholder. Possible **goals** include:
-  * Demonstrating that the solution improves both response time and throughput wil have a great impact.
+  * Demonstrating that the solution improves both response time and throughput will have a great impact.
   * Demonstrating that the solution only improves response time will still have a good impact (e.g., for clients).
   * Demonstrating that the response time is improved but the throughput is adversely impacted, this may still be useful (e.g., for clients).
   * Demonstrating that the response time is maintained when the request rate increases is a useful result (e.g., for operators).

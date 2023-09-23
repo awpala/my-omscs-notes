@@ -47,7 +47,7 @@ As seen previously (cf. Section 2), an issue arises when multiple instructions e
 <img src="./assets/06-003.png" width="450">
 </center>
 
-Consider **forwading** in the stage `E` as a potential resolution measure for this issue. Recall (cf. Lesson 3) that forwarding feeds the value(s) from the previous instruction into the subsequent instruction *before* the value(s) has been written to the register(s).
+Consider **forwarding** in the stage `E` as a potential resolution measure for this issue. Recall (cf. Lesson 3) that forwarding feeds the value(s) from the previous instruction into the subsequent instruction *before* the value(s) has been written to the register(s).
 
 Returning to the example from the previous section, and focusing on the stage `E` (as in the figure shown above), recall that there is a dependency between instructions `I1` and `I2`. Here, `I1` executes, and then subsequently `I2` also executes in the *same* cycle.
 
@@ -82,7 +82,7 @@ Consider the instructions in the figure shown above. RAW dependencies are denote
 CPI = 3 cycles / 5 instructions = 0.6
 ```
 
-Additionally, with an added dependency between `I2` and `I3` (denoted by red in the figure shown above), there is now full RAW dependency across all five instructions (i.e,. all five cycles are required to perform all five instructions), resulting in the following:
+Additionally, with an added dependency between `I2` and `I3` (denoted by red in the figure shown above), there is now full RAW dependency across all five instructions (i.e., all five cycles are required to perform all five instructions), resulting in the following:
 
 ```
 CPI = 5 cycles / 5 instructions = 1
@@ -108,7 +108,7 @@ Consider the instructions shown above. For purposes of examining **write-after-w
 
 Here, the first instruction computes a result which it writes to `R1`, the second instruction similarly writes to `R4`, and so on. If there is a read-after-write (RAW) dependency between the first and second instructions, then by cycle `C5` (at which the first instruction is executing), the second instruction must wait on the first to complete its execution first (and consequently the latter will only execute in the subsequent cycle, `C6`); simultaneously, the downstream instructions proceed with execution in cycle `C5`, unaffected by the upstream RAW dependency.
 
-Consequently, in this five-stage pipeline, by cycle `C6`, there is a "relative lag" in the second instruction with respect to the others (which have now proceed to stage `M`), which continues into cycle `C7`. However, because of the "upstream lag," there is a discrepancy in the pipeline stage `WB R4`, which is performed by *both* the second instruction (now in cycle `C8` due to delay) and the first instruction (in cycle `C7` "as usual"). Effectively, the second instruction will overwrite (in cycle `C8`) the *intended* value produced by the fifth instruction (previously in cycle `C7`).
+Consequently, in this five-stage pipeline, by cycle `C6`, there is a "relative lag" in the second instruction with respect to the others (which have now proceeded to stage `M`), which continues into cycle `C7`. However, because of the "upstream lag," there is a discrepancy in the pipeline stage `WB R4`, which is performed by *both* the second instruction (now in cycle `C8` due to delay) and the first instruction (in cycle `C7` "as usual"). Effectively, the second instruction will overwrite (in cycle `C8`) the *intended* value produced by the fifth instruction (previously in cycle `C7`).
   * The original intent of the programmer here is that the fifth instruction would "already have" the valid value by that point (which would only be a valid assumption if there were *no* RAW dependency here).
 
 Observe that the root cause of this ***problem*** is the delay induced from the upstream RAW dependency.

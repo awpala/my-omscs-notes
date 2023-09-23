@@ -55,7 +55,7 @@ Another ***issue*** with Tomasulo's algorithm is the occurrence of **branch misp
   ⋮
 ```
 
-Consider the program shown above. Here, the branch `BEQ ...` in instruction `I2` *can* be predicted, however, it takes a long time (i.e., `40` cycles) to detect a misprediction. In the meantime, instruction `I3` is fetched as usual (i.e., the branch is taken), and intruction `I3` subsequently completes execution; in this case, register `R3`'s result is already written.
+Consider the program shown above. Here, the branch `BEQ ...` in instruction `I2` *can* be predicted, however, it takes a long time (i.e., `40` cycles) to detect a misprediction. In the meantime, instruction `I3` is fetched as usual (i.e., the branch is taken), and instruction `I3` subsequently completes execution; in this case, register `R3`'s result is already written.
 
 However, once a misprediction of the branch is detected (i.e., `40` to` 50` cycles later), the expected behavior of the program is such as if the instruction `I3` were never executed in the first place, but rather commence with fetching instructions beginning from `Label` (i.e., `DIV`). But that becomes impossible, because `R3` has already been updated by that point, and therefore instruction `I1` is using the unintended/incorrect value for its operand `R3`.
 
@@ -69,7 +69,7 @@ Observe that the issue described here is reminiscent of that described previousl
   DIV ...
 ```
 
-A final issue arises due to so-called **phantom exceptions**. Consider the same program as shown above, with an additional downstream instruction `DIV ...` (still within the same branch). Assume there is a misprediction resulting in instruction `I3` *not* being executed (i.e., branch *not* taken). An issue arises if the downstream instruction `DIV ...` generates an exception, the the exception is indeed triggered irrespectively of the fact that it was not supposed to be executed (i.e., due to this branch not being taken). Therefore, this unnecessary exception-handling overhead will be incurred, without realizing it before its too late to detect in the normal program execution.
+A final issue arises due to so-called **phantom exceptions**. Consider the same program as shown above, with an additional downstream instruction `DIV ...` (still within the same branch). Assume there is a misprediction resulting in instruction `I3` *not* being executed (i.e., branch *not* taken). An issue arises if the downstream instruction `DIV ...` generates an exception, the exception is indeed triggered irrespectively of the fact that it was not supposed to be executed (i.e., due to this branch not being taken). Therefore, this unnecessary exception-handling overhead will be incurred, without realizing it before its too late to detect in the normal program execution.
 
 To reiterate, a ***key concern*** with exception handling is that there must be certainty that an exception is in fact necessary prior to executing it.
 
@@ -142,14 +142,14 @@ Furthermore, as per Tomasulo's algorithm, the register allocation table (RAT) is
 
 The RS is correspondingly populated with the values of its operand, including the entry `ROB6` via the ROB (as in the figure shown above). Furthermore, the entry `ROB6` records the target register `R1`, and designates the bit `Done` as `0` (i.e., instruction is still pending execution).
 
-Now, the instruction `ADD` waits on its operands (i.e,. pending capture/latch, for subsequent dispatch to the execution unit `ADD`), as previously demonstrated with respect to Tomasulo's algorithm (cf. Lesson 7).
+Now, the instruction `ADD` waits on its operands (i.e., pending capture/latch, for subsequent dispatch to the execution unit `ADD`), as previously demonstrated with respect to Tomasulo's algorithm (cf. Lesson 7).
 
 Eventually, once the instruction `ADD` is able to ***dispatch***, this occurs as follows:
   * Once the operands are ready, send to the execution unit (i.e., `ADD`)
   * Furthermore, free the RS upon dispatch
     * ***N.B.*** Previously, with Tomasulo's algorithm (i.e., without ROB), it was necessary to *wait* for the RS to release all the way until the instruction result is broadcasted (i.e., due to the RS serving as the tag for the result); however, this is obviated by the ROB entry itself, which instead provides this same feature, without otherwise encumbering the RS. In this manner, the RS is relieved of this additional tagging responsibility, now only serving in its primary role of capturing in-progress operands and determining when/which instructions to dispatch at the appropriate times.
 
-Therefore, on instruction execuction via the execution unit `ADD`, the instruction `ADD` carries the tag `ROB6` for subsequent broadcast.
+Therefore, on instruction execution via the execution unit `ADD`, the instruction `ADD` carries the tag `ROB6` for subsequent broadcast.
 
 ## 7. Free Reservation Stations Quiz and Answers
 
@@ -378,7 +378,7 @@ The ROB assists in this situation by treating the exception itself as any other 
 
 Furthermore, once the instruction `DIV` reaches the pointer `Commit`, at that point, the instruction `ADD` has not yet been committed, whereas all instructions preceding `DIV` have. Therefore, now, a corresponding flush of these errant instructions (i.e., `DIV` and `ADD`) can be performed, with a corresponding jump to the **exception handler** (denoted by purple arrow in the figure shown above), which now occurs effectively "immediately prior" to execution of the instruction `DIV`.
 
-Similarly for a load instruction resulting ni a page fault, an analogous chain of events would unfold, i.e., upon reaching of the commit on (attempted) page load (resulting in a page-fault exception handler), everything that has been committed up to that point in the program will be "restored" accordingly. Upon successfully resolving the page load from disk, the program can jump back into the program and resume execution accordingly as normal.
+Similarly for a load instruction resulting in a page fault, an analogous chain of events would unfold, i.e., upon reaching of the commit on (attempted) page load (resulting in a page-fault exception handler), everything that has been committed up to that point in the program will be "restored" accordingly. Upon successfully resolving the page load from disk, the program can jump back into the program and resume execution accordingly as normal.
 
 ```mips
   BEQ R1, R2, Label
@@ -389,7 +389,7 @@ Label:
 
 Another such exception-handling **issue** arises in a program such as that shown above. Here, there is a **phantom exception**, whereby if the branch via `BEQ` is *not* taken and the subsequent instruction `DIV` generates an exception (i.e., via operand `R5`, which results in a divide-by-zero error), then a situation can arise whereby the exception via `DIV` is generated *prior* to resolution of the branch `BEQ`. Therefore, upon finally resolving the branch, it is "too late" to catch the fact that an exception has already occurred with the subsequent instruction `DIV`.
 
-To mitigate this issue, the ROB will designate the instruction `DIV` as an "exception." As the pointer `Commit` reaches the branch point (i.e., either at `BEQ` or immediately prior to it, depending on the particular branch misprediction strategy used), it will be determined that the branch has been mispredicted, and that the actual intenion of the program is to jump to `Label` instead. Consequently, neither the instruction `DIV` itself nor its downstream (i.e., branch not-taken) instructions are committed, and their executions are correspondingly "canceled," and therefore the exception via `DIV` itself is never generated in the first place (i.e., because the instruction `DIV` is never executed).
+To mitigate this issue, the ROB will designate the instruction `DIV` as an "exception." As the pointer `Commit` reaches the branch point (i.e., either at `BEQ` or immediately prior to it, depending on the particular branch misprediction strategy used), it will be determined that the branch has been mispredicted, and that the actual intention of the program is to jump to `Label` instead. Consequently, neither the instruction `DIV` itself nor its downstream (i.e., branch not-taken) instructions are committed, and their executions are correspondingly "canceled," and therefore the exception via `DIV` itself is never generated in the first place (i.e., because the instruction `DIV` is never executed).
 
 Therefore, the ***key point*** with respect to exception handling is that the ROB simply treats the exception itself as a(n invalid) ***result***, with a corresponding ***delay*** in the actual handling of the exception itself until the exception-generating instruction commits (at which point, the exact "resume point" for the exception handler is already determined). Furthermore, this approach mitigates any possible phantom exceptions resulting from branching.
 
@@ -676,7 +676,7 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
   * The operands `R1` and `R3` are retrieved from the ROB as per the RAT, with the corresponding ROB tags (`ROB2` and `ROB3`, respectively) recorded in the respective RS fields.
     * ***N.B.*** In the figure shown above, the entries in the RS are abbreviated as `ROB2` and `ROB3` (*not* registers `R2` and `R3`, respectively).
   * The entry in RAT is updated to `ROB4` for register `R1`.
-    * ***N.B.*** Beware that when updating the RAT in this manner, ensure to thoroughly review where the entry is being used elsewhere in the system before proceeding (e.g., in this case, `R1` is *not* a pending operand in any outstanding RSes). If an input register were to get overwritten inadvertently while conducting such analysis, this could invalidate an in-progress instruction; therefore, the current values in the RAT must be used *first* before renaming/overwriting the corresponding RAT entry (otherwise, the instruction will be "waiting for its own result," which is impossible). In this case, `ROB4` is indeed the latest occurring version of register `R1`, since the upstsream instruction `I2` (via `ROB2`) has indeed already entered execution with the appropriate operand value of `R1`.
+    * ***N.B.*** Beware that when updating the RAT in this manner, ensure to thoroughly review where the entry is being used elsewhere in the system before proceeding (e.g., in this case, `R1` is *not* a pending operand in any outstanding RSes). If an input register were to get overwritten inadvertently while conducting such analysis, this could invalidate an in-progress instruction; therefore, the current values in the RAT must be used *first* before renaming/overwriting the corresponding RAT entry (otherwise, the instruction will be "waiting for its own result," which is impossible). In this case, `ROB4` is indeed the latest occurring version of register `R1`, since the upstream instruction `I2` (via `ROB2`) has indeed already entered execution with the appropriate operand value of `R1`.
 
 | Instruction | Issue | Execute | Write Result | Commit |
 |:-:|:-:|:-:|:-:|:-:|
@@ -1503,14 +1503,14 @@ As in the figure shown above, we have thus far seen configurations involving *se
 Note that both types of reservation stations (i.e., across different execution units) are exactly the same, with the exception that they are feeding into different execution units (however, otherwise, the logic, monitoring, etc. of register values with respect to broadcast, capture, and issuing is identical).
 
 Therefore, to improve the ability use the RSes (a relatively expensive resource), a **unified reservation station** approach can be used, whereby *all* RSes are effectively "pooled" across the various execution units. On issuing, the next-in-line instruction then simply occupies the next-available RS, irrespectively of the target execution unit in question.
-  * The **benefit** of this approach is that as long as there are *anY* available RSes, then instructions can continue to be issued.
+  * The **benefit** of this approach is that as long as there are *any* available RSes, then instructions can continue to be issued.
   * However, the **drawback** of this approach is that the logic for dispatching the instructions into the corresponding execution units becomes more complicated to implement (in every cycle, there is additional overhead to evaluate the heterogeneous set of pending instructions among the RSes, as well as dispatching to the appropriate execution unit accordingly)
 
 In practice, processors typically use some variation of the unified reservation station (i.e., as opposed to strictly segregated/dedicated RSes).
 
 ## 36. Superscalar
 
-Up to this point, the reorder-buffer-based (ROB-based) processors examined have *not* been **superscalar**, i.e., they have only issued *one* instruction per cycle (rather than *greater* than one). Even with a processor capable of *committing* up to two instructions per cycle (cf. Section 31), there will still be a "bottlenck" induced by the rate-limiting issue operation.
+Up to this point, the reorder-buffer-based (ROB-based) processors examined have *not* been **superscalar**, i.e., they have only issued *one* instruction per cycle (rather than *greater* than one). Even with a processor capable of *committing* up to two instructions per cycle (cf. Section 31), there will still be a "bottleneck" induced by the rate-limiting issue operation.
 
 <center>
 <img src="./assets/08-101.png" width="650">
@@ -1527,7 +1527,7 @@ Now, consider a real **superscalar** processor, as per the figure shown above. S
 | Broadcasts `> 1` results per cycle | This involves not only having multiple (i.e., `>= 2`) broadcast buses, but also requires every reservation station to compare its waited-for tags among *all* of these buses (because in any given cycle, one or more of these buses can be producing a result(s) at that point). Correspondingly, this significantly complicates the implementation of the reservation stations accordingly, i.e., the implementation cost/complexity is directly proportional to the total number of broadcast operations that must be monitored (roughly `O(n)` cost in `n` broadcast operations). |
 | Commits `> 1` instructions per cycle | As seen previously in this lesson, and similarly as for the issue operation, the next-pending instruction for committing is evaluated while a corresponding "lookahead" occurs for the subsequent to-be-committed instruction, and so on. Furthermore, in performing this evaluation, program-order must be maintained, therefore, it is not permissible to commit a "downstream" instruction "prematurely," if a particular instruction under current inspection cannot yet be committed. |
 
-Taking these characteristics in aggregate, among these, there will generally be a "weakest link," which will dictate the degree to which superscalar performance can actually be achieved (i.e,. performing *on average* `> 1` instruction per cycle across all of these operations).
+Taking these characteristics in aggregate, among these, there will generally be a "weakest link," which will dictate the degree to which superscalar performance can actually be achieved (i.e., performing *on average* `> 1` instruction per cycle across all of these operations).
 
 ## 37. Terminology Confusion
 
@@ -1548,7 +1548,7 @@ Furthermore, there are alternative terms used for each of these stages/operation
 
 `Issue` is also called:
   * `Allocate` → Resources (e.g., RSes) are allocated for the instructions
-  * `Dispatch` → The instruction is *dispatched* into the RS and corresopnding ROB entry
+  * `Dispatch` → The instruction is *dispatched* into the RS and corresponding ROB entry
 
 `Dispatch` is also called:
   * `Execute` → The instruction is *executed* by the execution unit
@@ -1569,7 +1569,7 @@ Finally, consider the notion of ***out-of-order*** in the context of a reorder-b
 
 Consider the processor pipeline as in the figure shown above. In an out-of-order processor, note that not all of these stages would occur strictly out-of-order.
   * For stages `Fetch` through `Issue`, these do in fact occur strictly in program-order; this ensures that any dependencies inherent in the program are preserved accordingly.
-  * Upon issuing an instruction to a reservation station (RS) pending subsequent execution, the subsequent `Execute` operations wll occur in the order of data dependencies, which do not necessarily follow strictly in program-order. Furthermore, the consequent `Write`/`Broadcast` operation can correspondingly occur out-of-order in general.
+  * Upon issuing an instruction to a reservation station (RS) pending subsequent execution, the subsequent `Execute` operations will occur in the order of data dependencies, which do not necessarily follow strictly in program-order. Furthermore, the consequent `Write`/`Broadcast` operation can correspondingly occur out-of-order in general.
   * Finally, on `Commit` of the instruction, this must occur strictly in program-order, in order to ensure proper semantics of the program itself; the committing order of the instruction is effectively the "programmer's perspective" of the program itself.
 
 Therefore, in an out-of-order processor, only a subset of the stages are actually occurring out-of-order. In contrast, a strictly in-order processor would additionally perform these subsets of (otherwise out-of-order) stages in program-order as well.

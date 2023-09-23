@@ -589,7 +589,7 @@ Recall the iron law (cf. Lesson 2) as follows:
 CPU Execution Time = # instructions in the program × cycles per instruction × clock cycle time
 ```
 
-Applying this formalism to the present example, the `clock cycle time` remains unchanged for a given processor, and the CPI (`cycles per instruction`) may or may not have changed. However, the most direct impact here from loop unrolling is with respect ot the `# instructions in the program`, i.e., its ***reduction*** yields a corresponding overall reduction in the `CPU Execution Time`.
+Applying this formalism to the present example, the `clock cycle time` remains unchanged for a given processor, and the CPI (`cycles per instruction`) may or may not have changed. However, the most direct impact here from loop unrolling is with respect to the `# instructions in the program`, i.e., its ***reduction*** yields a corresponding overall reduction in the `CPU Execution Time`.
 
 Next, let's consider the effect on the CPI.
 
@@ -739,8 +739,8 @@ Loop:
   ADD  R2, R2, R3   # I3′
   ADD  R10, R10, R3 # I4′ - use register `R10` to avoid dependency via `R2`
   ADDI R1, R1, -8   # I5′
-  SW   R2, 8(R1)    # I6′ - adust index/offset to `8` to match I5′
-  SW   R10, 4(R1)   # I7′ - use register `R10` to avoid dependency via `R2`, and adust index/offset to `4` to match I2′
+  SW   R2, 8(R1)    # I6′ - adjust index/offset to `8` to match I5′
+  SW   R10, 4(R1)   # I7′ - use register `R10` to avoid dependency via `R2`, and adjust index/offset to `4` to match I2′
   BNE  R1, R5, Loop # I8
 ```
 
@@ -803,7 +803,7 @@ The **net effect** is therefore a ***decrease*** in `CPU Execution` by reducing 
 <img src="./assets/10-036A.png" width="650">
 </center>
 
-Consider the following loop instructions, which computes the sume of the elements of an array:
+Consider the following loop instructions, which computes the sum of the elements of an array:
 
 ```mips
 Loop:
@@ -998,7 +998,7 @@ Furthermore, after function call inlining and compiler-facilitated instruction s
 
 In the case of compiler-facilitated instruction scheduling (but ***without*** function call inlining), this requires `10` total cycles.
   * In the main program, there is no opportunity for reordering, since there is a strict order dependence in the instructions, including the function call `CALL`. Furthermore, each of these instructions requires `2` cycles apiece.
-  * Similarly, the function-call body does not provide opportunities for instruciton scheduling, either.
+  * Similarly, the function-call body does not provide opportunities for instruction scheduling, either.
 
 The corresponding per-cycle analysis is as follows:
 

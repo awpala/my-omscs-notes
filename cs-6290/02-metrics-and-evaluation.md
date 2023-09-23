@@ -136,7 +136,7 @@ Therefore, rather than using actual workloads, when comparing two (or more) syst
 <img src="./assets/02-011.png" width="650">
 </center>
 
-What is a **benchmark**? A benchmark is comprised of programs and input data agreed upon (i.e., by the target stakeholders, users, companies, etc.) to be used for performance measurements. This is typically decided either by a consortium of companies who develop industry standards, and/or groups of users who who are concerned with a particular performance issue.
+What is a **benchmark**? A benchmark is comprised of programs and input data agreed upon (i.e., by the target stakeholders, users, companies, etc.) to be used for performance measurements. This is typically decided either by a consortium of companies who develop industry standards, and/or groups of users who are concerned with a particular performance issue.
 
 Typically, rather than using a *single* benchmark, a **benchmark suite** is used instead. This consists of *multiple* programs (along with their corresponding input data), each of which is representative of some type of particular application class.
 
@@ -456,7 +456,7 @@ In the subsequent Gen 2 processor, the blue phase is sped up by `2×`. The overa
 
 Similarly, in the subsequent Gen 3 processor, the blue phase is again sped up by `2×`. The overall speedup with respect to Gen 2 is then: `1/[(1-1/3) + (1/3)/2] = 1.2`
 
-Therefore, inasmuch as the the blue phase constitutes a decreasing fraction of the overall execution time in subsequent generations of the processor, speeding up this phase generation-over-generation yields a marginally diminishing improvement in the speedup. Consequently, eventually there will be practically no speedup observed generation-over-generation.
+Therefore, inasmuch as the blue phase constitutes a decreasing fraction of the overall execution time in subsequent generations of the processor, speeding up this phase generation-over-generation yields a marginally diminishing improvement in the speedup. Consequently, eventually there will be practically no speedup observed generation-over-generation.
 
 Furthermore, it is typically the case that the initial improvement in a system component is relatively simple to accomplish, while subsequent improvements require a much larger expenditure of effort, cost, etc. (i.e., eventually it is more practical to focus on improving the purple phase rather than continuing to focus on the blue phase).
 

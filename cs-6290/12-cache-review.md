@@ -29,7 +29,7 @@ Which of the following are ***not*** good examples of locality? (Select all that
     * `DOES NOT APPLY` - Usually if it rains often, then it will probably continue to rain often (at least for a while)
   * We ate dinner at 6 PM every day last week → Therefore, we will probably eat dinner around 6 PM this week
     * `DOES NOT APPLY` - People tend to eat meals around the same time
-  * It was New Year's Eve yesterday → Therefore, it will probably be be New Year's Eve today
+  * It was New Year's Eve yesterday → Therefore, it will probably be New Year's Eve today
     * `APPLIES` -  New Year's Eve occurring on a given day generally means it ***will not*** be New Year's Eve the following day, i.e., New Year's Eve is temporal phenomenon which does ***not*** generally have locality on a timescale of days (this is effectively "anti-locality" in the sense that it "predicts" precisely the *opposite* of what the locality principle implies/suggests)
 
 ## 4. Memory References
@@ -636,7 +636,7 @@ Consider a memory containing block numbers `0`, `1`, `2`, etc. (as in the figure
 
 Examining the **address** itself more closely (as in the figure shown above):
   * The least significant bit still denote the **block offset** as before, indicating where within the block the data is present (assuming such a block is found in the cache)
-  * The **block number** region itself is composed of of:
+  * The **block number** region itself is composed of:
     * A few bits indicating the **index**, i.e., where in the cache the block is located, with sufficient detail to unambiguously identify the specific cache line in question (e.g., a four-line cache would require at least `2 bits` to uniquely identify a cache line)
     * The remaining most-significant bits constitute the **tag** region
 
@@ -1173,7 +1173,7 @@ The second component of the write policy concerns the question: When a write hit
 
 **Write-through** caches are relatively unpopular; instead, **write-back** caches are used much more commonly. This is due to the fact that writes (which have a lot of intrinsic locality) will update the cache possibly many times, only sending a write to main memory *once* as the block is replaced. This correspondingly prevents the main memory from becoming "overwhelmed" with write operations from the cache.
 
-Furthermore, note that there is a relationship between the choices of **write-allocate** and **write-back** caches as the constituents of the collective write policy: Selecting write-back cache begets selection of a write-allocate cache, because minimizing writes to main memory (by correspondingly predominantly writing *only* to the cache via write-back) is particularly useful for **write misses** (in which case, it is desireable for future writes to occur in the cache via write-allocate).
+Furthermore, note that there is a relationship between the choices of **write-allocate** and **write-back** caches as the constituents of the collective write policy: Selecting write-back cache begets selection of a write-allocate cache, because minimizing writes to main memory (by correspondingly predominantly writing *only* to the cache via write-back) is particularly useful for **write misses** (in which case, it is desirable for future writes to occur in the cache via write-allocate).
 
 ## 38. Write-Back Caches
 
@@ -1537,7 +1537,7 @@ As is evident now, all of the aforementioned cache-related activities occur esse
 Consider a cache characterized as follows:
   * `256 bytes` in total size
     * `32 bytes` line size
-    * twp-way set-associative
+    * two-way set-associative
     * a write policy characterized by write-back, write-allocate
   * `32 bit` addresses created by the processor to access the cache
     * These bits are numbered `0` through `31`

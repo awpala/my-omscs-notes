@@ -210,7 +210,7 @@ While it is assumed here that the execution time for each task is known, in prac
 Therefore, in principle, it is necessary to employ certain **heuristics** based on the task's history in order to estimate the execution time for the task in question. With respect to the *future* execution time of the task, a useful heuristic is to use the task's **past running time**, e.g.,:
   * How long did a task run in the most recent execution?
   * How long did a task run for the last `n` executions?
-    * This can be used to to determine an average over a period of time, over a number of past executions, etc. Such an averaging over a defined time interval is called a **windowed average**.
+    * This can be used to determine an average over a period of time, over a number of past executions, etc. Such an averaging over a defined time interval is called a **windowed average**.
 
 ### 7. Priority Scheduling
 
@@ -328,7 +328,7 @@ Conversely, if there were no I/O operation to interrupt `T1`, execution of the t
 <img src="./assets/P03L01-021.png" width="650">
 </center>
 
-Round robin scheduling can also be generalized to include **priorities**. Consider, for example (as in the figure shown above), tha the tasks arrive at different times having different priorities such that `P1 (lowest) < P2 < P3 (highest)`. In this case, if a higher priority task arrives (e.g., when `T2` arrives at time `t = 1s`), then the currently running task (e.g., `T1` immediately prior to time `t = 1s`) is preempted to proceed with execution of the former.
+Round robin scheduling can also be generalized to include **priorities**. Consider, for example (as in the figure shown above), that the tasks arrive at different times having different priorities such that `P1 (lowest) < P2 < P3 (highest)`. In this case, if a higher priority task arrives (e.g., when `T2` arrives at time `t = 1s`), then the currently running task (e.g., `T1` immediately prior to time `t = 1s`) is preempted to proceed with execution of the former.
 
 <center>
 <img src="./assets/P03L01-022.png" width="650">
@@ -344,7 +344,7 @@ Therefore, in order to include priorities with round robin scheduling, it is nec
 
 A further **modification** that is sensible for round robin scheduling is rather than to wait for tasks to yield explicitly, instead to interrupt them so that they are **interleaved** (i.e., such that the tasks currently in the system are "mixed" together). Such a mechanism is called **timeslicing**.
 
-For example, in the the figure shown above, each task is assigned a timeslice of one time unit (e.g., `1s`), and operates over this fixed interval and then the system proceeds onto the next task in a round-robin manner via the runqueue (with a corresponding interruption of the current task, if necessary), and thus the system proceeds in this manner until all tasks complete execution.
+For example, in the figure shown above, each task is assigned a timeslice of one time unit (e.g., `1s`), and operates over this fixed interval and then the system proceeds onto the next task in a round-robin manner via the runqueue (with a corresponding interruption of the current task, if necessary), and thus the system proceeds in this manner until all tasks complete execution.
 
 Timeslicing will now be discussed in more detail in the following sections.
 
@@ -705,7 +705,7 @@ The two arrays are called **active** and **expired**.
   * The **active** array:
     * Is the primary list that the scheduler uses to select the next task to run.
     * Takes constant time to **add** a task, since this can be computed simply by using the array index to find the appropriate priority level, and then following the pointer to the end of the task list at that priority level to enqueue the task that is present there.
-      * Similarly, it takes constant time to **select** the task, because the scheduler relies on certain instructions that return the position of the first set bit in a sequence of bits, where the sequence of bits corresponds to the priority levels (with a bit value of `1` indicating tha there *are* tasks present at that priority level). Therefore, it takes constant time to run the instructions to determine what is the first priority level that has certain tasks on it; once this position is known, it also subsequently takes constant time to index into this array and then select the first task from the runqueue that is associated with that priority level.
+      * Similarly, it takes constant time to **select** the task, because the scheduler relies on certain instructions that return the position of the first set bit in a sequence of bits, where the sequence of bits corresponds to the priority levels (with a bit value of `1` indicating that there *are* tasks present at that priority level). Therefore, it takes constant time to run the instructions to determine what is the first priority level that has certain tasks on it; once this position is known, it also subsequently takes constant time to index into this array and then select the first task from the runqueue that is associated with that priority level.
     * Maintains tasks that are remaining in the queue (i.e., tasks that yield the CPU in order to wait for an event, or tasks that are preempted due to a higher priority task becoming runnable) in the **active array** until their timeslice expires.
       * The time that these tasks spend on the CPU is subtracted from the total amount of time, and if it is less than the timeslice, then they are still placed on the corresponding queue in the active list. Only *after* a task consumes its *entire* timeslice will it then be removed from the active list and placed on the appropriate queue within the expired array.
   * The **expired** array:

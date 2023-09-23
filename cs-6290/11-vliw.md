@@ -121,7 +121,7 @@ Now, consider some "real world" examples of VLIW processors.
 The (probably) most famous example of how *not* to implement the VLIW concept is Intel's **Itanium** processors line, characterized by the following:
   * ***Tons*** of instruction set architecture (ISA) features to enable compiler-facilitated instruction scheduling, etc.
   * Consequently, the resulting processor hardware became ***very complicated***
-    * While it was no longer necessary to check fo dependencies between instructions, it correspondingly introduced so many other "bells and whistles" in the process of "achieving" this that resulting hardware was among the most complicated that was every conceived/built by Intel thus far
+    * While it was no longer necessary to check for dependencies between instructions, it correspondingly introduced so many other "bells and whistles" in the process of "achieving" this that resulting hardware was among the most complicated that was every conceived/built by Intel thus far
     * And nevertheless, fundamentally, it is still ultimately a VLIW processor which is otherwise generally ill-suited for "irregular"/non-"normal" program code
 
 Another example of where VLIW is used is in **digital signal processing (DSP)** processors. DSP is characterized by ubiquitous floating-point work/instructions, typically involving regular/predictable loops comprised of a small amount of per-loop-iteration work but executed over many iterations. For this particular (specialized) use case, VLIW provides the following corresponding **benefits**:
@@ -137,7 +137,7 @@ These two processors respective "case studies" demonstrate the fundamental diffe
 <img src="./assets/11-010A.png" width="650">
 </center>
 
-Among the following, which type of application is is VLIW best suited for? (Rank from `1`/best to `3`/worst.)
+Among the following, which type of application is VLIW best suited for? (Rank from `1`/best to `3`/worst.)
   * Add many numbers together
     * `1` - This comprises a small, predictable loop with well-controlled dependencies, and so on. 
   * Determine the best path in a maze

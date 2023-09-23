@@ -105,7 +105,7 @@ To understand what an operating system is, consider some examples of actual oper
   * embedded
   * ultra high-end mainframes
 
-Since desktop and embedded systems are the most commonly used and use the most recent operating systems technology, they wil be the focus of discussion.
+Since desktop and embedded systems are the most commonly used and use the most recent operating systems technology, they will be the focus of discussion.
   * desktop
     * Microsoft Windows
     * UNIX-based

@@ -88,7 +88,7 @@ As computer architects, we attempt to ***translate*** this expected technology t
 
 Consider the implications of speed doubling, by comparing the speed of trains and processors, as in the figure shown above.
 
-Therefore, if maximum train speed had doubled at a comparable rate to processors betwen 1971 and 2007 (i.e., twice every two years, for 18 years), the resulting speed would be an astronomical `2`<sup>`18`</sup> km/h (or `99,614,720` km/h); for comparison/reference, the Voyager-1 probe (the fastest entity built by humans to date) achieved a maximum speed of `62,000` km/h. Furthermore, over that time period (18 years), the maximum train speed has not even doubled (i.e., not even `2`<sup>`1`</sup>)!
+Therefore, if maximum train speed had doubled at a comparable rate to processors between 1971 and 2007 (i.e., twice every two years, for 18 years), the resulting speed would be an astronomical `2`<sup>`18`</sup> km/h (or `99,614,720` km/h); for comparison/reference, the Voyager-1 probe (the fastest entity built by humans to date) achieved a maximum speed of `62,000` km/h. Furthermore, over that time period (18 years), the maximum train speed has not even doubled (i.e., not even `2`<sup>`1`</sup>)!
 
 ## 8. Memory Wall
 
@@ -114,7 +114,7 @@ Therefore, as time elapses, there is an increasing **gap** between the speed/per
 </center>
 
 When discussing **processor performance**, we typically refer to a processor's **speed** (i.e., how many instructions per second it can complete). However, we must also consider its fabrication **cost** and its **power** consumption.
-  * Lower fabrication costs allow to places more-powerful processors into devices that cannot be otherwise expensive (e.g., refrigerators, watches, etc.).
+  * Lower fabrication costs allow to place more-powerful processors into devices that cannot be otherwise expensive (e.g., refrigerators, watches, etc.).
   * Low power consumption is important not only due to the cost of electricity but also because it translates into longer battery life and smaller form factors (e.g., smartphones)
 
 Therefore, it is desirable to have the following concurrent performance improvements:
@@ -244,7 +244,7 @@ Another important relationship to understand is that between **fabrication cost*
 
 Chips are manufactured by taking a silicon disc (called a "wafer") and subjecting it to a number of processing steps.
   * Each of these steps prints some aspect of the circuitry that appears on each processor.
-  * At the end of these steps, the wafer is is cut into small sections constituting the processor chip itself, which is then packaged/enclosed with a casing containing connection pins.
+  * At the end of these steps, the wafer is cut into small sections constituting the processor chip itself, which is then packaged/enclosed with a casing containing connection pins.
 
 Upon fabrication, the processor chips are tested.
   * Chips which *pass* testing are approved for subsequent distribution and sale.

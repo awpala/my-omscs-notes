@@ -171,7 +171,7 @@ Each kernel-level thread executing a user-level thread has a **lightweight proce
 
 ### User-Level Thread Data Structures
 
-Now, consider the the user-level thread data structures, as described in Stein and Shah ("*Implementing Lightweight Threads*").
+Now, consider the user-level thread data structures, as described in Stein and Shah ("*Implementing Lightweight Threads*").
   * ***N.B.*** This paper does not describe POSIX threads, however, the threads described are sufficiently similar for purposes of discussion.
 
 <center>
@@ -184,7 +184,7 @@ With this configuration, if there is a problem with the thread, then if the thre
 
 The thread data structure itself contains a number of fields (e.g., registers, signal mask, priority, and stack pointer). Furthermore, the thread data structure contains **thread local storage**, which includes the variables defined in the thread functions that are known at compile time so that the compiler can allocate storage on a per-thread basis for each of them.
 
-The size of the **stack** can be be defined by the library defaults or by the user, but in general the size of most of the information in the thread data structure is fixed at compile time. Therefore, the information contained in the thread data structure can be layered contiguously in memory to improve locality and to facilitate the scheduler's finding of the next thread (i.e., via corresponding basic arithmetic operations).
+The size of the **stack** can be defined by the library defaults or by the user, but in general the size of most of the information in the thread data structure is fixed at compile time. Therefore, the information contained in the thread data structure can be layered contiguously in memory to improve locality and to facilitate the scheduler's finding of the next thread (i.e., via corresponding basic arithmetic operations).
 
 <center>
 <img src="./assets/P02L04-011.png" width="350">
@@ -663,7 +663,7 @@ Furthermore, to solve the aforementioned deadlock situation, the thread--immedia
 <img src="./assets/P02L04-047.png" width="400">
 </center>
 
-If the mask indicates the the the interrupt is disabled, then the interrupt will remain in a pending status until a later time.
+If the mask indicates the the interrupt is disabled, then the interrupt will remain in a pending status until a later time.
 
 Once the lock is freed (i.e., via corresponding call to `unlock()`), the thread will then reset the appropriate bit field in the mask, thereby enabling the execution of the handler code by the operating system; at this point, it is permissible for the handler to execute the critical-section code, because the thread no longer holds the mutex (i.e., the aforementioned deadlock is now avoided).
 
@@ -850,7 +850,7 @@ When the signal occurs, there is no problem: The kernel detects that the signal 
 
 In Case 2, kernel-level mask is `1` (i.e., the kernel thinks that the overall user-level process can handle the signal). However, the user-level thread that is currently running on top of the kernel-level thread has the signal *disabled* (i.e., mask bit is `0`). Furthermore, there is *another* user-level thread that is currently in the run queue (i.e., is runnable, but not currently executing) which has its mask *enabled*.
 
-The threading library that manages both of hte user-level threads is aware of *both* threads. Therefore, when a signal occurs at the kernel level, the kernel sees that the overall process knows how to handle this particular signal (and correspondingly has its bit set to `1`). However, it *should* be appropriate for the kernel to interrupt the user-level thread running on it (i.e., the currently running user-level thread with mask bit `0`/disabled).
+The threading library that manages both of the user-level threads is aware of *both* threads. Therefore, when a signal occurs at the kernel level, the kernel sees that the overall process knows how to handle this particular signal (and correspondingly has its bit set to `1`). However, it *should* be appropriate for the kernel to interrupt the user-level thread running on it (i.e., the currently running user-level thread with mask bit `0`/disabled).
 
 The user-level thread library is aware of the other user-level thread (with bit `1`), which is capable of handling the signal. Recall that the way signals are handled is that when they interrupt the process (or, more precisely, the thread that is running in the process), the corresponding handling routine that must be executed is specified in the **signal handlers table**.
 
@@ -889,7 +889,7 @@ When the signal occurs in the kernel-level thread, the kernel detects that the k
 <img src="./assets/P02L04-064.png" width="500">
 </center>
 
-Consequently, the user-level threading library will perform a system call to request for the signal mask of the underlying kernel-level thread to be reset to `0`. Now, from the execution of one user-level thread, the state of the signal masks that are associated with the other kernel-level threads (which may be executing on other CPUs) can now be be affected.
+Consequently, the user-level threading library will perform a system call to request for the signal mask of the underlying kernel-level thread to be reset to `0`. Now, from the execution of one user-level thread, the state of the signal masks that are associated with the other kernel-level threads (which may be executing on other CPUs) can now be affected.
 
 Here, only the mask associated with the kernel-level thread which has been reset can be changed. Therefore, the user-level threading library will **reissue** the signal for the entire process again.
 

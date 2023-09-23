@@ -410,7 +410,7 @@ Here, similarly the RAW dependency does not affect the performance of the partic
 |:---:|:---:|:---:|:---:|:---:|:---:|
 | C1 | `SUB` | `MUL` | `...` | `...` | `...` |
 
-The instruction `MUL` reads register `R4` in the the decode stage (`D`), and at this point (cycle C1) the instruction `SUB` is being fetched (stage `F`); this read of `R4` is not yet affected by the (later-occurring) instruction `SUB`.
+The instruction `MUL` reads register `R4` in the decode stage (`D`), and at this point (cycle C1) the instruction `SUB` is being fetched (stage `F`); this read of `R4` is not yet affected by the (later-occurring) instruction `SUB`.
 
 | Cycle | `F` | `D` | `A` | `M` | `W`|
 |:---:|:---:|:---:|:---:|:---:|:---:|

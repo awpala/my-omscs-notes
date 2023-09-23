@@ -208,7 +208,7 @@ With these assumptions in mind, which **device access method** is best for the f
   * Keyboard
     * `PIO` - It is unlikely for the keyboard to transfer very much data per keystroke, therefore a PIO approach is better, since configuring the DMA may be more complex than to simply perform one or two additional `store` instructions.
   * Network Interface Card (NIC)
-    * `Depends` - If sending out small packets that require less than `5` `store` instructions to the device data registers (given tha the difference between the `store` instruction and DMA controller is `1` vs. `5`, respectively), then it is better to perform `PIO`. Otherwise, if necessary to perform larger data transfers, then the `DMA` option may be better, since it is only necessary to configure the DMA controller and then issue the request.
+    * `Depends` - If sending out small packets that require less than `5` `store` instructions to the device data registers (given that the difference between the `store` instruction and DMA controller is `1` vs. `5`, respectively), then it is better to perform `PIO`. Otherwise, if necessary to perform larger data transfers, then the `DMA` option may be better, since it is only necessary to configure the DMA controller and then issue the request.
 
 ***N.B.*** The answer depends heavily on the size of the data transfers.
 
@@ -340,7 +340,7 @@ TODO
 An **inode** has the structure shown above, where each block pointer (both direct and indirect) is `4 bytes` long in size.
 
 If a block on disk is `1 KB`, what is the **maximum** file size that can be supported by this inode structure? (Round to the nearest `GB`.) 
-  * `16 GB` - `1` block addresses `256` pointers (i.e., `1 pointer/4 bytes` × `1024 bytes`), therefore the the total file size is (`12` + `256` + `256`<sup>`2`</sup> + `256`<sup>`3`</sup> blocks) × `1 KB/block`.
+  * `16 GB` - `1` block addresses `256` pointers (i.e., `1 pointer/4 bytes` × `1024 bytes`), therefore the total file size is (`12` + `256` + `256`<sup>`2`</sup> + `256`<sup>`3`</sup> blocks) × `1 KB/block`.
     * ***N.B.*** Properly rounding up results in `17 GB` or `16 GiB` (where `1 GB` is `10`<sup>`3`</sup> bytes and `1 GiB` is `2`<sup>`10`</sup> bits)
 
 Similarly, what is the **maximum** file size if a block on disk is `8 KB`? (Round to the nearest `TB`.)

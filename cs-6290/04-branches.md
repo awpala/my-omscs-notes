@@ -940,7 +940,7 @@ So, then, how to reduce waste (i.e., how to have fewer than `2`<sup>`n`</sup> co
 
 As demonstrated in the previous section (cf. Section 33), for an `n`-bit history pattern, only *`O`*`(n)` (i.e., `n + 1`) counters are required to capture this effectively.
 
-Therefore, with `2`<sup>`n`</sup> 2-bit counters available, one idea is to ***share*** these counters between the entries (i.e., rather than dedicating *all* of these counters on a *per-entry* basis). This introduces the possibility of conflict if two counters share the *same* bits, however, with a sufficiently large "pool" of counters (i.e., relative to the the size/needs of a particular entry), such conflicts rarely occur in practice.
+Therefore, with `2`<sup>`n`</sup> 2-bit counters available, one idea is to ***share*** these counters between the entries (i.e., rather than dedicating *all* of these counters on a *per-entry* basis). This introduces the possibility of conflict if two counters share the *same* bits, however, with a sufficiently large "pool" of counters (i.e., relative to the size/needs of a particular entry), such conflicts rarely occur in practice.
 
 <center>
 <img src="./assets/04-050.png" width="650">
@@ -1070,8 +1070,7 @@ The discussion from the previous section leads us to a so called **tournament pr
 
 The objective of the tournament predictor is to optimize each predictor to its corresponding branches; however, it is unknown a priori which predictor is optimized to which branches.
 
-Given two predictors (e.g., a gshare and a pshare, as in the figure shown above), the program counter (PC) is used to index into both predictors, and the decisions that they generate are 
-are combined with a **meta-predictor** (another array of 2-bit counters, which is also indexed via the PC). The output of the meta-predictor does not give a prediction for the branch, but rather it indicates which of the two predictors is the more likely to give an accurate prediction for the branch in question.
+Given two predictors (e.g., a gshare and a pshare, as in the figure shown above), the program counter (PC) is used to index into both predictors, and the decisions that they generate are combined with a **meta-predictor** (another array of 2-bit counters, which is also indexed via the PC). The output of the meta-predictor does not give a prediction for the branch, but rather it indicates which of the two predictors is the more likely to give an accurate prediction for the branch in question.
 
 The individual predictors are "trained" as before. However, the meta-predictor is trained differently. Rather than incrementing when the branch is taken and decrementing when the branch not taken, the meta-predictor is trained based on the performance of the two predictors, as depicted in the following table:
 
@@ -1124,7 +1123,7 @@ Next, the actual prediction is formed for the processor by using the result of t
 <img src="./assets/04-060.png" width="350">
 </center>
 
-Conversely, if the global predictor does ***not*** have a matching tag (i.e., it does not predict the instruction and is consequently not inserted into the global predictor), then correspondingly the local predictor is used, as shown above. If the local predictor indicates tha the branch ***is*** predicted here, then the local predictor similarly uses a "tag" array to record this.
+Conversely, if the global predictor does ***not*** have a matching tag (i.e., it does not predict the instruction and is consequently not inserted into the global predictor), then correspondingly the local predictor is used, as shown above. If the local predictor indicates that the branch ***is*** predicted here, then the local predictor similarly uses a "tag" array to record this.
 
 <center>
 <img src="./assets/04-061.png" width="350">
@@ -1167,7 +1166,7 @@ How can we describe such a multi-predictor? (Given options: `2-bit predictor`, `
 
 ***Explanation***:
 
-Because the 2-bit counter is the cheapest predictor which can cover the most branches, it is sensible to use it ot predict most of the branches. In such a multi-predictor scheme, the 2-bit counter is combined with a (more expensive) tournament predictor, which is reserved for branches which are mispredicted by the 2-bit counter. The tournament predictor in turn is composed of a pshare and gshare, which have complementary prediction capabilities (i.e., covering the remaining `5%` of mispredictions) but are otherwise not advantageous relative to one another.
+Because the 2-bit counter is the cheapest predictor which can cover the most branches, it is sensible to use it to predict most of the branches. In such a multi-predictor scheme, the 2-bit counter is combined with a (more expensive) tournament predictor, which is reserved for branches which are mispredicted by the 2-bit counter. The tournament predictor in turn is composed of a pshare and gshare, which have complementary prediction capabilities (i.e., covering the remaining `5%` of mispredictions) but are otherwise not advantageous relative to one another.
 
 ## 44-45. Return Address Stack (RAS)
 

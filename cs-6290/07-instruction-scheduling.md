@@ -67,7 +67,7 @@ The next-available instruction in the IQ is placed into one of the available **r
 <img src="./assets/07-005.png" width="650">
 </center>
 
-Additionally, there is a **floating-point registers file (REGS)** (as in the figure shown above), which contains the floating point registers themselves. When an instruction is inserted into the RS, the values already present in the REGS (i.e,. those which are *currently* available for execution) are simply inserted into the RS appropriately.
+Additionally, there is a **floating-point registers file (REGS)** (as in the figure shown above), which contains the floating point registers themselves. When an instruction is inserted into the RS, the values already present in the REGS (i.e., those which are *currently* available for execution) are simply inserted into the RS appropriately.
 
 <center>
 <img src="./assets/07-006.png" width="650">
@@ -99,7 +99,7 @@ Finally, if the instruction is *not* an arithmetic instruction (e.g., but rather
 <img src="./assets/07-010.png" width="650">
 </center>
 
-As in the figure shown above, the **load buffer (LB)** provides only the specifically requested data, while the the **store buffer (SB)** provides *both* the address *and* the data to MEM.
+As in the figure shown above, the **load buffer (LB)** provides only the specifically requested data, while the **store buffer (SB)** provides *both* the address *and* the data to MEM.
 
 <center>
 <img src="./assets/07-011.png" width="650">
@@ -287,7 +287,7 @@ Consider the configuration in the figure shown above, immediately prior to a `Di
   * `RS3` was issued in the previous cycle.
     * `APPLIES` - If `RS3` were indeed issued in the previous cycle (i.e., it arrived within the reservation station), then depending on when instructions for execution are selected (e.g., towards the end of the cycle), there may be a temporal "mismatch" (i.e., the next-available instruction was not ready yet at that point)
   * Another instruction was dispatched to the execution unit `ADD`.
-    * `APPLIES` - This is possible, for example, if `RS1` wAas sent in the previous cycle to the execution unit; in that case, the execution unit (assumed here to only execute one instruction per cycle) would be "occupied" and therefore unable to execute `RS3`.
+    * `APPLIES` - This is possible, for example, if `RS1` was sent in the previous cycle to the execution unit; in that case, the execution unit (assumed here to only execute one instruction per cycle) would be "occupied" and therefore unable to execute `RS3`.
   * `RS2` is older than `RS3` (i.e., `RS2` precedes `RS3` in program-order), so `RS3` cannot dispatch until `RS2` does.
     * `DOES NOT APPLY` - In an out-of-order algorithm (which Tomasulo's algorithm *is* characterized by), there *is* a dispatch of an instruction as soon as its operands are ready. If this factor were of concerned, then the dispatch of the instruction could simply be delayed (i.e., even if the operands *are* ready at this point); however, note that this would yield an in-order processor, which is not desirable here (i.e., due to sub-optimal performance). In fact, the reason why this is an out-of-order processor is precisely because instructions such as `R3` *can* execute even if they are *not* the oldest one in the reservation stations.
 
@@ -479,7 +479,7 @@ Recall (cf. Section 18) that `RS0` will free its reservation station and is in p
 
 `RS1` will capture its last-remaining operand during this cycle, thereby making it eligible for dispatch immediately thereafter. Since simultaneous capture and dispatch *is* possible on this hardware (as per the given parameters, cf. Section 17), `RS1` ***will*** consequently dispatch.
 
-`RS2` is occupied during this cycle via issuing of the instruction (`F1 = F0 + F1`). However, since simultaneous issue nad dispatch is *not* possible on this hardware (as per the given parameters, cf. Section 17), `RS2` ***will not*** dispatch in this cycle (i.e., even if its operands were available/ready).
+`RS2` is occupied during this cycle via issuing of the instruction (`F1 = F0 + F1`). However, since simultaneous issue and dispatch is *not* possible on this hardware (as per the given parameters, cf. Section 17), `RS2` ***will not*** dispatch in this cycle (i.e., even if its operands were available/ready).
 
 ***N.B.*** In this case, since there is only *one* available instruction for dispatch, there is no ambiguity here. However, if there were *more than one* instructions available for dispatch, some type of mechanism (e.g., oldest first) would have to be devised/implemented to select among these, since there is only one execution unit (`ALU`) available.
 
@@ -505,7 +505,7 @@ Which of the following is ***not*** true regarding Tomasulo's algorithm?
 
 Here, let us briefly consider what occurs during load and store instructions.
 
-Just as we have previously seen data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies vai **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
+Just as we have previously seen data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies via **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
   * A **read-after-write (RAW)** dependency occurs if there is an operation `SW` (store word) to some address in memory, which is then followed by an operation `LW` (load word) from the same address (i.e., the `LW` uses the value stored by `SW`).
   * A **write-after-read (WAR)** (false) dependency occurs if the program first performs `LW`, followed by `SW`; if these operations were reordered, then the `LW` reads a stale value (i.e., preceding that which is otherwise updated by the subsequent operation `SW`).
   * A **write-after-write (WAW)** dependency occurs if there are successive  `SW` operations to the *same* address; here, the latest-occurring `SW` should be the value at the end, but a "stale" value can occur if these `SW` operations are reordered.
@@ -695,7 +695,7 @@ Furthermore, the remaining operand `F0` is placed into the RAT (via correspondin
 
 In cycle `C3`, instruction `I1` (via corresponding RS `LD1`) is still executing; in this case, can instruction `I2` (via corresponding RS `LD2`) begin execution?
   * If the load/store unit were pipelined, then this *would* be possible.
-  * Conversely, without such a pipelined load/store unit, then this is *not* possible. With this assumption holding (as is intended for this particular example), `LD2` wil have to wait until cycle `C4` to begin executing the instruction, once the previous instruction `I1` (via `LD1`) has completed execution.
+  * Conversely, without such a pipelined load/store unit, then this is *not* possible. With this assumption holding (as is intended for this particular example), `LD2` will have to wait until cycle `C4` to begin executing the instruction, once the previous instruction `I1` (via `LD1`) has completed execution.
 
 Furthermore, note that nothing is broadcasting yet in cycle `C3`.
 
