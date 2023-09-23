@@ -85,7 +85,7 @@ What is the speedup of the new laptop relative to the old laptop?
 
 ***N.B.*** Intuitively, `speedup > 1` indicates that the new system is *faster* than the old system; conversely, `speedup < 1` indicates that the new system is *slower* than the old system. With this intuition, incorrectly calculating speedup in this example via throughputs (i.e., `speedup = 10/240 = 0.04`) yields an unintuitive result.
 
-## 5. Performance Comparison 2 Quiz and Answers
+## 6. Performance Comparison 2 Quiz and Answers
 
 Consider again the laptop which can compress a video in `10 minutes`. Now, assume that it falls down the storm drain, and we are forced to use the old laptop instead, which can compress the same video in `4 hours`.
 
