@@ -151,7 +151,7 @@ In order to detect this, page-table **entries**  consist of both the physical fr
 
 If the hardware's **memory management unit (MMU)** detects that the valid bit is set to `0` in the page-table entry, then it will raise a **fault** (i.e., it will trap to the operating system). In this case, control is passed to the operating system, at which point the operating system must determine the following:
   * Should the access be permitted?
-  * Where exactly is the page located in the physical memory (i.e, the corresponding page frame)?
+  * Where exactly is the page located in the physical memory (i.e., the corresponding page frame)?
   * Where should the page be brought into the physical memory?
 
 <center>

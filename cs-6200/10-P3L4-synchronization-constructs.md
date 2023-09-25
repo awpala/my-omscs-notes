@@ -169,7 +169,7 @@ sem_post(&m);
 
 When specifying synchronization requirements, it is sometimes useful to distinguish among the different **types** of **accesses** that a **resource** can be accessed with.
 
-For instance, it is commonly desirable to distinguish between those accesses that do *not* modify a shared resource (i.e, only **read**) vs. those accesses that *do* modify a shared resource (i.e., always **write**).
+For instance, it is commonly desirable to distinguish between those accesses that do *not* modify a shared resource (i.e., only **read**) vs. those accesses that *do* modify a shared resource (i.e., always **write**).
   * For **read** accesses, the resource can be ***shared*** concurrently.
   * For **write** accesses, this requires ***exclusive*** access of the resource.
 
@@ -300,7 +300,7 @@ The corresponding interaction with the **spinlock** `lock` is described as follo
   1. `lock` must be initialized to `free` (i.e., `0`).
   2. To ***lock*** `lock`, check if `lock` is `free`...
     * If `lock` *is* `free`, then we can change its state (i.e., acquire `lock` and change its state to `busy`).
-    * Otherwise if `lock` is *not* `free` (i.e, is `busy`), then we must keep ***spinning*** (i.e., perform the check designated by `spin: ...` repeatedly).
+    * Otherwise if `lock` is *not* `free` (i.e., is `busy`), then we must keep ***spinning*** (i.e., perform the check designated by `spin: ...` repeatedly).
   3. Finally, we can release `lock` by setting it to `free`.
 
 Based on this information, does this spinlock implementation correctly guarantee **mutual exclusion**? And if so, is it **efficient**? (Select one choice per category.)
