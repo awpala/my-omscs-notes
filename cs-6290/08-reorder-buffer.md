@@ -515,7 +515,7 @@ At this point, the instruction `DIV` now carries the exception condition into th
 <img src="./assets/08-043.png" width="650">
 </center>
 
-COnsider the configuration as in the figure shown above. The reorder buffer (ROB) currently holds the instructions as shown above. (***N.B.*** In the third instruction denoted `ROB3`, the evaluation `ROB1 * R7` is using the rename tag from entry `ROB1`; and similarly in the last instruction via `ROB2`, i.e., `R9 + ROB2`.)
+Consider the configuration as in the figure shown above. The reorder buffer (ROB) currently holds the instructions as shown above. (***N.B.*** In the third instruction denoted `ROB3`, the evaluation `ROB1 * R7` is using the rename tag from entry `ROB1`; and similarly in the last instruction via `ROB2`, i.e., `R9 + ROB2`.)
 
 Now, assume that all of these instructions have finished execution and placed these results accordingly in the ROB; it is now time to commit them.
 
