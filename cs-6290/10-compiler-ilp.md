@@ -464,7 +464,7 @@ Therefore, an alternative to if conversion for loops (i.e., moving things "upstr
 Consider the following C code:
 
 ```c
-for (i = 1000; i != 0; i--)
+for (int i = 1000; i != 0; i--)
   a[i] = a[i] + s;
 ```
 
@@ -482,7 +482,7 @@ Loop:
 Applying **loop unrolling** to this loop code ***once*** yields the following:
 
 ```c
-for (i = 1000; i != 0; i--) {
+for (int i = 1000; i != 0; i--) {
   a[i] = a[i] + s;
   a[i] = a[i] + s;
 }
