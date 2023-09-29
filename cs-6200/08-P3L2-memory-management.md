@@ -23,7 +23,7 @@ Returning to the toy shop analogy, **operating systems** and **toy shops** each 
 | Not all parts/memory are needed at once | Toy orders are completed in stages, and not all toy orders are completed at the same time (e.g., teddy bears may require fabric and threads vs. other toys requiring wooden parts, etc.) | Executing tasks/processes on a computing system only operate on a ***subset*** of the entire memory at any given time, and therefore do not require *all* of the memory simultaneously (i.e., some subset of the memory state can be brought in/out of memory at any given time to meet the demands of the currently executing task) |
 | The process is optimized for achieving high performance | Reduce the wait time for parts (i.e., reduce the time required to move the parts in/out of containers) in order to make more toys | Reduce the time to **access** state in memory (i.e., transferring state from main memory to/from memory pages and segments) in order to improve performance (i.e., to achieve ***faster*** memory access) |
 
-To achieve performance improvements with respect to memory access optimization, operating systems' memory management subsystems rely on **hardware support**,e.g., **translation lookaside buffers (TLBs)**, caches, and **software algorithms** (e.g., for pages, for memory allocation, etc.).
+To achieve performance improvements with respect to memory access optimization, operating systems' memory management subsystems rely on **hardware support**,e.g., **translation look-aside buffers (TLBs)**, caches, and **software algorithms** (e.g., for pages, for memory allocation, etc.).
 
 ## 3-4. Memory Management
 
@@ -87,8 +87,8 @@ As was already suggested, memory management is *not* performed solely by the ope
   * Designated **registers** also support memory management during ***address translation***.
     * For example, in a paged-based system, there are registers used to point to the currently active **page table**.
     * Similarly, in a segment-based system, there registers used to indicate the base address of the segment, the size limit of the segment, the total number of segments, etc.
-  * Since memory address translation occurs for practically all memory references, accordingly most memory management units (MMUs) integrate a small cache of valid virtual-address-to-physical-address translations; this cache is called the **translation lookaside buffer (TLB)**.
-    * The translation lookaside buffer (TLB) improves the speed of address translation operation, inasmuch as the presence of such a translation in the cache obviates the need to otherwise perform an additional operation to accomplish this mapping (e.g., accessing the page table and determining the validity of the address).
+  * Since memory address translation occurs for practically all memory references, accordingly most memory management units (MMUs) integrate a small cache of valid virtual-address-to-physical-address translations; this cache is called the **translation look-aside buffer (TLB)**.
+    * The translation look-aside buffer (TLB) improves the speed of address translation operation, inasmuch as the presence of such a translation in the cache obviates the need to otherwise perform an additional operation to accomplish this mapping (e.g., accessing the page table and determining the validity of the address).
   * Finally, the actual generation/**translation** of the physical address itself (i.e., from the virtual address) is performed by the **hardware**.
     * The operating system maintains certain **data structures** (e.g., **page tables**) to maintain certain information that is necessary to perform this translation, however, the actual translation itself is performed by the hardware.
     Furthermore, this also implies that the hardware itself dictates what type of **memory management modes** are supported (e.g., segmentation, paging, or both via what types of corresponding registers the hardware supports), as well as what types of pages that can be used, the formats of the virtual addresses and of the physical addresses (i.e., in order to be understood by the hardware itself), etc.
@@ -364,21 +364,21 @@ Therefore, in the multi-level (e.g., four-level) page table, such nested memory 
 
 The **standard technique** to avoid such repeated memory access operations is to use a **page table cache**.
 
-On most architectures, the hardware **memory management unit (MMU)** integrates a **hardware cache** that is ***dedicated*** for caching address translations; this cache is called the **translation lookaside buffer (TLB)**.
+On most architectures, the hardware **memory management unit (MMU)** integrates a **hardware cache** that is ***dedicated*** for caching address translations; this cache is called the **translation look-aside buffer (TLB)**.
 
-On each address translation, the translation lookaside buffer (TLB) cache is first quickly referenced.
-  * If the address can be generated from the translation lookaside buffer (TLB) contents, then there is **TLB hit**, which consequently ***bypasses*** all of the other otherwise required memory access operations in order to perform the translation.
+On each address translation, the translation look-aside buffer (TLB) cache is first quickly referenced.
+  * If the address can be generated from the translation look-aside buffer (TLB) contents, then there is **TLB hit**, which consequently ***bypasses*** all of the other otherwise required memory access operations in order to perform the translation.
   * Conversely, if there is a **TLB miss** (i.e., the address is *not* present in the TLB cache), then it is necessary to perform all of the address translation steps via access of the page tables from memory.
 
-In addition to the proper address translation, the translation lookaside buffer (TLB) entries also contain all of the necessary protection and validity bits to **verify** that the access operation is ***correct***, or (if necessary) to generate a **fault**.
+In addition to the proper address translation, the translation look-aside buffer (TLB) entries also contain all of the necessary protection and validity bits to **verify** that the access operation is ***correct***, or (if necessary) to generate a **fault**.
 
-As it turns out, even a ***small*** number of entries in the translation lookaside buffer (TLB) can result in a ***high*** TLB hit rate, by virtue of the associated high temporal and spatial **locality** via the corresponding memory references.
+As it turns out, even a ***small*** number of entries in the translation look-aside buffer (TLB) can result in a ***high*** TLB hit rate, by virtue of the associated high temporal and spatial **locality** via the corresponding memory references.
 
 For example, on recent x86 platforms (e.g., x86 Intel Core i7):
-  * There are *per-core* separate translation lookaside buffers (TLBs) for data (`64` entries) and for instructions (`128` entries).
-  * Additionally, there is a *shared* (i.e., across *all* cores) second-level translation lookaside buffer (TLB) (having `512` entries).
+  * There are *per-core* separate translation look-aside buffers (TLBs) for data (`64` entries) and for instructions (`128` entries).
+  * Additionally, there is a *shared* (i.e., across *all* cores) second-level translation look-aside buffer (TLB) (having `512` entries).
 
-Even with relatively small/modest sizes, these translation lookaside buffers (TLBs) were determined to be sufficiently effective to address typical memory access needs for modern processes running on this modern processor.
+Even with relatively small/modest sizes, these translation look-aside buffers (TLBs) were determined to be sufficiently effective to address typical memory access needs for modern processes running on this modern processor.
 
 ## 11. Inverted Page Tables
 
@@ -399,7 +399,7 @@ Using such inverted page tables, finding the translation occurs as follows:
 
 The **problem** with inverted page tables is that they require to perform a **linear search** of the page table to find which entry matches the `pid-p` information that is part of the logical address presented by the CPU. Since the physical memory can be arbitrarily assigned to different processes, the page table generally is *not* ordered (i.e., two adjacent entries in the page table in general will pertain to two unrelated processes), and there is no clever search technique used to speed up this search operation.
 
-However, in practice, the **translation lookaside buffer (TLB)** catches  many of these memory references, and therefore such a detailed linear search is not performed very frequently. However, this search *can* still be performed periodically, and therefore a more efficient solution is desirable.
+However, in practice, the **translation look-aside buffer (TLB)** catches  many of these memory references, and therefore such a detailed linear search is not performed very frequently. However, this search *can* still be performed periodically, and therefore a more efficient solution is desirable.
 
 ### Hashing Page Tables
 
@@ -461,7 +461,7 @@ The key **benefit** of using the larger page sizes (e.g., `2 MB` and `1 GB`) is 
 
 Therefore, in summary, the key **benefits** of larger page sizes include:
   * Fewer page table entries, resulting in smaller page tables
-  * Increasing the number of translation lookaside buffers (TLBs) hits due to improved translation of the physical memory via the TLB cache.
+  * Increasing the number of translation look-aside buffers (TLBs) hits due to improved translation of the physical memory via the TLB cache.
 
 Conversely, a **drawback** of using larger pages is the large page size itself. Due to the resulting large "gaps" of unused memory addresses (i.e., a sparsely populated virtual address space), this gives rise to the phenomenon called **internal fragmentation** (wasted memory regions in the allocated memory). Due to this issue, smaller pages (e.g., of size `4 KB`, the default size in Linux/x86) are more commonly used.
 

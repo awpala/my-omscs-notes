@@ -51,7 +51,7 @@ Some of these methods are fairly obvious:
 
 Additionally, there are more complex methods for reducing the `Hit Time`:
   * Overlapping the cache hit with another cache hit
-  * Overlapping the cache hit with a translation lookaside buffer (TLB) hit
+  * Overlapping the cache hit with a translation look-aside buffer (TLB) hit
   * Optimizing the lookup for the ***common case*** (without otherwise sacrificing too much for the less common cases)
   * Maintaining the replacement state in the cache more quickly (i.e., on cache hits, if state must be updated for some later replacements, then this can be done more efficiently/optimally accordingly)
 
