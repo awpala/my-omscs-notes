@@ -497,7 +497,7 @@ Here, with a ***single*** unrolling, each given iteration of the loop will also 
 However, this requires an additional adjustment to the indexes (i.e., to avoid simply doing the "same" work "twice") as follows:
 
 ```c
-for (i = 1000; i != 0; i = i - 2) {
+for (int i = 1000; i != 0; i = i - 2) {
   a[i] = a[i] + s;
   a[i-1] = a[i-1] + s;
 }
