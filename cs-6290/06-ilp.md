@@ -180,7 +180,7 @@ In the sixth instruction, there is a dependency (via `R1` and `R4`) on the upstr
 
 Thus far we have seen that:
   * **read-after-write (RAW)** dependencies are of concern due to having to feed the required value from a previous instruction, thereby causing a delay
-  * **write-after-write (WAW)** dependencies are of concern due to ensuring that the downstream-most instruction indeed occurs intended (i.e., writes a valid value to the register)
+  * **write-after-write (WAW)** dependencies are of concern due to ensuring that the downstream-most instruction indeed occurs as intended (i.e., writes a valid value to the register)
 
 **Anti-dependencies** (cf. Lesson 3) are also of concern here, because it is undesirable to overwrite results *before* the instructions requiring the results have a chance to actually use them.
 
