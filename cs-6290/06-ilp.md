@@ -125,7 +125,7 @@ Observe that the root cause of this ***problem*** is the delay induced from the 
 | `R8 = ...` | `E` | `M` | `WB R8` |`⋯` |`⋯` |
 | `R4 = ...` | `E` | `M` |`(...)`|`(...)`| `WB R4` |
 
-To resolve this problem, on solution would be to delay the writing in the fifth instruction to occur in a downstream cycle relative to the second instruction via stalling, as shown above. Therefore, in this situation, the processor must intervene with some type of resolution measure to ensure correct ordering of the write operations.
+To resolve this problem, one solution would be to delay the writing in the fifth instruction to occur in a downstream cycle relative to the second instruction via stalling, as shown above. Therefore, in this situation, the processor must intervene with some type of resolution measure to ensure correct ordering of the write operations.
 
 ## 6. Dependency Quiz and Answers
 
