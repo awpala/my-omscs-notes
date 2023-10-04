@@ -606,7 +606,7 @@ MUL R5, R8, R9 # I4 - C1
 ADD R4, R8, R9 # I5 - C1
 ```
 
-With respect to ILP, these "real processor" characteristics can be ignored, only focusing on data dependencies. There is one data dependency between instructions `I1` and `I2` via register `R1`. Consequently, this yields *two** cycles under ILP (denoted above as cycles `C1` and `C2`) and the following:
+With respect to ILP, these "real processor" characteristics can be ignored, only focusing on data dependencies. There is one data dependency between instructions `I1` and `I2` via register `R1`. Consequently, this yields *two* cycles under ILP (denoted above as cycles `C1` and `C2`) and the following:
 
 ```
 ILP = 5 instructions / 2 cycles = 2.5
