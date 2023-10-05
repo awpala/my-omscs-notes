@@ -385,7 +385,7 @@ The pertinent hardware components in Tomasulo's algorithm are as follows (as in 
   * **Execution Unit** (e.g., `ADD`)
 
 Examining the **operations** for *one* instruction, these are as follows:
-  1. `Issue`(denoted by blue in the figure shown above)
+  1. `Issue` (denoted by blue in the figure shown above)
       * The instruction is issued from the IQ to an available RS, with a corresponding lookup performed in the RAT to determine the location of the value(s) for its operand(s).
       * Once the instruction is issued, its waits for the operands to become ready (i.e., obtain actual values)
   2. `Capture` (denoted by green in the figure shown above)
