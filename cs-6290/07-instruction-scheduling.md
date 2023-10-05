@@ -505,7 +505,7 @@ Which of the following is ***not*** true regarding Tomasulo's algorithm?
 
 Here, let us briefly consider what occurs during load and store instructions.
 
-Just as we have previously seen data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies via **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
+Just as we have previously seen, data dependencies occurring via registers (e.g., renaming registers to eliminate false dependencies, and similarly the use of reservation stations, etc. to properly obey the inherent true dependencies), there can *also* be occurring dependencies via **memory** itself. In this case, here we assume loads and stores are the only instructions that can have dependencies via memory.
   * A **read-after-write (RAW)** dependency occurs if there is an operation `SW` (store word) to some address in memory, which is then followed by an operation `LW` (load word) from the same address (i.e., the `LW` uses the value stored by `SW`).
   * A **write-after-read (WAR)** (false) dependency occurs if the program first performs `LW`, followed by `SW`; if these operations were reordered, then the `LW` reads a stale value (i.e., preceding that which is otherwise updated by the subsequent operation `SW`).
   * A **write-after-write (WAW)** dependency occurs if there are successive  `SW` operations to the *same* address; here, the latest-occurring `SW` should be the value at the end, but a "stale" value can occur if these `SW` operations are reordered.
