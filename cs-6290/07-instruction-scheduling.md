@@ -191,7 +191,7 @@ Next, instruction `I3` (`F4 = F1 - F2`) is taken from the IQ (as in the figure s
 <img src="./assets/07-019.png" width="650">
 </center>
 
-***N.B.*** At this point (i.e., immediately following instruction `I3`), if there were *no* `RS3`present, the execution unit `ADD` would be currently *full*, and therefore instruction `I4` would have to wait to be removed from the IQ in the next cycle, pending execution of at least one of instructions `I1` or `I3` first.
+***N.B.*** At this point (i.e., immediately following instruction `I3`), if there were *no* `RS3` present, then the execution unit `ADD` would be currently *full*, and therefore instruction `I4` would have to wait to be removed from the IQ in the next cycle, pending execution of at least one of instructions `I1` or `I3` first.
 
 Lasty, instruction `I4` (`F1 = F2 + F3`) is taken from the IQ (as in the figure shown above). Here, operand `F3` is taken directly from the RF, whereas operand `F1` is taken from the RAT (via `RS4`).
 
