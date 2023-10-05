@@ -393,7 +393,7 @@ Examining the **operations** for *one* instruction, these are as follows:
   3. `Dispatch` (denoted by purple in the figure shown above)
       * Once the last-pending operand has been captured, the instruction is dispatched, i.e., sent to the execution unit for execution.
   4. `Write Result` (aka `Broadcast`) (denoted by red in the figure shown above)
-    * Once the instruction completes execution, it writes its result, i.e., this result is broadcasted and fed back to other instructions in their respective RSes which are pending capture of this result, as well as making corresponding updates to the REGS and RAT. Writing to the RAT allows (i.e., clearing the entry there) allows future instructions to get the current value from the REGS directly, rather than waiting for the blocking instruction to execute.
+      * Once the instruction completes execution, it writes its result, i.e., this result is broadcasted and fed back to other instructions in their respective RSes which are pending capture of this result, as well as making corresponding updates to the REGS and RAT. Writing to the RAT allows (i.e., clearing the entry there) allows future instructions to get the current value from the REGS directly, rather than waiting for the blocking instruction to execute.
 
 It is ***important*** to note while all of these operations occur sequentially for any given *instruction*, in any given *cycle*, some instruction will be in any one of these operations at any given time (i.e., the processor is generally performing *all* of these operations simultaneously at any given time). In this manner, the broadcasted result is the one that feeds back to the capture for use by subsequent instructions which are pending the result.
 
