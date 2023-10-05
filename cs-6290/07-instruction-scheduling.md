@@ -167,7 +167,7 @@ Lastly, the **reservation stations (RS)** (denoted by `RS1`, `RS2`, etc.) store 
 
 When instruction `I1` (`F2 = F4 + F1`) is issued from the IQ, it is taken from the **instruction buffer** (as in the figure shown above).
 
-Next, the RAT is examined. Since both inputs `F1` and `F4` are available, their corresponding values from the RF are store in `RS1` (where `+` denotes the operation `ADD`), which *is* indeed a currently available RS at this point.
+Next, the RAT is examined. Since both inputs `F1` and `F4` are available, their corresponding values from the RF are stored in `RS1` (where `+` denotes the operation `ADD`), which *is* indeed a currently available RS at this point.
 
 Lastly, for purposes of register renaming, since the result will now originate from `RS1`, the corresponding entry is updated in the RAT to reflect this (i.e., future instructions will now read `F2` via `RS1`'s pending result, rather than via the RF). Furthermore, the instruction will be removed from the IQ, thereby shifting down the upstream instructions accordingly (in the figure, this is denoted by crossing out with purple line in the IQ, but otherwise for simplicity without corresponding redrawing of the IQ itself).
 
