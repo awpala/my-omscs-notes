@@ -525,7 +525,7 @@ Now, assume that all of these instructions have finished execution and placed th
 
 The next instruction to be committed is `ROB1`, as in the figure shown above. At this point, the entries in the register allocation table (RAT) are as shown above.
   * `R1` points to `ROB4`, because the entry `ROB4` is the *latest* to write to register `R1` as far as the issued instructions are concerned
-  * `R2` points to `ROB5`, since there were no other renames of `R1` prior to that
+  * `R2` points to `ROB5`, since there were no other renames of `R2` prior to that
   * `R3` points to `ROB2`, since that was the most recent rename
 
 Furthermore, assume there are some existing (indeterminate) values in the register file (REGS), which will now be overwritten.
