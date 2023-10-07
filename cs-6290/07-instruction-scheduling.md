@@ -1341,7 +1341,7 @@ Finally, with respect to instruction `I4` (as in the table shown above), it cann
 | `I5` | `ADD F1, F1, F1` | | | |
 | `I6` | `ADD F1, F3, F4` | | | |
 
-Continuing with the same system (cf. Section 30), analysis through cycle `C4` is as per the table shown above.
+Continuing with the same system (cf. Section 28), analysis through cycle `C4` is as per the table shown above.
 
 Complete the remaining analysis with respect to pending instructions `I5` and `I6`.
 
