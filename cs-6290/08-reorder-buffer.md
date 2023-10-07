@@ -697,7 +697,7 @@ Cycle `C5` is depicted in the figure shown above.
 
 At this point, the next instruction `I5` can be issued, and there is a correspondingly available RS for this purpose.
   * The RS receives the destination tag (Dst-Tag) `ROB5`, which is the corresponding ROB entry.
-  * The operand `R1` is retrieved from the ROB as per the RAT  with the corresponding ROB tags (`ROB4`) while the operand `R5` has its value (i.e., `3`) is taken directly from ARF; both operands are recorded accordingly in the respective RS fields.
+  * The operand `R1` is retrieved from the ROB as per the RAT  with the corresponding ROB tag (`ROB4`), while the operand `R5` has its value (i.e., `3`) taken directly from ARF; both operands are recorded accordingly in the respective RS fields.
   * The entry in RAT is updated to `ROB5` for register `R4`.
 
 | Instruction | Issue | Execute | Write Result | Commit |
