@@ -562,7 +562,7 @@ Upon inspecting the RAT, it is verified that indeed `ROB4` is the most recently 
 <img src="./assets/08-048.png" width="650">
 </center>
 
-At this point, it is worthwhile to pause and examine the current configuration/state, as in the figure shown above. In particularly, why are we proceeding in such a manner, whereby values are being deposited directly to REGS, knowing that they will be soon overwritten?
+At this point, it is worthwhile to pause and examine the current configuration/state, as in the figure shown above. In particular, why are we proceeding in such a manner, whereby values are being deposited directly to REGS, knowing that they will be soon overwritten?
 
 The reason for this is that because--at any given point in time--if it is necessary to stop there and handle an exception or other related errant behavior, then all that is necessary to do at that point is to simply flush the ROB (i.e., invalidate the existing ROB entries) and then simply reset the RAT to point directly to REGS (i.e., for all constituent registers); in its current state, the REGS is synchronized/consistent with the committed-to point of the ROB (denoted by purple arrow in the figure shown above), i.e., still executing in program-order. In particular, note that such a "rollback"/"reset" would ***not*** be feasible if such "redundant" work were not being performed (i.e., the REGS would be inconsistent with program-order).
 
