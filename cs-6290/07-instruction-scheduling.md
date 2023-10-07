@@ -1281,7 +1281,7 @@ The quiz which analyzes this processor via Tomasulo's algorithm is split into tw
 | `I5` | `ADD F1, F1, F1` | | | |
 | `I6` | `ADD F1, F3, F4` | | | |
 
-Given the system shown previously (cf. Section 29), perform the corresponding time analysis for instructions `I1` through `I4`. The initial starting point (i.e., issued instructions) is given in the table shown above.
+Given the system shown previously (cf. subsection "Introduction"), perform the corresponding time analysis for instructions `I1` through `I4`. The initial starting point (i.e., issued instructions) is given in the table shown above.
 
 ***Answer and Explanation***:
 
