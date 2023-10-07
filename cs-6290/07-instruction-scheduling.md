@@ -724,7 +724,7 @@ In cycle `C4`, instruction `I4` is issued. This is noted accordingly in the tabl
 | `ML1` | `C4` | `MUL.D` | `(waiting)` | `2.5` | `LD2` |`(N/A)` | `No` |
 | `ML2` | | | | | | | |
 
-Since there is a correspondingly empty reservation station, instruction `I3` can be placed accordingly into `ML1`, as in the table shown above. Furthermore, both operands are waiting on RSes (i.e., `LD2` and `LD1`).
+Since there is a correspondingly empty reservation station, instruction `I4` can be placed accordingly into `AD1`, as in the table shown above. Furthermore, both operands are waiting on RSes (i.e., `LD2` and `LD1`).
 
 | Register | Value |
 |:--:|:--:|
