@@ -1099,7 +1099,7 @@ In which cycle does instruction `I4` get dispatched from its RS?
 <img src="./assets/08-080A.png" width="650">
 </center>
 
-Observe that instruction `I4` (in its corresponding RS) is pending the result (i.e., `4`) of instruction `I4` (via corresponding tag `ROB1`). This will occur in cycle `C12`; at that point, instruction `I4` will also be able to dispatch from its RS in the same cycle upon receiving the broadcasted result, with execution commencing in the following cycle (i.e., `C13`).
+Observe that instruction `I4` (in its corresponding RS) is pending the result (i.e., `4`) of instruction `I1` (via corresponding tag `ROB1`). This will occur in cycle `C12`; at that point, instruction `I4` will also be able to dispatch from its RS in the same cycle upon receiving the broadcasted result, with execution commencing in the following cycle (i.e., `C13`).
 
 ***N.B.*** At this point, the system is "logjammed" (.e., via pending result `ROB1`) until cycle `C13`, so this cycle will be the focus of the next quiz accordingly.
 
