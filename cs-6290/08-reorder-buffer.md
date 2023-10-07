@@ -1214,7 +1214,7 @@ In cycle `C18` (in which instruction `I5` commits), the following occur with res
   * The `Done` bit is marked accordingly in the ROB for entry `ROB5`
   * ARF is updated with the corresponding result (`-1`) for register `R4`
   * RAT has current entry `ROB5` (i.e., the most recent value of register `R4`), which is the same value, therefore, the RAT entry is cleared (i.e., indicating to retrieve the updated value directly from ARF)
-  * The ROB entry `ROB4` is cleared out
+  * The ROB entry `ROB5` is cleared out
 
 <center>
 <img src="./assets/08-091A.png" width="650">
