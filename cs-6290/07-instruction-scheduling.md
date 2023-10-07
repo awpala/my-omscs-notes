@@ -859,7 +859,7 @@ In cycle `C6`, instruction `I6` is issued. This is noted accordingly in the tabl
 | `ML1` | `C6` | `MUL.D` | `(waiting)` | `2.5` | `LD2` |`(N/A)` | `No` |
 | `ML2` | `C6` | `DIV.D` | `(waiting)` | `7.1` | `ML1` | `(N/A)` | `No` |
 
-Since there is a correspondingly empty reservation station, instruction `I6` can be placed accordingly into `ML2`, as in the table shown above. Furthermore, both operands are waiting on RSes (i.e., `AD1` and `LD2`).
+Since there is a correspondingly empty reservation station, instruction `I6` can be placed accordingly into `AD2`, as in the table shown above. Furthermore, both operands are waiting on RSes (i.e., `AD1` and `LD2`).
 
 | Register | Value |
 |:--:|:--:|
