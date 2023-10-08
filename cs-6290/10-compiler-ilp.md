@@ -447,7 +447,7 @@ Therefore, overall, if conversion introduces many more opportunities for replaci
 <img src="./assets/10-015.png" width="650">
 </center>
 
-Having seen the performance improvement provided by if conversion, can this technique also be useful in a loop? Recall the loop program from Section 5, as in the figure shown above. Assume that each instruction requires `2` cycles to execute.
+Having seen the performance improvement provided by if conversion, can this technique also be useful in a loop? Recall the loop program from Section 6, as in the figure shown above. Assume that each instruction requires `2` cycles to execute.
   * Before the compiler-facilitated instruction scheduling (left side of the figure shown above), there are three stall cycles (denoted by left-directed magenta arrows in the figure shown above).
   * After the compiler-facilitated instruction scheduling (right side of the figure shown above), there is still a necessary stall cycle, since the store instruction `SW` must be performed before the branching instruction `BNE`, and furthermore the instruction `SW` has an upstream dependency (`ADD R2, R2, R3`, via operand `R2`) which introduces the necessary stall accordingly (i.e., to complete the instruction `ADD`).
 
