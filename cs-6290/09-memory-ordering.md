@@ -417,7 +417,7 @@ Proceeding accordingly, instruction `41776` commits, copying its value to the co
 <img src="./assets/09-039.png" width="650">
 </center>
 
-Instruction `41779` commits, copying its value `0` to the corresponding data-cache address (overriding its existing value `17`), thereby advancing the **oldest pointer** to subsequent instruction `41775`.
+Instruction `41779` commits, copying its value `0` to the corresponding data-cache address (overriding its existing value `17`), thereby advancing the **oldest pointer** to subsequent instruction `41780`.
 
 <center>
 <img src="./assets/09-040.png" width="650">
