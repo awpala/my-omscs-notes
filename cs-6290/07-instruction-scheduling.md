@@ -511,7 +511,7 @@ Just as we have previously seen, data dependencies occurring via registers (e.g.
   * A **write-after-write (WAW)** dependency occurs if there are successive  `SW` operations to the *same* address; here, the latest-occurring `SW` should be the value at the end, but a "stale" value can occur if these `SW` operations are reordered.
 
 Obviously, dependencies in memory must be similarly obeyed (and/or otherwise eliminated) just as for data dependencies in registers. To **resolve** these memory dependencies, Tomasulo's algorithm does the following:
-  * Perform instructions load and store **in-order**, i.e., do not reorder them at all, but rather insert them into the load/store queue in first-in, first-out order (e.g., a load does not execute if there is a previous store pending, even if the load is ready to execute at that point).
+  * Perform instructions load and store **in-order**, i.e., do not reorder them at all, but rather insert them into the **load/store queue (LSQ)** (discussed later in this course, in Lesson 9) in first-in, first-out order (i.e., a load does not execute if there is a previous store pending, even if the load is ready to execute at that point).
     * In practice, this is the resolution method of choice for Tomasulo's algorithm.
   * Identify the dependencies between load and store instructions, and correspondingly **reorder** them (as with any other instruction).
     * This turns out to be rather complicated to implement in practice (i.e., relative to more straightforward approach to reordering register dependencies). However, this *is* in fact implemented on modern processors (i.e., including for load and store instructions).
