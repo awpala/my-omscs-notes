@@ -1608,12 +1608,12 @@ Consider the processor described in the table shown above. For a given stage, in
 | Commit |`√`| |
 | Release ROB Entry |`√`| |
 
-As indicated previously (cf. Section 37), stages Fetch through Decode must occur strictly in program-order.
+As indicated previously (cf. Section 38), stages Fetch through Decode must occur strictly in program-order.
 
 Furthermore, stages Dispatch through Broadcast can occur out-of-order.
   * ***N.B.*** In a strictly in program-order processor, these stages would also occur in program-order (i.e., rather than out-of-order).
 
-Lastly, as indicated previously (cf. Section 37), Commit must occur strictly in program-order, and thus it follows by natural consequence that the subsequent release of the ROB entry will occur in program-order as well. 
+Lastly, as indicated previously (cf. Section 38), Commit must occur strictly in program-order, and thus it follows by natural consequence that the subsequent release of the ROB entry will occur in program-order as well. 
 
 ## 40. Lesson Outro
 
