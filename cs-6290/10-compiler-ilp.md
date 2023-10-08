@@ -308,7 +308,7 @@ With respect to instructions' execution, assume the following:
   * Instruction `ADD` requires `1` cycle to execute
   * Instruction `SW` requires `1` cycle to execute
 
-Furthermore, assume that the processor is characterized as before (cf. Section 5), i.e., it performs strictly `1` instruction per cycle and executes in-program-order.
+Furthermore, assume that the processor is characterized as before (cf. Section 6), i.e., it performs strictly `1` instruction per cycle and executes in-program-order.
 
 How many cycles does this program require to execute as-is? How many cycles does this program require after modification via instruction scheduling in the compiler?
 
