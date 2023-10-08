@@ -581,7 +581,7 @@ to:
 8 instructions per iteration × 500 loop iterations = 4000 instructions
 ```
 
-This is a considerable reduction in the number of instructions required to perform this loop. This is accomplished here by reducing the **looping overhead** (i.e., trailing instruction `ADDI` and `BNE` to iterate to the next loop, which are only applied to half as many iterations with the once-unrolled modification).
+This is a considerable reduction in the number of instructions required to perform this loop. This is accomplished here by reducing the **looping overhead** (i.e., trailing instructions `ADDI` and `BNE` to iterate to the next loop, which are only applied to half as many iterations with the once-unrolled modification).
 
 Recall the iron law (cf. Lesson 2) as follows:
 
