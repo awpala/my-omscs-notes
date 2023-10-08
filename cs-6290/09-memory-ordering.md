@@ -223,7 +223,7 @@ In the case of in-order load-store execution (as in the figure shown above):
 <img src="./assets/09-019.png" width="450">
 </center>
 
-Eventually, the cache miss in instruction `I1` is resolved, and the instruction `LOAD` is able to proceed (as in the figure shown above). Consequently, instruction `I2` is able to computed `R7` promptly thereafter, and similarly instruction `I3` can now perform its corresponding instruction `STORE`. Furthermore, as instruction `I1` completes, instruction `I4` completes subsequently thereafter.
+Eventually, the cache miss in instruction `I1` is resolved, and the instruction `LOAD` is able to proceed (as in the figure shown above). Consequently, instruction `I2` is able to compute `R7` promptly thereafter, and similarly instruction `I3` can now perform its corresponding instruction `STORE`. Furthermore, as instruction `I1` completes, instruction `I4` completes subsequently thereafter.
 
 <center>
 <img src="./assets/09-020.png" width="450">
