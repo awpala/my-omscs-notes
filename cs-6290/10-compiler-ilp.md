@@ -100,7 +100,7 @@ The corresponding instruction-level parallelism (ILP) is as follows:
 * Instructions `I1′` and `I2′` have no dependencies between them, however, instruction `I3′` depends on these upstream instructions' results.
 * Instruction `I4′` has no upstream dependencies, and therefore can execute immediately on program start.
 * Instruction `I5′` is dependent on the result of upstream instruction `I4′`.
-* Instruction `I5′` is dependent on the results of upstream instructions `I3′` and `I5′`.
+* Instruction `I6′` is dependent on the results of upstream instructions `I3′` and `I5′`.
 
 Correspondingly, these instructions can be executed as follows:
 
