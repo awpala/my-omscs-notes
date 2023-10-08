@@ -372,7 +372,7 @@ Therefore, as-is, this program requires `8` cycles.
 <img src="./assets/10-013A.png" width="650">
 </center>
 
-Now, consider the compiler-facilitated instruction scheduling scenario. To avoid the stall in cycle `C2`, we must "move up" a downstream instruction which does not otherwise depend on instruction `I1` as-is. This can be achieved by moving instruction `I5` to the second-instruction position (and correspondingly using a non-conflicting register for its target operand, i.e., from `R1` to `R10`). The updated program is thus as follows:
+Now, consider the compiler-facilitated instruction scheduling scenario. To avoid the stall in cycle `C2`, we must "move up" a downstream instruction which does not otherwise depend on instruction `I1` as-is. This can be achieved by moving instruction `I4` to the now second-instruction position (and correspondingly using a non-conflicting register for its target operand, i.e., from `R1` to `R10`), and similarly moving instruction `I3` to the now-fifth instruction position. The updated program is thus as follows:
 
 ```mips
 LW  R1, 0(R2)    # I1
