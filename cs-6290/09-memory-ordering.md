@@ -97,7 +97,7 @@ The first instruction (`I1`) accesses the computed memory address `104`. Because
 <img src="./assets/09-006.png" width="350">
 </center>
 
-The second instruction (`I2`) stores the value `15` at computed address of `204`. The instruction is marked in field `C`; essentially, the instruction is essentially "delayed," and therefore it remains in the load-store queue (LSQ).
+The second instruction (`I2`) stores the value `15` at computed address of `204`. The instruction is marked in field `C`; essentially, the instruction is effectively "delayed," and therefore it remains in the load-store queue (LSQ).
 
 <center>
 <img src="./assets/09-007.png" width="450">
