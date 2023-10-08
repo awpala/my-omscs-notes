@@ -486,8 +486,8 @@ The instruction `LW` does ***not*** access cache or memory. Since `R2` refers to
 As a follow up to the quiz in the previous section, given that the instruction `LW` does *not* retrieve its value from the cache or memory (but rather the store),  where exactly does the instruction `LW` get its value from? (Select all applicable choices.)
   * A result broadcast
     * `DOES NOT APPLY` - The store does *not* broadcast its resulting value; results are only broadcasted in this manner for instructions producing a *register* result (which does not apply for a store instruction).
-  * A reservation station (RS) - RSes never provide any results to subsequent instructions, but rather only capture values for the *current* instruction. Furthermore, even in such a case, store instructions do not interact with RSes in this manner anyhow.
-    * `DOES NOT APPLY`
+  * A reservation station (RS)
+    * `DOES NOT APPLY` - RSes never provide any results to subsequent instructions, but rather only capture values for the *current* instruction. Furthermore, even in such a case, store instructions do not interact with RSes in this manner anyhow.
   * A reorder buffer (ROB) entry
     * `DOES NOT APPLY` - A ROB entry *would* maintain a result for a register-producing instruction between the time of broadcast and the time of commit, however, because a store instruction is not a register-value-producing instruction, it does *not* correspondingly place its result in a ROB entry. (In fact, the store does not even technically have such a "result" to place in such a ROB entry in the first place.)
   * A load-store queue (LSQ) entry
