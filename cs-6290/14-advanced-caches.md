@@ -166,3 +166,40 @@ With these advantages, why even bother with physically accessed caches at all, t
     * Conversely, in a (fully) virtually accessed cache, it would otherwise be necessary to ***flush*** the cache on context switch between the processes (i.e., removing all the cache data for a given process immediately prior to the context switch), thereby introducing bursts of cache misses on each such context switch. For reference, context switches occur among processes on the order of 1 millisecond, which while relatively large with respect to a typical clock (cf. 1-10 nanoseconds per cycle), bear in mind that the cache can be quite large, and correspondingly may nevertheless generate many such cache misses in tandem with such "re-heating" of the cache on context switch.
 
 ## 7. Virtually Indexed, Physically Tagged (VIPT) Cache
+
+<center>
+<img src="./assets/14-012.png" width="650">
+</center>
+
+To resolve the issues which are inherent to the (fully) virtually accessed cache (cf. end of Section 6), the **virtually indexed, physically tagged (VIPT) cache** was devised. The virtually indexed, physically tagged (VIPT) cache combines the advantages of the two types of caches.
+
+<center>
+<img src="./assets/14-013.png" width="350">
+</center>
+
+In a virtually indexed, physically tagged (VIPT) cache, the virtual address is comprised of the **cache offset**, **index bits**, and **tag region** (as in the figure shown above), however, the tag region is not used in the initial lookup. Instead, the index bits from the virtual address are used to locate the corresponding set in the cache. The **valid bits** of this cache set are then read accordingly.
+
+<center>
+<img src="./assets/14-014.png" width="350">
+</center>
+
+Meanwhile, the **page number** from the virtual address is used to access the **translation look-aside buffer (TLB)** in order to determine the corresponding physical-address **frame number**. With the **physical address** obtained in this manner, the corresponding **tag check** is performed via this physical address (i.e., *not* via the virtual address).
+
+Correspondingly, the nomenclature "virtually indexed, physically tagged" is now readily apparent:
+  * The ***index bits*** derive from the ***virtual address***
+  * The ***tag bits*** derive from the ***physical address***
+
+Downstream from these steps, the steps proceed as usual (i.e., a cache hit vs. cache miss is determined, etc.).
+
+So, then, what are the corresponding ***advantages*** of a virtually indexed, physically tagged (VIPT) cache?
+  * Since the respective upstream cache array and translation look-aside buffer (TLB) accesses generally proceed ***in parallel*** in this manner, if the translation look-aside buffer (TLB) access is sufficiently fast (which is typically the case, given its small size), then correspondingly `Hit Time = Cache Hit Time` (i.e., the latency component contributed by the translation look-aside buffer [TLB] to the `Hit Time` is negligible relative to the more prominent/bottlenecking cache hit time).
+    * This is reminiscent of the **virtually indexed, virtually tagged (VIVT) cache**.
+  * Additionally, in a virtually indexed, physically tagged (VIPT) cache, it is ***not*** necessary to flush on context switch, because if the process is switched (i.e., with virtual addressed correspondingly mapping to ***different*** physical addresses), then the cache content is effectively being checked against the actual ***physical*** addresses. Therefore, even if another process maps to the ***same*** cache set (i.e., via virtual address), it will still otherwise map to another set of corresponding physical addresses by virtue of the different/distinct tags.
+    * This is reminiscent of the **physically indexed, physically tagged (PIPT) cache**.
+
+Recall (cf. Lesson 13) that **aliasing** can occur when multiple virtual physical addresses in the same address space map to the ***same*** physical address (furthermore, since virtual addressing is performed with respect to cache access, then these addresses may ultimately occur in ***different*** locations within the constituent cache array, with mutually exclusive read/writes to these otherwise disparate/distinct cache locations). So, then, is this a concern with respect to virtually indexed, physically tagged (VIPT) caches?
+  * As it turns out, there are ***no*** such aliasing issues with respect to virtually indexed, physically tagged (VIPT) caches, provided that the cache is ***sufficiently small***, a direct consequence of the ***index bits*** themselves. This in turn ensures **correctness** of the cache operation itself.
+
+The concept of aliasing in the context of virtually indexed, physically tagged (VIPT) caches is further examined in the next section.
+
+## 8. Aliasing in Virtually Accessed Caches
