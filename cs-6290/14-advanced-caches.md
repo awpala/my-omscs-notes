@@ -126,3 +126,21 @@ Typically, in a **level 1 (L1) cache**, the `Hit Time` is on the order of 1-3 cy
   * Correspondingly, L1 caches are typically pipelined in this manner.
 
 ## 5. Translation Look-Aside Buffer (TLB) and Cache `Hit Time`
+
+Additionally, `Hit Time` is affected by having to access the **translation look-aside buffer (TLB)** prior to accessing the cache itself.
+
+<center>
+<img src="./assets/14-010.png" width="650">
+</center>
+
+Recall (cf. Lesson 13) that the processor starts out with the **virtual address**, as in the figure shown above. From there, the following ***sequence*** occurs:
+  * A portion of the virtual is used to index into the translation look-aside buffer (TLB) to determine the **frame number**
+  * The **page offset** of the virtual address is then combined with the frame number to reconstitute the **physical address**
+  * The physical address is used to access the data in the **cache**
+
+Therefore, if the translation look-aside buffer (TLB) requires one cycle and the cache requires an additional cycle, then two cycles are required for the processor to obtain the cache data from the virtual address.
+
+Such a cache that is accessed via a physical address in this manner is called a **physically accessed cache**, **physical cache**, or **physically indexed, physically tagged (PIPT) cache**.
+  * The overall **hit latency** of such a cache is effectively comprised of the translation look-aside buffer (TLB) hit latency and the cache hit latency.
+
+## 6. Virtually Accessed Cache
