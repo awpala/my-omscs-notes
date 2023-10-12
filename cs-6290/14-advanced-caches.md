@@ -202,4 +202,65 @@ Recall (cf. Lesson 13) that **aliasing** can occur when multiple virtual physica
 
 The concept of aliasing in the context of virtually indexed, physically tagged (VIPT) caches is further examined in the next section.
 
-## 8. Aliasing in Virtually Accessed Caches
+## 8-9. Aliasing in Virtually Accessed Caches
+
+### 8. Introduction
+
+We have seen (cf. Section 7) that virtually accessed caches can ***overlap*** the latency of the translation look-aside buffer (TLB) lookup and the cache lookup. However, virtually accessed caches have an inherent issue called **aliasing**.
+
+<center>
+<img src="./assets/14-015.png" width="650">
+</center>
+
+The issue of aliasing occurs because in the virtual address space of a given application (as in the figure shown above), one page from a given process (e.g., `A`) can map to some part of the physical address space (e.g., via Linux function `mmap()`, or equivalent system call in other operating systems, in order to map part of a file to appear within range of addressable memory, `A`), while another page from a different process (e.g., `B`) can also map to the ***same*** physical address (e.g., via `mmap()` on the same part of the same file to another address, `B`).
+
+The result of this is two (or more) virtual addresses referring to the ***same*** physical-memory location.
+
+To see why this is problematic in a virtually accessed cache, consider the following two addresses:
+  * `A = 0x12345000`
+  * `B = 0xABCDE000`
+
+Furthermore, let the cache be characterized by the following:
+  * `64 KB` in size
+  * direct-mapped
+  * `16 bytes` block size
+  * virtually accessed
+
+For this `16 byte` block size, there is a `4 bit` offset (via least-significant bit), along with the next-twelve-least-significant bits indexing into the cache itself, i.e.,:
+
+```
+          index bits
+         |   |
+              offset bits
+             | |
+A: 0x1234|500|0
+B: 0xABCD|E00|0
+```
+
+***N.B.*** `64 KB / 16 bytes = 4 KB` entries in the cache, requiring `log_2(4 KB) = log_2(2^12) = 12 bits` index bits required to identify the index uniquely. Also note that with respect to the offset bits, `0x0` (hex) is equivalent to `0000` (binary).
+
+<center>
+<img src="./assets/14-016.png" width="350">
+</center>
+
+Consider when the processor writes a value of `16` to `A` (as in the figure shown above), i.e., operation `WR A, 16`. It first decomposes the virtual address and indexes into the cache via index bits `0x500`. If a ***cache miss** occurs, then the correspondingly mapped data is first fetched from the physical memory, which in turn returns a value (e.g., `4`).
+
+<center>
+<img src="./assets/14-017.png" width="350">
+</center>
+
+Once the cache block is fetched, the corresponding value `16` is placed there, and the cache-block content is updated accordingly (as in the figure shown above).
+  * ***N.B.*** If we assume that the cache in question is a write-back cache, then this value of `16` simply stays there as written.
+
+Now, consider what occurs when attempting to read `B`, i.e., operation `RD B` (as in the figure shown above). On indexing into the cache via index bits `0xE00`, and assuming a cache miss similarly occurs, then due to the absence of the data in the cache, the data is first fetched from physical memory, which returns the value `4`.
+
+This results in a corresponding ***problem*** that will not be simply a consequence of cache misses: Whenever subsequently writing to `A` and reading from `B`, neither process ends up effectively "sharing" the data as otherwise would be sensible to do.
+  * Ideally, since `A` and `B` are actually sharing the ***same*** data, on write to cache by `A`, `B` should subsequently read the same corresponding data.
+
+This problem consequently results in ***incorrect execution*** whenever such a mapping occurs (e.g., via `mmap()`), which is unfortunately a legal operation in most operating systems; therefore, virtually accessed caches require additional support to handle this scenario (e.g., on write to any given virtual-memory location, it is necessary to perform a check for aliases or different versions of the same physical data in the cache, and then either invalidate them, remove them from the cache, or update them accordingly to reflect the new value).
+  * Such ancillary operations are correspondingly expensive to implement and to perform, and ultimately defeat the purpose/advantage of virtually accessed caches in the first place, which inherently attempt to minimize latency by reducing (or eliminating) translation steps.
+
+To summarize, virtually accessed caches are desirable because they allow to overlap translation look-aside buffer (TLB) latency with cache latency, however, they introduce this aliasing problem which preclude their practical use otherwise (i.e., due to correspondingly introduced complication in their implementation).
+
+### 9. Virtually Indexed, Physically Tagged (VIPT) Cache Aliasing
+
