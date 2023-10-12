@@ -144,3 +144,25 @@ Such a cache that is accessed via a physical address in this manner is called a 
   * The overall **hit latency** of such a cache is effectively comprised of the translation look-aside buffer (TLB) hit latency and the cache hit latency.
 
 ## 6. Virtually Accessed Cache
+
+<center>
+<img src="./assets/14-011.png" width="650">
+</center>
+
+The overall hit latency of the cache can be improved using a **virtually accessed cache**. In a virtually accessed cache (as in the figure shown above):
+  * The virtual address is used to access the data via the cache (cf. Section 5), via corresponding **cache hit**
+    * In this case, there is no need to access the translation look-aside buffer (TLB) immediately prior to accessing the data
+  * Otherwise, on a **cache miss**, the virtual address is used in tandem with the translation look-aside buffer (TLB) to determine the physical address, in order to bring that corresponding data into the cache
+
+Therefore, the ***advantages*** of using a virtually accessed cache over a corresponding physically accessed cache (cf. Lesson 12) are as follows:
+  * `Hit Time = Cache Hit Time`, i.e., the `Hit Time` is comprised solely of the `Cache Hit Time`, with no additional translation look-aside buffer (TLB) latency added
+  * There is correspondingly no translation look-aside buffer (TLB) access required on cache hits, thereby reducing energy usage accordingly
+
+With these advantages, why even bother with physically accessed caches at all, then? This is due to the following inherent ***problems*** with (exclusively) virtually accessed caches:
+  * In addition to containing the translation for the physical address, the translation look-aside buffer (TLB) also contains the **permissions** required to determine whether it is permissible to read, write, or execute certain pages.
+    * Therefore, even though the physical address produced by the translation look-aside buffer is not strictly required in a (fully) virtually accessed cache (i.e., in order to access the corresponding cache data), in practice, it still necessary to access the translation look-aside buffer (TLB) to determine these permissions in a *real* processor (i.e., even on cache hits).
+  * A bigger problem arises by virtue of the fact that a given virtual address is ***specific to*** a particular process running on the system. 
+    * Correspondingly, if running one process and filling the cache with its data, once another/separate process begins to run, then that other process will have virtual addresses which may potentially overlap with the virtual addresses of teh previous process, thereby creating ambiguity with respect to the intended data for each respective process. To resolve this matter, the translation look-aside buffer (TLB) additionally contains different translations for each corresponding process, mapping unambiguously to the respective physical-memory addresses.
+    * Conversely, in a (fully) virtually accessed cache, it would otherwise be necessary to ***flush*** the cache on context switch between the processes (i.e., removing all the cache data for a given process immediately prior to the context switch), thereby introducing bursts of cache misses on each such context switch. For reference, context switches occur among processes on the order of 1 millisecond, which while relatively large with respect to a typical clock (cf. 1-10 nanoseconds per cycle), bear in mind that the cache can be quite large, and correspondingly may nevertheless generate many such cache misses in tandem with such "re-heating" of the cache on context switch.
+
+## 7. Virtually Indexed, Physically Tagged (VIPT) Cache
