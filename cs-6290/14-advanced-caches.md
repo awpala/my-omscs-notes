@@ -339,4 +339,30 @@ Correspondingly, observe the following characteristics of actual Intel processor
 | Core 2, Nehalem, Sandy Bridge, Haswell | 8-way | `4 KB` | `32 KB` |
 | Skylake | 16-way | `4 KB` | `64 KB` |
 
-## 12. Associativity and `Hit Time`
+## 12-14. Associativity and `Hit Time`
+
+### 12. Introduction
+
+As another method for reducing `Hit Time`, let us now revisit the relationship between the associativity and the `Hit Time`.
+
+<center>
+<img src="./assets/14-022.png" width="650">
+</center>
+
+A ***high associativity*** in the cache gives rise to the following:
+  * ***Fewer*** conflicts for a given set in the cache when multiple blocks map to this same set → ***Reduced*** `Miss Rate`
+    * This is a desirable property
+  * ***Larger sized*** virtually indexed, physically tagged (VIPT) cache (cf. Section 10) → ***Reduced*** `Miss Rate`
+    * This is a desirable property
+  * Slower hits → ***Increased*** `Hit Time`
+    * This is an undesirable property
+
+Conversely, consider the corresponding (complementary) implications of a ***direct-mapped cache***:
+  * Increased conflicts and smaller sized virtually indexed, physically tagged (VIPT) caches  → ***Increased*** `Miss Rate`
+    * This is an undesirable property
+  * Faster hits → ***Decreased*** `Hit Time`
+    * This is an desirable property
+
+Therefore, there is a corresponding ***trade-off*** with respect to associativity and `Hit Time` (in particular, it undesirably increases with associativity level as a consequence of otherwise improved/reduced `Miss Rate`). Next, we will examine if this trade-off can be reconciled (i.e., decrease the `Miss Rate` without otherwise increasing the `Hit Time`, by slightly "cheating" with respect to the associativity).
+
+### 13. Way Prediction
