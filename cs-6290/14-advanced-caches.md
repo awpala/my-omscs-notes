@@ -382,3 +382,38 @@ Conversely, if there is ***no*** hit (i.e., the guess is ***incorrect***), then 
 With this scheme, the ***overall premise*** is that the `Miss Rate` is commensurate with that of a set-associative cache (i.e., relatively low), while the `Hit Time` is commensurate with that of a direct-mapped cache (i.e., relatively low), provided that the guesses are mostly correct to ensure this latter direct-mapped-cache-like behavior.
 
 ### 14. Way Prediction Performance
+
+So, then, how often can it be expected to "guess correctly" in a way prediction cache?
+
+<center>
+<img src="./assets/14-024.png" width="350">
+</center>
+
+We can formulate an intuition around this question by examining a relatively small direct-mapped cache, as in the figure shown above. Here, consider a two-way set-associative cache, with each cache set being correspondingly composed of two cache lines. By performing way prediction, we are effectively using only ***one*** of these cache lines initially (and only if the target data is not found there, will the search then proceed onto the other cache line).
+
+Therefore, in way prediction, the (otherwise set-associative) cache is treated effectively as a (smaller) direct-mapped cache (i.e., the initially searched cache line), and only upon unsuccessful search (via corresponding incorrect guess) does the search consequently expand to the entire set-associative cache.
+
+<center>
+<img src="./assets/14-025.png" width="650">
+</center>
+
+Correspondingly, the `Hit Rate`, `Hit Latency`, etc. can be examined in the context of a way prediction cache as a "first-order approximation" with respect to the direct-mapped cache and set-associative cache, as follows:
+
+| Characteristic | `32 KB`, 8-way set-associative | `4 KB` direct-mapped* | `32 KB`, 8-way set-associative with way prediction |
+|:--:|:--:|:--:|:--:|
+| `Hit Rate` | `90%` | `70%` (lower than set-associative) | `90%`** |
+| `Hit Latency` | `2 cycles`| `1 cycle` (faster than set-associative) | `1 cycle` (direct-mapped for correctly guessed) or `2 cycles` (set-associative for incorrectly guessed)  |
+| `Miss Penalty` | `20 cycles` | `20 cycles` (same as set-associative) | `20 cycles` |
+| `AMAT` (average memory access time) | `4` (`= 2 + (1 - 0.90) × 20`) | `7` (`= 2 + (1 - 0.70) × 20`) | `3.3` (`= [(0.70 × 1) + (0.30 × 2)] + (1 - 0.90) × 20]`) |
+
+****N.B.*** With respect to the `4 KB` direct-mapped cache, this is the equivalent of a way-prediction-like cache (i.e., accessing one of the cache lines, which is effectively a `32 KB / 8 = 4 KB` subset for a corresponding 8-way set-associative cache). Furthermore, with correspondingly added way prediction, there is an attempt to guess *which* particular cache line will contain the block in question.
+
+*****N.B.*** With respect to the `Hit Rate` of the `32 KB`, 8-way set-associative with way prediction cache, `70%` of the time the data will be found in the (effectively) direct-mapped cache (i.e., `4 KB` subset) with corresponding `1 cycle` of `Hit Latency`; however, in the remaining `30%` of the time, the rest of the cache will be checked in a set-associative manner, thereby giving an overall (i.e., effective) `Hit Rate` of `90%` (i.e., any incorrect guesses will ultimately be resolved via the full `32 KB` set-associative cache).
+
+Comparing the `32 KB`, 8-way set-associative cache ***without*** way prediction to the `4 KB` direct-mapped cache, overall the `AMAT` is better with respect to the former (i.e., set-associative), however, there is an additional-cycle penalty (i.e., higher `Hit Latency`) in order to achieve the correspondingly lower `Miss Penalty`.
+
+Furthermore, observe that the `32 KB`, 8-way set-associative cache ***with*** way prediction has the lowest overall `AMAT` between the three compared caches, by virtue of the following ***compounded effects***:
+  * The `Hit Rate` of the set-associative cache
+  * The (amortized) `Hit Latency` of the (correctly guessed) direct-mapped cache
+
+## 15. Way Prediction Quiz and Answers
