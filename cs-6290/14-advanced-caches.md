@@ -559,3 +559,144 @@ Correspondingly, at any given time, the pseudo least recently used (PLRU) replac
 Therefore, on cache hit, both not most recently used (NMRU) and pseudo least recently used (PLRU) replacement policies entail relatively "low activity" on a per-cache-hit basis compared to an equivalent least recently used (LRU) replacement policy.
 
 ## 19. Not Most Recently Used (NMRU) Replacement Policy Quiz and Answers
+
+<center>
+<img src="./assets/14-043A.png" width="650">
+</center>
+
+Consider a cache characterized as follows:
+  * Fully-associative with `4` cache lines
+  * Not most recently used (NMRU) replacement policy
+  * Initialized as "empty" (i.e., none of the `4` cache lines contain blocks)
+
+Furthermore, suppose that the processor accesses the blocks in the following order:
+
+```
+A A B A C A D A E A A A A B
+```
+
+Given this information, what is the least number of possible cache misses in this sequence of accesses?
+  * `5`
+
+And what is the largest number of possible cache misses?
+  * `6`
+
+***Explanation***:
+
+The initial access is a miss, because the cache is initialized as empty:
+
+```
+A A B A C A D A E A A A A B
+M
+```
+* ***N.B.*** Here `M` denotes a cache *m*iss (and similarly `H` will be used to denote a cache *h*it).
+
+The subsequent access is then correspondingly a hit:
+
+```
+A A B A C A D A E A A A A B
+M H
+```
+
+The subsequent access is a miss:
+
+```
+A A B A C A D A E A A A A B
+M H M
+```
+
+<center>
+<img src="./assets/14-044A.png" width="100">
+</center>
+
+Here, `B` is placed in a separate line (i.e., among the remaining unused `3`) within the cache from that of `A`, since `A` is the most recently used block immediately prior to placement of `B` into the cache. Furthermore, this implies that `A` still remains in the cache. The corresponding cache configuration in this state is as in the figure shown above.
+
+The subsequent access is a hit:
+
+```
+A A B A C A D A E A A A A B
+M H M H
+```
+
+<center>
+<img src="./assets/14-045A.png" width="150">
+</center>
+
+The corresponding state (as in the figure shown above) is such that `A` is the most recently used block.
+
+The subsequent access is a miss:
+
+```
+A A B A C A D A E A A A A B
+M H M H M
+```
+
+With respect to placement of `C` within the cache, it appears as though `B` may be a candidate for replacement (i.e., due to not being the most recently used). However, note that there are still ***valid bits*** used to track *all* of the blocks. Correspondingly, typically the replacement policy will account for this by first filling all lines in the cache set (i.e., without particular regard to least-recent vs. most-recent usage) prior to commencing with block evictions.
+
+<center>
+<img src="./assets/14-046A.png" width="150">
+</center>
+
+Therefore, `C` is placed in one of the (immediately prior to placement) empty blocks, with the most-recently-used pointer correspondingly updated accordingly (as in the figure shown above).
+
+The subsequent access is a hit:
+
+```
+A A B A C A D A E A A A A B
+M H M H M H
+```
+
+<center>
+<img src="./assets/14-047A.png" width="150">
+</center>
+
+The correspondingly updated cache state is as in the figure shown above.
+
+The subsequent access is a miss:
+
+```
+A A B A C A D A E A A A A B
+M H M H M H M
+```
+
+<center>
+<img src="./assets/14-048A.png" width="150">
+</center>
+
+The correspondingly updated cache state is as in the figure shown above.
+
+The subsequent access is a hit:
+
+```
+A A B A C A D A E A A A A B
+M H M H M H M H
+```
+
+<center>
+<img src="./assets/14-049A.png" width="150">
+</center>
+
+The correspondingly updated cache state is as in the figure shown above.
+
+The subsequent access is a miss:
+
+```
+A A B A C A D A E A A A A B
+M H M H M H M H M
+```
+
+Now, the question is: Which block will be evicted at this point? Given the most recent state immediately prior to cache miss via `E`, by inspection, `A` (which is the most recently used block up to that point) will *not* be evicted, and therefore the subsequent accesses will all be hits (with corresponding setting of the most recently used pointer to `A` accordingly), i.e.,:
+
+```
+A A B A C A D A E A A A A B
+M H M H M H M H M H H H H
+```
+
+Now with respect to `E` (i.e., immediately prior to the final access of `B`), there are two possibilities per its initial upstream access:
+  * It replaces either `C` or `D`, thereby resulting in a *hit* on final access of `B`
+  * It replaces `B`, thereby resulting in a *miss* on final access of `B` (i.e., due to its ejection previously in order to replace with `E` accordingly)
+
+Correspondingly, the least possible amount of misses for this sequence would be `5` (i.e., assuming `B` was *not* ejected), otherwise the most possible amount of misses for this sequence would be `6` (i.e., assuming `B` *was* indeed ejected).
+
+## 20. Reducing the Average Memory Access Time (`AMAT`)
+
