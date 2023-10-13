@@ -286,7 +286,35 @@ Conversely, in a **virtually indexed, physically tagged (VIPT) cache**, the phys
 To recap, in a virtually indexed, physically tagged (VIPT) cache, there is ***no aliasing*** if all of the index bits derive from the virtual address's page offset (i.e., these are effectively the same index bits that would otherwise derive from the least-significant bits of the physical address in a corresponding physically indexed cache).
   * This is a very desirable property, with the ***caveat*** that is requires the cache to be sufficiently small to allow this uniqueness property to exist in the first place (i.e., unique addressability via the virtual address's page-offset index bits).
 
-For example, given a cache characterized by a `4 KB` page size, this yields a page offset of `12 bits` (`log_2(4 * 2^10) = log_2(2^12) = 12`). Furthermore, given a `32 B` block size for this cache, this correspondingly yields a block offset of `5 bits` (`log_2(32) = log_2(2^5) = 5`). Given these constraints, this yields a `7 bits` index region (i.e., `12 - 5`), thereby limiting the size of the corresponding cache sets to `128` (i.e., `2^7`).
+For example, given a cache characterized by a `4 KB` page size, this yields a page offset of `12 bits` (`log_2(4 * 2^10) = log_2(2^12) = 12`). Furthermore, given a `32 bytes` block size for this cache, this correspondingly yields a block offset of `5 bits` (`log_2(32) = log_2(2^5) = 5`). Given these constraints, this yields a `7 bits` index region (i.e., `12 - 5`), thereby limiting the size of the corresponding cache sets to `128` (i.e., `2^7`).
   * If the number of cache sets were to exceed `128`, then the index bits would necessarily "spill over" into the least-significant-bits region of the page number, which correspondingly would impact the unique mapping to the frame number itself (thereby re-introducing potential aliasing, which was intended to be eliminated in the first place).
 
 ## 10. Virtually Indexed, Physically Tagged (VIPT) Aliasing Avoidance Quiz and Answers
+
+<center>
+<img src="./assets/14-020A.png" width="650">
+</center>
+
+Consider a virtually indexed, physically tagged (VIPT) cache characterized as follows:
+  * 4-way set-associative
+  * `16 bytes` block size
+  * `8 KB` page size
+
+To avoid aliasing, what is the maximum possible size of the cache?
+  * `32 KB`
+
+***Explanation***:
+
+Recall (cf. Section 9) that in order to prevent aliasing, the index bits must derive solely from the page offset. Given a page size of `8 KB = 8 * 2^10 bytes = 2 ^ 13 bytes`, this implies a page offset of `13 bits`. In the decomposition of the virtual address with respect to cache access, this implies that the index and offset bits must fit within these constituent `13 bits`. 
+
+For a block size of `16 bytes`, this implies an offset of `4 bits` (i.e., `log_2(16) = log_2(2^4) = 4`), and correspondingly the index bits are comprised of the remaining `13 - 4 = 9 bits`.
+
+Therefore, the maximum possible size of the cache is determined as follows (note that there are `4 = 2^2` cache blocks in a 4-way set-associative cache):
+
+```
+(2^9 cache sets) × (2^4 bytes per cache block) × (2^2 cache blocks per cache set) = 2^15 bytes = 32 KB
+```
+
+***N.B.*** The factor `(2^9 cache sets) × (2^4 bytes per cache block)` here must be equal to the page size (i.e., `2^13` via corresponding least-significant `13 bits` of the virtual address's page offset); therefore, effectively, the maximum size of the cache is the page size itself multiplied by the cache associativity. Correspondingly, all else equal, the only way to avoid aliasing in a cache while increasing its size is to increase its set-associativity.
+
+## 11. Real Virtually Indexed, Physically Tagged (VIPT) Caches
