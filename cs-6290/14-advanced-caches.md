@@ -484,3 +484,25 @@ Therefore, it is ***desirable*** to have a replacement policy characterized as f
 <center>
 <img src="./assets/14-033.png" width="650">
 </center>
+
+One so called least recently used (LRU) approximation algorithm is the **not most recently used (NMRU)** replacement policy, intended to provide further optimization of the performance/properties of the replacement policy.
+
+The not most recently used (NMRU) replacement policy attempts to *approximate* the performance of the least recently used (LRU) replacement policy without incurring the full overhead (i.e., per-cache-hit) of the latter. The not most recently used (NMRU) replacement policy works as follows:
+  * Track which particular block in the cache set is the most recently used block at any given time
+  * Subsequently, when a replacement is necessary, select a block for ejection which is another block (i.e., one which is ***not*** the most recently used block), e.g., via random selection or other policy
+
+In order to track the not most recently used block in this manner, given an ***n*-way set-associative cache**, a corresponding not most recently used (NMRU) replacement policy tracks the most recently used block for each cache set via a ***single*** most recently used **pointer** per cache set (e.g., in a 2-way set-associative cache, only one bit is necessary to uniquely identify which of the two sets is the most recently accessed; in a 4-way set-associative cache, a two-bit pointer is necessary to uniquely identify which of the four sets is the most recently accessed; and so on).
+  * cf. In an *n*-way set-associative cache using a "naive" least recently used (LRU) replacement policy, the full ***n***-sized counters per cache set are required to track ***all*** of the cache sets at any given time (cf. Section 16) (e.g., a 4-way set-associative cache requires *four* two-bit counters). Therefore, a not most recently used (NMRU) replacement policy correspondingly reduces the overhead to `log_2(n)` such counters, relative to `n` counters in an equivalent least recently used (LRU) replacement policy.
+
+It turns out that the not most recently used (NMRU) replacement policy works reasonably well.
+  * The not most recently used (NMRU) replacement policy has a `Hit Rate` that is slightly lower than an equivalent least recently used (LRU) replacement policy, however, this small concession otherwise provides a reduction in the `Hit Time` (i.e., reduction from `2` cycles to `1` cycle).
+
+A key ***disadvantage*** of the not most recently used (NMRU) replacement policy is that although it prevents the most recently accessed cache line from being evicted, it does not provide any additional discernment with respect to the order of the remaining not-most-recently-used cache blocks (i.e., in particular, which of these would be the next-most-recently-used candidates to avoid otherwise ejecting prematurely).
+
+Correspondingly, a possible alternative to this replacement policy would be characterized as follows:
+  * Still simpler than the least recently used (LRU) replacement policy with respect to "blocks accounting" overhead
+  * Keeps better track of the not-most-recently-used blocks relative to the not most recently used (NMRU) replacement policy
+
+Such a possible alternative is described next.
+
+### 18. Pseudo Least Recently Used (PLRU) Replacement Policy
