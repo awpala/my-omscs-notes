@@ -318,3 +318,25 @@ Therefore, the maximum possible size of the cache is determined as follows (note
 ***N.B.*** The factor `(2^9 cache sets) × (2^4 bytes per cache block)` here must be equal to the page size (i.e., `2^13` via corresponding least-significant `13 bits` of the virtual address's page offset); therefore, effectively, the maximum size of the cache is the page size itself multiplied by the cache associativity. Correspondingly, all else equal, the only way to avoid aliasing in a cache while increasing its size is to increase its set-associativity.
 
 ## 11. Real Virtually Indexed, Physically Tagged (VIPT) Caches
+
+Now, consider the sizes of some *actual* virtually indexed, physically tagged (VIPT) caches.
+
+<center>
+<img src="./assets/14-021.png" width="650">
+</center>
+
+Recall (cf. Section 10 quiz) that the cache size is effectively limited as follows:
+
+```
+cache size ≤ associativity × page size
+```
+
+Correspondingly, observe the following characteristics of actual Intel processors series and their respective caches (ordered from oldest to most recent processors series from top to bottom, respectively):
+
+| Processors Series | Set Associativity | Page Size | Level 1 (L1) Cache Size |
+|:--:|:--:|:--:|:--:|
+| Pentium 4 | 4-way | `4 KB` | `16 KB` |
+| Core 2, Nehalem, Sandy Bridge, Haswell | 8-way | `4 KB` | `32 KB` |
+| Skylake | 16-way | `4 KB` | `64 KB` |
+
+## 12. Associativity and `Hit Time`
