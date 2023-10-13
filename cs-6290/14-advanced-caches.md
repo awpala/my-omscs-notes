@@ -366,3 +366,19 @@ Conversely, consider the corresponding (complementary) implications of a ***dire
 Therefore, there is a corresponding ***trade-off*** with respect to associativity and `Hit Time` (in particular, it undesirably increases with associativity level as a consequence of otherwise improved/reduced `Miss Rate`). Next, we will examine if this trade-off can be reconciled (i.e., decrease the `Miss Rate` without otherwise increasing the `Hit Time`, by slightly "cheating" with respect to the associativity).
 
 ### 13. Way Prediction
+
+<center>
+<img src="./assets/14-023.png" width="650">
+</center>
+
+One way to "cheat" with respect to a cache's set-associativity is via **way prediction**.
+
+Starting with a set-associative cache, which recall (cf. Section 12) is characterized by a relatively low `Miss Rate` but correspondingly relatively high `Hit Time`, it is then ***guessed*** which cache line in the set is most likely to hit.
+  * For this purpose, the ***index bits*** can be used to determine which set should be examined accordingly, and then consequently rather than reading out ***all*** of the tags in that line to determine which line hits, instead it is guessed which line is ***most likely*** to hit and then that line is checked accordingly.
+  * With this approach, this yields an access time which is more similar to a direct-mapped cache, provided that the guess is ***correct***.
+
+Conversely, if there is ***no*** hit (i.e., the guess is ***incorrect***), then the fallback measure is to perform a normal set-associative check, with the correspondingly higher `Hit Time`.
+
+With this scheme, the ***overall premise*** is that the `Miss Rate` is commensurate with that of a set-associative cache (i.e., relatively low), while the `Hit Time` is commensurate with that of a direct-mapped cache (i.e., relatively low), provided that the guesses are mostly correct to ensure this latter direct-mapped-cache-like behavior.
+
+### 14. Way Prediction Performance
