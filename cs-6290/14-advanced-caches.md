@@ -264,3 +264,29 @@ To summarize, virtually accessed caches are desirable because they allow to over
 
 ### 9. Virtually Indexed, Physically Tagged (VIPT) Cache Aliasing
 
+Now, consider **aliasing** in the context of **virtually indexed, physically tagged (VIPT) caches** (cf. Section 7).
+
+<center>
+<img src="./assets/14-018.png" width="650">
+</center>
+
+Given a **virtual address (VA)** (as in the figure shown above), it has the following constituent ***regions*** used for cache access:
+  * **offset bits**
+  * **index bits**
+  * **tag region** (used if the cache is accessed)
+
+In a virtually indexed cache, the index bits of the virtual address are used, while the remainder is derived from the **physical address (PA)**.
+
+To form the corresponding **physical address (PA)**, the least-significant bits of the virtual address comprise the **page offset**, while the remaining tag-region bits comprise the **page number**. The page number of the virtual address is correspondingly translated to the **frame number** of the physical address, while the page offset of the virtual address correspondingly comprises the least-significant bits of the physical address.
+
+Conversely, in a **virtually indexed, physically tagged (VIPT) cache**, the physical-address **tag** originates from the physical address' frame number, while the index derives from the index bits of the virtual-address **offset bits** (to promote fast access).
+  * It is additionally noteworthy that the index bits are located closely to the least-significant offset bits of the virtual address, and that the page offset has a fixed number of bits. Consequently, for a small cache, the index bits may ***all*** derive from the virtual address's page offset, which is effectively equivalent to using the least-significant bits of the physical address itself (as demonstrated/delineated visually per corresponding alignment in the figure shown above).
+  * Therefore, in this manner, despite indexing via the virtual address, effectively the ***equivalent*** index is being used as if it were being accessed via the physical address itself, which in turn ***resolves*** the aforementioned issue of aliasing. This is because the virtual address's page number (having distinct a page number mapping to corresponding physical address's frame number) only differs with respect to this page number, while still maintaining the ***same*** page offset for the same data; furthermore, since only the index-bits region of the page offset is pertinent (provided that the cache is sufficiently small), it will generally ***always*** map to the ***same*** location in physical memory (i.e., corresponding to the appropriate cache set).
+
+To recap, in a virtually indexed, physically tagged (VIPT) cache, there is ***no aliasing*** if all of the index bits derive from the virtual address's page offset (i.e., these are effectively the same index bits that would otherwise derive from the least-significant bits of the physical address in a corresponding physically indexed cache).
+  * This is a very desirable property, with the ***caveat*** that is requires the cache to be sufficiently small to allow this uniqueness property to exist in the first place (i.e., unique addressability via the virtual address's page-offset index bits).
+
+For example, given a cache characterized by a `4 KB` page size, this yields a page offset of `12 bits` (`log_2(4 * 2^10) = log_2(2^12) = 12`). Furthermore, given a `32 B` block size for this cache, this correspondingly yields a block offset of `5 bits` (`log_2(32) = log_2(2^5) = 5`). Given these constraints, this yields a `7 bits` index region (i.e., `12 - 5`), thereby limiting the size of the corresponding cache sets to `128` (i.e., `2^7`).
+  * If the number of cache sets were to exceed `128`, then the index bits would necessarily "spill over" into the least-significant-bits region of the page number, which correspondingly would impact the unique mapping to the frame number itself (thereby re-introducing potential aliasing, which was intended to be eliminated in the first place).
+
+## 10. Virtually Indexed, Physically Tagged (VIPT) Aliasing Avoidance Quiz and Answers
