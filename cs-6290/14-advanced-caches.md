@@ -506,3 +506,56 @@ Correspondingly, a possible alternative to this replacement policy would be char
 Such a possible alternative is described next.
 
 ### 18. Pseudo Least Recently Used (PLRU) Replacement Policy
+
+<center>
+<img src="./assets/14-034.png" width="650">
+</center>
+
+The **pseudo least recently used (PLRU)** replacement policy is one such replacement policy which attempts to more closely approximate the least recently used (LRU) replacement policy. The pseudo least recently used (PLRU) maintains ***one*** bit per line in the cache set.
+
+<center>
+<img src="./assets/14-035.png" width="100">
+</center>
+
+Consider an 8-way set-associative cache (as in the figure shown above), which has one bit per line (cf. `log_2(8) = log_2(2^3) = 3 bits` required for a comparable least recently used [LRU] replacement policy), with each bit initialized to `0`.
+
+<center>
+<img src="./assets/14-036.png" width="100">
+</center>
+
+Subsequently, as a given line(s) is accessed, its corresponding bit is set to `1` (as in the figure shown above). As long as there are remaining `0` bits, this process continues. Furthermore, whenever it is necessary to replace a block, one of those among the `0`s is chosen for this purpose (i.e., ejection). In this manner, the `1` bits correspondingly track the most recently used blocks (i.e., otherwise sparing them from ejection/replacement at any given time).
+
+<center>
+<img src="./assets/14-037.png" width="100">
+</center>
+
+As cache hits accumulate, correspondingly the `1` bits will accumulate accordingly (as in the figure shown above).
+
+<center>
+<img src="./assets/14-038.png" width="100">
+</center>
+
+Eventually, all of the lines will be set to `1` (as in the figure shown above). At this point, there are no `0`s remaining for replacement.
+
+<center>
+<img src="./assets/14-039.png" width="100">
+</center>
+
+<center>
+<img src="./assets/14-040.png" width="100">
+</center>
+
+When this state is detected (i.e., the last remaining `0` bit has been changed to `1`), the remaining bits are consequently zeroed out accordingly as (in the figures shown above). This effectively yields a new state reminiscent of that provided by the not most recently used (NMRU) replacement policy (cf. Section 17), i.e., only the most recently used block is current identified with correspondingly set `1` bit, while the remaining blocks are effectively selected randomly on necessary replacement.
+
+<center>
+<img src="./assets/14-041.png" width="100">
+</center>
+
+However, as other blocks are subsequently accessed and correspondingly set to `1` accordingly (as in the figure shown above), a better sense is developed with respect to which particular blocks are more recently vs. less recently used.
+
+Correspondingly, at any given time, the pseudo least recently used (PLRU) replacement policy behaves somewhere ***"in between"*** the not most recently used (NMRU) (one block having its bit set to `1`) and least recently used (LRU) (all blocks having their bit set to `1` except for the last-pending still set to `0`) replacement policies. This is achieved by an intermediate level of tracking bits relative to each of these "extremes" (i.e., more than not most recently used [NMRU], but less than least recently used [LRU]); however, on cache hit, it is only necessary to set *one* corresponding bit for the block in question (which can be achieved relatively quickly and efficiently), thereby still providing relatively low overhead compared to the least recently used (LRU) replacement policy.
+  * ***N.B.*** In the special case of all but one block set to `1`, this is a "true least recently used (LRU) replacement policy," in the sense that it is *exactly* deterministic which particular block is least recently used (i.e., that with the remaining `0` bit).
+
+Therefore, on cache hit, both not most recently used (NMRU) and pseudo least recently used (PLRU) replacement policies entail relatively "low activity" on a per-cache-hit basis compared to an equivalent least recently used (LRU) replacement policy.
+
+## 19. Not Most Recently Used (NMRU) Replacement Policy Quiz and Answers
