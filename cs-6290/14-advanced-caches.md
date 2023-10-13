@@ -733,3 +733,26 @@ Correspondingly, some of the obvious techniques for reducing the `Miss Rate` wil
 However, note that all of these prospective techniques will also correspondingly impact the `Hit Time`. The following sections will therefore explore techniques which attempt to reduce `Miss Rate` without corresponding (undesirable) increase of `Hit Time`.
 
 ## 21. Larger Cache Blocks
+
+<center>
+<img src="./assets/14-0452.png" width="650">
+</center>
+
+The first technique for reducing the `Miss Rate` is to simply use ***larger*** cache blocks.
+
+Larger cache blocks facilitate with reducing the `Miss Rate` because generally more words are brought in on cache miss, and therefore subsequent accesses might access these additional words (which otherwise may not have been brought in) thereby yielding subsequent cache hits (i.e., rather than cache misses).
+  * While this does ***reduce*** the `Miss Rate`, that is only strictly the case when **spatial locality** is ***good**.
+  * Otherwise, when **spatial locality** is ***poor***, then the `Miss Rate` will actually ***increase***.
+    * This is because when the target word is brought in along with additional words which are *not* otherwise relevant (i.e., for subsequent accesses), then the cache effectively has a lower capacity due to being populated with "garbage data," resulting in subsequent ***capacity misses***.
+
+Examining the plot of `Miss Rate` vs. `Block Size` (as in the figure shown above), observe the following general ***trends***:
+  * A ***small cache*** starts with a relatively high `Miss Rate` and then decreases with increasing `Block Size` down to a minimum. Beyond this minimum, the `Miss Rate` eventually increases as the amount of spatial locality supported by the cache is exhausted.
+    * For example, a `4 KB` cache will have an optimal (i.e., minimized) `Miss Rate` at a `Block Size` of `64`.
+  * A ***large cache*** starts with a relatively low `Miss Rate` and continues to decrease with increasing `Block Size` (past the minimum `Block Size` of the relatively smaller cache) until eventually reaching a minimum. Eventually, the `Miss Rate` also increases beyond this optimizing (i.e., minimizing) `Block Size`.
+    * For example, a `256 KB` cache will have an optimal (i.e., minimized) `Miss Rate` at a `Block Size` of `256`.
+
+The corresponding trends with respect to `Miss Rate` vs. `Block Size` are a direct consequence of the level of "garbage data" present relative to the overall size/capacity of the cache. In particular, certain blocks will inherently have more spatial locality than others, and this effect is amplified by the size of the cache itself (i.e., the amount of "usable spatial locality" will generally be "maxed out sooner" by a relatively smaller cache, all else equal).
+
+Therefore, the overall `Miss Rate` can be reduced in this manner (particularly in a relatively large cache) by increasing the `Block Size` accordingly.
+
+## 22. `Miss Rate` Quiz and Answers
