@@ -143,7 +143,7 @@ The third approach (building the entire library at home) is very expensive, whil
 Therefore, just as a student is faced with these choices regarding the library, similar principles apply to a **processor** requiring access to **main memory**: Rather than going to main memory to fetch *every* single memory location, instead it will only retrieve the content of the memory locations of particular interest (and only a limited amount of such content, to prevent from degenerating back to slow-access behavior).
   * For this purpose, to store such a selected subset of useful information retrieved from main memory, the processors uses a small repository of such information which is called the **cache** in the context of such memory accesses.
 
-## 8. Cache Quiz Question and Answers
+## 8. Cache Quiz and Answers
 
 <center>
 <img src="./assets/12-012A.png" width="650">

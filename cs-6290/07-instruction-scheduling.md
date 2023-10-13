@@ -413,7 +413,7 @@ Therefore, because all of these operations *can* (and do) occur in every cycle, 
 
 The following set of quizzes tests understanding of what occurs in one cycle via Tomasulo's algorithm.
 
-### 16. Part 1 Question and Answers
+### 16. Part 1 Quiz and Answers
 
 <center>
 <img src="./assets/07-038A.png" width="650">
@@ -438,7 +438,7 @@ These events can be analyzed in any arbitrary order, however, their resulting ef
 
 Lastly, the entry `F1` in REGS remains unchanged, since neither event affected that value.
 
-### 17. Part 2 Question and Answers
+### 17. Part 2 Quiz and Answers
 
 <center>
 <img src="./assets/07-040A.png" width="650">
@@ -463,7 +463,7 @@ With respect to the broadcast from `ALU`:
     * `RS1` entry for `RS0` is captured as `4.4`
     * `RS2` entry (which was issued in this same cycle) for `RS0` is captured as `4.4`; furthermore, this is necessary to occur in the *same* cycle, because with `RS0` freed, that value is now stale/invalid. `RS0` entry for `RS1` is still pending a result (which is permissible here, since `RS1` has not yet executed).
 
-### 18. Part 3 Question and Answers
+### 18. Part 3 Quiz and Answers
 
 <center>
 <img src="./assets/07-042A.png" width="650">
