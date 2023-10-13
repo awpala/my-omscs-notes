@@ -417,3 +417,25 @@ Furthermore, observe that the `32 KB`, 8-way set-associative cache ***with*** wa
   * The (amortized) `Hit Latency` of the (correctly guessed) direct-mapped cache
 
 ## 15. Way Prediction Quiz and Answers
+
+<center>
+<img src="./assets/14-027A.png" width="650">
+</center>
+
+What kind of cache can way prediction be used for? (Select all that apply.)
+  * Fully-associative
+    * `APPLIES`
+  * 8-way set-associative
+    * `APPLIES`
+  * 2-way set-associative
+    * `APPLIES`
+  * Direct-mapped
+    * `DOES NOT APPLY`
+
+***Explanation***:
+
+By definition, way prediction can be used in any cache that has more than one block per cache set. Therefore, this precludes a direct-mapped cache, which is comprised of only one block per cache set. A direct-mapped cache already inherently "knows" which block will be accessed a priori (i.e., the only one that is available to it). Otherwise, in set- and fully-associative caches, the benefit conferred on the cache via way prediction is correspondingly (correctly) guessing the particular cache block of interest.
+
+## 16-18. Replacement Policy and `Hit Time`
+
+### 16. Introduction
