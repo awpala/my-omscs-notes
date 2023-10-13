@@ -700,3 +700,36 @@ Correspondingly, the least possible amount of misses for this sequence would be 
 
 ## 20. Reducing the Average Memory Access Time (`AMAT`)
 
+Let us now return to consideration of reducing the average memory access time (`AMAT`) (cf. Section 2).
+
+<center>
+<img src="./assets/14-0450.png" width="350">
+</center>
+
+As demonstrated thus far in this lesson, the average memory access time (`AMAT`) can be reduced via the following:
+  * Reduce the `Hit Time`
+    * Discussed in the preceding sections of this lesson
+  * Reduce the `Miss Rate`
+    * To be discussed presently
+
+<center>
+<img src="./assets/14-0451.png" width="650">
+</center>
+
+In order to reduce the `Miss Rate`, it first must be understood what ***causes*** the cache misses. The corresponding causes of cache misses can be summarized as the ***"three Cs (3 Cs)***, as follows:
+
+| Cause | Description | Limiting Condition* |
+|:--:|:--:|:--:|
+| Compulsory Misses | A cache miss occurring on initial access of the cache block (i.e., this cache miss is "compulsory" because the cache must be "warmed up" first by corresponding placement into the block) | This cache miss ***would*** be incurred even in an ***infinite*** cache which is initialized to empty |
+| Capacity Misses | A cache miss resulting from eviction of a block due to limited cache size (i.e., the block in question was otherwise relatively recently used, but nevertheless was necessarily ejected due to cache capacity limits) | This cache miss ***would*** be incurred even in a ***fully-associative*** cache of corresponding (capacity-limited) size (e.g., given an `8 KB` direct-mapped cache, a capacity miss would still occur in a corresponding fully-associative `8 KB` cache if the block is not found in the cache) |
+| Conflict Misses | A cache miss resulting from a conflict within a given cache set (i.e., eviction is not due to capacity, but rather due to limited associativity resulting in a corresponding ejection/replacement) | This cache miss ***would not*** be incurred otherwise in an equivalent fully-associative cache (i.e., of the same size/capacity) |
+* ****N.B.*** The limiting conditions here are specified in descending order of cache size and associativity.
+
+Correspondingly, some of the obvious techniques for reducing the `Miss Rate` will therefore target these causes, for example:
+  * A larger cache will generally help to reduce the number of capacity misses
+  * A larger set-associativity will generally help to reduce the number of conflict misses
+  * A better replacement policy will generally help to reduce the number of conflict misses
+
+However, note that all of these prospective techniques will also correspondingly impact the `Hit Time`. The following sections will therefore explore techniques which attempt to reduce `Miss Rate` without corresponding (undesirable) increase of `Hit Time`.
+
+## 21. Larger Cache Blocks
