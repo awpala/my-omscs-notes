@@ -439,3 +439,48 @@ By definition, way prediction can be used in any cache that has more than one bl
 ## 16-18. Replacement Policy and `Hit Time`
 
 ### 16. Introduction
+
+Next, consider how the **replacement policy** for the cache impacts the `Hit Time`.
+  * ***N.B.*** Recall (cf. Lesson 12) that the replacement policy dictates the choice of which block to eject from the cache when more room is needed in the cache.
+
+<center>
+<img src="./assets/14-028.png" width="650">
+</center>
+
+A simple such replacement policy, such as **random** replacement (i.e., randomly selecting among the blocks in the set to be replaced), has nothing to update on a cache hit (i.e., on cache hit, there is no additional action necessary in order to subsequently perform a random replacement, however, on cache miss, there is a consequent action via random selection of the block to be ejected). This results in ***faster*** hits, due to the relatively low overhead of a cache hit. However, a random replacement policy has a deleterious effect on `Miss Rate` (i.e., generally increases it), because it oftentimes involves ejecting blocks which will otherwise be needed soon.
+
+Conversely, a **least recently used (LRU)** replacement policy yields a lower `Miss Rate` (which is desirable), however, this comes at the expense of higher overhead (i.e., ***more*** power consumption and ***slower*** hits) due to necessitating the update of (potentially many) counters, even on cache hits (even if the resulting action is no update to the counters for a given cache hit).
+
+<center>
+<img src="./assets/14-029.png" width="75">
+</center>
+
+To further illustrate a cache hit occurring in a least recently used (LRU) replacement policy, consider a four-way set-associative cache whose counters are currently set to `0`, `1`, `2`, and `3` (respectively), as in the figure shown above.
+
+<center>
+<img src="./assets/14-030.png" width="250">
+</center>
+
+If the processor accesses the block initialized to `0` and there is a cache hit (as in the figure shown above), then the counters will update accordingly. Correspondingly, all of these counter updates occur even when such a cache hit occurs, thereby incurring overhead accordingly (whereby a cache hit generally incurs a cost of updating up to `n` counters per cache hit, where `n` is the level of associativity in the cache, e.g., `4` in this particular case).
+
+<center>
+<img src="./assets/14-031.png" width="400">
+</center>
+
+Now consider an access of one of the relatively more recently used (i.e., next-most recently used) cache blocks (as in the figure shown above), also resulting in a cache hit. As before, the counters update accordingly, in this case with only two of the counters having updated values. Despite this, it is still necessary to check *all* of the counters regardless to update corresponding state accordingly.
+
+<center>
+<img src="./assets/14-032.png" width="550">
+</center>
+
+As expected, accessing the most recently used cache block (as in the figure shown above) similarly incurs a cost of checking/updating *all* of the corresponding cache blocks' counters, despite *none* of the counters changing/updating their constituent values in this case.
+
+Therefore, it is ***desirable*** to have a replacement policy characterized as follows:
+  * A low `Miss Rate` akin to a least recently used (LRU) cache (i.e., sensibly replacing the blocks in a manner which only ejects blocks that are unlikely to be used soon)
+  * Reduced overhead (e.g., counters updates) on a per-cache-hit basis
+
+### 17. Not Most Recently Used (NMRU) Replacement Policy
+
+<center>
+<img src="./assets/14-033.png" width="650">
+</center>
