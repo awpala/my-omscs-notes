@@ -936,3 +936,57 @@ To determine prefetching with respect to the ***outer*** loop (if applicable at 
 ***N.B.*** A prefetch of `a[i + 20]` is ***not*** appropriate for the outer loop. Since this entails `20` loops in between the prefetch and actual usage with respect to the outer loop, relative to the cache data with respect to `b` (i.e., `8000 bytes`), then this prefetch would exceed the size of the cache accordingly (i.e., `20 iterations × 8000 bytes per iteration = 160000 bytes`, relative to `16000 bytes` cache size), and correspondingly would likely result in "premature ejection" of the pertinent data prior to its actual use in the program.
 
 ### 26. Hardware Prefetching
+
+<center>
+<img src="./assets/14-069.png" width="650">
+</center>
+
+Another example of prefetching is so called **hardware prefetching**, whereby rather than changing the program, instead the ***hardware*** itself (i.e., the processor or the cache) attempts to guess which data will be accessed soon.
+
+There are several such **hardware prefetchers** which work reasonably well, such as the following:
+  * stream buffer
+  * stride-based prefetcher
+  * correlating prefetcher
+
+All of these hardware prefetchers attempt to guess what data will be accessed next by the program, based on some type of ***locality property***.
+
+A **stream buffer** is ***sequential*** in nature.
+  * A stream buffer attempts to determine if once a block is accessed followed by the subsequent block, whether the subsequent block after that is similarly accessed in sequence, and so on.
+  * Accordingly, a stream buffer essentially fetches several (sequential) blocks in advance to ensure "timely access" of the data.
+
+<center>
+<img src="./assets/14-070.png" width="150">
+</center>
+
+A **stride-based prefetcher** monitors accesses to determine if they occur at some fixed distance from each other (as in the figure shown above).
+
+<center>
+<img src="./assets/14-071.png" width="350">
+</center>
+
+Correspondingly, if the addresses of the accesses do indeed differ by a fixed amount, then a stride-based prefetcher will simply prefetch "in advance" by some integer multiple of this fixed amount (as in the figure shown above), in order to ensure availability of the cache data "just in time" for use in the program itself.
+
+Lastly, a ***correlating prefetcher*** attempts to predict access patterns which are neither sequential (cf. stream buffer) nor at a fixed-address distance (cf. stride-based prefetcher).
+
+<center>
+<img src="./assets/14-072.png" width="75">
+</center>
+
+Given an initial pattern `A B` (as in the figure shown above), a correlating prefetcher notes this pattern accordingly (e.g., in a table or equivalent mechanism).
+
+<center>
+<img src="./assets/14-073.png" width="100">
+</center>
+
+Subsequently, when `C` is accessed, this pattern is similarly recorded (as in the figure shown above).
+
+<center>
+<img src="./assets/14-074.png" width="350">
+</center>
+
+Proceeding in this manner, when `A` is once again encountered (as in the figure shown above), a correlated prefetcher will consequently prefetch `B`, based on the pattern it detected previously (and similarly, when `B` is subsequently encountered, it will prefetch `C`; and so on).
+
+Correspondingly, a correlated prefetcher can prefetch an arbitrary sequence of accesses, provided that the pattern itself eventually repeats.
+  * This is particularly advantageous for a structure such as a linked list, which is not necessarily stored in memory sequentially nor at fixed strides, but nevertheless inherently involves correlated access among the linked-list elements themselves (i.e., via following their constituent pointers, or equivalent linking mechanism).
+
+## 27. Loop Interchange
