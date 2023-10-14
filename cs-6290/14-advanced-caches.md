@@ -853,3 +853,45 @@ Therefore:
 Overall, prefetching is effective when ***good guesses*** can be made to eliminate cache misses, but correspondingly requires elimination of ***bad guesses*** to avoid inducing undesirable behavior of the cache (i.e., cache pollution).
 
 ### 24. Prefetch Instructions
+
+<center>
+<img src="./assets/14-064.png" width="650">
+</center>
+
+One way to implement prefetching is to simply add **prefetching instructions** to the instruction set, and thereby allow the compiler/programmer to determine when to request prefetches accordingly.
+
+For example, consider the following C program fragment which adds up the elements of a large array:
+
+```c
+for (int i = 0; i < 1000000; i++)
+  sum += a[i];
+```
+* ***N.B.*** This program fragment will access the array elements sequentially, thereby having a lot of spatial locality, however, it will not have much temporal locality; correspondingly, the program will incur a lot of cache misses due to the large size of the array.
+
+With available prefetching instructions, this program fragment can be transformed as follows:
+
+```c
+for (int i = 0; i < 1000000; i++)
+  prefetch a[i + pdist]; // access a "future" element, where `pdist >= 1`
+  sum += a[i];
+```
+
+One of the pertinent questions for this transformation is as follows: What value should `pdist` be, in order to optimize prefetching (i.e., how far in advance should prefetching be performed)?
+
+<center>
+<img src="./assets/14-065.png" width="650">
+</center>
+
+If `pdist` is ***too small*** (e.g., only `1`, as in the figure shown above), then relative to the the access operation (i.e., `a[i]`), the prefetch occurs in the a "nearby" upstream iteration (e.g., the previous iteration, in the case of `pdist == 1`), and consequently the prefetch's memory latency will "spillover" into the cache access itself, thereby still incurring (a portion) of the latency itself (albeit slightly lower with this "head start," relative to commencing the memory access immediately following the access operation itself). Correspondingly, the prefetch in this case occurs ***"too late"*** relative to the access operation itself.
+
+<center>
+<img src="./assets/14-066.png" width="650">
+</center>
+
+Conversely, if `pdist` is ***too large*** (e.g., as in the figure shown above), then relative to the the access operation (i.e., `a[i]`), the prefetch occurs in the a "distant" upstream iteration, and consequently the prefetch's memory latency will not "spillover" into the cache access itself, but rather it will populate the cache "prematurely" relative to when the data is actually useful to the operation itself. Furthermore, since subsequent access operations occur, it is likely that this prefetched data will be ejected during this time, before it can be effectively used by the target operation itself. Correspondingly, the prefetch in this case occurs ***"too early"*** relative to the access operation itself.
+
+Therefore, it is not necessarily easy to "guess" how far in advance to prefetch in this manner.
+
+Furthermore, if writing a program and modifying it to incorporate prefetching in this manner, it is possible that the optimal prefetching may vary across hardware generations as well (e.g., if the processor speed is improved, but not that of the memory itself, resulting ina processor which performs more iterations per-unit time with the same memory latency, thereby necessitating an increase in `pdist` accordingly). Consequently, it may additionally be difficult to optimize `pdist` itself in this manner "programmatically," as it is also dictated by the hardware itself.
+
+### 25. Prefetch Instructions Quiz and Answers
