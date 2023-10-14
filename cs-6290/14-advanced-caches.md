@@ -741,7 +741,7 @@ However, note that all of these prospective techniques will also correspondingly
 The first technique for reducing the `Miss Rate` is to simply use ***larger*** cache blocks.
 
 Larger cache blocks facilitate with reducing the `Miss Rate` because generally more words are brought in on cache miss, and therefore subsequent accesses might access these additional words (which otherwise may not have been brought in) thereby yielding subsequent cache hits (i.e., rather than cache misses).
-  * While this does ***reduce*** the `Miss Rate`, that is only strictly the case when **spatial locality** is ***good**.
+  * While this does ***reduce*** the `Miss Rate`, that is only strictly the case when **spatial locality** is ***good***.
   * Otherwise, when **spatial locality** is ***poor***, then the `Miss Rate` will actually ***increase***.
     * This is because when the target word is brought in along with additional words which are *not* otherwise relevant (i.e., for subsequent accesses), then the cache effectively has a lower capacity due to being populated with "garbage data," resulting in subsequent ***capacity misses***.
 
@@ -756,3 +756,54 @@ The corresponding trends with respect to `Miss Rate` vs. `Block Size` are a dire
 Therefore, the overall `Miss Rate` can be reduced in this manner (particularly in a relatively large cache) by increasing the `Block Size` accordingly.
 
 ## 22. `Miss Rate` Quiz and Answers
+
+<center>
+<img src="./assets/14-0454A.png" width="650">
+</center>
+
+Having now seen that increasing `Block Size` can reduce the `Miss Rate` (cf. Section 21), which types of misses are reduced in this manner? (Select all that apply.)
+  * Compulsory
+    * `APPLIES`
+  * Capacity
+    * `APPLIES`
+  * Conflict
+    * `APPLIES`
+
+***Explanation***:
+
+<center>
+<img src="./assets/14-0455A.png" width="75">
+</center>
+
+With respect to ***compulsory misses***, consider a small-block-size cache memory (as in the figure shown above), into which two blocks are brought in with corresponding (compulsory) misses incurred.
+
+<center>
+<img src="./assets/14-0456A.png" width="75">
+</center>
+
+Now, consider bringing in another block which also incurs a (compulsory) miss (as in the figure shown above).
+  * If the cache line size were twice of what it is currently, then this would *not* have been a cache miss, because it would have already been present within the cache block from the previous fetch of the first one (i.e., via corresponding spatial locality).
+  * However, for a small `Block Size`, this spatial locality cannot be exploited, resulting in a(n otherwise unnecessary) compulsory miss.
+
+Therefore, increasing the `Block Size` (assuming there is sufficient spatial locality) will generally reduce compulsory misses, all else equal.
+  * ***N.B.*** Another way to understand this is to note that a compulsory miss occurs whenever a given block is accessed for the very first time; therefore, all else equal, a larger `Block Size` generally yields fewer blocks (i.e., for a given-size cache), correspondingly reducing the number of such blocks that will be accessed "for the very first time" in this manner (assuming there is sufficient spatial locality, that is).
+
+<center>
+<img src="./assets/14-0457A.png" width="75">
+</center>
+
+With respect to ***capacity misses***, consider a program accessing a relatively large array that does not fit in the cache (as in the figure shown above), and that the array is subsequently accessed again. On the second round of accesses, capacity misses will occur.
+  * The first round of accesses were compulsory misses incurred while populating the cache with the corresponding array data.
+  * Furthermore, because the data does not fit in the cache, by the time the end of the array is accessed, the beginning-array elements are ejected from the cache, resulting in capacity misses on subsequent access(es) of the array.
+
+Therefore, the capacity itself is causing the corresponding misses in this scenario (i.e., an otherwise infinite-capacity cache would ***not*** similarly incur these cache misses, all else equal). Furthermore, the extent of these misses occurring will also on the `Block Size` itself (i.e., with smaller `Block Size`, the same-sized array will occupy more blocks, whereas with a larger `Block Size`, the same-sized array will occupy fewer blocks; correspondingly, the number of cache misses will correspond equally to the number of blocks).
+  * Accordingly, increasing the `Block Size` yields a corresponding decrease in `Miss Rate` (assuming better spatial locality is achieved), by direct reduction of capacity misses.
+
+Lastly, with respect to ***conflict misses***, a similar scenario can be considered, whereby two blocks "kick each other out" on subsequent accesses. Similarly, if the `Block Size` is increased (and correspondingly a larger block is fetched on a per-access basis), then this will directly reduce conflict misses accordingly.
+
+In conclusion, increasing `Block Size` can reduce `Miss Rate` with respect to all three types of cache misses, provided that sufficient spatial locality is correspondingly achieved.
+  * The compulsory misses will practically always decrease with increasing `Block Size`
+  * The capacity misses will typically decrease with increasing `Block Size`, provided there is improved spatial locality with increasing `Block Size`
+  * The conflict misses will likely decrease with increasing `Block Size`, or might otherwise yield a comparable `Miss Rate`
+
+## 23. Prefetching
