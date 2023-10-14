@@ -895,3 +895,44 @@ Therefore, it is not necessarily easy to "guess" how far in advance to prefetch 
 Furthermore, if writing a program and modifying it to incorporate prefetching in this manner, it is possible that the optimal prefetching may vary across hardware generations as well (e.g., if the processor speed is improved, but not that of the memory itself, resulting ina processor which performs more iterations per-unit time with the same memory latency, thereby necessitating an increase in `pdist` accordingly). Consequently, it may additionally be difficult to optimize `pdist` itself in this manner "programmatically," as it is also dictated by the hardware itself.
 
 ### 25. Prefetch Instructions Quiz and Answers
+
+<center>
+<img src="./assets/14-068A.png" width="650">
+</center>
+
+Consider the following C program fragment, wherein the elements of matrix `b` are summed into the elements of array `a`:
+
+```c
+for (int i = 0; i < 1000; i++)
+  for (int j = 0; j < 1000; j++)
+    a[i] += b[i][j];
+```
+
+With respect to both `a` and `b`, assuming that the constituent elements are floating-point elements, each of size `8 bytes`.
+
+Furthermore, assume that the cache is characterized as follows:
+  * `16 KB` total size
+  * fully associative
+  * least recently used (LRU) replacement policy
+
+Lastly, with respect to the inner-loop iterations of the program fragment itself, assume the following:
+  * A single iteration of the inner loop requires `10` cycles if there are ***no*** cache misses
+  * Otherwise, the `Miss Penalty` is `200 cycles` in the event of a cache miss (i.e., due to memory latency required to fetch the data into the cache)
+
+With respect to the ***outer*** loop, should a prefetch instruction be added here, and if so, for what corresponding size (i.e., what value `<...>` in `prefetch a[i + <...>]`)?
+  * yes; `1`
+
+And similarly, with respect to the ***inner*** loop, should a prefetch instruction be added here, and if so, for what corresponding size (i.e., what value `<...>` in `prefetch b[i][j + <...>]`)?
+  * yes; `20`
+
+***Explanation***:
+
+Examining the ***inner*** loop first, note that each iteration requires `10` cycles if there are ***no*** cache misses, and furthermore there is a `200` cycles `Miss Penalty` in the event of a cache miss. Therefore, in order to prefetch optimally, the corresponding "upstream offset" should be `200 cycles per penalty / 10 cycles per iteration = 20 cycles`. At this critical point, the prefetch will arrive "just in time" for `b` to receive its value (i.e., immediately prior to its use).
+
+To determine prefetching with respect to the ***outer*** loop (if applicable at all), it should first be noted that prefetching should ***not*** be done if by the time access of `a` is reached, it is already ejected from the cache (i.e., due to prefetching of `b`). Therefore, the pertinent question is: How much data is brought in per outer-loop iteration?
+  * The answer to this is `1000` eight-byte elements of `b` and `1` eight-byte element of `a` per outer-loop iteration. Correspondingly, if prefetching with a distance of `1`, then this yields a prefetch which concludes after `200` cycles (cf. `10 cycles per instruction × 1000 instructions = 10000` cycles performed with respect to cache-hit `b` accesses), which is "in time" for the next iteration of the outer loop.
+  * Furthermore, in assessing whether this element (i.e., `a[i + 1]`) would be ejected prior to its use, this would ***not*** be the case, because there is `8 bytes per element × 1000 elements = 8000 bytes` worth of data per inner-loop iteration (cf. cache size of `16 KB = 16000 bytes`), and therefore, on subsequent iteration of the outer loop, the prefetched data will still be present in the cache for its subsequent use.
+
+***N.B.*** A prefetch of `a[i + 20]` is ***not*** appropriate for the outer loop. Since this entails `20` loops in between the prefetch and actual usage with respect to the outer loop, relative to the cache data with respect to `b` (i.e., `8000 bytes`), then this prefetch would exceed the size of the cache accordingly (i.e., `20 iterations × 8000 bytes per iteration = 160000 bytes`, relative to `16000 bytes` cache size), and correspondingly would likely result in "premature ejection" of the pertinent data prior to its actual use in the program.
+
+### 26. Hardware Prefetching
