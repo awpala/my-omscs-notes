@@ -703,7 +703,7 @@ Correspondingly, the least possible amount of misses for this sequence would be 
 Let us now return to consideration of reducing the average memory access time (`AMAT`) (cf. Section 2).
 
 <center>
-<img src="./assets/14-0450.png" width="350">
+<img src="./assets/14-050.png" width="350">
 </center>
 
 As demonstrated thus far in this lesson, the average memory access time (`AMAT`) can be reduced via the following:
@@ -713,7 +713,7 @@ As demonstrated thus far in this lesson, the average memory access time (`AMAT`)
     * To be discussed presently
 
 <center>
-<img src="./assets/14-0451.png" width="650">
+<img src="./assets/14-051.png" width="650">
 </center>
 
 In order to reduce the `Miss Rate`, it first must be understood what ***causes*** the cache misses. The corresponding causes of cache misses can be summarized as the ***"three Cs (3 Cs)***, as follows:
@@ -735,7 +735,7 @@ However, note that all of these prospective techniques will also correspondingly
 ## 21. Larger Cache Blocks
 
 <center>
-<img src="./assets/14-0452.png" width="650">
+<img src="./assets/14-052.png" width="650">
 </center>
 
 The first technique for reducing the `Miss Rate` is to simply use ***larger*** cache blocks.
@@ -758,7 +758,7 @@ Therefore, the overall `Miss Rate` can be reduced in this manner (particularly i
 ## 22. `Miss Rate` Quiz and Answers
 
 <center>
-<img src="./assets/14-0454A.png" width="650">
+<img src="./assets/14-054A.png" width="650">
 </center>
 
 Having now seen that increasing `Block Size` can reduce the `Miss Rate` (cf. Section 21), which types of misses are reduced in this manner? (Select all that apply.)
@@ -772,13 +772,13 @@ Having now seen that increasing `Block Size` can reduce the `Miss Rate` (cf. Sec
 ***Explanation***:
 
 <center>
-<img src="./assets/14-0455A.png" width="75">
+<img src="./assets/14-055A.png" width="75">
 </center>
 
 With respect to ***compulsory misses***, consider a small-block-size cache memory (as in the figure shown above), into which two blocks are brought in with corresponding (compulsory) misses incurred.
 
 <center>
-<img src="./assets/14-0456A.png" width="75">
+<img src="./assets/14-056A.png" width="75">
 </center>
 
 Now, consider bringing in another block which also incurs a (compulsory) miss (as in the figure shown above).
@@ -789,7 +789,7 @@ Therefore, increasing the `Block Size` (assuming there is sufficient spatial loc
   * ***N.B.*** Another way to understand this is to note that a compulsory miss occurs whenever a given block is accessed for the very first time; therefore, all else equal, a larger `Block Size` generally yields fewer blocks (i.e., for a given-size cache), correspondingly reducing the number of such blocks that will be accessed "for the very first time" in this manner (assuming there is sufficient spatial locality, that is).
 
 <center>
-<img src="./assets/14-0457A.png" width="75">
+<img src="./assets/14-057A.png" width="75">
 </center>
 
 With respect to ***capacity misses***, consider a program accessing a relatively large array that does not fit in the cache (as in the figure shown above), and that the array is subsequently accessed again. On the second round of accesses, capacity misses will occur.
@@ -806,4 +806,50 @@ In conclusion, increasing `Block Size` can reduce `Miss Rate` with respect to al
   * The capacity misses will typically decrease with increasing `Block Size`, provided there is improved spatial locality with increasing `Block Size`
   * The conflict misses will likely decrease with increasing `Block Size`, or might otherwise yield a comparable `Miss Rate`
 
-## 23. Prefetching
+## 23-26. Prefetching
+
+### 23. Introduction
+
+<center>
+<img src="./assets/14-058.png" width="650">
+</center>
+
+Another technique, which leverages a similar idea (cf. Section 21) to increasing the `Block Size` in order to reduce the `Miss Rate`, is called **prefetching**. Prefetching involves guessing which blocks will be accessed soon (i.e., before actually being accessed), and consequently fetching those blocks into the cache "ahead of time" (i.e., immediately prior to their actual use in the program).
+
+<center>
+<img src="./assets/14-059.png" width="450">
+</center>
+
+With ***no*** prefetching (as in the figure above), an access operation (e.g., `LW A`) results in a corresponding fast check of the cache.
+
+<center>
+<img src="./assets/14-060.png" width="450">
+</center>
+
+If the data is ***not*** present in the cache (as in the figure shown above), then this incurs an additional cost to retrieve the corresponding data from memory, which eventually returns the data for subsequent use by the processor.
+
+<center>
+<img src="./assets/14-061.png" width="450">
+</center>
+
+Conversely, ***with*** prefetching (as in the figure shown above), prior to the operation itself (i.e., `LW A`), it can be guessed that the data in question (i.e., operand `A`) will be accessed imminently.
+
+<center>
+<img src="./assets/14-062.png" width="450">
+</center>
+
+Correspondingly, the data in question is prefetched into the cache from memory prior to its use (as in the figure shown above).
+
+<center>
+<img src="./assets/14-063.png" width="450">
+</center>
+
+On execution of the operation (as in the figure shown above), the data is now available in the cache, and consequently there is no additional cost/penalty incurred on execution, which now only involves the rapid access of the cache data (i.e., the memory-access latency is otherwise "hidden" in the upstream access from memory, prior to executing the operation itself).
+
+Therefore:
+  * If the guess is ***correct***, then this effectively yields a ***cache hit*** (i.e., at the point of execution)
+  * Conversely, if the guess is ***incorrect***, then a corresponding ***cache miss*** will result, along with corresponding **cache pollution** (i.e., retrieving otherwise "garbage data," which is not relevant to near-future program execution, and which may also correspondingly eject data on replacement of otherwise useful data already present in the cache immediately prior to ejection, thereby potentially inducing additional cache misses with respect to the now-ejected but "otherwise useful" data).
+
+Overall, prefetching is effective when ***good guesses*** can be made to eliminate cache misses, but correspondingly requires elimination of ***bad guesses*** to avoid inducing undesirable behavior of the cache (i.e., cache pollution).
+
+### 24. Prefetch Instructions
