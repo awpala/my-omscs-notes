@@ -990,3 +990,51 @@ Correspondingly, a correlated prefetcher can prefetch an arbitrary sequence of a
   * This is particularly advantageous for a structure such as a linked list, which is not necessarily stored in memory sequentially nor at fixed strides, but nevertheless inherently involves correlated access among the linked-list elements themselves (i.e., via following their constituent pointers, or equivalent linking mechanism).
 
 ## 27. Loop Interchange
+
+<center>
+<img src="./assets/14-075.png" width="650">
+</center>
+
+The final optimization with respect to reducing the `Miss Rate` we will examine in this lesson is the so called **loop interchange**. A loop interchange is one of the compiler optimizations that can be performed in order to transform the code into a form which has better locality.
+
+Consider a C code fragment which initializes a matrix as follows:
+
+```c
+for (int i = 0; i < ...; i++)
+  for (int j = 0; i < ...; j++)
+    a[j][i] = 0;
+```
+
+<center>
+<img src="./assets/14-076.png" width="350">
+</center>
+
+The layout of the memory for this code is as in the figure shown above.
+
+<center>
+<img src="./assets/14-077.png" width="350">
+</center>
+
+Initial accesses will proceed as in the figure shown above (i.e., with respect to outer-loop row index `i == 0` iterating from inner-loop column indices `j == 0` through `j == ...`)
+
+<center>
+<img src="./assets/14-078.png" width="350">
+</center>
+
+Subsequent row access (i.e., `i == 1`) will proceed similarly, as in the figure shown above.
+
+A ***problem*** occurs here, such that when accessing the initial-row data, an entire cache block worth of data is fetched pertaining ***only*** to this one row element (and similarly for subsequent column-data accesses for this row). By the time the end of the row is reached (i.e., immediately prior to iterating onto the next row), the cache capacity may already be exceeded; correspondingly, the initial-column data will likely have been ejected already by this point, resulting in one cache miss per column-data access throughout iteration over the rows.
+
+To remedy this problem, a good compiler will detect the sub-optimal ordering of these loop-iterating expressions (i.e., with respect to the underlying memory layout for the corresponding matrix) and reorder them accordingly via **loop interchange**, e.g.,:
+
+```c
+for (int j = 0; i < ...; j++)   # previously inner loop, currently outer loop
+  for (int i = 0; i < ...; i++) # previously outer loop, currently inner loop
+    a[j][i] = 0;
+```
+
+Proceeding in this manner, the cache blocks are fetched on a row-major basis (i.e., for consequent column-wise iteration via the inner loop), thereby improving spatial locality accordingly (i.e., minimizing "destructive" cache ejections during inner-loop iteration). Additionally, this also improves sequential access, thereby facilitating the action of hardware prefetchers (cf. Section 26) accordingly.
+
+Collectively, loop interchange provides a very good optimization, which dramatically improves the `Hit Rate`. However, note that it is not always possible to achieve (i.e., it cannot be simply applied "arbitrarily," but rather the compiler must first determine whether the initial code and post-loop-exchange code are semantically equivalent, including resolving any potential underlying dependencies among the loops).
+
+## 28. Reducing the Average Memory Access Time (`AMAT`)
