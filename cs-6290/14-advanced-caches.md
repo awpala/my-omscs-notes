@@ -1037,4 +1037,86 @@ Proceeding in this manner, the cache blocks are fetched on a row-major basis (i.
 
 Collectively, loop interchange provides a very good optimization, which dramatically improves the `Hit Rate`. However, note that it is not always possible to achieve (i.e., it cannot be simply applied "arbitrarily," but rather the compiler must first determine whether the initial code and post-loop-exchange code are semantically equivalent, including resolving any potential underlying dependencies among the loops).
 
-## 28. Reducing the Average Memory Access Time (`AMAT`)
+## 28-29. Overlapping Cache Misses
+
+### 28. Introduction
+
+<center>
+<img src="./assets/14-079.png" width="450">
+</center>
+
+Returning to the possible strategies for reducing the **average memory access time (`AMAT`)** (cf. Section 2), we have seen thus far in this lesson techniques for reducing both the `Hit Time` and the `Miss Rate`.
+
+<center>
+<img src="./assets/14-080.png" width="650">
+</center>
+
+The final set of available techniques correspondingly focus on reducing the `Miss Penalty` (i.e., when a cache miss *does* occur, minimize the resulting incurred-cycles penalty accordingly).
+
+<center>
+<img src="./assets/14-081.png" width="550">
+</center>
+
+As time proceeds, the processor performs multiple instructions per cycle (as in the figure shown above), eventually performing a memory-access operation (e.g., `LW`), which in turn initiates a cache-access attempt. On cache miss, there is a corresponding `Miss Penalty` incurred as the data is fetched from memory accordingly.
+
+<center>
+<img src="./assets/14-082.png" width="550">
+</center>
+
+Given an appropriate out-of-order processor (as in the figure shown above), rather than blocking on this memory-access operation, it will still proceed with additional instructions while the memory access occurs in the background, though eventually it will run out of "useful work" to perform over this same time span (possibly exhausting prior to completed fetching of the data from memory).
+  * ***N.B.*** The processor cannot yet commit this operation `LW` at this point, so eventually it will either fill up the reorder buffer (ROB), or run out of reservation stations (i.e., due to upstream dependencies pending the result from this operation `LW`), etc.
+
+Accordingly, some of this `Miss Penalty` latency will be added directly to the execution, while the remaining portion will actually "constructively overlap" with the processor's activity itself.
+
+<center>
+<img src="./assets/14-083.png" width="550">
+</center>
+
+In the elapsed time between initiating execution of the memory-access operation (i.e., `LW`) and fetching the corresponding data from memory, the processor may also subsequently issue another memory-access operation also resulting in a cache miss (as in the figure shown above).
+
+In a **blocking cache**, this scenario will proceed in such a manner whereby the subsequent memory-access operation will ***not*** commence execution until the first/upstream memory-access operation completes its execution.
+
+<center>
+<img src="./assets/14-084.png" width="550">
+</center>
+
+Only on completion of the first/upstream memory-access operation will the subsequent memory-access operation proceed with execution accordingly (as in the figure shown above).
+
+<center>
+<img src="./assets/14-085.png" width="550">
+</center>
+
+Furthermore, since the processor can still commit instructions downstream from initiating the execution of the subsequent memory-access operation, these latter instructions can still correspondingly "constructively overlap" with commenced execution of the subsequent memory-access operation accordingly (as in the figure shown above).
+
+Conversely, there is also a **non-blocking cache**, which can further improve such "constructive overlap," by supporting the following:
+  * **hit under miss** → hit subsequently when an initial cache-missing operation is encountered
+  * **miss under miss** → send a subsequent (miss-inducing) request to memory when an initial cache-missing operation is encountered 
+
+<center>
+<img src="./assets/14-086.png" width="550">
+</center>
+
+To demonstrate this, consider a similar processor operation whereby a miss-inducing memory-access operation (e.g., `LW`) occurs (as in the figure shown above).
+
+<center>
+<img src="./assets/14-087.png" width="550">
+</center>
+
+On subsequent memory-access operation (as in the figure shown above), this subsequent operation performs its fetching from memory ***immediately***, thereby overlapping this memory-fetching operation with that of the initial/upstream memory-access operation.
+
+<center>
+<img src="./assets/14-088.png" width="550">
+</center>
+
+On completion of the initial/upstream memory-access operation (as in the figure shown above), there is a corresponding "decaying activity burst" which is then "revived" as the subsequent memory-access operation completes.
+
+<center>
+<img src="./assets/14-089.png" width="550">
+</center>
+
+Reviewing the blocking vs. non-blocking caches comparatively (as in the figure shown above), the effectively "induced inactivity" due to the fetching from memory (as denoted by orange in the figure shown above) is reduced in the latter, by a fairly substantial amount (e.g., effectivley a halving), thereby decreasing the corresponding `Miss Penalty` accordingly.
+
+Accordingly, if three, four, etc. such overlaps can be achieved, there is a corresponding improvement in the `Miss Penalty` reduction in a non-blocking cache relative to an equivalent blocking cache. This property is appropriately called **memory-level parallelism** (i.e., a memory-access operation is effectively "parallelized" relative to a single/blocking operation, with corresponding reduction in `Miss Penalty` latency).
+
+### 29. Miss-Under-Miss Support in Caches
+
