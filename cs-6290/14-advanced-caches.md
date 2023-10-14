@@ -1120,3 +1120,25 @@ Accordingly, if three, four, etc. such overlaps can be achieved, there is a corr
 
 ### 29. Miss-Under-Miss Support in Caches
 
+<center>
+<img src="./assets/14-090.png" width="650">
+</center>
+
+So, then, what must the cache contain in order to support such a miss-under-miss memory-access operation? (cf. Section 28)
+  * ***N.B.*** cf. In a non-blocking cache (i.e., one which does ***not*** support such miss-under-miss operation), the cache simply blocks on memory access once a cache miss is encountered, which is effectively provided "by default" (i.e., there is no additional hardware support necessary to achieve this otherwise). Furthermore, in a hit-under-miss memory-access operation, the subsequent cache accesses are handled "as usual" for the subsequent cache-hitting operation(s). However, the miss-under-miss memory-access scenario is the one in particular which requires additional support/attention to achieve accordingly.
+
+In order to handle miss-under-miss memory-access operations, this requires **miss status handling registers (MSHRs)**, which retain what specifically was requested from memory on initiating execution of the corresponding memory-access operation. This occurs in the following ***sequence***:
+  * 1 - Information regarding the in-progress cache misses is retained
+  * 2 - When a cache miss occurs, the miss status handling registers (MSHRs) are examined to determine if there is a match (i.e., to determine whether it is a "new" cache miss vs. a "previously encountered" cache miss)
+    * 2A - If there is ***no*** match, then this corresponds to a cache miss with respect to a ***different*** cache block, and consequently there is a ***new*** miss status handling register allocated accordingly, along with retaining which instruction in the process to "awaken" on subsequent fetching of the pertinent data from memory
+      * This scenario is called a (true) **miss**
+    * 2B - Conversely, if there ***is*** a match, then this corresponds to data from a ***previously encountered** cache block whose fetching is already in progress by this point, and therefore this is noted accordingly with respect to the most recent cache-missing memory-access operation via corresponding addition of the instruction as a new miss status handling register entry
+      * This scenario is called a **half-miss** (i.e., this would be a "true miss" in an otherwise blocking cache)
+  * 3 - When the requested data is finally fetched from memory, locate the corresponding instruction(s) among the miss status handling registers (MSHRs) and "awaken" it/them accordingly, and then consequently release the miss status handling register(s) (MHSRs) in question accordingly for subsequent reuse by another cache miss
+
+***N.B.*** Note that the (true) miss and half-miss with respect to a given cache block need ***not*** necessarily be with respect to the ***same*** word; in fact, it is rather common to access a given word initially, and then subsequently thereafter accessing the second word in the block, in which case the first word will yield a (true) miss while the second word will yield a half-miss.
+
+This begs the question: How many such miss status handling registers (MHSRs) are appropriate for optimal performance?
+  * It turns out that there is a massive benefit to having only ***two*** such miss status handling registers (MSHRs) (i.e., to handle two different in-progress cache blocks at any given time), while ***four*** yields even better results. There is also an additional benefit gained by incorporating as many as ***sixteen*** or even ***thirty-two*** (i.e., on the order of `O(10)` is still considered "optimally performant"). The reason for this is that memory latencies are relatively long, and therefore it is desirable to keep sending requests to memory over this time span accordingly to achieve a corresponding level of memory parallelism.
+
+## 30. Miss-Under-Miss Quiz and Answers
