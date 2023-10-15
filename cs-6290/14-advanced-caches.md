@@ -1224,3 +1224,25 @@ With respect to level 1 (L1) vs. level 2 (L2) caches, which of the following are
     * `DOES NOT APPLY` - While this may potentially be the case, it is not necessarily true, and typically is not. The reason for this is because the level 1 (L1) cache must have a low latency (i.e., short `Hit Time`), which necessarily comes at the expense of capacity (and corresponding associativity); correspondingly, the level 2 (L2) cache provides increased capacity (and correspondingly higher level of associativity) at the expense of a relatively higher `Hit Time`.
 
 ## 34. Multi-Level Cache Performance
+
+<center>
+<img src="./assets/14-097.png" width="650">
+</center>
+
+To assess performance of a multi-level cache, consider the following comparisons:
+
+| Performance Metric | `16 KB` cache | `128 KB` cache | No cache (main memory only) | Multi-level cache (`16KB` L1 + `128 KB` L2)** |
+|:--:|:--:|:--:|:--:|:--:|
+| `Hit Time` (cycles) | `2` | `10` | `100` | `2` for L1, `12` for `L2` |
+| `Hit Rate` (percent) | `90%` | `97.5%` | `100%` | `90%` for L1, `75%` for L2 |
+| Average Memory Access Time (`AMAT`) (cycles)* | `12` (`= 2 + (1 - 0.90) × 100`) | `12.5` (`= 10 + (1 - 0.975) × 100`) | `100` (`= 100 + (1 - 1) × 100`) | `5.5` (`= 2 + (1 - 0.90) × [10 + (1 - 0.75) × 100]`) |
+* ****N.B.*** Assume a memory latency of `100` cycles for purposes of comparison
+* *****N.B.*** With respect to the multi-level cache, the `Hit Time` for the L2 cache is comprised of the `2` cycles `Hit Time` to first check via the L1 cache, followed by the `10` cycles `Hit Time` imposed by the L2 cache itself. Similarly, with respect to the `Hit Rate`, the *cache hits* are generally "mutually shared" between the L1 and L2 caches, however, it is the *cache misses* which are effectively "filtered down" into the L2 cache (i.e., the L2 cache only "sees" the "worst" 10-15% or so of the memory-access operations), for which the L2 itself has a lower `Hit Rate` (`75%`) relative to its intrinsic hit rate (`97.5%`), the latter of which would otherwise apply if it were the *only* cache being used here.
+
+Note the following ***observations***:
+  * Comparing the `16 KB` cache to the `128 KB` cache, in the latter, increasing the cache capacity correspondingly increases both the `Hit Time` and the `Hit Rate`, but does not otherwise improve the average memory access time (`AMAT`).
+  * Nevertheless, having a cache is still substantially better than not having a cache at all.
+  * In the multi-level cache, with respect to the average memory access time (`AMAT`), the factor `[10 + (1 - 0.75) × 100] = 35` cycles is the overall `Miss Penalty` for the L1 cache misses, which is a substantial improvement over the `100` cycles `Miss Penalty` incurred by the L1 cache (i.e., via the main-memory access) working alone. Correspondingly, the overall average memory access time (`AMAT`) of `5.5` cycles in the multi-level cache is substantially better than either of the caches working alone. This is because most of the accesses hit via the `Hit Latency` of the faster (L1) cache, with only the residual cache misses hitting with the relatively higher `Hit Latency` of the slower (L2) cache, and from there even fewer incur the full main-memory-access `Hit Latency`.
+    * Correspondingly, it is not sufficient to simply have a large cache, if it is otherwise still relatively slow. Instead, it is more effective to combine the caches in such a manner which exploits their complementary properties (fast `Hit Time` of the L1 with the high `Hit Rate` of the L2) more favorably (i.e., *"the whole is greater than the sum of its parts"*).
+
+## 35. `Hit Rate` in L2, L3, etc.
