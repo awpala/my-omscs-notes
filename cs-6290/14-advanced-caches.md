@@ -1393,3 +1393,27 @@ Correspondingly, the inclusion property does ***not*** necessarily hold in a mul
 Therefore, in order to ***maintain*** the inclusion property, the level 2 (L2) cache must incorporate a corresponding **inclusion bit**. The inclusion bit has the value `1` when the block in question is also present in the level 1 (L1) cache, and on subsequent cache-block replacements in the L2 cache, blocks designated with an inclusion-bit value of `1` are ***prevented*** from otherwise being replaced in the L2 cache.
 
 ### 39. Inclusion Property Quiz and Answers
+
+<center>
+<img src="./assets/14-115A.png" width="650">
+</center>
+
+Consider a multi-level cache comprised of level 1 (L1) and level 2 (L2) caches which ***maintains*** an inclusion property. Furthermore, the dirty block is replaced from the L1 cache with another block, and is consequently written back by the L1 cache. For this write-back access, can it be performed as an L2 hit and/or miss? (Select all that apply.)
+  * L2 hit only
+
+Conversely, consider a multi-level cache comprised of level 1 (L1) and level 2 (L2) caches which does ***not*** maintain an inclusion property. Furthermore, the dirty block is replaced from the L1 cache with another block, and is consequently written back by the L1 cache. For this write-back access, can it be performed as an L2 hit and/or miss? (Select all that apply.)
+  * L2 hit and L2 miss
+
+***Explanation***:
+
+If the level 1 (L1) and (L2) ***do*** maintain an inclusion property, then the dirty block which is present in the L1 cache immediately prior to ejection is also present in the L2 cache. Therefore, on write-back operation, it will be an L2 hit, however, it cannot be an L2 miss because the inclusion property guarantees that the now-dirty block still exists in the L2 cache. Subsequently to the write-back operation, the new block can be brought into the L1 cache, which in turn may replace the block from both L1 and L2 caches; however, until the block is written back, then the block exists in both the L1 and L2 caches, and correspondingly the write-back operation is necessarily an L2 hit.
+
+Conversely, if the level 1 (L1) and (L2) ***do not*** maintain an inclusion property, then when the dirty block is replaced in the level 1 (L1) cache, this dirty block may or may not correspondingly be present in the level 2 (L2) cache as well. Therefore, the L1 cache's write-back operation may yield both a L2 hit (if the block *is* present) *or* an L2 miss (if the block is *not* present). 
+
+As these contrasting examples demonstrate, write-back handling becomes slightly simpler when an inclusion property is maintained among the caches in a multi-level cache.
+
+## 40. Lesson Outro
+
+In this lesson, we examined how modern processors use multi-level caches and other cache-related techniques to compensate for main-memory access being ***slow***.
+
+But this begs the question: *Why* is main memory inherently so slow in the first place? This question is explored further in the next lesson.

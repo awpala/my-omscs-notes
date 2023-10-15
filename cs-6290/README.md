@@ -17,6 +17,7 @@
 | [11](./11-vliw.md) | Very Long Instruction Word (VLIW) |
 | [12](./12-cache-review.md) | Cache Review |
 | [13](./13-virtual-memory.md) | Virtual Memory |
+| [14](./14-advanced-caches.md) | Advanced Caches |
 
 ## Videos Reference
 
