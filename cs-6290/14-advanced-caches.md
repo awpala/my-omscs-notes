@@ -1223,7 +1223,9 @@ With respect to level 1 (L1) vs. level 2 (L2) caches, which of the following are
   * L1 associativity = L2 associativity
     * `DOES NOT APPLY` - While this may potentially be the case, it is not necessarily true, and typically is not. The reason for this is because the level 1 (L1) cache must have a low latency (i.e., short `Hit Time`), which necessarily comes at the expense of capacity (and corresponding associativity); correspondingly, the level 2 (L2) cache provides increased capacity (and correspondingly higher level of associativity) at the expense of a relatively higher `Hit Time`.
 
-## 34. Multi-Level Cache Performance
+## 34-36. Multi-Level Cache Performance
+
+### 34. Introduction
 
 <center>
 <img src="./assets/14-097.png" width="650">
@@ -1245,4 +1247,18 @@ Note the following ***observations***:
   * In the multi-level cache, with respect to the average memory access time (`AMAT`), the factor `[10 + (1 - 0.75) × 100] = 35` cycles is the overall `Miss Penalty` for the L1 cache misses, which is a substantial improvement over the `100` cycles `Miss Penalty` incurred by the L1 cache (i.e., via the main-memory access) working alone. Correspondingly, the overall average memory access time (`AMAT`) of `5.5` cycles in the multi-level cache is substantially better than either of the caches working alone. This is because most of the accesses hit via the `Hit Latency` of the faster (L1) cache, with only the residual cache misses hitting with the relatively higher `Hit Latency` of the slower (L2) cache, and from there even fewer incur the full main-memory-access `Hit Latency`.
     * Correspondingly, it is not sufficient to simply have a large cache, if it is otherwise still relatively slow. Instead, it is more effective to combine the caches in such a manner which exploits their complementary properties (fast `Hit Time` of the L1 with the high `Hit Rate` of the L2) more favorably (i.e., *"the whole is greater than the sum of its parts"*).
 
-## 35. `Hit Rate` in L2, L3, etc.
+### 35. `Hit Rate` in L2, L3, etc.
+
+<center>
+<img src="./assets/14-098.png" width="650">
+</center>
+
+Recall (cf. Section 34) that when the level 2 (L2) cache is used alone, it has a relatively higher `Hit Rate` (i.e., `97.5%`) compared to a multi-level cache configuration (i.e., `75%`). This suggests that the level 2 (L2) cache has a ***lower*** `Hit Rate` than the level 1 (L1) cache, however, this is misleading.
+
+The effectively "reduced" `Hit Rate` of the level 2 (L2) cache is called the **local hit rate** for the cache, which is the `Hit Rate` actually observed by the cache in its multi-level configuration (i.e., it is the `Hit Rate` observed by the cache with respect to the access-operations it actually interacts with, i.e., "post-filtering" from upstream cache levels). Furthermore, note that accesses to downstream level (L2), level (L3), etc. caches are ***not*** all of the accesses that are ultimately performed by the processor, but rather those accesses which have a lot of locality tend to concentrate more in upstream (i.e., level 1 [L1]) caches, and never even reach the downstream caches to begin with (and accordingly, the downstream cache levels deal with the more cache-miss-prone accesses, rather than benefiting from the relatively "easy-to-access" cache-hit accesses).
+
+Conversely, the intrinsic `Hit Rate` of a given cache level (i.e., in isolation) is called the **global hit rate**. This also characterizes the downstream caches relative to this cache's level in a "black box" manner (i.e., this is the most achievable `Hit Rate` with the particular cache in question handling the predominantly cache-hit accesses).
+
+Therefore, when characterizing a cache with respect to its size/capacity and the general notion of "larger caches behaving better with respect to `Hit Rate`," typically this characterization is with respect to the ***global hit rate***, because the local hit rate is not an intrinsic property of a given cache itself (i.e., it is influenced by the upstream cache levels in the multi-level configuration).
+
+### 36. Global vs. Local `Hit Rate`
