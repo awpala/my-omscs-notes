@@ -1178,3 +1178,33 @@ L1 Miss Penalty = L2 Hit Time + (L2 Miss Rate × L2 Miss Penalty)
 In particular, the `L2 Miss Penalty` can correspond to the actual main-memory-access latency ***or*** it can correspond to another cache level (e.g., level 3 [L3], level 4 [L4], etc.).
 
 ### 32. The Average Memory Access Time (`AMAT`) with Cache Hierarchies
+
+<center>
+<img src="./assets/14-094.png" width="650">
+</center>
+
+Now, consider the equation for **average memory access time (`AMAT`)** in the context of a cache hierarchy.
+
+With respect to the level 1 (L1) cache, **average memory access time (`AMAT`)** is defined as follows:
+
+```
+AMAT = L1 Hit Time + (L1 Miss Rate × L1 Miss Penalty)
+```
+
+When introduced initially (cf. Section 2), this was the "terminal form" of the equation, with the `L1 Miss Penalty` corresponding to the main-memory access time.
+
+However, in a cache hierarchy, `L1 Miss Penalty` is defined as follows:
+
+```
+L1 Miss Penalty = L2 Hit Time + (L2 Miss Rate × L2 Miss Penalty)
+```
+
+And similarly, `L2 Miss Penalty` is defined as follows:
+
+```
+L2 Miss Penalty = L3 Hit Time + (L3 Miss Rate × L3 Miss Penalty)
+```
+
+These definitions proceed similarly in this manner, until ultimately reaching the definition of the **last level cache (LLC)** (i.e., level `N` [L`N`] cache), which corresponds directly to the main-memory access time itself (i.e., the hierarchy correspondingly is comprised of `N` cache levels, where the level `N` cache is that which ultimately performs the main-memory access operation).
+
+## 33. Level 1 (L1) vs. Level 2 (L2) Quiz and Answers
