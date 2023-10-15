@@ -1158,3 +1158,23 @@ What kind of application experiences ***no*** benefit from miss-under-miss supor
     * `DOES NOT APPLY` - This application will also benefit from miss-under-miss support (i.e., relative to the "overlapping" time span)
 
 ## 31-32. Cache Hierarchies
+
+### 31. Introduction
+
+<center>
+<img src="./assets/14-093.png" width="650">
+</center>
+
+Returning to the possible strategies for reducing the **average memory access time (`AMAT`)** (cf. Section 2), we have seen thus far in this lesson techniques for reducing both the `Hit Time` and the `Miss Rate`, as well as reducing `Miss Penalty` via overlapping (cf. Section 28).
+
+Additionally, we will now consider another technique for reducing `Miss Penalty`, which involves **multi-level caches** or equivalently a **cache hierarchy**. With this technique, a cache miss in the first cache of the processor (e.g., **level 1 [L1] cache**) subsequently proceeds to another cache level (e.g., **level 2 [L2] cache**), rather than to main memory.
+
+Consequently, the `Miss Penalty` incurred from the level 1 (L1) cache miss is not equal to the *full* main-memory-access latency, but rather the level 1 (L1) cache `Miss Penalty` is defined as follows:
+
+```
+L1 Miss Penalty = L2 Hit Time + (L2 Miss Rate × L2 Miss Penalty)
+```
+
+In particular, the `L2 Miss Penalty` can correspond to the actual main-memory-access latency ***or*** it can correspond to another cache level (e.g., level 3 [L3], level 4 [L4], etc.).
+
+### 32. The Average Memory Access Time (`AMAT`) with Cache Hierarchies
