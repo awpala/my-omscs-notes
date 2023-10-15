@@ -1142,3 +1142,19 @@ This begs the question: How many such miss status handling registers (MHSRs) are
   * It turns out that there is a massive benefit to having only ***two*** such miss status handling registers (MSHRs) (i.e., to handle two different in-progress cache blocks at any given time), while ***four*** yields even better results. There is also an additional benefit gained by incorporating as many as ***sixteen*** or even ***thirty-two*** (i.e., on the order of `O(10)` is still considered "optimally performant"). The reason for this is that memory latencies are relatively long, and therefore it is desirable to keep sending requests to memory over this time span accordingly to achieve a corresponding level of memory parallelism.
 
 ## 30. Miss-Under-Miss Quiz and Answers
+
+<center>
+<img src="./assets/14-092A.png" width="650">
+</center>
+
+What kind of application experiences ***no*** benefit from miss-under-miss suport? (Select all that apply.)
+  * An application which *always* hits in the cache
+    * `APPLIES` - If the application does not experience any cache misses, then by definition there is no benefit gained from miss-under-miss support.
+  * An application which experiences a *miss* every `1000` instructions
+    * `APPLIES` - When a cache miss does occur, the processor will likely exhaust the reorder buffer (ROB) entries prior to encountering the subsequent cache-miss-inducing instruction, thereby there will not likely be a benefit conferred on the processor by miss-under-miss support accordingly
+  * An application which experiences a *miss* every `10` instructions
+    * `DOES NOT APPLY` - This application will benefit from miss-under-miss support (i.e., relative to the "overlapping" time span)
+  * An application which experiences a *miss* every `2` instructions
+    * `DOES NOT APPLY` - This application will also benefit from miss-under-miss support (i.e., relative to the "overlapping" time span)
+
+## 31-32. Cache Hierarchies
