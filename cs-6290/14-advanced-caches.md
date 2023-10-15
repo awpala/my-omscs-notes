@@ -1223,7 +1223,7 @@ With respect to level 1 (L1) vs. level 2 (L2) caches, which of the following are
   * L1 associativity = L2 associativity
     * `DOES NOT APPLY` - While this may potentially be the case, it is not necessarily true, and typically is not. The reason for this is because the level 1 (L1) cache must have a low latency (i.e., short `Hit Time`), which necessarily comes at the expense of capacity (and corresponding associativity); correspondingly, the level 2 (L2) cache provides increased capacity (and correspondingly higher level of associativity) at the expense of a relatively higher `Hit Time`.
 
-## 34-36. Multi-Level Cache Performance
+## 34-39. Multi-Level Cache Performance
 
 ### 34. Introduction
 
@@ -1283,6 +1283,27 @@ Local Hit Rate = (# hits) / (# accesses to this particular cache)
 ```
 * ***N.B.*** Here, ***only*** those memory accesses pertaining to this particular cache are counted, rather than all memory accesses.
 
-Another popular metric for quantifying how often the cache hits in a non-level-1 (non-L1) cache is called **misses per 1000 instructions (MPKI)**. This is reminiscent of the `Global Miss Rate` except that rather than normalizing the cache misses with respect to "raw" number of memory-access instructions/operations, but rather with respect to general instructions (including non-memory-access instructions) encountered by the processor during program execution.
+Another popular metric for quantifying how often the cache hits in a non-level-1 (non-L1) cache is called **misses per 1000 instructions (MPKI)**. This is reminiscent of the global `Miss Rate` except that rather than normalizing the cache misses with respect to "raw" number of memory-access instructions/operations, but rather with respect to general instructions (including non-memory-access instructions) encountered by the processor during program execution.
 
-## 37. Global and Local `Miss Rate` Quiz and Answers
+### 37. Global and Local `Miss Rate` Quiz and Answers
+
+<center>
+<img src="./assets/14-101A.png" width="650">
+</center>
+
+Given a level 1 (L1) cache with a `90%` `Hit Rate`, what are the local and global `Miss Rate`s?
+  * local: `10%`
+  * global: `10%`
+
+Similarly, given a level 2 (L2) cache which hits for `50%` of the aforementioned L1 cache's misses, what are the local and global `Miss Rate`s for the L2 cache?
+  * local: `50%`
+  * global: `5%` 
+
+***Explanation***:
+
+In this particular multi-level cache configuration, with respect to the level 1 (L1) cache, there is no distinction between the local vs. global `Miss Rate`s; in either case, it is simply (by definition) `100% - 90% = 10%`.
+
+Conversely, with respect to the level 2 (L2) cache, since it hits for `50%` of the L1 misses, this correspondingly implies that it also misses for `50%` of these L1 misses (i.e., the only thing reaching the L2 cache are the L1 misses), which characterizes its local `Miss Rate` accordingly. Furthermore, the global `Miss Rate` for the L2 cache is `5%`, because only `10%` of the L1 accesses (i.e., the L1 cache misses) reach the L2 cache, for which the latter has an intrinsic/global `Hit Rate` of `50%`.
+
+### 38. Inclusion Property
+
