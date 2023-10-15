@@ -711,7 +711,7 @@ In the event of *both* a ***TLB hit*** *and* a **cache hit**, this sequence can 
 <img src="./assets/13-042.png" width="650">
 </center>
 
-However, what about if a ***TLB miss*** occurs (i.e., what if the translation is ***not*** present in the translation look-aside buffer (TLB))? In this case, the corresponding corrective-action sequence is:
+However, what about if a ***TLB miss*** occurs (i.e., what if the translation is ***not*** present in the translation look-aside buffer [TLB])? In this case, the corresponding corrective-action sequence is:
   * 1 - Perform translation using a page table(s)
   * 2 - Place the resulting translation into the translation look-aside buffer (TLB) for subsequent use by the processor
 

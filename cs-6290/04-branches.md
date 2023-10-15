@@ -975,7 +975,7 @@ In general, it is evident that many patterns will indeed have a small counter re
 </center>
 
 The previously described arrangement (cf. Section 36) is called a **pshare** predictor, characterized by the following:
-  * A ***p***rivate history for each branch (i.e., *each* individual branch should have its *own* history in the branch history table (BHT))
+  * A ***p***rivate history for each branch (i.e., *each* individual branch should have its *own* history in the branch history table [BHT])
   * ***S***hared counters, whereby in general *different* branches can map to the *same* counters
 
 Pshare predictors are useful for the following:
