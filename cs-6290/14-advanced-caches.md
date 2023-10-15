@@ -1307,3 +1307,89 @@ Conversely, with respect to the level 2 (L2) cache, since it hits for `50%` of t
 
 ### 38. Inclusion Property
 
+<center>
+<img src="./assets/14-102.png" width="650">
+</center>
+
+In addition to variable `Miss Rate`s between local vs. global cache performance in a multi-level cache, there is also a relevant property in such multi-level caches called the **inclusion property**.
+
+<center>
+<img src="./assets/14-103.png" width="250">
+</center>
+
+Given a two-level cache hierarchy (as in the figure shown above) and that a block is in the level 1 (L1) cache, there are the following possible states:
+  * The block may or may not also be in the level 2 (L2) cache
+  * The block ***must*** also be in the level 2 (L2) cache (***inclusion***)
+  * The block ***cannot*** also be in the level 2 (L2) cache (***exclusion***)
+
+So, then, which of these states is correct? It turns out that unless there is an explicit effort to strictly enforce inclusion or exclusion, then either is possible (i.e., the block may or may not also be in the L2 cache at any given time).
+
+<center>
+<img src="./assets/14-104.png" width="350">
+</center>
+
+Consider a simple example characterized as follows (as in the figure shown above):
+  * The level 1 (L1) cache is comprised of two blocks
+  * The level 2 (L2) cache is comprised of four blocks
+  * Both L1 and L2 caches are fully associative and use a least recently used (LRU) replacement policy
+  * Assume that the content of both caches is initially empty
+
+<center>
+<img src="./assets/14-105.png" width="350">
+</center>
+
+On access of block `A` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). At this point, the inclusion property holds.
+
+<center>
+<img src="./assets/14-106.png" width="350">
+</center>
+
+Similarly, on subsequent access of block `B` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-107.png" width="350">
+</center>
+
+On subsequent access of block `C` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). Furthermore, `A` is ejected from L1. At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-108.png" width="375">
+</center>
+
+Conversely, rather than subsequently accessing block `C`, instead block `A` is first re-accessed (as in the figure shown above). Since the re-access is only with respect to the level 1 (L1) cache, the corresponding least-recently-used counters are updated accordingly (in number ordering of highest/most-recently-accessed to lowest/least-recently-accessed). At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-109.png" width="375">
+</center>
+
+Now, on subsequent access of block `C` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). Furthermore, `A` is ejected from L1, and both caches' least-recently-used counters are updated accordingly. At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-110.png" width="375">
+</center>
+
+On subsequent re-access of block `A` (as in the figure shown above), since the re-access is only with respect to the level 1 (L1) cache, the corresponding least-recently-used counters for the L1 cache are updated accordingly. At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-111.png" width="375">
+</center>
+
+On subsequent access of block `D` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). Furthermore, `C` is ejected from L1, and both caches' least-recently-used counters are updated accordingly. At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-112.png" width="375">
+</center>
+
+On subsequent re-access of block `A` (as in the figure shown above), since the re-access is only with respect to the level 1 (L1) cache, the corresponding least-recently-used counters for the L1 cache are updated accordingly. At this point, the inclusion property still holds.
+
+<center>
+<img src="./assets/14-113.png" width="375">
+</center>
+
+On subsequent access of block `E` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). Furthermore, `D` is ejected from L1 and `A` is ejected from L2. Observe that at this point, the inclusion property no longer holds with respect to block `A`.
+
+Correspondingly, the inclusion property does ***not*** necessarily hold in a multi-level cache, because blocks which are frequently accessed in the level 1 (L1) cache generally will not be accessed as frequently in the level 2 (L2) cache (i.e., the L2 cache only "sees" the cache misses of L1).
+
+Therefore, in order to ***maintain*** the inclusion property, the level 2 (L2) cache must incorporate a corresponding **inclusion bit**. The inclusion bit has the value `1` when the block in question is also present in the level 1 (L1) cache, and on subsequent cache-block replacements in the L2 cache, blocks designated with an inclusion-bit value of `1` are ***prevented*** from otherwise being replaced in the L2 cache.
+
+### 39. Inclusion Property Quiz and Answers
