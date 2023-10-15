@@ -1208,3 +1208,19 @@ L2 Miss Penalty = L3 Hit Time + (L3 Miss Rate × L3 Miss Penalty)
 These definitions proceed similarly in this manner, until ultimately reaching the definition of the **last level cache (LLC)** (i.e., level `N` [L`N`] cache), which corresponds directly to the main-memory access time itself (i.e., the hierarchy correspondingly is comprised of `N` cache levels, where the level `N` cache is that which ultimately performs the main-memory access operation).
 
 ## 33. Level 1 (L1) vs. Level 2 (L2) Quiz and Answers
+
+<center>
+<img src="./assets/14-096A.png" width="650">
+</center>
+
+With respect to level 1 (L1) vs. level 2 (L2) caches, which of the following are true? (Select all that apply.)
+  * L1 capacity < L2 capacity
+    * `APPLIES` - In general, the level 2 (L2) cache must contain "reserve capacity" to cover cache hits which were correspondingly cache misses in the level 1 (L1) cache (i.e., if proceeding onto the L2 cache, the intended purpose is to cover with cache hits there, rather than to further propagate cache misses).
+  * L1 latency < L2 latency
+    * `APPLIES` - The level 1 (L1) cache is the first level of caching within the hierarchy not because it has a higher chance of a cache hit, but rather precisely because it has a relatively lower latency in the first place (i.e., all else equal, an L1 cache hit will be faster than an L2 cache hit relative to initiation of a memory-access operation).
+  * L1 number of accesses < L2 number of accesses
+    * `DOES NOT APPLY` - All of the access operations (i.e., loads and stores) proceed via the level 1 (L1) cache, however, only those which result in cache misses consequently proceed onto the level 2 (L2) cache (i.e., in general, the L1 cache will experience the highest number of accesses for a given program).
+  * L1 associativity = L2 associativity
+    * `DOES NOT APPLY` - While this may potentially be the case, it is not necessarily true, and typically is not. The reason for this is because the level 1 (L1) cache must have a low latency (i.e., short `Hit Time`), which necessarily comes at the expense of capacity (and corresponding associativity); correspondingly, the level 2 (L2) cache provides increased capacity (and correspondingly higher level of associativity) at the expense of a relatively higher `Hit Time`.
+
+## 34. Multi-Level Cache Performance
