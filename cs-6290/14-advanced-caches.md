@@ -114,7 +114,7 @@ The corresponding cache-hit data is read out and combined with the **offset** in
 <img src="./assets/14-009.png" width="600">
 </center>
 
-On example of a pipelined cache access is as in the figure shown above, comprised of the following ***stages***:
+One example of a pipelined cache access is as in the figure shown above, comprised of the following ***stages***:
   * ***Stage 1*** (magenta in the figure shown above) → Read the tag regions, valid bits, etc. from the cache array
   * ***Stage 2*** (red in the figure shown above) → Perform comparison of the cache hits and correspondingly locate the data
   * ***Stage 3*** (black in the figure shown above) → Perform the data read and provide it to the processor
