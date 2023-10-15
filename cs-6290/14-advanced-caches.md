@@ -1262,3 +1262,27 @@ Conversely, the intrinsic `Hit Rate` of a given cache level (i.e., in isolation)
 Therefore, when characterizing a cache with respect to its size/capacity and the general notion of "larger caches behaving better with respect to `Hit Rate`," typically this characterization is with respect to the ***global hit rate***, because the local hit rate is not an intrinsic property of a given cache itself (i.e., it is influenced by the upstream cache levels in the multi-level configuration).
 
 ### 36. Global vs. Local `Hit Rate`
+
+<center>
+<img src="./assets/14-099.png" width="650">
+</center>
+
+Let us now define these `Hit Rate`s as follows.
+
+```
+Global Hit Rate = 1 - Global Miss Rate
+```
+
+```
+Global Miss Rate = (# misses in this cache) / (# all memory references)
+```
+* ***N.B.*** Here, "all" memory references includes all memory references performed by the processor in it entirety, ***not*** just those which reach its cache.
+
+```
+Local Hit Rate = (# hits) / (# accesses to this particular cache)
+```
+* ***N.B.*** Here, ***only*** those memory accesses pertaining to this particular cache are counted, rather than all memory accesses.
+
+Another popular metric for quantifying how often the cache hits in a non-level-1 (non-L1) cache is called **misses per 1000 instructions (MPKI)**. This is reminiscent of the `Global Miss Rate` except that rather than normalizing the cache misses with respect to "raw" number of memory-access instructions/operations, but rather with respect to general instructions (including non-memory-access instructions) encountered by the processor during program execution.
+
+## 37. Global and Local `Miss Rate` Quiz and Answers
