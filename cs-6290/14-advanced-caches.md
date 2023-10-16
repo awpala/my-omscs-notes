@@ -1026,8 +1026,8 @@ A ***problem*** occurs here, such that when accessing the initial-row data, an e
 To remedy this problem, a good compiler will detect the sub-optimal ordering of these loop-iterating expressions (i.e., with respect to the underlying memory layout for the corresponding matrix) and reorder them accordingly via **loop interchange**, e.g.,:
 
 ```c
-for (int j = 0; i < ...; j++)   # previously inner loop, currently outer loop
-  for (int i = 0; i < ...; i++) # previously outer loop, currently inner loop
+for (int j = 0; i < ...; j++)   // previously inner loop, currently outer loop
+  for (int i = 0; i < ...; i++) // previously outer loop, currently inner loop
     a[j][i] = 0;
 ```
 
