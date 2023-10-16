@@ -696,7 +696,7 @@ Now with respect to `E` (i.e., immediately prior to the final access of `B`), th
 
 Correspondingly, the least possible amount of misses for this sequence would be `5` (i.e., assuming `B` was *not* ejected), otherwise the most possible amount of misses for this sequence would be `6` (i.e., assuming `B` *was* indeed ejected).
 
-## 20. Reducing the Average Memory Access Time (`AMAT`)
+## 20. Reducing the `Miss Rate`
 
 Let us now return to consideration of reducing the average memory access time (`AMAT`) (cf. Section 2).
 
