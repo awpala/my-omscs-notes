@@ -169,7 +169,7 @@ These options correspond analogously to the library example seen previously (cf.
 <img src="./assets/12-013.png" width="650">
 </center>
 
-Now that we know that the **cache** is a small memory section inside of the processor where the processor attempts to find the data first before subsequently proceeding to the main memory (cf. Section 8), let us know consider the **requirements** for a cache, which are as follows:
+Now that we know that the **cache** is a small memory section inside of the processor where the processor attempts to find the data first before subsequently proceeding to the main memory (cf. Section 7), let us know consider the **requirements** for a cache, which are as follows:
   * It must be ***fast*** → Therefore, it must be ***small***
     * As a consequence of its small size, ***not*** everything will fit in the cache, and therefore there will be a lot of main-memory locations which are ***not*** accounted for in the cache 
 
