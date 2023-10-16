@@ -242,7 +242,7 @@ Typically, we use the ***original form*** of the `AMAT` definition, simply becau
 <img src="./assets/12-016A.png" width="450">
 </center>
 
-Having now seen the relationship between `Hit Time`, `Miss Time`, and cache performance (cf. Section 10), Recalling (cf. Section 9) that `Miss Time = Hit Time + Miss Penalty`, now consider the following.
+Having now seen the relationship between `Hit Time`, `Miss Time`, and cache performance (cf. Section 10), Recalling (cf. Section 10) that `Miss Time = Hit Time + Miss Penalty`, now consider the following.
 
 Which of the following properties characterize a ***well-designed*** cache? (Select all that apply.)
   * `Hit Time < Miss Time`
