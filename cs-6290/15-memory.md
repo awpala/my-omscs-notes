@@ -49,11 +49,11 @@ Next, we wil consider what ***one*** memory bit looks like in the context of the
 
 ### 4. One Memory Bit: SRAM
 
-First, consider one memory bit in **static random access memory (SRAM)**.
-
 <center>
 <img src="./assets/15-003.png" width="650">
 </center>
+
+First, consider one memory bit in **static random access memory (SRAM)** (as in the figure shown above).
 
 The **bit** sits at the intersection of a **wordline** (which traverses many such bits) and the corresponding **bitlines** (which also in turn traverse many such bits); effectively, the memory is a ***matrix*** of such memory cells.
   * ***N.B.*** Dynamic random access memory (DRAM) similarly is comprised of intersecting wordlines and bitlines (as will be discussed shortly, in the next subsection).
@@ -85,7 +85,7 @@ In static random access memory (SRAM), the memory cell itself consists of two co
 <img src="./assets/15-006.png" width="300">
 </center>
 
-To further enhance this "reinforcement" effect, typically two such transistors are connected to the ***same*** memory cell (as in the figure shown above), with their non-memory-cell-connected terminals connected to bitlines having complementary bit values (i.e., $b$ and $\bar b$).
+To further enhance this "reinforcement" effect, typically two such transistors are connected to the ***same*** memory cell (as in the figure shown above), with their bitline-connected terminals connected to respective bitlines having complementary bit values (i.e., $b$ and $\bar b$).
   * For example, with a bitline signals of $b = 1$ and complement $\bar b = 0$, this further "overwhelms"/"coerces" the memory cell into having a value ***written*** to it.
   * Similarly, if connecting both bitlines for ***reading***, the corresponding complementary pair will be read out to the respective bitlines (i.e., $b$ and $\bar b$). Furthermore, the difference between the bitlines can be examined to more quickly detect the target data value being read from the memory cell accordingly.
 
@@ -93,3 +93,37 @@ To reiterate, by virtue of the ***weak*** constituent transistors of the inverte
   * By initializing the bitlines near the midpoint between `1` and `0`, on activation of the wordline, this in turn initiates the action of the memory cell to "push"/"pull" against the bitlines to quickly converge towards a stable, detectable "difference" between the bitlines accordingly.
 
 ### 5. One Memory Bit: DRAM
+
+<center>
+<img src="./assets/15-007.png" width="650">
+</center>
+
+In **dynamic random access memory (DRAM)** (as in the figure shown above), there is similarly a **transistor** which is activated by the **wordline** and correspondingly connects the **memory cell** to the **bitline**, however, this is the ***only*** transistor. Furthermore, the **memory cell** is comprised of a simple ***capacitor*** (i.e., rather than a pair of inverters).
+  * To ***write*** data to the memory cell, the wordline is activated, and then consequently the bitline signal (e.g., `1`) is fed into the memory-cell capacitor, which in turn effectively charges the capacitor. Furthermore, on deactivation of the wordline, this charge is subsequently retained in the capacitor accordingly (analogously, a writing bitline signal of `0` would result in a discharge of the capacitor into the bitline and consequent stored value of `0`, i.e., no charge held by the memory-cell capacitor, which it subsequently retains on disconnection of the wordline).
+  * Correspondingly, the data bit is effectively stored by the capacitor (i.e., `1` holds a charge, while `0` holds "no" charge).
+
+However, there is an inherent ***problem*** here: The transistor itself is ***not*** a "perfect" switch, but rather it is slightly "leaky." In contrast, the inverters of the static random access memory (SRAM) are sufficiently strong to retain the charge, and are even tolerant of slightly leaky bitline-connecting transistors (i.e., the memory-cell inverters can still retain the charge/state reliably nevertheless).
+
+Because of this "leakiness," the dynamic random access memory (DRAM) memory cell ***loses*** the stored-bit information over time, which consequently necessitates a period reading out of the bit and writing the bit back in at full voltage to restore the "true" value of the memory cell.
+
+Another ***problem*** with the dynamic random access memory (DRAM) memory cell (which is not otherwise present in the static random access memory [SRAM] memory cell) is that once the wordline is activated, the memory-cell capacitor consequently "drains" into the bitline; while this value can be detected by the bitline, the memory-cell capacitor is no longer fully charged as a result. This is correspondingly called a **destructive read**, i.e., on reading of the memory-cell bit value, it must be immediately written back in, in order to restore the intended data (i.e., the value is lost upon being read).
+
+<center>
+<img src="./assets/15-008.png" width="150">
+</center>
+
+Note that the static random access memory (SRAM) memory cell is called a **6 transistor (6T) cell** (i.e., two bitline-connecting transistors, and a pair of memory-cell inverters which are each comprised of two constituent transistors apiece), and by contrast the dynamic random access memory (DRAM) memory cell is correspondingly called a **1 transistor (1T) cell** (i.e., the single transistor connected to the memory-cell capacitor).
+  * Correspondingly, the area occupied by a static random access memory (SRAM) memory cell is that of the six constituent transistors.
+  * Conversely, the area occupied by the dynamic random access memory (DRAM) memory cell appears as though it would correspond to the area of its one constituent transistor and associated memory-cell capacitor. Furthermore, the larger the memory-cell capacitor, the longer that it can retain its stored data value (i.e., `1` or `0`) before it is "lost," therefore it is desirable to maximize this area accordingly.
+    * ***N.B.***  A capacitor can be viewed as two metal plates which are placed in close proximity to each other (as in the figure shown above). Furthermore, in general, the capacitance (and corresponding ability to retain charge) is directly proportional to the common area of the plates.
+
+<center>
+<img src="./assets/15-009.png" width="100">
+</center>
+
+In fact, rather than increasing the area of the memory-cell capacitor, in a dynamic random access memory (DRAM) memory cell, the transistor and capacitor are built into a single-transistor component via a corresponding technology called a **trench cell** (as in the figure shown above).
+  * With a trench cell, one end of the transistor is "buried" deeply into the silicon substrate during manufacture of the transistors-based memory chip. This allows for relative isolation of the transistor subcomponent itself.
+
+As a final note, observe that the dynamic random access memory (DRAM) memory cell can be relatively small compared to the corresponding static random access memory (SRAM) memory cell, because the former does not require an additional bitline to achieve an equivalent memory cell (and correspondingly requires less wiring as well, all else equal).
+
+## 6. Dynamic Random Access Memory (DRAM) Technology Quiz and Answers
