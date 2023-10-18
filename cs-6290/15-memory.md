@@ -127,3 +127,21 @@ In fact, rather than increasing the area of the memory-cell capacitor, in a dyna
 As a final note, observe that the dynamic random access memory (DRAM) memory cell can be relatively small compared to the corresponding static random access memory (SRAM) memory cell, because the former does not require an additional bitline to achieve an equivalent memory cell (and correspondingly requires less wiring as well, all else equal).
 
 ## 6. Dynamic Random Access Memory (DRAM) Technology Quiz and Answers
+
+<center>
+<img src="./assets/15-011A.png" width="650">
+</center>
+
+Why not use a "normal" transistor and a capacitor to construct a dynamic random access memory (DRAM) memory cell? (Select the correct choice.)
+  * The trench cell is easier to make
+    * `INCORRECT` - Embedding the trench cell into the silicon substrate is generally a more complex manufacturing operation than simply using equivalent discrete subcomponents
+  * The trench cell is more reliable
+    * `INCORRECT`
+  * The trench cell enables manufacturing DRAM chips more cheaply
+    * `CORRECT` - While it seems paradoxical that a trench cell is more complex to manufacture (and therefore presumably more expensive to manufacture accordingly), recall (cf. Lesson 1) that the cost of manufacturing a chip grows quickly with the total area of the chip, and correspondingly, since the trench cell occupies a lot less per-unit-area of the chip than an equivalent discrete transistor/capacitor combination, consequently this net reduction in area per-unit-memory-cell offsets the associated added-complexity-of-manufacturing cost 
+
+## 7-8. Memory Chip Organization
+
+### 7. Part 1
+
+### 8. Part 2
