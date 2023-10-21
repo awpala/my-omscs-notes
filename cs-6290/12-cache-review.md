@@ -537,7 +537,7 @@ Consider the situation as in the figure shown above, where the third line has co
 <img src="./assets/12-041.png" width="650">
 </center>
 
-Now, the ***block offset*** can be used by the processor to determine where in that correspondingly line the data is located, as in the figure shown above.
+Now, the ***block offset*** can be used by the processor to determine where in that corresponding line the data is located, as in the figure shown above.
   * ***N.B.*** The block number is correspondingly called the **tag region** of the address. In the event of a cache miss, the corresponding tag-region data is placed into the cache line along with the block number being placed in the cache tag for subsequent searches. Furthermore, later, we will see that sometimes this tag region is ***not*** identical to the block number.
 
 ## 22. Cache Tag Quiz and Answers
@@ -1165,7 +1165,7 @@ The first component of the write policy is the so called **allocate policy**, wh
 
 Most modern caches are **write-allocate**, simply because there is generally inherent ***locality*** among read and write operations (i.e., data that is written is also likely to be read). Accordingly, write-allocate improves read hits, even in the event of a write miss.
 
-The second component of the write policy concerns the question: When a write hit occurs, should the write be performed *only* in the cache, or *also* in main memory as well? For this purpose, there are two ***types** of caches, as follows:
+The second component of the write policy concerns the question: When a write hit occurs, should the write be performed *only* in the cache, or *also* in main memory as well? For this purpose, there are two ***types*** of caches, as follows:
   * **write-through**
     * This type of cache updates the main memory immediately (i.e., a write to the cache correspondingly propagates up to the main memory as well, thereby "writing through" the cache)
   * **write-back**
