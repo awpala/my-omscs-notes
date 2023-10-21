@@ -1495,7 +1495,7 @@ As per the table above, there are `58 bits` (1 + 1 + 54 + 2) in addition to the 
 
 Given the same cache as specified previously (cf. Section 41), as in the figure shown above, now consider how the address is used to access the cache.
 
-To simplify the representation, a lines in a given set are represented horizontally, spanning the `16` total sets accordingly (i.e., sets `0` through `15`, respectively).
+To simplify the representation, lines in a given set are represented horizontally, spanning the `16` total sets accordingly (i.e., sets `0` through `15`, respectively).
 
 <center>
 <img src="./assets/12-090.png" width="650">
