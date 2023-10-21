@@ -1299,7 +1299,7 @@ In the subsequent access `WR C` (as in the figure shown above), there is a cache
 
 Because this is a write operation, on populating the cache with the data for `C`, the processor will also correspondingly set the dirty bit to `1`. 
 
-At this point, the dirt bit for every line in the cache simply indicates whether or not the line was ever written since being last brought into the cache.
+At this point, the dirty bit for every line in the cache simply indicates whether or not the line was ever written since being last brought into the cache.
 
 <center>
 <img src="./assets/12-078.png" width="650">
