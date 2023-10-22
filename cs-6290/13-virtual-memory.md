@@ -228,9 +228,9 @@ Furthermore, suppose that the machine running this process has a `16 bit` virtua
 
 Given the following `16 bit` virtual addresses, what are the corresponding physical addresses?
   * `0xF0F0`
-    * `0x05F0F0`
+    * `0x5F0F0`
   * `0x001F`
-    * `0x07C01F`
+    * `0x7C01F`
 
 ***Explanation***:
 
