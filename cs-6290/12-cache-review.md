@@ -1592,7 +1592,7 @@ On initial `LW 0xBCDE0000` (as in the figure shown above), the cache is updated 
 
 | Cache Line | Valid Bit | Dirty Bit | Tag |
 |:--:|:--:|:--:|:--:|
-| 0 | 1 | 0 | `0xBCDE0000` |
+| 0 | 1 | 0 | `0xBCDE00` |
 | 1 | 0 |  | |
 
 Because this is a read operation, on populating the cache with the data for `0xBCDE0000`, the processor will also correspondingly set the dirty bit to `0`. 
@@ -1605,8 +1605,8 @@ In the subsequent access `LW 0xCDEF0000` (as in the figure shown above), there i
 
 | Cache Line | Valid Bit | Dirty Bit | Tag |
 |:--:|:--:|:--:|:--:|
-| 0 | 1 | 0 | `0xBCDE0000` |
-| 1 | 1 | 0 | `0xCDEF0000` |
+| 0 | 1 | 0 | `0xBCDE00` |
+| 1 | 1 | 0 | `0xCDEF00` |
 
 Because this is a read operation, on populating the cache with the data for `0xCDEF0000`, the processor will also correspondingly set the dirty bit to `0`. 
 
@@ -1618,8 +1618,8 @@ In the subsequent access `SW 0xBCDE0000` (as in the figure shown above), there i
 
 | Cache Line | Valid Bit | Dirty Bit | Tag |
 |:--:|:--:|:--:|:--:|
-| 0 | 1 | 1 | `0xBCDE0000` |
-| 1 | 1 | 0 | `0xCDEF0000` |
+| 0 | 1 | 1 | `0xBCDE00` |
+| 1 | 1 | 0 | `0xCDEF00` |
 
 Because this is a write operation, on populating the cache with the data for `0xBCDE0000`, the processor will also correspondingly set the dirty bit to `1`.
 
@@ -1631,8 +1631,8 @@ In the subsequent access `SW 0xCDEF0004` (as in the figure shown above), there i
 
 | Cache Line | Valid Bit | Dirty Bit | Tag |
 |:--:|:--:|:--:|:--:|
-| 0 | 1 | 1 | `0xBCDE0000` |
-| 1 | 1 | 1 | `0xCDEF0000` |
+| 0 | 1 | 1 | `0xBCDE00` |
+| 1 | 1 | 1 | `0xCDEF00` |
 
 Because this is a write operation, on populating the cache with the data for `0xCDEF0004`, the processor will also correspondingly set the dirty bit to `1`.
 
@@ -1644,8 +1644,8 @@ In the subsequent (and final) access `SW 0xBCDE0000` (as in the figure shown abo
 
 | Cache Line | Valid Bit | Dirty Bit | Tag |
 |:--:|:--:|:--:|:--:|
-| 0 | 1 | 1 | `0xBCDE0000` |
-| 1 | 1 | 1 | `0xCDEF0000` |
+| 0 | 1 | 1 | `0xBCDE00` |
+| 1 | 1 | 1 | `0xCDEF00` |
 
 Because this is a write operation, on populating the cache with the data for `0xBCDE0000`, the processor will also correspondingly set the dirty bit to `1`.
 
