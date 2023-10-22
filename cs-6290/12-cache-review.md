@@ -1524,7 +1524,7 @@ Conversely, in the case of a **cache miss** (as in the figure shown above), i.e.
 
 On update/replacement of the block, the LRU counters are correspondingly updated accordingly, and the data is subsequently provided to the processor as usual from there.
 
-As is evident now, all of the aforementioned cache-related activities occur essentially ***simultaneously** on every access operation, with appropriate contingencies for cache hits vs. cache misses accordingly.
+As is evident now, all of the aforementioned cache-related activities occur essentially ***simultaneously*** on every access operation, with appropriate contingencies for cache hits vs. cache misses accordingly.
 
 ## 43-44. Cache Summary Quizzes and Answers
 
