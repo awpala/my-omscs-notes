@@ -529,7 +529,7 @@ Therefore, in the virtual address space, there are:
 Correspondingly, for the ***flat*** page table, the size is (via `8 = 2^3 bytes` per page table entry):
 
 ```
-(2^48 pages) × (2^8 bytes per page table entry) = 2^51 bytes
+(2^48 pages) × (2^3 bytes per page table entry) = 2^51 bytes
 ```
 * ***N.B.*** This is an enormously sized page table (i.e., `2048 TB = 2 PB`).
 
