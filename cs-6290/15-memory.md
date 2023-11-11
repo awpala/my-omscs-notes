@@ -33,7 +33,7 @@ There are two principal memory technologies, defined as follows:
 
 ***N.B.*** In both types of memory, **random** access refers to the fact that any memory location can be accessed arbitrarily/randomly by address, without otherwise requiring full traversal of all memory locations to reach a given address. Conversely, **sequential** access (e.g., tape) requires scanning through the entire memory in order to reach a given address.
 
-The key ***differences** between static and dynamic random access memories is with respect to this static vs. dynamic behavior, which is characterized as follows:
+The key ***differences*** between static and dynamic random access memories is with respect to this static vs. dynamic behavior, which is characterized as follows:
 
 | Random Access Memory Type | Data Retention* | Transistors per Bit | Overall Speed |
 |:--:|:--:|:--:|:--:|
@@ -143,5 +143,59 @@ Why not use a "normal" transistor and a capacitor to construct a dynamic random 
 ## 7-8. Memory Chip Organization
 
 ### 7. Part 1
+
+<center>
+<img src="./assets/15-012.png" width="550">
+</center>
+
+Having seen what a *single* bit looks like (cf. Sections 3-5), now consider the *entire* chip's organization (as in the figure shown above).
+
+<center>
+<img src="./assets/15-013.png" width="550">
+</center>
+
+Recall (cf. Section 4) that there are **wordlines** which activate **memory cells**; there are several such wordlines (as in the figure shown above, denoted by green horizontal lines).
+
+Among these wordlines, the **row decoder** decides which wordline gets activated. Correspondingly, the input fed into the row decoder is a series of bits of the address indicating which wordline to activate (only one wordline can be activated at a time in this manner), as provided by the **row address**.
+  * ***N.B.*** The row decoder is therefore a "real decoder," in the sense that it takes a number input and performs a corresponding "output action" (i.e., wordline selection)
+
+<center>
+<img src="./assets/15-014.png" width="550">
+</center>
+
+There is also an intersecting **bitline** (as in the figure shown above, denoted by magenta vertical line), and recall (cf. Section 4) that a memory cell correspondingly exists at ***each*** intersection of the bitline with the respective wordlines; correspondingly, the wordline itself is therefore the ***connection point*** between the memory cell and the bitline (i.e., via corresponding input bits from the row address, which identify the particular bitline intersection in question).
+
+<center>
+<img src="./assets/15-015.png" width="550">
+</center>
+
+In general, there are several such bitline-wordlines intersections (as in the figure shown above, which depicts a four-by-four, 16-bit memory). In this example, four bits can output to the ***same*** bitline, and there are four corresponding bits activated by each of the wordlines; therefore, selection of a particular wordline (row) correspondingly outputs four bits from the row address to it.
+
+<center>
+<img src="./assets/15-016.png" width="550">
+</center>
+
+Generally, bitlines are very long. Recall (cf. Sections 3-5) that the memory cell is either:
+  * 1 - A relatively weak static random access memory (SRAM) (in which case it slowly pulls the bitline one way or the other)
+    * Given a weak cell, it is undesirable to wait for the particular memory cell to raise the entire bitline one way or the other (i.e., between values `0` and `1`).
+  * 2 - A dynamic random access memory (DRM) (in which case it discharges a relatively small capacitor into this relatively long bitline)
+    * Discharging a small capacitor into a long bitline causes a change in the voltage on the bitline, however, this change is relatively small (i.e., negligibly so relative to a "full level" switch from/to `0` or `1`).
+
+For these reasons, the bitlines are typically connected to a device called a **sense amplifier** (as in the figure shown above). The purpose of the sense amplifier is to sense ***small*** changes on the bitline and then to consequently amplify these changes, which in turn facilitates the raising or lowering of the memory cell's bitline-wise voltage.
+  * The sense amplifier in turn contains relatively powerful circuitry for each bitline, and is therefore significantly larger than a single row of memory cells, however, only one such sense amplifier is necessary for each corresponding set of bitlines (i.e., as opposed to on a per-bitline/wordline-intersection-memory-cell basis).
+
+<center>
+<img src="./assets/15-017.png" width="550">
+</center>
+
+The signals that are produced by the sense amplifier (i.e., the "corrected" `1` or `0` bit) are subsequently fed into a storage element called the **row buffer** (as in the figure shown above). The row buffer stores the correct values read from the entire row of memory cells (i.e., four bits, in the case of a four-by-four memory).
+
+<center>
+<img src="./assets/15-018.png" width="550">
+</center>
+
+The row buffer in turn feeds the latched data to the **column decoder** (as in the figure shown above). The column decoder in turn selects the correct bit among the row-buffer bits using the **column address** (which itself is another part of the data address), thereby outputting a ***single bit***.
+
+Therefore, to build a memory component having more than just one bit of data for a given location, this configuration is simply ***replicated*** accordingly (e.g., two sets will correspondingly output two bits of data given an input row address and column address; and so on).
 
 ### 8. Part 2
