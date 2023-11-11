@@ -140,7 +140,7 @@ Why not use a "normal" transistor and a capacitor to construct a dynamic random 
   * The trench cell enables manufacturing DRAM chips more cheaply
     * `CORRECT` - While it seems paradoxical that a trench cell is more complex to manufacture (and therefore presumably more expensive to manufacture accordingly), recall (cf. Lesson 1) that the cost of manufacturing a chip grows quickly with the total area of the chip, and correspondingly, since the trench cell occupies a lot less per-unit-area of the chip than an equivalent discrete transistor/capacitor combination, consequently this net reduction in area per-unit-memory-cell offsets the associated added-complexity-of-manufacturing cost 
 
-## 7-8. Memory Chip Organization
+## 7-10. Memory Chip Organization
 
 ### 7. Part 1
 
@@ -199,3 +199,45 @@ The row buffer in turn feeds the latched data to the **column decoder** (as in t
 Therefore, to build a memory component having more than just one bit of data for a given location, this configuration is simply ***replicated*** accordingly (e.g., two sets will correspondingly output two bits of data given an input row address and column address; and so on).
 
 ### 8. Part 2
+
+<center>
+<img src="./assets/15-019.png" width="550">
+</center>
+
+Consider now how to ***read*** a row of bits (as in the figure shown above). Assuming a dynamic random access memory (DRAM), consider the sequence of bits `1 0 1 1` drained into the corresponding respective bitlines. These values in turn propagate through the downstream elements (i.e., sense amplifier and row buffer). Finally, assume the column address selects the bit `0` for the output.
+
+<center>
+<img src="./assets/15-020.png" width="550">
+</center>
+
+Recall (cf. Section 3) that dynamic random access memory (DRAM) reads are ***destructive***. Correspondingly, the original bits are ***invalidated*** on read (as in the figure shown above).
+
+<center>
+<img src="./assets/15-021.png" width="550">
+</center>
+
+Consequently, after the sense amplifier determines the correct value of the bits (and correspondingly exhausting the respective memory cells in the process), it correspondingly ***reverses*** the direction and raises each of the bitlines to their respective original/correct values (as in the figure shown above).
+
+<center>
+<img src="./assets/15-022.png" width="650">
+</center>
+
+Therefore, **destructive reads** from dynamic random access memory (DRAM) amounts to ***read-then-write*** on a per-memory-cell basis (i.e., it is insufficient to simply "wait long enough" to retrieve the correct value, but rather it is additionally necessary to "wait long enough" to restore the original/correct value in the memory cell as well).
+  * Correspondingly, this is one of the reasons that dynamic random access memory (DRAM) is slower than static random access memory (SRAM). Another reason for this disparity is that the memory cell does not pull the bitline as strongly in dynamic random memory access (DRAM), thereby necessitating a longer time for the sense amplifier to determine the appropriate bit values.
+
+Subsequently to this read-then-write approach, the memory cells contain the original/correct values (i.e., `1 0 1 1`) and have been correspondingly **refreshed** (i.e., even if they have been reduced to 90% or so of their original value, they are subsequently restored to the "full" original value on refresh in this manner, thereby permitting subsequent "leak tolerance" prior to a subsequent read-then-write operation).
+
+In this manner, refresh ensures that each row is read periodically. Given a time `T` (denoting the time for the memory cell to lose the value sufficiently to preclude its subsequent recoverability), then each row must be read-and-written within this time period. Furthermore, we cannot rely on the processor to access ***every*** row of memory in this manner simply for this purpose.
+  * In fact, with caches, oftentimes certain rows are accessed more frequently than others by the processor, in which case these particular rows are not refreshed in this manner, but rather they occur as cache hits which are subsequently stored in the cache itself instead (and correspondingly "lapsing" in access time with respect to the memory itself).
+
+To resolve this matter, there is a corresponding **refresh row counter**, which is initialized to `0` and subsequently periodically refreshes the respective rows in turn. Correspondingly, if a given row must be refreshed within some **refresh period** `T`, and given `N` such rows, then this refresh operation will occur at a ***frequency*** of:
+
+```
+T / N
+```
+
+Modern dynamic random access memory (DRAM) memory cells are composed of many such rows, but nevertheless have a refresh period of well under `1 second` (i.e., many such refreshes occur on a per-second basis). In fact, this significantly interferes with what can actually be read-and-written, as during a given refresh, an effective read operation cannot be performed during this time.
+
+### 9. Memory Refresh Quiz and Answers
+
+### 10. Part 3
