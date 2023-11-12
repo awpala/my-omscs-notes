@@ -18,6 +18,7 @@
 | [12](./12-cache-review.md) | Cache Review |
 | [13](./13-virtual-memory.md) | Virtual Memory |
 | [14](./14-advanced-caches.md) | Advanced Caches |
+| [15](./15-memory.md) | Memory |
 
 ## Videos Reference
 

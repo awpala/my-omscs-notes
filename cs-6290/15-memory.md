@@ -412,3 +412,33 @@ Therefore, with this reordering, the overall operation time is:
 As demonstrated here, such reordering is indeed advantageous when cache misses are sent to memory for retrieval, in order to minimize overall operation time.
 
 ## 13. Connecting the Dynamic Random Access Memory (DRAM) to the Processor
+
+<center>
+<img src="./assets/15-036.png" width="650">
+</center>
+
+Having examined dynamic random access memory (DRAM) in this lesson, now consider how to ***connect*** the dynamic random access memory (DRAM) to the processor (as in the figure shown above).
+
+Initially, the processor propagates its request through the various cache levels (i.e., `L1`, `L2`, and `L3`), with each cache level sending its cache misses and write back requests to each subsequent cache level in turn.
+  * Note that the processor and its cache levels are physically packaged as a single physical ***chip***.
+
+Subsequently, the cache misses and write back requests from the last cache (i.e., `L3`) are sent over an external connection, via processor pins connected to what is known as the **front-side bus**.
+
+In order to design the processor chip in a manner which is interoperable with many different memory chips, rather than designing the front-side bus itself (i.e., specifying the row address, column address, etc. with respect to the external memory chip), instead a **memory controller** chip is used to manage this interoperability.
+
+The memory controller in turn has **memory channels** which connect the processor output from the memory controller to the respective **dynamic random access memory (DRAM) modules**.
+  * These channels in turn perform the various operations (i.e., open a row, send/receive data, close a row, open another row, etc.).
+
+Accordingly, the memory latency observed by the cache (i.e., `L3`) entails all of these downstream operations accordingly (i.e., sending the request over the front-side bus, processing the request by the memory controller, performing the per-memory-module operations for memory-data access, and then relaying the data back to the cache over the reverse path). All of this collectively contributes a non-trivial fraction to the overall memory latency.
+  * ***N.B.*** There is also additional variation imposed by the channel-wise speeds/frequencies on both ends of the memory controller, which in general may not be uniform.
+
+More recent processor chips integrate the memory controller into a ***single*** chip with the processor chip itself (as denoted by red box in the figure shown above), thereby obviating the need for the front-side bus (which is instead replaced by corresponding on-chip direct wiring) and reducing the bandwidth accordingly.
+  * ***N.B.*** Impressively, the total size of such a chip is on the order of 2×2 cm<sup>2</sup>.
+
+With such an "integrated chip," the requests can be sent directly through the memory channels to the corresponding dynamic random access memory (DRAM) modules, thereby reducing overall latency accordingly (a corresponding improvement of around 10-30% in practice). However, the corresponding ***cost*** with this configuration is that now the processor chip itself is more tightly coupled to a specific type of dynamic random access memory (DRAM) module, thereby necessitating a relatively high degree of ***standardization*** among these memory modules. Accordingly, the corresponding protocols have indeed increasingly standardized accordingly in tandem with this trend, ultimately a "useful concession" (i.e., at the expense of relatively higher interoperability/flexibility) to improve memory access time.
+
+## 14. Lesson Outro
+
+This lesson has described the difference between dynamic random access memory (DRAM) and static dynamic random access memory (SRAM), including how they work and where/when to use each of them.
+
+The next lesson will discuss disk drives, which have an even lower cost per bit but are correspondingly much slower.
