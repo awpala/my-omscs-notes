@@ -332,3 +332,83 @@ While a *single* (destructive) read and/or write operation entails all of these 
   * Therefore, generally it is advantageous to open a page, perform subsequent read and/or write operations, and only then finally close the page.
 
 ## 12. Dynamic Random Access Memory (DRAM) Access Scheduling Quiz and Answers
+
+<center>
+<img src="./assets/15-031A.png" width="650">
+</center>
+
+Consider a dynamic random access memory (DRAM) characterized by `32` 1-bit arrays, with each array having a size of `16M` bits (i.e., `2^12 rows × 2^12 bits/row`).
+
+Furthermore, the `24-bit` address is evenly divided into `12` bits apiece for the row address and the column address (as in the figure shown above).
+  * ***N.B.*** When processor issues a `24-bit` physical address to access the corresponding `32-bit` memory location, each dynamic random access memory (DRAM) chip is fed the corresponding `24-bit` physical address, with the `32` memory chips collectively constituting a `32-bit` memory. For example, one chip might hold bit number `7` from *all* of the words in the `16M` "megaword" memory.
+
+Assume that cache misses are currently pending for the following (`24-bit`) addresses:
+
+```
+F00 F00
+E00 F00
+F00 E04
+E04 F00
+E00 E00
+F00 123
+123 F00
+```
+
+Finally, assume the following per-operation times:
+  * A page open requires `10 ns`
+  * A read from row buffer requires `2 ns`
+  * A page close requires `5 ns`
+
+How much time is required to perform these operation on the addresses in question:
+  * In the given order?
+    * `119 ns`
+  * In the best (i.e., optimally reordered) order?
+    * `74 ns`
+
+***Explanation***:
+
+Note that each array sees the "same" input address, while providing a different bit for that particular address. Therefore, each array will have the ***same*** sequence of row and column addresses, with each implementing different bits of that particular address.
+
+With respect to the first input address (`F00 F00`), this requires a `10 ns` page open operation, followed by a `2 ns` read operation, and then finally a `5 ns` page close operation.
+
+Since the subsequent input address (`E00 F00`) is on a *different* page, the row address differs. By inspection, this will require an additional `(10 + 2 + 5) ns = 17 ns`.
+
+<center>
+<img src="./assets/15-032A.png" width="150">
+</center>
+
+Proceeding in this manner (as in the figure shown above), it is readily apparent that the total in-order operation time is therefore:
+
+```
+7 × (17 ns) = 119 ns 
+```
+
+However, observe that there is an inefficiency here imposed by the order due to the occurrence of the rows. This can be improved by grouping common pages together in order to facilitate better fast-page mode accesses with respect to a given page.
+
+<center>
+<img src="./assets/15-033A.png" width="150">
+</center>
+
+Therefore, an initial access of row `F00` (as in the figure shown above) yields a total operation time of an initial `10 ns` page open followed by three `2 ns` apiece read operations with respect to this row, and then finally a `5 ns` page close operation.
+
+<center>
+<img src="./assets/15-034A.png" width="150">
+</center>
+
+Subsequently, access of row `E00` (as in the figure shown above) yields a total operation time of an initial `10 ns` page open followed by two `2 ns` apiece read operations with respect to this row, and then finally a `5 ns` page close operation.
+
+<center>
+<img src="./assets/15-035A.png" width="150">
+</center>
+
+By inspection, the remaining two rows (`E04` and `123`, as in the figure shown above) will require full `17 ns` operation times apiece.
+
+Therefore, with this reordering, the overall operation time is:
+
+```
+[10 + (3 × 2) + 5] + [10 + (2 × 2) + 5] + [17] + [17] ns = 74 ns
+```
+
+As demonstrated here, such reordering is indeed advantageous when cache misses are sent to memory for retrieval, in order to minimize overall operation time.
+
+## 13. Connecting the Dynamic Random Access Memory (DRAM) to the Processor
