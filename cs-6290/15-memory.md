@@ -306,3 +306,29 @@ Subsequently, the write-input value (i.e., `1`) is written into the row buffer, 
 Therefore, as demonstrated here, a ***write*** operation (similarly to a ***read*** operation) entails a ***read-then-write*** operation.
 
 ## 11. Fast Page Mode
+
+<center>
+<img src="./assets/15-029.png" width="650">
+</center>
+
+Recall (cf. Sections 7-10) that dynamic random access memory (DRAM) is slow due to the row-wise operations involved (i.e., selecting the row with the row decoder, getting the bits onto the bitlines, sensing the values of the bitlines, etc. until finally reading the values from the row buffer back to the processor).
+
+However, note that not all dynamic random access memory (DRAM) access operations are necessarily this slow. A technique called **fast-page mode** can be leveraged for this purpose in order to make some of the dynamic random access memory (DRAM) accesses much faster than others.
+
+Note that once the row buffer is populated with the row data, at this point the row buffer can ***retain*** the entire row. Therefore, to read a subsequent bit from the ***same*** row, this obviates the need to repeat the entire upstream sequence accordingly; instead, if these values are simply retained in the row buffer, then a simple update of the corresponding column address can target the other bit(s) in question, thereby reading it out accordingly from the row buffer. This approach is indeed the aforementioned **fast-page mode**.
+  * ***N.B.*** This nomenclature is preferred over "fast-row mode," because it is common practice to designate such a wordline-based row as a "page" rather than a "row," and is typically comprised of thousands of bits (however, note that this is unrelated to the "pages" in the context of virtual memory [cf. Lesson 13]); essentially, here, "page" simply is referring to "an entity comprised of *many* bits."
+
+More formally, the ***sequence*** of steps involved in fast-page mode are as follows:
+  * 1 - Open a page
+    * 1A - Input a row address
+    * 1B - Select the corresponding row
+    * 1C - Perform sense amplification to determine the outputs of the respective memory cells
+    * 1D - Latch the corresponding values into the row buffer
+  * 2 - Perform a series of read and/or write operations on the page in question via the corresponding row buffer
+  * 3 - Close the page in question to free the corresponding elements in order to allow for subsequent row-wise operations
+    * The sense amplifier writes back the values from the row buffer to the page/row
+
+While a *single* (destructive) read and/or write operation entails all of these steps in turn, *multiple* successive read and/or write operations can be performed prior to closing the page (i.e., iteratively performing step 2 per above).
+  * Therefore, generally it is advantageous to open a page, perform subsequent read and/or write operations, and only then finally close the page.
+
+## 12. Dynamic Random Access Memory (DRAM) Access Scheduling Quiz and Answers
