@@ -276,3 +276,33 @@ Therefore, this leaves effectively:
 ```
 
 ### 10. Part 3
+
+<center>
+<img src="./assets/15-025.png" width="650">
+</center>
+
+So, then, how are ***write*** operations to memory performed?
+
+<center>
+<img src="./assets/15-026.png" width="500">
+</center>
+
+Consider the case of updating one of the memory cells (as in the figure shown above). The row address selects the corresponding row of the cell (rather than an individual cell); however, an input is supplied to the column decoder (e.g., `1`) targeting the specific memory cell in question.
+  * Targeting a specific memory cell in this manner is challenging, as driving the value back into the row can generally impact the *entire* row, not just the particular memory cell in question.
+
+<center>
+<img src="./assets/15-027.png" width="500">
+</center>
+
+To achieve writing in this manner, instead, the row address first selects the row, and then the bits are read out into the sense amplifier, which in turn passes them down to the row buffer which latches the values (as in the figure shown above).
+
+<center>
+<img src="./assets/15-028.png" width="500">
+</center>
+
+Subsequently, the write-input value (i.e., `1`) is written into the row buffer, and then the entire set of values is written back into the row (as in the figure shown above).
+  * ***N.B.*** The row values have effectively been lost on initial read into the row buffer at this point, so a write back is necessary regardless.
+
+Therefore, as demonstrated here, a ***write*** operation (similarly to a ***read*** operation) entails a ***read-then-write*** operation.
+
+## 11. Fast Page Mode
