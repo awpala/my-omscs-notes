@@ -240,4 +240,39 @@ Modern dynamic random access memory (DRAM) memory cells are composed of many suc
 
 ### 9. Memory Refresh Quiz and Answers
 
+<center>
+<img src="./assets/15-024A.png" width="650">
+</center>
+
+Consider a memory array comprised of the following:
+  * `4096` rows and `2048` columns
+  * a refresh period of `500 μs` per memory cell
+
+Furthermore, assume that the timing for read operations is characterized by the following steps:
+  * `4 ns` to select a row
+  * `10 ns` for the sense amplifier to get the bit values from the row
+  * `2 ns` to place the data in the row buffer
+  * `4 ns` for the column decoder's operation
+  * `11 ns` to write the data back from the sense amplifier to the memory row
+    * ***N.B.*** This occurs effectively in parallel/overlapping with the previously indicated steps (i.e., column decoder operation and write back of the data by the sense amplifier)
+
+How many data (non-refresh) reads per second can this memory-array system support?
+  * `31,808,000`
+
+***Explanation***:
+
+One read operation effectively requires `(4 + 10 + 11) ns = 25 ns` (where the `11 ns` interval overlaps with the corresponding `(2 + 4) ns = 6 ns`). In principle, this would allow for up to `(1 read / 25 ns) × (10^9 ns / 1 s) = 4 * 10^10 reads/s`, if ***only*** reads were the necessary operation.
+
+However, there is an additional ***complication*** here: Recall (cf. Section 8) that **refreshes** are also a relevant factor here. Correspondingly, this requires `(1 refresh / 500 μs) × (10^6 μs / 1 s) = 2000 refreshes/s`, and each such refresh must be performed on a per-row basis, which in turn requires a corresponding `25 ns` interval (i.e., the same amount for the refresh as for the read operation, since these cannot occur simultaneously). This correspondingly amounts to:
+
+```
+(2000 refreshes/s/row) × (4096 rows) = 8.192 * 10^9 refreshes/s
+```
+
+Therefore, this leaves effectively:
+
+```
+40,000,000 reads/s - 8,192,000 refreshes/s = 31,808,000 non-refresh reads/s
+```
+
 ### 10. Part 3
