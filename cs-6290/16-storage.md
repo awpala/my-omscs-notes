@@ -149,3 +149,22 @@ Therefore, the average disk-access read time is:
 ```
 
 ### 6. Trends for Magnetic Disks
+
+<center>
+<img src="./assets/16-010.png" width="650">
+</center>
+
+There are several observed **trends** for magnetic disks over recent years, as follows:
+  * The **capacity** (i.e., how much data fits on a single disk) has been improving exponentially at a rate of approximately doubling every 1-2 years for several years
+  * The **seek time** has consistently stayed around 5-10 ms for several years, with only very slow/slight improvements over this time frame
+    * The only way to improve seek time is to either increase the motor speed while maintaining precise head-assembly operation (which is difficult to achieve) or to make platter smaller in order to decrease the radial traversal distance (in this respect, the platter size has been reduced from 5 in. diameter disks to 3.5 in. diameter and even more recently to 2.5 in. diameter), with the latter constituting the majority factor for more recent improvements.
+    * Consequently, improvements to seek time are correspondingly very slow/gradual.
+  * The **rotation speed** has improved steadily, from `5000` rotations per minute (RPM) to `10,000` RPM to (most recently) `15,000` RPM
+    * This type of improvement requires advancements in the material composition of the platter itself.
+    * Additionally, another relevant factor is the resulting noise from the rotation itself. Disks that rotate faster tend to be both noisier and create a higher pitched sound, which are deemed to be unpleasant characteristics for consumers of the disks.
+    * Correspondingly, these factors give rise to only relatively slow/incremental improvements on rotation speed.
+  * The speed of **disk controllers** and **buses** for data transfer have been improving at a modest rate, primarily by constituting an increasingly smaller fraction of the overall disk access time (whereby the disk access time is increasingly becoming dominated by the seek time, and to a lesser extent the rotational latency)
+
+As these trends demonstrate collectively, improvements in magnetic disks have been lagging relative to improvements in main memory and in processors. This is primarily due to the mechanical and material constraints of magnetic disks, neither of which are readily amenable to improvements on the order of Moore's law.
+
+## 7. Optical Disks
