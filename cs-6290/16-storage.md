@@ -116,3 +116,36 @@ Typically the access time for a disk request by the operating system is comprise
 
 ### 5. Disk Access Time Quiz and Answers
 
+<center>
+<img src="./assets/16-009A.png" width="650">
+</center>
+
+Consider a magnetic disk assembly comprised of the following:
+  * `1000` cylinders
+  * `10` sectors per track
+  * the head assembly is initialized to a position at cylinder `0` (where the cylinders are numbered `0` through `9999`)
+  * the speed of head assembly movement is `10 µs` per cylinder (i.e., linear movement in the radial direction)
+  * disk rotation of `100` times per second
+  * "perfect" controller and bus (i.e., "very fast" relative to the head assembly movement speed)
+  * there is no previous request (i.e., no queuing delay)
+
+What is the average time to read a randomly selected byte from the disk (where every byte has the *same* chance of being selected)?
+  * `11 ms`
+
+***Explanation***:
+
+The read time will be constituted by the seek time, rotational latency, and data read operations.
+
+With respect to the seek time, since the head assembly is initialized to a position of cylinder `0`, and the distribution of the data locations is random, then on average seeking will occur at a distance of `0.5 × 1000 = 500` cylinders, requiring a corresponding seek time of `(10 µs/cylinder) × 500 cylinders = 5 ms`.
+
+With the magnetic head placed on the correct track, by similar rationale, the average rotational latency for a randomly distributed data set will be half of a rotation (it may land either directly on the correct track, a full rotation away from the correct track, or some intermediate variation of these on any given disk read), i.e., `(1 s / 100 rotations) × 0.5 rotations = 5 ms`.
+
+Finally, to read the data, since there are `10` sectors per track, then a data read operation will require one tenth of a rotation, or `(1 s / 100 rotations) × 0.1 rotations = 1 ms`.
+
+Therefore, the average disk-access read time is:
+
+```
+5 + 5 + 1 ms = 11 ms
+```
+
+### 6. Trends for Magnetic Disks
