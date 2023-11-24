@@ -95,3 +95,24 @@ To accommodate relative large capacities in relatively small physical space:
   * Furthermore, the head assembly must be very precise in its positioning for accurate reading.
 
 ### 4. Access Times for Magnetic Disks
+
+<center>
+<img src="./assets/16-007.png" width="650">
+</center>
+
+Consider now how to access data on a magnetic disk, and the corresponding **access time** required to retrieve this data.
+
+Assuming that the disk is already spinning (otherwise, if not, then this adds an additional several-seconds delay to spin up the disks, however, typically if data is accessed frequently, then the disk is persistently spinning), then the access time per disk access is comprised of the following **time components**:
+  * **seek time** → the time required to move the head assembly to the corresponding cylinder for the target data
+  * **rotational latency** → upon positioning the magnetic head at the correct cylinder, there is an additional time/delay required to position the head within the given track on the preamble of the target sector
+  * **data read** → the time required for the magnetic head to read the track through the end of the sector
+    * This depends on both the speed of rotation and the number of sectors per track. For example, if the entire track is just *one* sector, then the data read operation will comprise a full rotation of the disk; otherwise, if the track is comprised of *ten* sectors, then the data read operation will comprise one-tenth of a disk rotation; and so on.
+  * **controller time** → the time required for the disk controller to check the checksum, verify correctness of the sector, etc.
+  * **input/output (I/O) bus time** → once the data is read and verified, this is the time required to send the data to main memory
+
+Note that unlike a cache or a dynamic random access memory (DRAM), wherein multiple accesses can be performed simultaneously, conversely, on a magnetic disk, on a seek is performed with respect to a given track, it is not possible to simultaneously read other tracks; therefore, effectively, disk accesses occur ***one at a time*** in the aforementioned manner (i.e., only on a per-track basis).
+
+Typically the access time for a disk request by the operating system is comprised of the aforementioned disk access time, as well as a **queuing delay**, due to pending completion of a previous access, thereby preventing a subsequent access from occurring until its completion.
+
+### 5. Disk Access Time Quiz and Answers
+
