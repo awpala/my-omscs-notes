@@ -168,3 +168,21 @@ There are several observed **trends** for magnetic disks over recent years, as f
 As these trends demonstrate collectively, improvements in magnetic disks have been lagging relative to improvements in main memory and in processors. This is primarily due to the mechanical and material constraints of magnetic disks, neither of which are readily amenable to improvements on the order of Moore's law.
 
 ## 7. Optical Disks
+
+<center>
+<img src="./assets/16-011.png" width="650">
+</center>
+
+An **optical disk** is similar to a magnetic disk in the sense that it also has a rotating platter which stores data bits on its surface.
+
+However, a key difference with an optical disk (relative to a magnetic disk) is that instead of using a magnetic head placed closely to the disk's surface, instead an optical disk shoots a **laser** at the surface which is then reflected by the surface material and subsequently detected as a data bit (i.e., `0` or `1`).
+  * Otherwise, many of the other properties of optical disks are very similar to hard disks (e.g., tracks, etc.), however.
+
+Furthermore, unlike magnetic-disk hard drives (which tend to be enclosed hardware units that are not otherwise portable on installation into a computer system), since optical disks do not require precise placement of a magnetic head (but rather rely on non-mechanically-contacting lasers/optics), consequently smudges, dust particles, and other surface anomalies are less problematic to the operation of optical disks.
+  * Consequently, optical disks in the form of compact discs (CDs) and digital video discs (DVDs) are **portable** and resistant to these surface anomalies.
+
+However, as a consequence of this portability, optical disks must be **standardized** for interoperability with corresponding optical drives (e.g., CD players, DVD players, etc.).
+  * This standardization also limits the rate of improvement, because even as the technology itself improves, it must subsequently pass through a standards process before finally being commercialized as a product. Therefore, technological advancements may consequently "lag" behind production/commercialization for this reason.
+  * Conversely, with magnetic-disk hard drives, while the physical enclosure size is relatively standardized (along with its connectors to the computer system), the actual "interior" hardware implementation is relatively flexible and thus more congruent with the pace of the technological advancement itself.
+
+## 8. Magnetic Tape
