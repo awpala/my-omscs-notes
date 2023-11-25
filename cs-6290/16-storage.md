@@ -242,3 +242,31 @@ Another ***approach*** is to use so called **flash memory**, which is manufactur
   * A key advantage of flash memory (i.e., relative to the DRAM/battery approach) is that it persists data even without power.
 
 ## 11. Hybrid Magnetic-Flash
+
+<center>
+<img src="./assets/16-016.png" width="650">
+</center>
+
+One popular approach is to combine magnetic disks with flash-drive technology.
+
+Magnetic disks are characterized by the following:
+  * benefits:
+    * cheap to manufacture (i.e., low cost per-unit gigabyte)
+    * can be built to have large capacities (on the order of terabytes in a relatively small physical pacakge)
+  * drawbacks:
+    * very power-consumptive (it spins constantly, thereby consuming power even when not accessing data)
+    * slow due to mechanical movement of its constituent parts
+    * sensitive to physical perturbations (e.g., falling to the ground) while spinning, and susceptible to damage in this manner
+
+Conversely, flash drives are characterized by the following benefits:
+  * fast
+  * power-efficient (due to no moving mechanical parts)
+  * more resistant to physical perturbations
+
+Therefore, the idea is to combine these two technologies to optimize for their relative benefits, thereby effectively using the flash drive as a cache for the magnetic disk.
+  * In this manner, most of the data is stored on the magnetic disk (therefore benefiting from its capacity advantage), whereas the frequently accessed data is placed on the flash drive (benefiting from its mechanical properties and fast access times).
+  * Furthermore, if the flash drive has sufficient capacity, this may even obviate the need to keep the magnetic disk spinning constantly, as it can be spun down and powered down and only otherwise accessed on "flash miss."
+  * Lastly, since neither require power to persist the data, powering down the computer system will also not impact the stored data on either medium (i.e., as opposed to "hybridizing" magnetic disks with DRAM, with the latter requiring power to persist the data).
+
+## 12. Flash vs. Disk vs. Both Quiz and Answers
+
