@@ -218,3 +218,27 @@ With respect to the distinction between disk and tape, consider the following ap
 | Make a cat happy | `X` | `√` - Youtube substantiates the claim that cats are more entertained by long, string-like targets |
 
 ## 10. Using Random Access Memory (RAM) for Storage?
+
+<center>
+<img src="./assets/16-015.png" width="650">
+</center>
+
+Having seen that magnetic-disk hard drives do not benefit from Moore's law trends (cf. Section 6), this begs the question: Would random access memory (RAM), and particularly dynamic RAM (DRAM), be useful for storage (i.e., given that they *do* demonstrate Moore's law trends with respect to capacity [cf. Lesson 15])?
+  * Recall (cf. Lesson 15) that dynamic random access memory (DRAM) have increasing capacity at a comparable rate to magnetic-disk hard drives, but conversely have much faster access times (cf. approximately `10 ms` for hard drives vs. well under `1 µs` for DRAM).
+
+There are a several ***reasons*** why this has *not* the case in practice (i.e., using memory for storage), notably the fact that magnetic-disk hard drives are on the order of `100×` cheaper to manufacture on a per-gigabyte basis.
+  * Conversely, dynamic random access memory (DRAM) has on the order of `100,000×` better (i.e., lower) latency.
+
+More recently, an emerging trend of **solid-state disks (SSDs)** has become more common.
+  * ***N.B.*** "Disk" in this context is a misnomer, as such devices are not disks at all, but rather comprised of static eletronic-storage components (i.e., "solid state"). However, since the connotation of "disks" with respect to storage is a de facto "conventional" designation, this nomenclature has persisted in this context as well.
+
+One ***approach*** to manufacture such a solid-state disk (SSD) is to use a dynamic random access memory (DRAM) (along with a controller to refresh it) combined with a battery (which persists the data on the DRAM to prevent losing it).
+  * This approach is very ***fast*** and ***reliable*** (more so than even the magnetic-disk hard drive itself), however, it is also very ***expensive*** to implement.
+  * Furthermore, this approach is ***not*** well suited for archiving data, because once the battery depletes, then the data is no longer persisted (conversely, a magnetic-disk hard drive can persist data virtually indefinitely, provided that the hardware components do not wear out).
+
+Another ***approach*** is to use so called **flash memory**, which is manufactured using similar technology to that for dynamic random access memory (DRAM) modules and processors, correspondingly using transistors to store the constituent data (and thereby benefitting from Moore's law trends accordingly).
+  * This approach consumes very ***little power*** (it does not require a constantly spinning disk and other moving mechanical parts as in the case of a magnetic-disk hard drive, but rather has a lot of "idle" power usage periods), and is also very ***fast*** (much faster than magnetic-disk hard drives, but slower than DRAM).
+  * However, this approach has ***smaller capacity*** (gigabytes) compared to magnetic-disk hard drives (terabytes).
+  * A key advantage of flash memory (i.e., relative to the DRAM/battery approach) is that it persists data even without power.
+
+## 11. Hybrid Magnetic-Flash
