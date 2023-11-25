@@ -59,3 +59,27 @@ Similarly, an error is necessary to generate a failure, however, not every error
   * Similarly, a test condition such as `if (add(5, 3) > 0)` will not produce a failure (despite producing an error).
 
 ## 5. Laptop Falls Down Quiz and Answers
+
+<center>
+<img src="./assets/17-005A.png" width="650">
+</center>
+
+Consider the distinction between a fault, error, and failure in the context of a laptop falling down.
+
+The laptop following down is comprised of the following six steps:
+  * 1 - falls out of my bag
+  * 2 - hits the pavement
+  * 3 - the pavement develops a crack
+  * 4 - the crack expands during winter
+  * 5 - the pavement breaks
+  * 6 - the pavement must be replaced
+
+In this scenario, from the perspective of the pavement as the "system," identify which step corresponds to the following:
+  * failure?
+    * `5` - This results in the pavement no longer functioning properly
+  * fault?
+    * `2` - The laptop hitting the pavement results directly in the fault
+  * (first) error?
+    * `3` - The crack is the appearance of the error, which deviates from the structure of the "intact" pavement
+
+## 6. Reliability
