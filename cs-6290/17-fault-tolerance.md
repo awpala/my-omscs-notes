@@ -25,6 +25,37 @@ Furthermore, note that the system itself has **components** (called **modules**)
 
 ### 3. Introduction
 
+<center>
+<img src="./assets/17-002.png" width="650">
+</center>
 
+When discussing "deviation from specified behavior," this really entails three specific ***concepts***, as follows:
+  * A **fault** occurs when a ***module*** in the system deviates from the specified behavior
+  * An **error** occurs when the ***actual behavior*** somewhere within the system differs from the specified behavior within the system
+  * A **failure** occurs when the ***system*** itself deviates from the specified behavior for the system
 
 ### 4. Examples
+
+<center>
+<img src="./assets/17-003.png" width="650">
+</center>
+
+To better understand the concept of fault, error, and failure, consider corresponding illustrative examples.
+
+Generally, a **fault** is the first-occurring event, for example, a programming mistake. Consider a programming mistake comprised of an `add()` function which works correctly, except in the case of `add(5, 3)` (which generates actual output `7` rather than expected `8`).
+  * This type of fault is also called a **latent error**, because an error does not occur until such an "error condition" (i.e., `add(5, 3)`) is encountered.
+
+Once a fault has encountered (i.e., the fault is ***activated***), then a subsequent **error** occurs. This state is also described as having an **effective error** (i.e., as distinguished from a latent error).
+  * For example, when `add(5, 3)` is called and the result `7` is stored in a variable, this constitutes the effective error in question.
+
+Finally, the **failure** results as a direct consequence of the system's deviation from the specified behavior.
+  * For example, if the result in question was used to determine a meeting time, then the meeting will now be scheduled for `7 AM` rather than (intended) `8 AM`.
+
+It is ***important*** to note that a fault is necessary to generate an error, however, not every fault results in an error.
+  * In the preceding example, the fault must be activated first in order to become an error (i.e., called in such a manner which yields this underlying fault condition).
+
+Similarly, an error is necessary to generate a failure, however, not every error results in a failure.
+  * In the preceding example, if the errant value `7` were never used for scheduling, then no scheduling error would occur in the system.
+  * Similarly, a test condition such as `if (add(5, 3) > 0)` will not produce a failure (despite producing an error).
+
+## 5. Laptop Falls Down Quiz and Answers
