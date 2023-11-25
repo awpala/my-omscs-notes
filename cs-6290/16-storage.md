@@ -186,3 +186,21 @@ However, as a consequence of this portability, optical disks must be **standardi
   * Conversely, with magnetic-disk hard drives, while the physical enclosure size is relatively standardized (along with its connectors to the computer system), the actual "interior" hardware implementation is relatively flexible and thus more congruent with the pace of the technological advancement itself.
 
 ## 8. Magnetic Tape
+
+<center>
+<img src="./assets/16-012.png" width="650">
+</center>
+
+**Magnetic tape** is typically used for backup purposes (and therefore also called **secondary storage** for this reason), meaning that it is usually *not* the first-in-line occurrence of where the data itself is sought (which instead is typically constituted by a hard drive).
+
+Magnetic tapes can have large capacities and are typically replaceable (i.e., swapped in/out with a like-for-like tape roll attachment into the tape machine).
+
+The access of magnetic tapes is fundamentally **sequential**, meaning that seeking operations are performed along the length of the tap itself until the target data is located.
+  * Therefore, tapes are ***advantageous*** for backups, restoring backups, etc., which typically involve writing data sequentially for long time periods, or otherwise reading data sequentially for a long time in a similar manner.
+  * Conversely, magnetic tapes are ***not*** well suited for virtual memory (and related) due to this limitation (i.e., sequential rather than random-access).
+
+In the modern landscape, magnetic tapes are slowly dying out, due to several reasons:
+  * Low production volume due to relatively low demand, resulting in cost not dropping at a rate on par with that of disks (which conversely have a high activity in mass production, thereby decreasing their per-unit costs over time)
+  * It is cheaper to use and operate disks, since the corresponding hardware (i.e., tape machines vs. hard-drive packages and universal serial bus [USB] drives) is much more economical to manufacture and maintain, particularly in the mass consumers market
+
+## 9. Disks and Tape Quiz and Answers
