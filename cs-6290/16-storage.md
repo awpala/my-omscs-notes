@@ -317,3 +317,25 @@ For "disk with `4 GB` flash" configuration, the first (sequential) read requires
 ***N.B.*** While not as fast as the "pure flash drive," this "hybrid" approach has a much faster access time compared to "pure magnetic disk" but at a comparable price to manufacture the former (cf. `4 GB` of flash memory is relatively cheap to manufacture with modern technology).
 
 ## 13. Connecting Input/Output (I/O) Devices
+
+<center>
+<img src="./assets/16-019.png" width="650">
+</center>
+
+Having examined various storage devices in this lesson, now consider how they and other **input/output (I/O) devices** can be connected to the computer system.
+
+Typically, **input/output (I/O) devices** are connected using some type of standardized **input/output (I/O) bus**.
+  * **Standards** are necessary for this purpose, in order to increase/improve interoperability among these devices (e.g., connecting a hard drive from one manufacturer to a computer built by another).
+  * However, due to this necessity for standards, there is a correspondingly ***limited*** rate of improvement, which often occurs incrementally in steps (i.e., while the underlying technology itself may improve in a more "smooth" fashion, adoption of corresponding standards tends to lag and occur more in a "step-wise" manner).
+
+Furthermore, rather than having a *single* type of input/output (I/O) bus which connects to *all* input/output (I/O) devices, instead, there is typically a ***hierarchy*** of buses (as in the figure shown above), as follows:
+  * A **mezzanine bus** (e.g., peripheral component interconnect express [PCIe]) at the top level, which is characterized by fast speed (facilitated by short connections), and connecting directly between the fast devices (e.g., graphics) and the processor.
+  * The **storage buses** (e.g., serial advanced technology attachment [SATA] and small computer system interface [SCSI, pronounced "scuzzy"]) at the next level for connecting storage devices (e.g., hard drives), which are specialized for storage and are correspondingly slower but experience less frequent changes in their standards (furthermore, due to the comparably slower speed, frequent changes are not required in the first place, when such a faster alternative already exists).
+    * ***N.B.*** A serial advanced technology attachment (SATA) controller acts as a peripheral component interconnect express (PCIe) device on the mezzanine bus, though the controller itself actually controls a SATA bus to which such storage devices are connected. Correspondingly, relative changes in the standards do not impact interoperability accordingly.
+  * The **universal serial bus (USB) bus** (e.g., universal serial bus [USB] hub) provides a relatively lower level of connection in the hierarchy, which connects to the mezzanine bus but provides the USB connection for even slower USB devices (with correspondingly much longer standing/stable standards) which are ubiquitous and relatively cheap to manufacture.
+
+Per this hierarchy, note that in general the closer that the bus works directly with higher performance components (e.g., the processor, graphics, and bus controllers), the more important it is to keep improving speed and performance. Conversely, lower in the hierarchy (e.g., storage and other peripherals), "sub-busing" in this manner still provides acceptable performance, while being more amenable to standardization (which is correspondingly important for mass production and ubiquitous usage and interchange of such devices).
+
+## 14. Lesson Outro
+
+Having examined how storage devices work and how they are connected to the processor in this lesson, consider now: What happens when these storage devices ***fail***? The next lesson describes these failure modes, and how to avoid them.

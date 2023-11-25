@@ -19,6 +19,7 @@
 | [13](./13-virtual-memory.md) | Virtual Memory |
 | [14](./14-advanced-caches.md) | Advanced Caches |
 | [15](./15-memory.md) | Memory |
+| [16](./16-storage.md) | Storage |
 
 ## Videos Reference
 
