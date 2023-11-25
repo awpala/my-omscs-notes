@@ -204,3 +204,17 @@ In the modern landscape, magnetic tapes are slowly dying out, due to several rea
   * It is cheaper to use and operate disks, since the corresponding hardware (i.e., tape machines vs. hard-drive packages and universal serial bus [USB] drives) is much more economical to manufacture and maintain, particularly in the mass consumers market
 
 ## 9. Disks and Tape Quiz and Answers
+
+<center>
+<img src="./assets/16-014A.png" width="650">
+</center>
+
+With respect to the distinction between disk and tape, consider the following applications and select which is/are appropriate for that particular application in order to optimize performance:
+
+| Application | Disk | Tape |
+|:--:|:--:|:--:|
+| Read an *entire* 1 GB file from start to end | `√` - Disk is amenable to sequential access in this manner | `√` - Tape is well suited for sequential access in this manner |
+| Read *only* the first and last byte of a 1 GB file |`√` - Disk is well suited for random access memory, including specific bytes (i.e., first and last) | `X` - Due to the sequential access constraint of tape, this is a sub-optimal medium as it will require traversing the entire length of tape simply to read these two bytes |
+| Make a cat happy | `X` | `√` - Youtube substantiates the claim that cats are more entertained by long, string-like targets |
+
+## 10. Using Random Access Memory (RAM) for Storage?
