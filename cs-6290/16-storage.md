@@ -270,3 +270,50 @@ Therefore, the idea is to combine these two technologies to optimize for their r
 
 ## 12. Flash vs. Disk vs. Both Quiz and Answers
 
+<center>
+<img src="./assets/16-018A.png" width="650">
+</center>
+
+Consider a user who performs the following sequence of actions on their computer system:
+  * 1 - Plays a game for `2` hours (comprised of reading `2 GB`, followed by writing another `10 MB`)
+  * 2 - Watches a movie for `2` hours (comprised of reading `1 GB` of sequential data)
+
+Furthermore, this sequence (game followed by movie) is performed `4` times total.
+
+The disk is characterized as follows:
+  * `100 MB/s` for sequential reads/writes
+  * `1 MB/s` for random reads/writes
+  * `1 GB/s` for flash read/writes
+
+What is the total access time using the following hardware configurations?
+  * disk only
+    * `160 s`
+  * flash only
+    * `12.04 s`
+  * disk with `4 GB` flash (with initially empty "flash cache")
+    * `52.04 s`
+
+***Explanation***:
+
+For "disk only" configuration, each (sequential) read requires `2 GB / (100 MB/s) = 20 s` and each (random) write requires `10 MB / (1 MB/s) = 10 s`, for a total of `20 + 10 = 30 s` per game play. Similarly, each movie will require a (sequential) read of `1 GB / (100 MB/s) = 10 s`. Cumulatively, this requires:
+
+```
+4 × (20 + 10 + 10) s = 160 s
+```
+
+For "flash only" configuration, each (sequential) read requires `2 GB / (1 GB/s) = 2 s` and each (random) write requires `10 MB / (1 GB/s) = 0.1 s`, for a total of `2 + 0.1 = 2.1 s` per game play. Similarly, each movie will require a (sequential) read of `1 GB / (1 GB/s) = 1 s`. Cumulatively, this requires:
+
+```
+4 × (2 + 0.1 + 1) s = 12.04 s
+```
+
+
+For "disk with `4 GB` flash" configuration, the first (sequential) read requires `2 GB / (100 MB/s) = 20 s` and the first (random) write requires `10 MB / (1 MB/s) = 10 s`, for a total of `20 + 10 = 30 s` for first game play. Similarly, the first movie will require a (sequential) read of `1 GB / (100 MB/s) = 10 s`. However, the subsequent three re-plays and re-watches will be characterized by the flash drive (i.e., `2.1 s` and `1 s`, respectively), after an additional initial `2 + 0.1 + 1 = 3.01 s` to copy the data over to the flash drive. Cumulatively, this requires:
+
+```
+[20 + 10 + 10] + [2 + 0.1 + 1] + [3 × (2 + 0.1 + 1)] s = 52.04 s
+```
+
+***N.B.*** While not as fast as the "pure flash drive," this "hybrid" approach has a much faster access time compared to "pure magnetic disk" but at a comparable price to manufacture the former (cf. `4 GB` of flash memory is relatively cheap to manufacture with modern technology).
+
+## 13. Connecting Input/Output (I/O) Devices
