@@ -449,3 +449,42 @@ MTTDL_RAID1_2 = (MTTF_1 / 2) × (MTTF_1 / MTTR_1)
 Since the factor `(MTTF_1 / MTTR_1)` is relatively large (i.e., much larger than `2`), correspondingly `MTTDL_RAID1_2` (RAID 1 configuration) is much larger than `MTTDL_1` (single-disk configuration), and therefore provides a considerable improvement in reliability accordingly.
 
 ### 22. RAID 1 Quiz and Answers
+
+<center>
+<img src="./assets/17-027A.png" width="650">
+</center>
+
+Consider a RAID 1 array configuration comprised of two disks, with each disk characterized as follows (similarly to previously, cf. Section 18):
+  * `200 GB` capacity
+  * `10 MB/s` data throughput
+  * `MTTF_1 = 100,000 hours`
+
+Furthermore, assume that the failed disk is replaced at `24 hours` (i.e., `MTTR_1 = 24 hours`).
+
+For this RAID 1 array:
+  * What is the total storage?
+    * `200 GB`
+  * What is the total data throughput (assuming 50% read operations and 50% write operations)?
+    * `13.33 MB/s`
+  * What is the `MTTF_RAID1_2`?
+    * `208,333,333 hours`
+
+***Explanation***:
+
+The total storage/capacity is equivalent to a single disk in a RAID 1 configuration (i.e., both disks store the *same* data).
+
+The data throughput for the system is twice that of a single disk while ***reading***, however, it is equivalent to that of a single disk while ***writing*** (i.e., writing to both disks simultaneously). Therefore, cumulatively, the data throughput is `[(1/3)×(2×10) + (2/3)×(1×10)] MB/s = 13.33 MB/s`, where per-unit time of the system's operation (constituted by equal amounts of read and write operations), two-thirds are spent on write operations and one-third are spent on read operations.
+  * ***N.B.*** The data throughput for the system is ***not*** simply the average throughput (i.e., `[(1/2)×(2 × 10) + (1/2)×(1×10)] MB/s = 15 MB/s`), as even with equally distributed read and write operations, there is a disparity in the respective time distributions of these operations accordingly (i.e., for the system cumulatively, all else equal, writes occupy a larger fraction of the time in a RAID 1 configuration).
+
+Lastly, with respect to `MTTF_RAID1_2`, this can be determined as follows by definition (cf. Section 21):
+
+```
+MTTF_RAID1_2 = (MTTF_1 / 2) × (MTTF_1 / MTTR_1) = (100,000 hours / 2) × (100,000 hours / 24 hours) = (50,000 hours) × (4166.667) = 208,333,333 hours
+```
+  * ***N.B.*** The second factor `4166.667` is the amount of possible attempted repairs of the second disk while the first disk is still in operation, prior to both disks ultimately failing.
+
+Observe that `MTTF_RAID1_2` (208,333,333 hours, or approximately 24,000 years) is ***much*** larger than `MTTF_1` (100,000 hours, or approximately 11 years), a substantial improvement in the reliability.
+
+## 23-27. RAID 4
+
+### 23. Introduction: Block-Interleaved Parity
