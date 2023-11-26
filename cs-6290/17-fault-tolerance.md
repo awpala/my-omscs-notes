@@ -277,5 +277,26 @@ A single alpha particle strike only affects a single processor, thereby leaving 
 Conversely, the remaining events (even if occurring singularly) will impact all three devices uniformly, thereby subverting the consensus mechanism entirely.
   * Therefore, to improve fault tolerance against this situation, one possible resolution measure would be to geographically distribute the three computers. However, with respect to a faulty processor design, this would additionally require replacing the three processors with non-faulty ones.
 
-## 14. Fault Tolerance for Memory and Storage
+## 14-15. Fault Tolerance for Memory and Storage
 
+## 14. Introduction
+
+<center>
+<img src="./assets/17-017.png" width="650">
+</center>
+
+Having seen relatively general fault tolerance techniques previously in this lesson, consider now the fault tolerance techniques for memory and storage.
+
+While dual-module redundancy and triple-module redundancy could be used for memory and storage, these are considered to be ***overkill*** for this particular use case.
+  * These techniques are better suited for hardware that performs the computation, which cannot otherwise be protected using the less expensive techniques which are more suitable for memory and storage.
+
+Instead, the primary technique for fault tolerance in memory and storage is called **error detection** (or **correction codes**). This involves the storing of bits with ***extra information*** which allows to detect and then to consequently correct one or more errant bits, thereby precluding the necessity of storing *all* of the data twice (or more) in order to detect and/or correct a *single* error.
+  * The simplest technique for this purpose is using a **parity bit**, which is one additional bit added onto the data bits that is simply computed as the XOR of all of the data bits.
+    * When parity occurs, if a fault flips any one of the bits (including the parity bit itself), then the parity bit will no longer match the data, thereby detecting (at least a) single-bit error.
+  * The next level of error detection and correction codes is the so called **error correction code (ECC)**, such as the **single error correction, double error detection (SECDED) code**, which can detect any *one* bit flip and correspondingly fix it (or otherwise it can detect *two* bit flips, but not fix either).
+    * An example of using such an error code is in dynamic random access memory (DRAM) modules using error-code correction (ECC), utilizing this mechanism to protect the data (i.e., detecting bit flips and rectifying accordingly).
+  * Additionally, hard drives use even more sophisticated codes (e.g., **Reed-Solomon**), which can detect and correct *multiple* bit errors, and are particularly specialized for handling streaks of flipped bits (e.g., as a result of an oscillating magnetic head and other related hardware-originating reading anomalies)
+
+Additionally, hard drives use a set of techniques called **redundant array of independent disks (RAID)** to provide additional fault tolerance, as discussed in the remainder of this lesson.
+
+## 15. Redundant Array of Independent Disks (RAID)
