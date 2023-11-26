@@ -106,3 +106,52 @@ availability = MTTF / (MTTF + MTTR)
 ```
 
 ## 7. Reliability and Availability Quiz and Answers
+
+<center>
+<img src="./assets/17-008A.png" width="650">
+</center>
+
+Consider a system comprised of a hard disk characterized by the following sequence:
+  * Works correctly for `12` months
+  * Breaks (cannot spin), requiring a consequent `1` month downtime to replace the motor
+  * Works correctly for `4` months
+  * Breaks (cannot move magnetic heads), requiring a consequent `2` months downtime to diagnose and unstick
+  * Works correctly for `14` months
+  * Breaks (magnetic head broken), would require a consequent `3` months downtime to fix
+  * Throw away and replace with a new hard disk instead of fixing the broken one
+
+For this system, determine the following:
+  * mean time to failure (MTTF)?
+    * `10` months
+  * mean time to repair (MTTR)?
+    * `2` months
+  * availability?
+    * `83.33%`
+
+***Explanation***:
+
+The mean time to failure (MTTF) can be determined as follows:
+
+```
+(12 + 4 + 14 months)/(3 failures) = 10 months per failure
+```
+
+The mean time to repair (MTTR) can be determined as follows:
+
+```
+(1 + 2 + 3 months)/(3 repairs) = 2 months per repair
+```
+
+The availability can be determined as follows:
+
+(*via MTTF and MTTR*)
+```
+10/(10 + 2) = 0.8333
+```
+
+(*equivalently via time of service and time of repair*)
+```
+(3×10 months)/(3×10 + 3×2 months) = 0.8333
+```
+
+## 8. Kinds of Faults
