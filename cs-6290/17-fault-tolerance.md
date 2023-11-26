@@ -365,3 +365,23 @@ Typically, a single disk will have `MTTF_1` on the order of 10 to 100 years, the
 
 ### 18. RAID 0 Quiz and Answers
 
+<center>
+<img src="./assets/17-022A.png" width="650">
+</center>
+
+Consider a RAID 0 array configuration comprised of four disks, with each disk characterized as follows:
+  * `200 GB` capacity
+  * `10 MB/s` data throughput
+  * `MTTF_1 = 100,000 hours`
+
+For this RAID 0 array:
+  * What is the total storage?
+    * `800 GB` - with striping, the total storage is simply the sum of the four disks' capacities
+  * What is the total data throughput?
+    * `40 MB/s` - the data throughput is effectively parallelized across the four disks
+  * What is the `MTTF_4`?
+    * `25,000 hours` - `MTTF_4 = MTTF_1 / 4 = 100,000 hours / 4`, thereby reducing the `MTTF` from approximately 12 years for a single disk down to approximately 3 years for the RAID 0 array
+
+## 19-22. RAID 1
+
+### 19. Introduction: Mirroring
