@@ -402,3 +402,29 @@ With this RAID 1 configuration, any faults affecting only *one* of the disks can
   * Correspondingly, while previously (cf. Section 14) it was noted that two copies can detect but not correct the error, this is not the case for the RAID 1 configuration of disks, because the error-correcting code (ECC) on *each* disk sector can detect errors that have already occurred, thereby allowing to use the other disk without the corresponding sector error being present there.
 
 ### 20. Reliability
+
+<center>
+<img src="./assets/17-024.png" width="650">
+</center>
+
+Consider now the reliability of the RAID 1 configuration. As before (cf. Section 17), let `f` represent the failure rate for a *single* disk (i.e., the amount of failures per disk per unit time), which is assumed to be constant over time. Furthermore, for a single disk, the **mean time to failure (MTTF)** is `MTTF = 1 / f`, and correspondingly the **mean time to data loss (MTTDL)** for a *single* disk is defined as `MTTDL_1 = MTTF_1`.
+
+For two disks in RAID 1 configuration, given that `f_N = N × f_1` as before (cf. Section 17), then both disks operate normally until an expected failure occurs at time `MTTF_1 / 2`.
+
+However, unlike in RAID 0 (at which point data loss would occur here), *both* disks must fail in order to constitute a "full" data loss in the system; therefore, in this case, it is possible that only one disk has failed at this point, while the other is still operational.
+
+The other disks will continue to operate for another `MTTF_1`. Therefore, in this case, with respect to this operational disk, the ***overall*** MTTF for this disk is `MTTF_1`.
+
+Collectively for the system, then, the `MTTDL_RAID1_2` (RAID 1 configuration with `2` disks) is defined as follows:
+
+```
+MTTDL_RAID1_2 = (MTTF_1 / 2) + MTTF_1
+```
+  * ***N.B.*** This formulation assumes ***no*** disk is replaced at the point of failure (i.e., worst case scenario).
+
+Therefore, in RAID 1 configuration, while the capacity is not effectively increased (i.e., both disks store the *same* data), the net improvement is with respect to the reliability itself (i.e., by increased `MTTDL` for the RAID 1 configuration relative to a single disk).
+
+Furthermore, note that if the failed disk *is* replaced (i.e., immediately upon failure), this will correspondingly impact the `MTTDL` accordingly, as discussed in the next section.
+
+### 21. Reliability if Failed Disk(s) Is/Are Replaced
+
