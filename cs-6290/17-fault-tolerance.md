@@ -155,3 +155,24 @@ The availability can be determined as follows:
 ```
 
 ## 8. Kinds of Faults
+
+<center>
+<img src="./assets/17-009.png" width="650">
+</center>
+
+There are various ways by which faults can be ***classified***.
+
+One such classification is ***by cause***:
+  * ***hardware faults*** → the hardware system fails to perform as it was designed to
+  * ***design faults*** → software bugs and hardware design mistakes (e.g., the infamous `FDIV` design bug)
+  * ***operation faults*** → operator and user mistakes
+  * ***environmental faults*** → fire, power failures, sabotage of the system, etc.
+
+***N.B.*** While all of these "faults by cause" are faults, not all result in failures (e.g., the `FDIV` bug only results in a failure if used in such a failure-inducing manner, an operator shutting down the system while it is not otherwise in use does not constitute a consequent failure, a backup battery or generator can mitigate a power failure to prevent a consequent system failure, etc.).
+
+Another classification is ***by duration*** (i.e., how long the fault condition persists):
+  * ***permanent*** → once the fault occurs, the fault is not subsequently corrected (e.g., destructively/non-reversibly examining a processor by accessing its internal components)
+  * ***intermittent*** → the fault lasts for a certain time frame, and does so in a ***recurring*** manner (e.g., overclocking a system which results in an eventual crash, followed by a reboot to restore the system until the subsequent overclock-induced crash, and so on)
+  * ***transient*** → the fault occurs for a certain time frame but then eventually subsides indefinitely (e.g., an alpha particle collides with a chip causing an incidental fault, which subsequently resolves on reboot of the system)
+
+## 9. Fault Classification Quiz and Answers
