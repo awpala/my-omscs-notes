@@ -335,3 +335,33 @@ To address this issue, RAID 0 uses two disks which "mimic" the original disk, bu
   * Conversely, with respect to ***reliability***, this is worse than the equivalent single disk (as discussed in the next section)
 
 ### 17. Reliability
+
+<center>
+<img src="./assets/17-020.png" width="650">
+</center>
+
+To further examine the reliability of RAID 0, let `f` represent the failure rate for a *single* disk (i.e., the amount of failures per disk per unit time). Generally, this failure rate `f` can be assumed as constant over time.
+
+For a single disk, the **mean time to failure (MTTF)** is correspondingly defined as follows:
+
+```
+MTTF = 1/f
+```
+  * ***N.B.*** In the context of disks, mean time to failure (MTTF) is also sometimes called the **mean time to data loss (MTTDL)** (i.e., how long until some data is lost on the disk). In this characterization, for a *single* disk, `MTTDL_1` (where subscript `_1` denotes one disk) is simply defined as `MTTDL_1 = MTTF_1`.
+
+Conversely, considering the case where there are `N` disks in RAID 0 configuration, the failure rate in this case (i.e., `f_N`) is defined as `f_N = N × f_1`. Correspondingly, the **mean time to failure (MTTF)** for this case is as follows:
+
+```
+MTTF_N = MTTDL_N = MTTF_1 / N
+```
+
+Therefore, for example, in the case of two disks (i.e., `MTTF_2`), this yields the following:
+
+```
+MTTF_2 = MTTF_1 / 2
+```
+
+Typically, a single disk will have `MTTF_1` on the order of 10 to 100 years, therefore in a two-disk configuration, this will still yield a `MTTF_2` on the order of 5 to 10 years or so, however, as the RAID 0 configuration size is increased, this may eventually reach a point where a failure can occur on a relatively small timescale, thereby necessitating a hard drive replacement.
+
+### 18. RAID 0 Quiz and Answers
+
