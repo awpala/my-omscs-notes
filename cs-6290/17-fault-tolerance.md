@@ -83,3 +83,26 @@ In this scenario, from the perspective of the pavement as the "system," identify
     * `3` - The crack is the appearance of the error, which deviates from the structure of the "intact" pavement
 
 ## 6. Reliability
+
+<center>
+<img src="./assets/17-006.png" width="650">
+</center>
+
+In addition to dependability, there are also several key properties pertaining to fault tolerance.
+
+One of these properties is **reliability**. Unlike dependability (which is a property of the system with respect to its ability to perform its function), reliability is a ***measurable*** property.
+
+In order to measure reliability, the system is considered to be in one of the two following **states** at any given time:
+  * ***service accomplishment***  → this is the "normal" state, in which the system provides the service in question
+  * ***service interruption*** → in this state, the service is not being provided (i.e., the system is not accomplishing the expected service)
+
+Given these two states, reliability can now be ***defined*** by measuring the ***continuous*** service accomplishment state. A typical metric for reliability in this context is the **mean time to failure (MTTF)**, which quantifies how long is the service accomplished state sustained before the service interruption state occurs.
+  * For example, a service which has periodic monthly service interruptions during a continuous two-year interval of operation will have a mean time to failure (MTTF) of one month.  
+
+Another popular metric related to this is called **availability**, which measures the service accomplishment state as a fraction of the overall time. In order express this measurement, the **mean time to repair (MTTR)** (i.e., the time required to restore the system from service interruption state back to service accomplishment state) must also be determined accordingly. Given these constituents, availability can therefore be expressed as follows:
+
+```
+availability = MTTF / (MTTF + MTTR)
+```
+
+## 7. Reliability and Availability Quiz and Answers
