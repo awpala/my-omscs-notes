@@ -321,3 +321,17 @@ The redundant array of independent disks (RAID) techniques are designated numeri
 ## 16-18. RAID 0
 
 ### 16. Introduction: Striping to Improve Performance
+
+<center>
+<img src="./assets/17-019.png" width="650">
+</center>
+
+RAID 0 uses a technique called **striping** in order to improve performance.
+
+Consider a disk comprised of sequentially numbered **tracks** starting from `0` (as in the figure shown above). When the magnetic head is positioned to read track `0`, it cannot simultaneously read track `1`, and furthermore it is also far away from the other tracks. Therefore, access of the tracks must be performed ***serially*** in this manner, thereby limiting the read performance.
+
+To address this issue, RAID 0 uses two disks which "mimic" the original disk, but does so by alternating the tracks across the two disks. These "mimicked tracks" are now called **stripes**.
+  * With respect to ***performance***, on average, there is a doubling of the ***data throughput*** (each stripe can be read simultaneously, and furthermore the downstream throughput is not bottlenecked by the relatively faster buses and controllers). There is also a corresponding reduction in ***latency*** (i.e., decreased queuing delay) due to this effective "parallelization" of the throughput.
+  * Conversely, with respect to ***reliability***, this is worse than the equivalent single disk (as discussed in the next section)
+
+### 17. Reliability
