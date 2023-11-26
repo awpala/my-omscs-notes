@@ -512,3 +512,37 @@ With respect to ***write*** operations, each operation must write both to a data
   * Furthermore, note that full reconstruction of the data only occurs if the read operation fails under abnormal operating conditions (but otherwise, in general, reading the parity disk is unnecessary under "normal" read operations).
 
 ### 24. Performance and Reliability
+
+<center>
+<img src="./assets/17-029.png" width="650">
+</center>
+
+With respect to RAID 4 configuration, consider the overall system performance and reliability.
+
+For ***read*** operations, there is an average (equivalent) throughput of `N - 1 ` disks (i.e., reading from the data disks), which is a significant improvement over a single-disk equivalent.
+
+For ***write*** operations, the data accesses are distributed among the data disks. Furthermore, recall (cf. Section 23) that every write operation requires the parity disk to update the corresponding parity stripe. Consequently, the throughput is only `1/2` of a single-disk equivalent (i.e., the parity disk requires two accesses for every write, one to read the old value and another to write the new/updated value).
+  * ***N.B.*** While this is a significant disadvantage, this lesson will later discuss how RAID 5 configuration is used to overcome this.
+
+With respect to **mean time to failure (MTTF)**, as before in RAID 1 (cf. Sections 20-21), there are essentially two possible sequences:
+  * 1 - All disks are operational for time `MTTF_1 / N`
+  * 2 - Subsequently, there are two possible resolution measures on failure of one of the disks:
+    * 2A - No repair of the failed disk
+    * 2B - Repair the failed disk immediately
+
+In sequence 1→2A (no repair), the `MTTF` is as follows:
+
+```
+MTTF = (MTTF_1 / N) + [MTTF_1 / (N - 1)]
+```
+  * ***N.B.*** In this case, `MTTF` is generally ***worse*** than the single-disk equivalent (i.e., `MTTF_1`). Therefore, RAID 4 is not an advisable configuration/strategy if there is no intention to perform repairs (i.e,. the reliability is *decreased* in this case!).
+
+Conversely, in sequence 1→2B (with repair), the `MTTF` is as follows:
+
+```
+MTTF = (MTTF_1 / N) × {[MTTF_1 / (N - 1)] / (MTTR_1)} = [MTTF_1 × MTTF_1] / [N × (N - 1) × MTTR_1]
+```
+ * ***N.B.*** Recall (cf. Section 21) that in general `MTTR_1 << MTTF_1`, thus the corresponding factor `MTTF_1/MTTR_1` gives rise to a very large overall `MTTF` (i.e., much improved reliability) for the system.
+
+### 25. Write Operation
+
