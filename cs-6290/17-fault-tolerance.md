@@ -279,7 +279,7 @@ Conversely, the remaining events (even if occurring singularly) will impact all 
 
 ## 14-15. Fault Tolerance for Memory and Storage
 
-## 14. Introduction
+### 14. Introduction
 
 <center>
 <img src="./assets/17-017.png" width="650">
@@ -299,4 +299,25 @@ Instead, the primary technique for fault tolerance in memory and storage is call
 
 Additionally, hard drives use a set of techniques called **redundant array of independent disks (RAID)** to provide additional fault tolerance, as discussed in the remainder of this lesson.
 
-## 15. Redundant Array of Independent Disks (RAID)
+### 15. Redundant Array of Independent Disks (RAID)
+
+<center>
+<img src="./assets/17-018.png" width="650">
+</center>
+
+In the fault tolerance technique known as **redundant array of independent disks (RAID)**, several disks assume the role of a *single* disk (by acting as either a larger disk, a more reliable disk, or perhaps both a larger and more reliable disk).
+
+Each disk still detects errors using **error codes**, thereby ensuring that each disk can individually detect which one has the error(s) in the overall redundant array of independent disks (RAID) scheme.
+
+Ideally, redundant array of independent disks (RAID) is ***characterized*** by:
+  * better performance
+  * "normal" service accomplishment with respect to read and write operations, even in the events of bad sectors on a certain disk(s), or in the extreme case of an entire disk failing
+    * these events exceed even the capabilities of error-code-based detection and correction, but still must be handled accordingly
+
+Note that not all redundant array of independent disks (RAID) techniques will improve all of these characteristics; some may only improve performance, some may only improve reliability, while others may improve both.
+
+The redundant array of independent disks (RAID) techniques are designated numerically (e.g., RAID 0, RAID 1, etc.); these various numerically designated techniques will be discussed in turn through the remainder of this lesson.
+
+## 16-18. RAID 0
+
+### 16. Introduction: Striping to Improve Performance
