@@ -214,3 +214,21 @@ In order to improve reliability and availability, the following ***techniques***
 The remainder of this lesson will focus on the **fault tolerance** technique, particularly in the context of memory and storage.
 
 ## 11. Fault Tolerance Techniques
+
+<center>
+<img src="./assets/17-013.png" width="650">
+</center>
+
+The available **fault tolerance techniques** for improving reliability and availability are as follows:
+  * **checkpointing** → save the state of the system periodically, and then detect errors and consequently restore the state of the system on detection of an error(s)
+    * This technique is well suited for a system characterized by many transient and intermittent faults.
+      * The idea is to save the system when the system is functioning normally, and then if a fault occurs, perform a restore on the system state upon detection of the corresponding errors. With one or several such restore operations, this is sufficient to resolve both transient and intermittent faults accordingly.
+    * However, note that the checkpointing/restoring ***cannot*** take a long duration to perform, otherwise such a recovery will be regarded as a **service interruption**; thus, the relevant timescale is relative to this.
+    * Furthermore, note that checkpointing is only a **recovery** technique, which additionally requires a detection technique (e.g., two-way redundancy) in order to actually detect the error.
+  * **two-way redundancy** → two modules perform the *same* work, and then on comparison of this work, if there is a discrepancy then a rollback is performed
+    * Note that this is only an **error-detection** technique, which additionally requires a recovery technique (e.g., checkpointing) for subsequent resolution.
+  * **three-way redundancy** → three (or more modules) perform the *same* work, and then subsequently *vote* for which result is correct (thereby "eliminating by vote" any incorrect result(s))
+    * This technique performs *both* **error detection** and **recovery**.
+    * This technique is also relatively ***expensive***, since it requires a triplicate (or more) of the hardware and the "voter" mechanism, relative to a non-fault-tolerant system, however, as a result, the system can tolerate ***any*** fault in any ***one*** (but not two or more) of the given modules
+
+## 12. N-Module Redundancy
