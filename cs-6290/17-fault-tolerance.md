@@ -488,3 +488,27 @@ Observe that `MTTF_RAID1_2` (208,333,333 hours, or approximately 24,000 years) i
 ## 23-27. RAID 4
 
 ### 23. Introduction: Block-Interleaved Parity
+
+<center>
+<img src="./assets/17-028.png" width="650">
+</center>
+
+***N.B.*** RAID 3 will not be discussed in this course, as it is rarely used in practice today. Furthermore, RAID 4 is not used commonly today either, however, understanding its fundamental operation will facilitate with describing RAID 5 subsequently in this lesson.
+
+RAID 4 uses a technique called **block-interleaved parity** in order to improve reliability.
+
+RAID 4 configuration involves the use of `N` disks.
+  * `N - 1` of these disks contain the data, and are striped similarly to RAID 0 (cf. Section 16).
+  * Conversely, the other remaining disk has **parity blocks**, which protect the other `N - 1` disks.
+
+Consider an example of a four-disk RAID 4 configuration (as in the figure shown above).
+  * Three of the disks contain striped data representing the "full/composite" disk.
+  * The data is then compared on a per-stripe basis across the three disks using XOR operators (`⊕`), collectively resulting in a single-stripe-length result that is stored in the other disk (the **parity disk**) as the corresponding **parity stripe** for that set of stripes.
+
+In this manner, if any one of the constituent non-parity disks fail, then the data of the failed disk can be reconstituted from the remaining disks (including the parity disk). This effectively allow to tolerate the failure of any one of the disks, without otherwise incurring the cost of a 2× redundancy (cf. mirroring in RAID 1) with respect to storage (e.g., in this four-disk example, only a quarter of the storage is expended on the parity disk itself, while the other three disks' worth of storage is available for data).
+  * Therefore, RAID 4 is effectively a "more generalized" form of mirroring (with RAID 1 being the special case of RAID 4 with only two disks, one with data and the other with the parity bits).
+
+With respect to ***write*** operations, each operation must write both to a data disk and to the parity disk (i.e., writing will impact the state of the parity bit accordingly). Conversely, with respect to ***read*** operations, only one read operation is performed (i.e., with respect to the non-parity data disk in question).
+  * Furthermore, note that full reconstruction of the data only occurs if the read operation fails under abnormal operating conditions (but otherwise, in general, reading the parity disk is unnecessary under "normal" read operations).
+
+### 24. Performance and Reliability
