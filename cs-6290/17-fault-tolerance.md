@@ -232,3 +232,22 @@ The available **fault tolerance techniques** for improving reliability and avail
     * This technique is also relatively ***expensive***, since it requires a triplicate (or more) of the hardware and the "voter" mechanism, relative to a non-fault-tolerant system, however, as a result, the system can tolerate ***any*** fault in any ***one*** (but not two or more) of the given modules
 
 ## 12. N-Module Redundancy
+
+<center>
+<img src="./assets/17-014.png" width="650">
+</center>
+
+Consider a more general redundancy-based approach called **N-module redundancy**.
+  * `N = 2` (**dual-module redundancy**) → guarantees detection but not correction with respect to `1` faulty module total
+    * This technique can be used to detect more than one fault in the *same* module, however not multiple faulty modules.
+  * `N = 3` (**triple-module redundancy**) → guarantees correction of `1` faulty module (and correspondingly all faults within that given module)
+    * This technique can be used to tolerate more than one faulty module, however, the faults cannot impact the same overall result in order to guarantee correction.
+  * `N = 5` → increased level of fault tolerance
+    * For example, in the scenario of a space shuttle comprised of `5` computers performing the *same* tasks along with a voting mechanism:
+      * `1` incorrect result in a vote yields normal operation
+      * `2` incorrect results in a vote yields an aborted mission
+        * In this case, there is still no failure, because `3` correct have still outvoted `2` incorrect 
+      * `3` incorrect results in a vote yields a catastrophic failure of the space shuttle
+        * For this reason, the upstream `2` incorrect results yields an aborted mission, in order to prevent this condition from being reached in the first place
+
+## 13. N-Module Redundancy Quiz and Answers
