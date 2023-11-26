@@ -176,3 +176,25 @@ Another classification is ***by duration*** (i.e., how long the fault condition 
   * ***transient*** → the fault occurs for a certain time frame but then eventually subsides indefinitely (e.g., an alpha particle collides with a chip causing an incidental fault, which subsequently resolves on reboot of the system)
 
 ## 9. Fault Classification Quiz and Answers
+
+<center>
+<img src="./assets/17-011A.png" width="650">
+</center>
+
+Consider a scenario where a phone gets wet, heats up during subsequent attempted operation, and then explodes.
+
+Classify the following faults appropriately:
+  * the phone got wet? (by duration, by cause)
+    * `transient` (by duration), `environmental` (by cause)
+  * the phone was supposed to prevent itself from operating when wet, therefore heating up is a result of? (by duration, by cause)
+    * `permanent` (by duration), `design` (by cause)
+
+***Explanation***:
+
+The wetting of the phone is an environmental fault, which occurs transiently (i.e., eventually, it dries off).
+  * ***N.B.*** The explosion would have been a permanent/unrecoverable fault, however getting wet in itself is only a transient fault.
+
+Furthermore, because the phone was supposed to prevent itself from running when wet, the fact that it did actually heat up otherwise is indicative of a design fault. Such design faults are typically permanent.
+  * ***N.B.*** Observe that this is an example of how a fault can occur which does not subsequently lead to an error or failure (i.e., the permanent fault of being poorly designed in such a manner which does not prevent heating up and exploding on getting wet only manifests itself on reaching this wet condition).
+
+## 10. Improving Reliability and Availability
