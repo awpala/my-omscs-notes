@@ -385,3 +385,20 @@ For this RAID 0 array:
 ## 19-22. RAID 1
 
 ### 19. Introduction: Mirroring
+
+<center>
+<img src="./assets/17-023.png" width="650">
+</center>
+
+RAID 1 uses a technique called **mirroring** in order to improve reliability.
+
+In RAID 1, the *same* data exists on *both* disks.
+  * For a ***write*** operation, the system writes to *each* disk.
+    * This results in the *same* write performance as that of writing to a *single* disk, because the disk-wise writes are performed simultaneously.
+  * For a ***read*** operation, only *one* disk is read at a given time.
+    * This results in a *doubled* data throughput compared to reading from a *single* disk alone (effectively, a "composite single read" can be "halved" between the two disks, thereby doubling the throughput accordingly).
+
+With this RAID 1 configuration, any faults affecting only *one* of the disks can be tolerated (e.g., a bad sector from one disk can be simply read from the other; or, in the extreme case, in the event of total failure of one of the disks, the other disk can simply be used instead).
+  * Correspondingly, while previously (cf. Section 14) it was noted that two copies can detect but not correct the error, this is not the case for the RAID 1 configuration of disks, because the error-correcting code (ECC) on *each* disk sector can detect errors that have already occurred, thereby allowing to use the other disk without the corresponding sector error being present there.
+
+### 20. Reliability
