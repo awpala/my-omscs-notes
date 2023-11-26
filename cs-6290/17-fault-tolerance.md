@@ -251,3 +251,31 @@ Consider a more general redundancy-based approach called **N-module redundancy**
         * For this reason, the upstream `2` incorrect results yields an aborted mission, in order to prevent this condition from being reached in the first place
 
 ## 13. N-Module Redundancy Quiz and Answers
+
+<center>
+<img src="./assets/17-016A.png" width="650">
+</center>
+
+Consider a system comprised of a computer, for which it is desired to have fault tolerance. To implement this fault tolerance, the following are performed:
+  * Two more identical computers are purchased and placed on the same desk
+  * The same computation is performed on all three computers, the results are compared, and then the consensus result is taken such that two or more (i.e., all three) agree
+
+With this fault tolerance in place, which single event(s) can be tolerated? (Select all that apply.)
+  * Alpha particle strikes a processor
+    * `APPLIES`
+  * Building collapses
+    * `DOES NOT APPLY`
+  * Earthquake
+    * `DOES NOT APPLY`
+  * Mistake in processor design
+    * `DOES NOT APPLY`
+
+***Explanation***:
+
+A single alpha particle strike only affects a single processor, thereby leaving the other two computers intact.
+
+Conversely, the remaining events (even if occurring singularly) will impact all three devices uniformly, thereby subverting the consensus mechanism entirely.
+  * Therefore, to improve fault tolerance against this situation, one possible resolution measure would be to geographically distribute the three computers. However, with respect to a faulty processor design, this would additionally require replacing the three processors with non-faulty ones.
+
+## 14. Fault Tolerance for Memory and Storage
+
