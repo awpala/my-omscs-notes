@@ -428,3 +428,24 @@ Furthermore, note that if the failed disk *is* replaced (i.e., immediately upon 
 
 ### 21. Reliability if Failed Disk(s) Is/Are Replaced
 
+<center>
+<img src="./assets/17-025.png" width="650">
+</center>
+
+Consider now the impact on reliability if the failed disk in a RAID 1 configuration is replaced immediately on failure.
+
+In this scenario, the following sequence of events occurs:
+  * Initially, both disks are operational for time `MTTF_1 / 2`.
+  * One disk subsequently fails, and the other disk is still operational for time `MTTR_1` (the time required to repair the failed disk).
+  * Both disks are once again operational for an additional time `MTTF_1 / 2` (i.e., until the other disk fails).
+
+Per this sequence, the corresponding `MTTDL_RAID1_2` (RAID 1 configuration with `2` disks) is defined as follows:
+
+```
+MTTDL_RAID1_2 = (MTTF_1 / 2) × (MTTF_1 / MTTR_1)
+```
+  * ***N.B.*** In order determine the factor for when the second disks' failure can occur during repair period of the first disk (i.e., during `MTTR_1`), this requires a more elaborate analysis of the probability distribution for `f`, `MTTR_1`, etc. However, under the simplifying assumption/condition of `MTTR_1 << MTTF_1` (i.e., "fast repair" [hours to days] relative to failure time [years]), then the probability of the second disk failing during `MTTR_1` can be approximated as `MTTR_1 / MTTF_1`, as in the equation shown above (which uses its reciprocal as the multiplying factor, representing the number of times a repair is performed until the second disk fails).
+
+Since the factor `(MTTF_1 / MTTR_1)` is relatively large (i.e., much larger than `2`), correspondingly `MTTDL_RAID1_2` (RAID 1 configuration) is much larger than `MTTDL_1` (single-disk configuration), and therefore provides a considerable improvement in reliability accordingly.
+
+### 22. RAID 1 Quiz and Answers
