@@ -198,3 +198,19 @@ Furthermore, because the phone was supposed to prevent itself from running when 
   * ***N.B.*** Observe that this is an example of how a fault can occur which does not subsequently lead to an error or failure (i.e., the permanent fault of being poorly designed in such a manner which does not prevent heating up and exploding on getting wet only manifests itself on reaching this wet condition).
 
 ## 10. Improving Reliability and Availability
+
+<center>
+<img src="./assets/17-012.png" width="650">
+</center>
+
+In order to improve reliability and availability, the following ***techniques*** can be used:
+  * **fault avoidance** → prevent faults from occurring in the first place
+    * For example, enforce a "no coffee in the server room" policy in order to prevent a potential damage-causing coffee spill.
+  * **fault tolerance** → prevent faults from progressing into failures
+    * A typical fault tolerance technique involves **redundancy** (e.g., an error correcting code [ECC] to ensure integrity of data in memory on read)
+  * **speed up repair** → reduce the mean time to repair (MTTR), which is limited to improving only availability (but not reliability)
+    * For example, keeping a spare hard disk in the drawer in the event of a hard drive failure for quick replacement (i.e., the failure still occurs, however, the repair period is comparatively short)
+
+The remainder of this lesson will focus on the **fault tolerance** technique, particularly in the context of memory and storage.
+
+## 11. Fault Tolerance Techniques
