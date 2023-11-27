@@ -88,3 +88,21 @@ As this demonstrates, two cores are achieving a higher speedup relatively to a s
   * ***N.B.*** A strong ***caveat*** here is that in order to achieve this "enhanced" speedup, the programs running on this dual-core processor must be amenable to parallelization in order to "divide up" this work appropriately to effectively leverage this parallelization.
 
 ## 5. Multi-Processors Need Parallel Programs
+
+<center>
+<img src="./assets/18-005.png" width="650">
+</center>
+
+Recall (cf. Section 4) that a multi-processor can generally outperform a comparable uni-processor with today's technology, provided that the program running on the processor in question is amenable to utilizing these multiple cores (i.e., exploiting parallelism accordingly).
+
+Nevertheless, there are indeed ***disadvantages*** to moving from single-core to multi-core processors, including:
+  * Code that is **sequential** (also called **single-threaded**) is generally ***a lot*** easier to develop and reason about.
+    * By corollary, there is a significant "developer time-cost" involved in converting a given application from a single-threaded to a multi-threaded implementation.
+  * **Debugging** parallel applications is ***much*** more difficult relative to the sequential equivalent.
+  * Even with a working implementation of a parallelized application, it is still ***very*** difficult to achieve **performance scaling** in practice, where performance scaling is a property of the program such that as the number of cores is increased, the performance correspondingly increases (as in the figure shown above)
+    * In ***ideal*** performance scaling, there is a direct, linear relationship between the increasing cores count and corresponding increase in performance (as denoted by blue line in the figure shown above).
+    * However, in practice, as programs are parallelized, performance scaling eventually "plateaus" with respect to increasing cores count (as denoted by purple curves in the figure shown above).
+      * Even with improvements in the performance scaling, these "plateaus" generally arise and persist; furthermore, it is generally difficult to achieve incremental "curve-shifting" performance improvements on a per-improvement basis in this manner in the first place.
+      * Accordingly, few programs achieve sustained high performance with many cores, and those that do require a lot of time, effort, and expertise to develop accordingly.
+
+## 6. Central Shared Memory
