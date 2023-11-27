@@ -591,8 +591,9 @@ The data throughput for the system is four times that of a single disk while ***
 Lastly, with respect to `MTTF_RAID4_5`, this can be determined as follows by definition (cf. Section 24):
 
 ```
-MTTF_RAID4_5 = [MTTF_1 × MTTF_1] / [N × (N - 1) × MTTR_1] = [(100,000 hours) × (100,000 hours)] / [(5) × (4) × (24 hours)] = (5,000 hours) × (4166.667) = 20,833,333 hours
+MTTF_RAID4_5 = [MTTF_1 × MTTF_1] / [N × (N - 1) × MTTR_1] = [(100,000 hours) × (100,000 hours)] / [(5) × (4) × (24 hours)] = (20,000 hours) × (416.667) = 20,833,333 hours
 ```
+  * ***N.B.*** The second factor `416.667` is the amount of possible attempted repairs of the remaining four disks while the first disk is still in operation, prior to all disks ultimately failing.
 
 Observe that `MTTF_RAID4_5` (20,833,333 hours, or approximately 2,400 years) is ***much*** larger than `MTTF_1` (100,000 hours, or approximately 11 years), a substantial improvement in the reliability.
   * ***N.B.*** This reliability (`MTTF_RAID4_5`) is a factor of ten worse than that of RAID 1 (cf. `MTTF_RAID1_2`, Section 22), however, it is still substantially better than the single-disk equivalent, and additionally RAID 4 provides a comparatively higher capacity by only sacrificing one-fifth (cf. one-half in the case of two-disk RAID 1) of the total system capacity on the parity disk (while the rest can be used for data storage accordingly).
@@ -639,9 +640,53 @@ Consider an example of a four-disk RAID 5 configuration (as in the figure shown 
 
 With respect to ***read*** operations, the corresponding read throughput is `N` times that of a single-disk equivalent, since each disk contains data stripes (cf. `N - 1` throughput for RAID 4, since one of the disks is *dedicated* as the parity disk).
 
-With respect to ***write*** operations, this requires four accesses per write (in the case of a four-disk RAID 5 configuration), however, this is distributed among the disks, and therefore the net write throughput is `N / 4` times that of a single-disk equivalent (cf. in a four-disk RAID 4 configuration, the write throughput is *always* limited to one-half of a single-disk equivalent).
+With respect to ***write*** operations, this requires four accesses per write (i.e., a pair of read/write operations apiece with respect to the "composite"/"distributed" data disk and the "composite"/"distributed" parity disk), however, this is distributed among the disks, and therefore the net write throughput is `N / 4` times that of a single-disk equivalent (cf. in a four-disk RAID 4 configuration, the write throughput is *always* limited to one-half of a single-disk equivalent).
 
 Furthermore, the ***reliability*** of the RAID 5 configuration is equivalent to that of the RAID 4 configuration (i.e., system failure will occur if more than one constituent disk fails). Since each disk serves (compositely) as both a data disk and a parity disk, the net effect is equivalent to a "dedicated" parity disk (which is otherwise "distributed" across the data disks in the case of RAID 5).
 
 ### 29. RAID 5 Quiz and Answers
+
+<center>
+<img src="./assets/17-037A.png" width="650">
+</center>
+
+Consider a RAID 5 array configuration comprised of five disks, with each disk characterized as follows (similarly to previously, cf. Section 18):
+  * `200 GB` capacity
+  * `10 MB/s` data throughput
+  * `MTTF_1 = 100,000 hours`
+
+Furthermore, assume that the failed disk is replaced at `24 hours` (i.e., `MTTR_1 = 24 hours`).
+
+For this RAID 5 array:
+  * What is the total storage?
+    * `800 GB`
+  * What is the total data throughput (assuming 50% read operations and 50% write operations)?
+    * `20 MB/s`
+  * What is the `MTTF_RAID4_5`?
+    * `20,833,333 hours`
+
+***Explanation***:
+
+The total storage/capacity is equivalent to cumulative single-disk capacities of the four data disks (but excluding the capacity of the "composite"/"distributed" parity disk) in a RAID 5 configuration.
+
+The data throughput for the system is five times that of a single disk while ***reading***, however, it is equivalent to one-fourth (i.e., `(10 / 4) MB/s = 2.5 MB/s`) of that of a single disk while ***writing*** (i.e., a pair of read/write operations apiece with respect to the "composite"/"distributed" data disk and the "composite"/"distributed" parity disk). Therefore, cumulatively, the data throughput is `[(1/5)×(5×10) + (4/5)×(5×2.5)] MB/s = 20 MB/s`, where per-unit time of the system's operation (constituted by equal amounts of read and write operations), four-fifths are spent on write operations and one-fifth are spent on read operations.
+  * ***N.B.*** The data throughput for the system is ***not*** simply the average throughput (i.e., `[(1/2)×(5×10) + (1/2)×(5×2.5)] MB/s = 31.25 MB/s`), as even with equally distributed read and write operations, there is a disparity in the respective time distributions of these operations accordingly (i.e., for the system cumulatively, all else equal, writes occupy a larger fraction of the time in a RAID 5 configuration).
+
+***N.B.*** Observe that the data throughput in RAID 5 (`20 MB/s`) is considerably better than that in RAID 4 (cf. `8.89 MB/s`, Section 26).
+
+Lastly, with respect to `MTTF_RAID5_5`, this can be determined as follows by definition (cf. Section 24):
+
+```
+MTTF_RAID5_5 = MTTF_RAID4_5 = [MTTF_1 × MTTF_1] / [N × (N - 1) × MTTR_1] = [(100,000 hours) × (100,000 hours)] / [(5) × (4) × (24 hours)] = (20,000 hours) × (416.667) = 20,833,333 hours
+```
+  * ***N.B.*** The second factor `416.667` is the amount of possible attempted repairs of the remaining four disks while the first disk is still in operation, prior to all disks ultimately failing.
+
+Observe that `MTTF_RAID5_5` (20,833,333 hours, or approximately 2,400 years) is ***much*** larger than `MTTF_1` (100,000 hours, or approximately 11 years), a substantial improvement in the reliability.
+  * ***N.B.*** This reliability (`MTTF_RAID5_5`) is a factor of ten worse than that of RAID 1 (cf. `MTTF_RAID1_2`, Section 22), however, it is still substantially better than the single-disk equivalent, and additionally RAID 5 provides a comparatively higher capacity by only sacrificing one-fifth (cf. one-half in the case of two-disk RAID 1) of the total system capacity on the "composite"/"distributed" parity disk (while the rest can be used for data storage accordingly), while also providing a higher throughput compared to RAID 4.
+
+In conclusion, it is not advantageous to use RAID 4 when RAID 5 is available, since a move to RAID 5 increases throughput without otherwise sacrificing on capacity or reliability (i.e., mean time to failure [MTTF]).
+
+## 30-31. RAID 6
+
+### 30. Introduction
 
