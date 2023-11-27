@@ -546,3 +546,18 @@ MTTF = (MTTF_1 / N) × {[MTTF_1 / (N - 1)] / (MTTR_1)} = [MTTF_1 × MTTF_1] / [N
 
 ### 25. Write Operation
 
+<center>
+<img src="./assets/17-030.png" width="650">
+</center>
+
+Consider now a more comprehensive description of ***write*** operations in a RAID 4 configuration (as in the figure shown above), using an example of a five-disk system (i.e., four data disks and a parity disk).
+
+Given an initialized set of stripes, assume that a subsequent write operation is performed on the first disk (disk `D0`). In order to compute the updated parity value, there are several possible ***approaches*** to do this.
+
+One approach would be to read the data from the other three disks and perform an XOR operation to compute the updated parity value. However, this requires three read operations and one write operation (with read operations increasing proportionally with more added data disks accordingly).
+
+Conversely, another approach (as in the figure shown above) would be to read the old data from the disk first, XOR this data with the new/updated data, and then lastly combine this with the old parity value (i.e., via appropriate flip of pertinent updated bits) in order to compute the new parity value.
+  * The net result is two read operations (from the old data and from the old parity value) and two write operation (to the new/updated data and to the new/updated parity value), which does not change proportionally to the number of added data disks to the RAID 4 configured system (i.e., it is *always* two reads and two writes if using this approach).
+  * Furthermore, observe that the parity disk forms a ***bottleneck*** for write observations, because it *always* requires a read/write pair irrespectively of the number of data disks in the RAID 4 configuration. To address this issue, RAID 5 configuration was devised accordingly (as discussed later in this lesson).
+
+### 26. RAID 4 Quiz and Answers
