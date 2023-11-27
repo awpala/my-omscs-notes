@@ -485,7 +485,7 @@ MTTF_RAID1_2 = (MTTF_1 / 2) × (MTTF_1 / MTTR_1) = (100,000 hours / 2) × (100,0
 
 Observe that `MTTF_RAID1_2` (208,333,333 hours, or approximately 24,000 years) is ***much*** larger than `MTTF_1` (100,000 hours, or approximately 11 years), a substantial improvement in the reliability.
 
-## 23-27. RAID 4
+## 23-26. RAID 4
 
 ### 23. Introduction: Block-Interleaved Parity
 
@@ -597,4 +597,33 @@ MTTF_RAID4_5 = [MTTF_1 × MTTF_1] / [N × (N - 1) × MTTR_1] = [(100,000 hours) 
 Observe that `MTTF_RAID4_5` (20,833,333 hours, or approximately 2,400 years) is ***much*** larger than `MTTF_1` (100,000 hours, or approximately 11 years), a substantial improvement in the reliability.
   * ***N.B.*** This reliability (`MTTF_RAID4_5`) is a factor of ten worse than that of RAID 1 (cf. `MTTF_RAID1_2`, Section 22), however, it is still substantially better than the single-disk equivalent, and additionally RAID 4 provides a comparatively higher capacity by only sacrificing one-fifth (cf. one-half in the case of two-disk RAID 1) of the total system capacity on the parity disk (while the rest can be used for data storage accordingly).
 
-### 27. Parity Quiz and Answers
+## 27. Parity Quiz and Answers
+
+<center>
+<img src="./assets/17-034A.png" width="650">
+</center>
+
+Before proceeding onto the next RAID configuration, let us further consider the implications of parity in the context of RAID.
+
+Suppose that parity is used to detect bit-flip errors in dynamic random access memory (DRAM) (as in the figure shown above).
+
+The ***unprotected*** memory simply consists of eight `1 bit` arrays (denoted by teal in the figure shown above), with each such array comprised of `1024 × 1024 bits`. Each array is designated by the ***same*** row and column address, and each array outputs one bit of the overall `8 bit` value being read/written via this memory.
+
+In order to add protection, a ***parity bit*** is incorporated for each `4 bit` data subset. How should this be done? (Select the better approach.)
+  * Add two *additional* `1 bit` arrays (denoted by green in the figure shown above)
+    * `CORRECT`
+  * Maintain the *same* eight `1 bit` arrays, but add an additional `256 bits` (i.e., `log_2(256) = 8`) to *each* existing array (denoted by blue in the figuree shown above), with protection provided on a per-row basis accordingly
+    * `INCORRECT`
+
+***N.B.*** The net addition of bits is the *same* between both options, however, they are distributed differently in each option.
+
+***Explanation***:
+
+Adding two additional arrays/modules is preferable for two reasons:
+  * One reason is that the arrays can be designed for both unprotected and protected memories, rather than "imposing" the design decision of "strictly protected."
+  * Additionally, this provides an analogous "geographic distribution" with respect to the data bits. If one of the arrays has an errant bit value, then this will propagate across the other row-based values and into the parity-error-detecting modules, rather than the error detection being confined to a *single* data module.
+
+## 28-29. RAID 5
+
+### 28. Introduction: Distributed Block-Interleaved Parity
+
