@@ -627,3 +627,21 @@ Adding two additional arrays/modules is preferable for two reasons:
 
 ### 28. Introduction: Distributed Block-Interleaved Parity
 
+<center>
+<img src="./assets/17-035.png" width="650">
+</center>
+
+RAID 5 uses a technique called **distributed block-interleaved parity** in order to improve reliability and to protect the disks.
+
+RAID 5 performs block-interleaved parity similarly to RAID 4 (cf. Section 23), however, RAID 5 distributes its parity across *all* of the disks, rather than concentrating it in a *single* disk.
+
+Consider an example of a four-disk RAID 5 configuration (as in the figure shown above). In a RAID 5 configuration, the parity stripe (denoted by purple in the figure shown above) occurs in an alternating manner across the disks, and therefore any given disk is composed of *both* data stripes *and* parity stripes.
+
+With respect to ***read*** operations, the corresponding read throughput is `N` times that of a single-disk equivalent, since each disk contains data stripes (cf. `N - 1` throughput for RAID 4, since one of the disks is *dedicated* as the parity disk).
+
+With respect to ***write*** operations, this requires four accesses per write (in the case of a four-disk RAID 5 configuration), however, this is distributed among the disks, and therefore the net write throughput is `N / 4` times that of a single-disk equivalent (cf. in a four-disk RAID 4 configuration, the write throughput is *always* limited to one-half of a single-disk equivalent).
+
+Furthermore, the ***reliability*** of the RAID 5 configuration is equivalent to that of the RAID 4 configuration (i.e., system failure will occur if more than one constituent disk fails). Since each disk serves (compositely) as both a data disk and a parity disk, the net effect is equivalent to a "dedicated" parity disk (which is otherwise "distributed" across the data disks in the case of RAID 5).
+
+### 29. RAID 5 Quiz and Answers
+
