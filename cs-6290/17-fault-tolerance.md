@@ -715,3 +715,25 @@ Therefore, the main advantage of RAID 6 over RAID 5 is simply in the case where 
 
 ### 31. Is RAID 6 an Overkill?
 
+<center>
+<img src="./assets/17-039.png" width="650">
+</center>
+
+Recall (cf. Section 30) that the argument for RAID 6 being an "overkill" (relative to RAID 5) is the fact that replacement of the disk can be done relatively quickly compared to the timescale of a subsequent disk failure.
+  * For example, a `3 days` downtime to replace the failing disk is typically sufficient to ensure replacement prior to a subsequent disk failure (which is highly improbable over such a short `3 days` time interval).
+  * However, an important ***caveat*** here is that this assumes that the disk failures are ***independent*** of one another.
+
+Conversely, note that disk failures ***can*** indeed be related (i.e., *not* independent of each other). A typical scenario in which this can occur is a RAID 5 configuration with, say, five disks, with one of the disks (e.g., disk `2`) experiencing a failure (as in the figure shown above).
+  * When the system reports to "replace disk `2`," it still proceeds with normal operation without the failed disk being in operation.
+  * On receipt of the replacement disk, the operator accesses the disk drives within the computer case, and consequently replaces the "second" disk.
+  * However, since the numbering of the disks is zero-indexed, the operator has in fact replaced the unintended disk (i.e., disk `1`), while leaving the still non-functional disk `2` intact within the computer system. This now introduces a possibility of a second failure occurring within the system.
+
+Therefore, in the case of such **correlated/dependent failures**, RAID 6 still provides an advantage by virtue of this "redundancy"/"safety factor."
+
+## 32. Lesson Outro
+
+This lesson examined how faults, errors, and failures are interrelated, and how redundancy can help to prevent faults from becoming failures.
+
+Additionally, this lesson concludes the second part of the high-performance computer architecture course (i.e., CS 6290), discussing how the memory hierarchy works.
+
+The final part of this course will focus on what is required from a computer architecture in order to achieve correct *and* efficient execution in multi-threaded and multi-core processors, as discussed starting from the next lesson.

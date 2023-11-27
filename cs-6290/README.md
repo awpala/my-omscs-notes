@@ -20,6 +20,7 @@
 | [14](./14-advanced-caches.md) | Advanced Caches |
 | [15](./15-memory.md) | Memory |
 | [16](./16-storage.md) | Storage |
+| [17](./17-fault-tolerance.md) | Fault Tolerance |
 
 ## Videos Reference
 
