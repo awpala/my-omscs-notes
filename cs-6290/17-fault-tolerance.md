@@ -561,3 +561,40 @@ Conversely, another approach (as in the figure shown above) would be to read the
   * Furthermore, observe that the parity disk forms a ***bottleneck*** for write observations, because it *always* requires a read/write pair irrespectively of the number of data disks in the RAID 4 configuration. To address this issue, RAID 5 configuration was devised accordingly (as discussed later in this lesson).
 
 ### 26. RAID 4 Quiz and Answers
+
+<center>
+<img src="./assets/17-032A.png" width="650">
+</center>
+
+Consider a RAID 4 array configuration comprised of five disks, with each disk characterized as follows (similarly to previously, cf. Section 18):
+  * `200 GB` capacity
+  * `10 MB/s` data throughput
+  * `MTTF_1 = 100,000 hours`
+
+Furthermore, assume that the failed disk is replaced at `24 hours` (i.e., `MTTR_1 = 24 hours`).
+
+For this RAID 5 array:
+  * What is the total storage?
+    * `800 GB`
+  * What is the total data throughput (assuming 50% read operations and 50% write operations)?
+    * `8.89 MB/s`
+  * What is the `MTTF_RAID4_5`?
+    * `20,833,333 hours`
+
+***Explanation***:
+
+The total storage/capacity is equivalent to cumulative single-disk capacities of the four data disks (but excluding the capacity of the parity disk) in a RAID 4 configuration.
+
+The data throughput for the system is four times that of a single disk while ***reading***, however, it is equivalent to half (i.e., `(10 / 2) MB/s = 5 MB/s`) of that of a single disk while ***writing*** (because the parity disk must be both read from and written to on every write operation). Therefore, cumulatively, the data throughput is `[(1/9)×(4×10) + (8/9)×(1×5)] MB/s = 8.89 MB/s`, where per-unit time of the system's operation (constituted by equal amounts of read and write operations), eight-ninths are spent on write operations and one-ninth are spent on read operations.
+  * ***N.B.*** The data throughput for the system is ***not*** simply the average throughput (i.e., `[(1/2)×(4×10) + (1/2)×(1×5)] MB/s = 22.5 MB/s`), as even with equally distributed read and write operations, there is a disparity in the respective time distributions of these operations accordingly (i.e., for the system cumulatively, all else equal, writes occupy a larger fraction of the time in a RAID 4 configuration).
+
+Lastly, with respect to `MTTF_RAID4_5`, this can be determined as follows by definition (cf. Section 24):
+
+```
+MTTF_RAID4_5 = [MTTF_1 × MTTF_1] / [N × (N - 1) × MTTR_1] = [(100,000 hours) × (100,000 hours)] / [(5) × (4) × (24 hours)] = (5,000 hours) × (4166.667) = 20,833,333 hours
+```
+
+Observe that `MTTF_RAID4_5` (20,833,333 hours, or approximately 2,400 years) is ***much*** larger than `MTTF_1` (100,000 hours, or approximately 11 years), a substantial improvement in the reliability.
+  * ***N.B.*** This reliability (`MTTF_RAID4_5`) is a factor of ten worse than that of RAID 1 (cf. `MTTF_RAID1_2`, Section 22), however, it is still substantially better than the single-disk equivalent, and additionally RAID 4 provides a comparatively higher capacity by only sacrificing one-fifth (cf. one-half in the case of two-disk RAID 1) of the total system capacity on the parity disk (while the rest can be used for data storage accordingly).
+
+### 27. Parity Quiz and Answers
