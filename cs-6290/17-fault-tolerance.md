@@ -690,3 +690,28 @@ In conclusion, it is not advantageous to use RAID 4 when RAID 5 is available, si
 
 ### 30. Introduction
 
+<center>
+<img src="./assets/17-038.png" width="650">
+</center>
+
+Having seen RAIDs 0, 1, 2, 4, and 5 up to this point in the lesson, this now begs the question: Is there also a RAID 6? The answer is yes, there is a RAID 6.
+
+RAID 6 configuration is similar to RAID 5, except that in each group of blocks contains ***two*** parity blocks, rather than only one, with each parity block having different types of parity. Consequently, RAID 6 is still operational even when there are ***two*** failed stripes per group of blocks.
+
+These two parity blocks are characterized as follows:
+  * One of the parity blocks is the "true" **parity block**, which is responsible for actually fixing the data error.
+  * The other parity block is a different type of block, called the **check block**.
+
+When one disk fails, then the parity block is used to recover the system.
+
+Conversely, when two disks fail, then equations are solved (incorporating the data itself and the check block) in order to recover the content of the two failed disks.
+
+With respect to RAID 5, RAID 6 is characterized as follows:
+  * 2× the overhead (i.e, the reliability is twice as costly)
+  * a relatively higher write overhead (update of the data blocks now entails reading and writing the data block and *both* parity blocks, yielding ***six*** total accesses per write operation vs. four total accesses in RAID 5)
+
+Therefore, the main advantage of RAID 6 over RAID 5 is simply in the case where the chance of more than one disk failing (without sufficient time to replace the first-failing disk) is relatively likely.
+  * ***N.B.*** In general, with RAID configurations, it is generally preferable to replace the failing disk immediately to restore fault tolerance in the system. Therefore, RAID 6 is only really advantageous in this situation when the subsequent failure is *expected* to occur in a short time frame relative to the first disk failure (which should otherwise be replaced promptly to avoid reaching a two-disk failures scenario in the first place).
+
+### 31. Is RAID 6 an Overkill?
+
