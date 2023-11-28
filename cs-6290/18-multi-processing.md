@@ -49,6 +49,7 @@ Put another way, multi-processors exist today not necessarily because a doubling
 Suppose that the following improvement is made in a single processor core:
 
 | Generation | Area (cm<sup>2</sup>) | Instructions per cycle | Power consumption (W, at 2 GHz) |
+|:--:|:--:|:--:|:--:|
 | Old | `2` | `2.5` | `100` |
 | New | `1` | `2.5` | `50` |
 
@@ -125,3 +126,21 @@ This type of system resembles modern **multi-core processors**, which are more f
 Additionally, this type of multi-processing is designated as a **symmetric multi-processor (SMP)**, due to the "symmetric"/uniform appearance and configuration of a given core-cache pair within the overall system (i.e., any given core-cache component is effectively interchangeable with any other in the system).
 
 ### 7. Uniform Memory Access (UMA) / Symmetric Multi-Processor (SMP) / Multi-Core Quiz and Answers
+
+<center>
+<img src="./assets/18-008A.png" width="650">
+</center>
+
+Suppose that it is desired to have ***many*** cores, using a centralized shared memory. Which of the following problems will be encountered in this case? (Select all that apply.)
+  * Main memory needs to be very large (and consequently slow)
+    * `APPLIES` - Having more cores generally implies running of programs which access more data, all else equal. Therefore, to store and manage this data, a large memory is required accordingly.
+  * Main memory receives too many accesses per-unit time (i.e., main memory will require a very high throughput to scale appropriately)
+    * `APPLIES` - Cache misses from *all* of the cores will be falling through to main memory, which may reach some critical point which "overwhelms" the main memory (relative to its intrinsic throughput).
+  * Many small memory modules will be required (i.e., proportionately to the number of cores)
+    * `DOES NOT APPLY` - This is not necessarily true, as the *quantity* of memory modules in a centralized shared memory is not as consequential as the *total capacity* of this memory.
+  * Caches will have a very small block size
+    * `DOES NOT APPLY` - The block size of the caches is independent of the centralized shared memory, and furthermore is not divided up among the cores, but rather specified on a per-core basis.
+  * Pages for virtual memory will become too small (i.e., too small for even practical use)
+    * `DOES NOT APPLY` - The page size is independent of both the size of the memory and the quantity of cores used.
+
+### 8. Centralized Main Memory Problems
