@@ -144,3 +144,19 @@ Suppose that it is desired to have ***many*** cores, using a centralized shared 
     * `DOES NOT APPLY` - The page size is independent of both the size of the memory and the quantity of cores used.
 
 ### 8. Centralized Main Memory Problems
+
+<center>
+<img src="./assets/18-009.png" width="650">
+</center>
+
+Consider now the **problems** of centralized shared memory, which will motivate discussion of alternative approaches (as discussed subsequently in this lesson).
+
+Firstly, ***memory size*** is a significant constraint. Since the shared main memory must be ***large*** to accommodate this configuration, this results in a ***slow*** memory which is relatively far away from each individual core.
+
+Additionally, ***memory bandwidth*** is another significant issue. Because cache misses from all cores fall through to the *single* shared main memory, this results in **memory bandwidth contention** among these core-wise memory requests (which in turn is exacerbated by the aforementioned large, slow nature of this shared main memory). Consequently, additional cores do not effectively benefit from overall performance on a per-core-added basis (i.e., the memory accesses are effectively rendered as "serialized").
+
+Therefore, for these reasons, a centralized shared memory is only particularly effective for relatively small multi-processor machines comprised of only 2, 4, 8, or perhaps 16 cores at most; beyond this point, the memory bandwidth is effectively "saturated" (and additionally requires an excessively large, slow main memory to support additional cores beyond this).
+
+## 9. Distributed Shared Memory
+
+
