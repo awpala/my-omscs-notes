@@ -157,6 +157,30 @@ Additionally, ***memory bandwidth*** is another significant issue. Because cache
 
 Therefore, for these reasons, a centralized shared memory is only particularly effective for relatively small multi-processor machines comprised of only 2, 4, 8, or perhaps 16 cores at most; beyond this point, the memory bandwidth is effectively "saturated" (and additionally requires an excessively large, slow main memory to support additional cores beyond this).
 
-## 9. Distributed Shared Memory
+## 9. Distributed Memory
 
+<center>
+<img src="./assets/18-010.png" width="650">
+</center>
 
+Another type of multi-processor is **distributed memory**, which is no longer "shared" (as in the case of centralized shared memory, cf. Section 6), but rather in this configuration, only one core can access a memory slice, while the others cannot access the same memory slice (as in the figure shown above).
+
+In this distributed memory configuration (as in the figure shown above), each **core** (designated by `C` in the figure shown above) has its own cache, along with a corresponding **main memory "slice"** (designated by `M` in the figure shown above) that can only be locally accessed by that specific core.
+  * Effectively, each core individually has a complete single-core computer system.
+
+Additionally, a core-wise network interface card (designated by `NIC` in the figure shown above) connects the cores to the centralized **network**.
+
+In this configuration, whenever a core experiences a ***cache miss***, the cache miss falls through to its own local main memory. Furthermore, in order for a given core to access data from another core's memory, rather than "falling through" with a cache miss, instead the requesting core creates a **network message** (via corresponding operating system "send"/"receive" primitives, or equivalent mechanism) in order to retrieve this other-core data.
+  * Therefore, in this configuration, communication is now ***explicit***, rather than "passively" managing via a centralized main memory.
+
+As a consequence of this network-based intercommunication, this necessitates writing programs in a particular manner to accommodate this.
+  * Symmetric shared memory and distributed shared memory both pass data around using a centralized shared memory (i.e., read and write operations are used to exchange data).
+  * Conversely, distributed memory uses a mechanism called **message passing** for communication. To accomplish this, the program is written as if the individual cores were "independent machines" that communicate over a network.
+    * For example, a distributed-memory "supercomputer" proceeds in this manner, however, it utilizes network interface cards and Ethernet connections which are much faster than typical consumer-grad e equivalents.
+
+***N.B.*** This type of distributed memory system is also called a **multi-computer**, because each core-wise element is effectively a "complete computer" on its own (i.e., comprised of a processor, memory, and input/output (I/O) devices). Additionally, the designation of **cluster computer** is also used in this context, since these "complete computers" are tightly "clustered" into a single, shared network, which effectively forms a distributed-memory system.
+
+These types of computers tend to scale up to a very ***large*** number of processors.
+  * The reason for this is not that they are fundamentally better at communicating as compared to shared-memory-system equivalents, but rather that the programmer is forced to explicitly deal with and consider this network-based communication (and corresponding primitive) when writing programs for these distributed-memory systems. This in turn enforces "good practices" such as awareness of this network "bottleneck" and devising accordingly (i.e., minimize network accesses and maximize optimal use of the local main memory), thereby ensuring more thoughtfulness around the "shared memory" aspect of the program (i.e., as opposed to "over-relying" on a potentially large, slow centralized shared memory).
+
+## 10. Non-Uniform Memory Access (NUMA) Memory Allocation Quiz and Answers
