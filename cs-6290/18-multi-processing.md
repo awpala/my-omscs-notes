@@ -16,7 +16,7 @@ This lesson will describe what occurs when more than one thread (or process) is 
 | Parallel machine classification | Quantity of instruction streams | Quantity of data streams | Comment |
 |:--:|:--:|:--:|:--:|
 | single instruction, single data (SISD) | `1` | `1` | This is a conventional **uni-processor** (i.e., single-core machine), as described previously in this course |
-| single instruction, multiple data (SIMD) | `1` | `>1` | This involves only a single program counter executing the single instruction stream, however, it operates on multiple data streams. A typical example is so called **vector processors**, which executes on simultaneous vector values (rather than single scalar values) in a single program involving correspnding vector operations (e.g., vector addition). Modern processors also have **multimedia extensions** (e.g., SSE, MMX, etc.) which fall under this classification.  |
+| single instruction, multiple data (SIMD) | `1` | `>1` | This involves only a single program counter executing the single instruction stream, however, it operates on multiple data streams. A typical example is so called **vector processors**, which executes on simultaneous vector values (rather than single scalar values) in a single program involving corresponding vector operations (e.g., vector addition). Modern processors also have **multimedia extensions** (e.g., SSE, MMX, etc.) which fall under this classification.  |
 | multiple instruction, single data (MISD) | `>1` | `1` | This involves several program executing simultaneously, all operating on the *same* data stream. This is a relatively rare configuration, however, a relevant example is a **stream processor** (which performs step-wise/stage-wise processing of the data stream). |
 | multiple instruction, multiple data (MIMD) | `>1` | `>1` | This is a bona fide **multi-processor**, whereby each processor has its own independent program counter, etc., with each independently operating on its own data stream. |
 
@@ -184,3 +184,30 @@ These types of computers tend to scale up to a very ***large*** number of proces
   * The reason for this is not that they are fundamentally better at communicating as compared to shared-memory-system equivalents, but rather that the programmer is forced to explicitly deal with and consider this network-based communication (and corresponding primitive) when writing programs for these distributed-memory systems. This in turn enforces "good practices" such as awareness of this network "bottleneck" and devising accordingly (i.e., minimize network accesses and maximize optimal use of the local main memory), thereby ensuring more thoughtfulness around the "shared memory" aspect of the program (i.e., as opposed to "over-relying" on a potentially large, slow centralized shared memory).
 
 ## 10. Non-Uniform Memory Access (NUMA) Memory Allocation Quiz and Answers
+
+<center>
+<img src="./assets/18-012A.png" width="650">
+</center>
+
+How should the operating system allocate memory in a **non-uniform memory access (NUMA)** system (i.e., distributed memory)? (Select all that apply.)
+  * Place the stack pages for core `N` in the memory slice `N`.
+    * `APPLIES`
+  * Place all data pages *ever touched* by core `N` in the memory slice `N`.
+    * `DOES NOT APPLY`
+  * Place all data pages *mostly accessed* by core `N` in the memory slice `N`.
+    * `APPLIES`
+
+***Explanation***:
+
+In general, in order to improve performance for a non-uniform memory access (NUMA) machine, the operating system should place all data pages as closely/locally to the relevant core(s) as possible, thereby ensuring the fastest possible memory access (i.e., by correspondingly minimizing otherwise-necessary network utilization).
+  * Along these lines, placing the stack pages for core `N` in memory slice `N` is simply the extreme example of this, effectively "fully localizing" the "data slice" to this core. Furthermore, a stack is a memory entity which the operating system can readily determine with respect to appropriate core-wise localization (i.e., in contrast to pages which are inherently accessed by multiple cores).
+
+However, placing all data pages *ever touched* by core `N` in corresponding memory slice `N` will localize the data to that core, and possibly exceed its local memory capacity as well.
+
+## 11-13. Message Passing vs. Shared Memory
+
+### 11. A Message-Passing Program
+
+### 12. A Shared-Memory Program
+
+### 13. Message Passing vs. Shared Memory: Summary
