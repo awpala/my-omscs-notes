@@ -456,3 +456,39 @@ However, consider the case where ***no*** floating-point-dedicated thread were a
   * Therefore, it is ***not*** a strict generality that simultaneous multi-threading (SMT) is ***always*** more cost-effective (i.e., for comparable performance otherwise) relative to chip multi-core processors (CMPs), but rather the nature of the application(s) in question (and corresponding interaction with the available respective hardware configuration) also dictates this comparison as well. Only in this extreme case of dedicated threads (as in this particular example, i.e., floating-point vs. integer-only threads) is the comparison more "clear-cut."
 
 ### 18. Simultaneous Multi-Threading (SMT) Changes
+
+<center>
+<img src="./assets/18-030.png" width="650">
+</center>
+
+Given that, in general, a simultaneous multi-threading (SMT) processor is not relatively more expensive than an equivalent single-threaded (i.e., no multi-threading) processor, consider now the corresponding **hardware changes** required to support simultaneous multi-threading in this manner (as in the figure shown above).
+
+In a single-threaded superscalar processor (denoted by light blue in the figure shown above), the following ***components*** are present:
+  * A **program counter**
+  * The **instruction cache**, which fetches the instructions from the program counter
+    * ***N.B.*** In a superscalar processor, multiple instructions are fetched simultaneously from the program counter in this manner.
+  * The **decoder**, which is capable of decoding multiple instructions per cycle
+  * The **renamer**, which interacts (i.e., reads and updates) with the **register allocation table (RAT)** on a per-thread basis
+  * The **reservation stations (RSes)**, which dispatch instructions to the **execution units**
+  * The **reorder buffer (ROB)**, which tracks the next ***committed*** instruction on a per-thread basis
+  * On instruction ***commit***, the result is deposited into the **architecture register file (ARF)**, which in turn is broadcasted back to the registration stations (RSes)
+
+Correspondingly, to add additional simultaneous multi-threading (SMT) to such a processor, this requires net additions (denoted by dark blue in the figure shown above) as follows:
+  * A *separate*/*dedicated* **program counter**, with corresponding additional logic to fetch among the thread-specific program counters
+    * This can be done either via fetching of "half-instructions" from both program counters every cycle, or equivalently via fetching of "full instructions" from either program counter per cycle. In this regard, this issuing can be performed in a "fine-grain" manner accordingly, even in such a simultaneous multi-threading (SMT) processor (in fact, this is typical in real processors).
+  * Simultaneous multi-threading is characterized by relatively "downstream" hardware elements in the "instruction stream"
+    * Decoding is otherwise effectively "oblivious" to the origin of the instructions themselves
+    * The **register allocation table (RAT)** is managed on a per-thread basis, without otherwise impacting the renamer itself
+    * After renaming, instructions have separate/dedicated (i.e., thread-specific) physical registers, with **reservation stations (RSes)** correspondingly shared among the threads accordingly, and in turn the downstream execution units are also otherwise "oblivious" to the origin of the issued instructions in question
+    * With respect to the **reorder buffer (ROB)**, there are two possibilities:
+      * There is either a separate/dedicated (i.e., per-thread) ROB, each with its own commit point (in which case each thread commits its respective instructions in-order)
+        * Because the Rob is a large, complex hardware component, it is ***not*** typical to follow this approach in practice.
+      * Or otherwise all instructions are ***interleaved*** in-order in the same/shared ROB, in which case instructions from one thread cannot be committed until all upstream instructions from the other thread(s) have been committed first
+        * This is adds a slight performance hit, however, it is comparatively much simpler to implement in hardware.
+        * ***N.B.*** If the instructions are sent from the reservation stations (RSes) in-order, then the corresponding "composite" order (i.e., across the threads) is still effectively "in-order," however, the additional inefficiency is introduced if this ordering is out-of-order (i.e., among the threads) in a "blocking" manner (however, while this is slightly sub-optimal, in practice it is not a major issue).
+      * As before, on instruction ***commit***, the result is deposited into the **architecture register file (ARF)**, which in turn is broadcasted back to the registration stations (RSes), however, these architecture register files (ARFs) are correspondingly separate/dedicated (i.e., per-thread), along with corresponding **read ports** to update the registration stations (RSes) on broadcast
+
+Therefore, the complexity of simultaneous multi-threading (SMT) is largely introduced by multiple program counters, as well as the (hardware-based) logic immediately preceding the action of the reservation stations (RSes). Otherwise, the more complicated aspects of the processor's hardware (e.g., the reservation stations [RSes] themselves, results broadcasting, etc.) is largely unaffected by this change, and accordingly the cost is only incremental (i.e., rather than an effective doubling for a two threads, tripling for three threads, etc.).
+
+### 19. Simultaneous Mult-Threading (SMT), Data Cache, and Translation Look-Aside Buffer (TLB)
+
