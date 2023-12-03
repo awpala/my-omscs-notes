@@ -432,3 +432,27 @@ With respect to ***hardware cost***, this can be summarized as follows (on a rel
 | Simultaneous multi-threading (SMT) | `1.1×` | The incremental/additional hardware cost is relatively small, as while the processor scheduler is similar to a no-multi-threading equivalent (after register renaming, etc.), but with additional overhead introduced in order to select instructions from among the multiple threads for subsequent scheduling in the per-cycle scheduling window. Additionally, in order to commit, the corresponding instruction must be determined accordingly. |
 
 ### 17. Simultaneous Multi-Threading vs. Dual-Core Quiz and Answers
+
+<center>
+<img src="./assets/18-029A.png" width="650">
+</center>
+
+To further compare simultaneous multi-threading (SMT) with a chip multi-core processor (CMP) (more specifically, a dual-core processor), consider two executing threads characterized as follows:
+  * One thread is dedicated primarily to floating-point-intensive instructions (and corresponding execution units)
+  * The other thread performs *no* such floating-point operations, but rather is dedicated strictly to integer-only operations
+
+Furthermore, assume that the available core(s) is `4` issue, and capable of issuing `2` floating-point and `2` integer instructions simultaneously per cycle.
+
+In which configuration (simultaneous multi-threading [SMT] vs. dual-core) will there be better performance per-unit hardware cost? (Select one.)
+  * Simultaneous multi-threading (SMT)
+
+***Explanation***:
+
+In the dual-core configuration, one processor is effectively `2` issue (i.e., floating-point operations, perhaps with some additional "head room"for integer operations) while the other is strictly `2` issue (i.e., dedicated to integer-only operations).
+
+Conversely, in simultaneous multi-threading (SMT), in any given cycle, `4` instructions can be issued in the best case, thereby approaching similar performance to the dual-core equivalent, however, at a correspondingly much lower relative cost.
+
+However, consider the case where ***no*** floating-point-dedicated thread were available, but rather only two dedicated integer-only threads instead. In this case, the dual-core processor is slightly more cost effective relative to the equivalent simultaneous multi-threading (SMT) single core, because it has the *same* `2` issue performance in *each* core (for the same per-core cost), whereas the simultaneous multi-threading (SMT) single core effectively yields performance of a single core (with both threads sharing the *same* `2`-issue slots) at a slightly higher per-core equivalent cost.
+  * Therefore, it is ***not*** a strict generality that simultaneous multi-threading (SMT) is ***always*** more cost-effective (i.e., for comparable performance otherwise) relative to chip multi-core processors (CMPs), but rather the nature of the application(s) in question (and corresponding interaction with the available respective hardware configuration) also dictates this comparison as well. Only in this extreme case of dedicated threads (as in this particular example, i.e., floating-point vs. integer-only threads) is the comparison more "clear-cut."
+
+### 18. Simultaneous Multi-Threading (SMT) Changes
