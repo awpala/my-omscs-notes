@@ -208,6 +208,44 @@ However, placing all data pages *ever touched* by core `N` in corresponding memo
 
 ### 11. A Message-Passing Program
 
+<center>
+<img src="./assets/18-013.png" width="650">
+</center>
+
+Consider the following program
+
+```c
+#define ASIZE 1024
+#define NUMPROC 4
+
+double myArray[ASIZE/NUMPROC];
+double mySum = 0;
+
+// core-wise partial array summation
+for (int i = 0; i < ASIZE/NUMPROC; i++)
+  mySum += myArray;
+
+// combine results across cores
+if (myPID == 0) { // "summing agent" core
+  for (int p = 1; p < NUMPROC; p++) {
+    int pSum;
+    recv(p, pSum);
+    mySum += pSum;
+  }
+  printf("Sum: %lf\n", mySum);
+} else {         // non-"summing agent" cores
+  send(0, mySum);
+}
+```
+
+This program computes the sum (`mySum`) of a relatively large (`1024` elements, i.e., `ASIZE`) array (`myArray`) in parallel on `4` cores (i.e., `NUMPROC`).
+
+In this ***message-passing*** version of the program, each processor manages one-quarter of the array (i.e., `ASIZE/NUMPROC`).
+  * There is mutually exclusive access of these four quarters (i.e., a given core cannot directly access the array data of another).
+  * One of the cores (i.e., `myPID == 0`) acts as the "summing agent," which is responsible for summing the partial sums from the other cores via corresponding `send()`/`recv()` mechanism, which is a necessary ***explicit mechanism*** (i.e., inter-process communication) required in this style of program.
+
+With appropriate program design, it is readily apparent where network-related bottlenecks occur (e.g., `send()`/`recv()` pairs).
+
 ### 12. A Shared-Memory Program
 
 ### 13. Message Passing vs. Shared Memory: Summary
