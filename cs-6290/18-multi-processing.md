@@ -303,3 +303,28 @@ Now, consider the differences between a message-passing and shared-memory implem
 ***N.B.*** As this table highlights, with respect to programming there is typically an inherent ***trade-off***: Message passing is generally more challenging to implement correctly (but if done so, usually results in much better performance), whereas shared memory is relatively simpler to implement correctly (but is much more challenging to optimize for better performance).
 
 ### 14. Message Passing vs. Shared Memory Quiz and Answers
+
+<center>
+<img src="./assets/18-017A.png" width="650">
+</center>
+
+Consider a program characterized by one core which initializes an array, from which all other cores then subsequently read this *entire* array.
+
+With respect to data distribution (i.e., of the array data on initialization), does a message-passing implementation have more, fewer, or same lines of code relative to shared memory? (Select `MORE`, `FEWER`, or `EQUAL`.)
+  * `MORE`
+
+Furthermore, on achievement of a correct data distribution implementation, what is the relative addition of lines with respect to ***synchronization*** (i.e., ensuring that the initialization is completed prior to reading the array data) in the following (equivalent) implementations? (Select `MORE` or `EQUAL`.)
+   * In message passing?
+    * `EQUAL`
+   * In shared memory?
+    * `MORE`
+
+***Explanation***:
+
+With respect to data distribution, shared-memory implementation requires virtually *no* net additional lines of code (i.e., once the array is initialized in this shared memory, the other cores can simply read it directly as-is in this manner). Conversely, the equivalent message-passing implementation, explicit constructs (and appropriate ordering/sequencing of operations) are required to perform this initialization, as well as subsequent `send()`/`recv()` operations (i.e., this initialization must be performed "explicitly" with corresponding *additional* program code).
+
+Once data distribution is implemented correctly, message passing requires *no* additional code, as this is already managed by the aforementioned network-based operations. Conversely, in an equivalent shared-memory implementation, explicit constructs (e.g., mutexes) are required to perform this synchronization, which correspondingly requires *additional* program code.
+
+***N.B.*** These observations are typical of shared-memory vs. message-passing implementations. Message passing requires more "programming overhead" to effectively manage distribution of the data (which inherently yields "already implemented" synchronization), whereas shared memory does not require explicit data distribution (but consequently does require additional implementation if/when synchronization is needed to access and manage this distributed data).
+
+## 15. Shared-Memory Hardware
