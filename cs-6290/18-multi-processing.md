@@ -212,7 +212,7 @@ However, placing all data pages *ever touched* by core `N` in corresponding memo
 <img src="./assets/18-013.png" width="650">
 </center>
 
-Consider the following program
+Consider the following program:
 
 ```c
 #define ASIZE 1024
@@ -247,5 +247,37 @@ In this ***message-passing*** version of the program, each processor manages one
 With appropriate program design, it is readily apparent where network-related bottlenecks occur (e.g., `send()`/`recv()` pairs).
 
 ### 12. A Shared-Memory Program
+
+Now, consider a ***shared-memory*** analog of the same program from the previous section (cf. Section 11):
+
+```c
+#define ASIZE 1024
+#define NUMPROC 4
+
+shared double myArray[ASIZE]; // array in shared memory
+shared double allSum = 0;
+shared mutex sumLock;
+double mySum = 0;
+
+for (int i = myPID*ASIZE/NUMPROC; i < (myPID+1)*ASIZE/NUMPROC; i++)
+  mySum += myArray[i];
+
+// start critical section
+lock(sumLock);
+allSum += mySum;
+unlock(sumLock);
+// end critical section (barrier)
+
+if (myPID == 0) {
+  printf("Sum: %lf\n", mySum);
+}
+```
+
+In this version, all cores can share/access the *same* data array (i.e., `myArray`), which is correspondingly placed in the *same* shared/distributed memory accordingly.
+  * Each core sums up its "own part" of this shared array (i.e., section `myPID` through `myPID + (ASIZE/NUMPROC - 1)`).
+  * However, unlike in the previous shared-memory version (cf. Section 12), here, each core synchronizes the total sum (`allSum`) via corresponding ***critical section*** using a mutex, which allows for summing in this manner "non-deterministically" without otherwise adversely impacting the correctness of the intended program/semantics.
+  * Furthermore, the ***barrier*** (exit out of the critical section) ensures that the corresponding summation is performed prior to the final statement to print the result.
+
+A key ***advantageous property*** of this shared-memory implementation is that it is more explicitly clear with respect to the coordination among the cores in the context of the control flow (i.e., as opposed to more "indirect" network calls). Furthermore, there is no need to "distribute" the data array, but rather it is effectively a "monolith" (with controlled access) in the context of this program.
 
 ### 13. Message Passing vs. Shared Memory: Summary
