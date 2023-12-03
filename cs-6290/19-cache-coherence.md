@@ -28,3 +28,60 @@ This "mismatched" behavior in a shared-memory system is called **incoherence**, 
 Therefore, in order to avoid this incoherence, a corresponding **cache coherence** strategy is required to mitigate this, i.e., devising in such a manner whereby the entire system effectively behaves as a "single-memory" system.
 
 ## 3. Cache Incoherence Quiz and Answers
+
+<center>
+<img src="./assets/19-003A.png" width="650">
+</center>
+
+Consider a memory location `A` initialized to value `0`.
+
+The system of interest is characterized by three cores, each with a write-back level 1 (L1) cache. These write-back caches do ***not*** provide coherence support (i.e., each level 1 [L1] cache simply behaves as an "independent uni-processor" with respect to its associated core, without otherwise attempting to provide cache coherence for the system at large).
+
+The three cores perform the following sequence of operations (where `←` denotes "read from" and `→` denotes "write to"):
+
+(first, core `0`)
+```
+LW Reg ← A
+Reg++
+SW Reg → A
+```
+
+(next, core `1`)
+```
+LW Reg ← A
+Reg++
+SW Reg → A
+```
+
+(last, core `2`)
+```
+LW Reg ← A
+Reg++
+SW Reg → A
+```
+
+In the final write to memory location `A` (i.e., as performed by core `2`), what is the possible value written? (Select all that apply.)
+  * `0`
+    * `DOES NOT APPLY`
+  * `1`
+    * `APPLIES`
+  * `2`
+    * `APPLIES`
+  * `3`
+    * `APPLIES`
+  * `4`
+    * `DOES NOT APPLY`
+  * `> 4`
+    * `DOES NOT APPLY`
+
+***Explanation***:
+
+The "intended" behavior of the program is such that each subsequent read/write pair performed core-wise will correspondingly update the value in memory location `A` accordingly (i.e., updating from `0` to `3` via corresponding three write operations).
+
+However, a key ambiguity arises in an incoherent system at the "boundaries" (i.e., as one core's write operation occurs, the next core's subsequent read operation occurs).
+  * If there is a corresponding "lag" between core `0`'s write and core `1`'s subsequent read, then this will propagate value `1` to core `2` from core `1`, with a consequent update to value `2`.
+  * Similarly, if there is a corresponding "lag" in *both* write/read pairs (i.e., across cores `0` to `1`, and `1` to `2`), then core `2` will effectively read initial value `0` and increment this to `1` accordingly immediately prior to writing out.
+
+Furthermore, the value `0` will not "fall through" regardless, as core `2` will still ultimately perform at least one increment operation accordingly. Similarly, the value `4` will be neither reached nor exceeded, as the maximum number of upstream increments (i.e., from initial value `0`) is two additional increments immediately preceding the additional increment performed by core `2`.
+
+## 4. Coherence Definition
