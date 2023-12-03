@@ -204,7 +204,7 @@ In general, in order to improve performance for a non-uniform memory access (NUM
 
 However, placing all data pages *ever touched* by core `N` in corresponding memory slice `N` will localize the data to that core, and possibly exceed its local memory capacity as well.
 
-## 11-13. Message Passing vs. Shared Memory
+## 11-14. Message Passing vs. Shared Memory
 
 ### 11. A Message-Passing Program
 
@@ -248,6 +248,10 @@ With appropriate program design, it is readily apparent where network-related bo
 
 ### 12. A Shared-Memory Program
 
+<center>
+<img src="./assets/18-014.png" width="650">
+</center>
+
 Now, consider a ***shared-memory*** analog of the same program from the previous section (cf. Section 11):
 
 ```c
@@ -281,3 +285,21 @@ In this version, all cores can share/access the *same* data array (i.e., `myArra
 A key ***advantageous property*** of this shared-memory implementation is that it is more explicitly clear with respect to the coordination among the cores in the context of the control flow (i.e., as opposed to more "indirect" network calls). Furthermore, there is no need to "distribute" the data array, but rather it is effectively a "monolith" (with controlled access) in the context of this program.
 
 ### 13. Message Passing vs. Shared Memory: Summary
+
+<center>
+<img src="./assets/18-015.png" width="650">
+</center>
+
+Now, consider the differences between a message-passing and shared-memory implementation of a(n equivalent) program as follows:
+
+| Feature | Message Passing | Shared Memory |
+|:--:|:--:|:--:|
+| Communication | The ***programmer*** is responsible for determining sending/receiving of the data | Occurs ***automatically*** via shared variables in (shared/distributed) memory |
+| Data distribution | The programmer ***manually*** determines this with explicit sends/receives to and across pertinent cores | The system (i.e., hardware and related software) ***automatic*** manages the distribution of program data to wherever it is needed in the program |
+| Hardware support | ***Simple*** (i.e., a network card and a network) | Requires ***extensive*** hardware support in order to manage data flow across shared/distributed memory, caching, etc. (this hardware support is the focus of the remaining lessons in this course) |
+| Programming: Correctness | ***Difficult***, as it requires orchestrating the program logic carefully, which is susceptible to deadlock issues, incorrect data distribution, etc. | ***Less difficult*** compared to message passing  |
+| Programming: Performance | ***Difficult*** (generally, achieving correctness is more challenging in message passing, but with correspondingly improved performance being the resulting consequence) | ***Very difficult*** to achieve (it is often the case that a shared-memory program may be *correct*, but otherwise challenging to implement in an actually *performant* manner) |
+
+***N.B.*** As this table highlights, with respect to programming there is typically an inherent ***trade-off***: Message passing is generally more challenging to implement correctly (but if done so, usually results in much better performance), whereas shared memory is relatively simpler to implement correctly (but is much more challenging to optimize for better performance).
+
+### 14. Message Passing vs. Shared Memory Quiz and Answers
