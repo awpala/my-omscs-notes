@@ -149,3 +149,28 @@ Each program's blocking condition (i.e., `while` loop) will be "unblocked" by th
   * In this manner, coherence is generally a strict subset of of incoherence, as the "coherent" outputs could also result in the equivalent incoherent system, however, the reverse is not true (i.e., a coherent system will strictly exclude these "incoherent" outputs).
 
 ## 6. How to Achieve Coherence?
+
+<center>
+<img src="./assets/19-007.png" width="650">
+</center>
+
+There are several ***strategies*** for achieving cache coherence, as follows:
+  * 1 - Avoid caches altogether
+    * This is a trivial solution, as it results in unacceptably poor performance. However, by strict definition, relying solely on main memory as the "shared memory" mechanism is a valid implementation strategy in this context.
+  * 2 - All cores share the ***same*** level 1 (L1) cache
+    * This is an analogous situation to a shared main memory, albeit with comparatively better performance (relative to relying strictly on main memory). However, this will still result in unacceptably poor performance nevertheless.
+  * 3 - Core-wise ***private*** write-through caches
+    * In this case, while the main memory does observe all of the writes, it still introduces the ***problem*** of a "lagging" core(s) with respect to long-reading data with respect to this individual cache. In particular, this may eventually outlast subsequent write-through operations to the main memory from the other cores, resulting in an ***incoherent*** system.
+  * 4 - Ultimately, the required solution to achieve coherence is to ***force*** read operations in one cache to observe write changes in the other caches (i.e., a given core's private cache cannot simply perpetuate a "local cache hit" indefinitely, without otherwise consulting the shared memory as prompted), which can be accomplished by the following sub-strategies:
+    * 4A - **write-update coherence** → ***broadcast*** writes to update other caches (analogously to a write-through cache in a single-core system)
+    * 4B - **write-invalidate coherence** → writes ***prevent*** cache hits on other copies of the cache block (i.e., effectively all of these "copies" of the cache block must behave as "cache misses" or otherwise "invalidated" in some such manner)
+    * 4C - **snooping** → ***broadcast*** writes on a ***shared bus***, with the corresponding ordering of these writes being observed by the respective cores accordingly
+      * ***N.B.*** In this strategy, the shared bus can become ***bottlenecking***.
+    * 4D - **directory-based coherence** → each cache block is assigned an ***ordering point*** (called a **directory** in the context of cache coherence), with different ordering points generally being used by different cache blocks (i.e., for a given cache block, all accessed are ordered by the ***same*** entity, but otherwise these entities are different/distinct among the blocks, thereby precluding any possible contention)
+
+Strategies 4A and 4B ensure that subsequent reads receive updated values produced by writes (i.e., the second coherence property, cf. Section 4). Strategies 4C and 4B ensure that all cores observe the same ordering of the writes (i.e., the third coherence property, cf. Section 4).
+  * Accordingly, it is necessarily to select one strategy apiece among the pairs 4A/4B and 4C/4D, with all possible combinations being generally useful.
+
+## 7-15. Write-Update and Write-Invalidate Coherence
+
+### 7. Write-Update Snooping Coherence
