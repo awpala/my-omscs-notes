@@ -492,3 +492,31 @@ Therefore, the complexity of simultaneous multi-threading (SMT) is largely intro
 
 ### 19. Simultaneous Mult-Threading (SMT), Data Cache, and Translation Look-Aside Buffer (TLB)
 
+Consider now the ***relationship*** between simultaneous multi-threading (SMT), the data cache, and the translation look-aside buffer (TLB).
+
+<center>
+<img src="./assets/18-031.png" width="650">
+</center>
+
+Given a **virtually indexed, virtually tagged (VIVT)** data cache (as in the figure shown above), a virtual address is simply sent to the data cache, and the corresponding data output from the data cache is used accordingly.
+
+However, a ***problem*** in this scenario occurs when the threads have ***separate*** address spaces, which are being sent ***simultaneously*** as inputs to the data cache.
+  * From the data cache's perspective, it is "oblivious" to the thread-specific origin of these input virtual addresses, therefore, without corresponding hardware logic to reconcile these discrepancies, there can be corresponding address ***aliasing*** among the inputs from the threads.
+
+***N.B.*** Normally, in a virtually indexed, virtually tagged (VIVT) data cache, in a ***coarse-grain*** configuration, there is a corresponding ***flushing*** of the data cache when switching between the threads. However, now, with the ability to switch among the threads, it is not feasible to flush the data cache in between (thereby adversely impacting the state of the other thread[s] accordingly).
+
+Therefore, in a virtually indexed, virtually tagged (VIVT) data cache, there is a non-trivial ***risk*** of fetching the ***wrong*** data.
+
+<center>
+<img src="./assets/18-032.png" width="650">
+</center>
+
+Conversely, given a **virtually indexed, physically tagged (VIPT)** data cache (as in the figure shown above), an input virtual address is processed more deliberately as follows in order to eliminate any possible aliasing:
+  * The input physical address is fetched in the data cache and outputted as the corresponding physical tag
+  * These physical tags are correspondingly compared with those originating from the **translation look-aside buffer (TLB)**
+  * Furthermore, when using a virtual address to access the translation look-aside buffer (TLB), rather than simply examining the page number of the input virtual address (which may be otherwise ambiguous among the input threads), the translation look-aside buffer (TLB) is additionally designed to be **thread-aware**
+    * This "thread awareness" is implemented accordingly by adding an additional bit to each entry in the translation look-aside buffer (TLB) which designates the corresponding thread. This in turn is used along with the input address to match the corresponding **thread ID (TID)** to unambiguously identify the thread in question, yielding a consequent thread look-aside buffer (TLB) hit vs. miss (i.e., for subsequent production of the output physical address).
+
+***N.B.*** Similarly, a **physically indexed, physically tagged (PIPT)** data cache must also be **thread-aware** in this manner.
+
+### 20. Simultaneous Multi-Threading (SMT) and Cache Performance
