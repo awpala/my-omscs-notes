@@ -327,7 +327,7 @@ Once data distribution is implemented correctly, message passing requires *no* a
 
 ***N.B.*** These observations are typical of shared-memory vs. message-passing implementations. Message passing requires more "programming overhead" to effectively manage distribution of the data (which inherently yields "already implemented" synchronization), whereas shared memory does not require explicit data distribution (but consequently does require additional implementation if/when synchronization is needed to access and manage this distributed data).
 
-## 15-16. Shared-Memory Hardware
+## 15-21. Shared-Memory Hardware
 
 ### 15. Introduction
 
@@ -351,3 +351,84 @@ Accordingly, hardware support is required for all of these configurations, which
 
 ### 16. Multi-Threading Performance
 
+<center>
+<img src="./assets/18-019.png" width="650">
+</center>
+
+Consider now the performance of **multi-threading**, and how it can be better than simply running operations "one at a time."
+
+<center>
+<img src="./assets/18-020.png" width="550">
+</center>
+
+With ***no*** multi-threading support, two threads run as in the figure shown above (where "columns" denote successive cycles, and "rows" are four simultaneously executing instructions among the two threads in question).
+
+<center>
+<img src="./assets/18-021.png" width="550">
+</center>
+
+Initially, one thread (denoted by green in the figure shown above) commences execution.
+  * In the first cycle, the thread executes two instructions, while the other two available "slots" are unutilized since no instructions are ready to dispatch for execution in this cycle.
+  * In the second cycle, there is a data dependency, so one instruction proceeds, while the other waits.
+  * In the third cycle, three instructions execute simultaneously.
+  * In the fourth and fifth cycles, all "slots" are in an "inactive" state (i.e., either waiting on data dependencies or not receiving dispatched instructions for execution).
+  * In the sixth cycle, all four commence execution.
+  * In the seventh cycle, a similar pattern follows (i.e., a combination of execution and "inactivity").
+
+***N.B.*** Observe that, in general, there is not a fully utilized processor pipeline at any given time when executing in this manner (i.e., without multi-threading).
+
+<center>
+<img src="./assets/18-022.png" width="550">
+</center>
+
+Suppose now that an ***interrupt*** occurs at the end of the seventh cycle (as in the figure shown above). Because another thread is available for execution, the operating system proceeds with utilizing the pipeline accordingly for several subsequent cycles (denoted by red in the figure shown above), using these cycles to determine which thread to run next.
+
+<center>
+<img src="./assets/18-023.png" width="550">
+</center>
+
+Eventually, the operating system selects another thread (denoted by blue in the figure shown above), which commences execution with a similar pattern as the previous (green) thread (as in the figure shown above).
+
+Therefore, in the case of ***no multi-threading support*** (i.e., performed on a single core without this support), the inherent ***overhead*** derives from performing **context switches** among the threads. Furthermore, this overhead generally ***exceeds*** the benefit provided by running multiple threads (i.e., effectively, the execution pattern is akin to a "less efficient" single-threaded execution performing the equivalent two-thread work in the first place).
+  * However, even in this case, this still may be advantageous simply by virtue of allowing to run multiple applications simultaneously (e.g., games and music, without human-perceptible disruption of either), albeit with an added overhead cost.
+
+<center>
+<img src="./assets/18-024.png" width="350">
+</center>
+
+Conversely, in a **chip multi-core processor (CMP)**, the equivalent work is divided among two separate threads as in the figure shown above.
+  * Here, there are two separate/dedicated cores, which execute two independent threads simultaneously.
+  * However, this correspondingly ***doubles*** the cost, as it requires an additional dedicated (physical) core for this purpose.
+
+<center>
+<img src="./assets/18-025.png" width="550">
+</center>
+
+Additionally, in **fine-grain multi-threading** (as in the figure shown above), there is only ***one*** (physical) core, however, there are separate/dedicated registers for each thread, as well as additional scheduling logic to support rapid ***per-cycle*** context switching.
+  * The correspondingly equivalent work is therefore dramatically improved, as "inactive" cycles can be "interleaved" more effectively in this manner among the two threads, with an overall faster execution of each individual thread's operations.
+
+<center>
+<img src="./assets/18-026.png" width="550">
+</center>
+
+Lastly, in **simultaneous multi-threading (SMT)** (as in the figure shown above), instructions from ***different*** threads can be "mixed" in the ***same*** cycle of execution.
+  * The correspondingly equivalent work is therefore even more dramatically improved, with correspondingly additional "interleaving" among the two threads (even more so than in fine-grain multi-threading), with further reduction in "inactive" cycles.
+  * Here, one thread (green) is relatively high priority, with the other (blue) "filling in inactivity gaps" accordingly.
+
+<center>
+<img src="./assets/18-027.png" width="550">
+</center>
+
+Additionally, in simultaneous multi-threading (SMT), such utilization can be further enhanced with additional threads (as in the figure shown above, with additional thread denoted by magenta).
+  * Therefore, the key advantage of simultaneous multi-threading (SMT) is essentially maximizing utilization of otherwise underutilized issued instruction "slots" in such an out-of-order superscalar processor, which in turn further improves performance to a level approaching that of a chip multi-core processor (CMP).
+
+With respect to ***hardware cost***, this can be summarized as follows (on a relative basis to single-core without multi-threading hardware support):
+
+| Configuration | Cost | Comment |
+|:--:|:--:|:--:|
+| No multi-threading | `1×` | (N/A) |
+| Chip multi-core processor (CMP) | `2×` | Requires a separate dedicated (physical) core |
+| Fine-grain multi-threading | `1.05×` | The incremental/additional hardware cost is relatively small, requiring a slightly more complicated fetch stage (for selection among the thread-dedicated program counters) and a slightly more complicated register file (to maintain thread-dedicated architecture register files) |
+| Simultaneous multi-threading (SMT) | `1.1×` | The incremental/additional hardware cost is relatively small, as while the processor scheduler is similar to a no-multi-threading equivalent (after register renaming, etc.), but with additional overhead introduced in order to select instructions from among the multiple threads for subsequent scheduling in the per-cycle scheduling window. Additionally, in order to commit, the corresponding instruction must be determined accordingly. |
+
+### 17. Simultaneous Multi-Threading vs. Dual-Core Quiz and Answers
