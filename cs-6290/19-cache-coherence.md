@@ -103,3 +103,49 @@ To fulfill the definition of cache coherence, the system must fulfill the follow
     * ***N.B.*** This third part of the definition does not depend on the second part of the definition, but rather the "slow-reading" core must simply "ultimately" read the intended order of the writes (i.e., the most recent write must be coherently ordered accordingly).
 
 ## 5. Coherence Definition Quiz and Answers
+
+<center>
+<img src="./assets/19-006A.png" width="650">
+</center>
+
+Consider a coherent system comprised of two cores. These two cores simultaneously execute the following programs respectively (where `A` is a shared-memory location):
+
+(core `1`)
+```c
+A = 1;
+while (A == 1):
+A = 1;
+print("Done 1!");
+```
+
+(core `2`)
+```c
+A = 0;
+while (A == 0);
+A = 0;
+print("Done 2!");
+```
+
+***N.B.*** It is not strictly necessary for both cores to execute their respective programs in "lock-step" (i.e., execution of each program is independent of the other).
+
+What is the correspondingly possible output of these programs running on this system? (Select all that apply.)
+  * `Done 1! Done 2!`
+    * `APPLIES`
+  * `Done 2! Done 1!`
+    * `APPLIES`
+  * `Done 1!`
+    * `DOES NOT APPLY`
+  * `Done 2!`
+    * `DOES NOT APPLY`
+  * (no printed output)
+    * `DOES NOT APPLY`
+
+***Explanation***:
+
+Each program's blocking condition (i.e., `while` loop) will be "unblocked" by the program running on the other core. However, this will otherwise occur non-deterministically, and thus the order of the printed outputs can occur in either order.
+  * Furthermore, note that by the strict (i.e., three-part) definition of cache coherence (cf. Section 4), this will be guaranteed/ensured accordingly, i.e., the sequential writes will ultimately prevent either program individually from never clearing the blocking condition (e.g., one core's program will not "outpace" the other prior to the latter's reaching of this blocking condition, because cache coherence will enforce appropriate state updates, thereby precluding this possibility).
+
+***N.B.*** In an *incoherent* system, all of these would be possible outputs. In particular, there are possible scenarios whereby one or both programs are independently "blocked" on the respective blocking conditions, due to a temporal mismatch in their respective execution, and otherwise independent core-wise cache maintenance/dependence.
+  * In this manner, coherence is generally a strict subset of of incoherence, as the "coherent" outputs could also result in the equivalent incoherent system, however, the reverse is not true (i.e., a coherent system will strictly exclude these "incoherent" outputs).
+
+## 6. How to Achieve Coherence?
