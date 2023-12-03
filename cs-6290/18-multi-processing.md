@@ -520,3 +520,22 @@ Conversely, given a **virtually indexed, physically tagged (VIPT)** data cache (
 ***N.B.*** Similarly, a **physically indexed, physically tagged (PIPT)** data cache must also be **thread-aware** in this manner.
 
 ### 20. Simultaneous Multi-Threading (SMT) and Cache Performance
+
+<center>
+<img src="./assets/18-033.png" width="650">
+</center>
+
+Consider the relationship between simultaneous multi-threading (SMT) and ***cache performance***.
+
+The cache of the (single) core is ***shared*** among ***all*** constituent threads that are currently active at any given time. This gives rise to both beneficial and adverse properties.
+
+A key ***benefit*** of a shared cache is that there is ***fast*** data sharing among the threads.
+  * For example, when thread `0` stores data (i.e., `SW A`) which is subsequently loaded by thread `1` (i.e., `LD A`), this can be performed with respect to the shared cache (i.e., in a direct manner), which is generally conducive to cache hits, etc.
+
+Conversely, a key ***drawback*** of a shared cache is that the cache capacity (and cache associativity) is shared by ***all*** of the threads.
+  * Correspondingly, if the relationship between the working sets (`WS`) among the threads is `WS(T0) + WS(T1) - WS(T0, T1) > size(cache)` (i.e., the cache size is exceeded by the respecting working sets' collective usage), then **cache thrashing** can result, whereby this thread-wise data exceeds the capacity of the shared cache, resulting in consequent sustained cache misses.
+  * Furthermore, if individually `WS(T0) < size(cache)` (while not otherwise performing multi-threaded operations), then this results in a corresponding ***under-utilization*** of the cache capacity relative to an otherwise non-multi-threaded single-thread equivalent, resulting in comparatively ***significantly worse*** performance accordingly.
+
+Therefore, a ***key assumption*** of using simultaneous multi-threading effectively in the first place is that the resource utilization is maximized across the threads, particularly with respect to the capacity of the cache itself (i.e., the benefit of interleaved/overlapped execution must exceed the risk of potential cache thrashing and under-utilization).
+
+## 21. Simultaneous Mult-Threading (SMT) and Cache Quiz and Answers
