@@ -538,4 +538,44 @@ Conversely, a key ***drawback*** of a shared cache is that the cache capacity (a
 
 Therefore, a ***key assumption*** of using simultaneous multi-threading effectively in the first place is that the resource utilization is maximized across the threads, particularly with respect to the capacity of the cache itself (i.e., the benefit of interleaved/overlapped execution must exceed the risk of potential cache thrashing and under-utilization).
 
-## 21. Simultaneous Mult-Threading (SMT) and Cache Quiz and Answers
+### 21. Simultaneous Multi-Threading (SMT) and Cache Quiz and Answers
+
+<center>
+<img src="./assets/18-035A.png" width="650">
+</center>
+
+Consider a series of programs characterized as follows with respect to their respective working-set sizes:
+
+| Program | Working set size (KB) |
+|:--:|:--:|
+| A | `10` |
+| B | `4` |
+| C | `1` |
+
+Furthermore, consider a processor core characterized as follows:
+  * Supports `4` simultaneous threads
+  * Has a `8 KB` level 1 (L1) data cache
+
+Given these characteristics, in what sequence should the programs be run on this processor? (Select the correct option.)
+  * Program A, B, and C all run simultaneously
+    * `INCORRECT`
+  * Programs A and B run simultaneously, followed by program C
+    * `INCORRECT`
+  * Program A runs alone, followed by programs B and C running simultaneously
+    * `CORRECT`
+  * Programs A and C run simultaneously, followed by program B
+    * `INCORRECT`
+  * Program A runs alone, followed by program B, followed by program C (i.e., sequentially)
+    * `INCORRECT`
+
+***Explanation***:
+
+Program A has a working set which exceeds the capacity of the cache. Therefore, it will inevitably yield cache misses in all cases. Conversely, programs B and C are both sufficiently small to fit both individually and together in the cache simultaneously, however, the cache capacity exceeds that of running all three programs simultaneously (thereby precluding this possibility, without otherwise incurring poor cache behavior across all three programs).
+
+Conversely, running A by itself first will incur necessary cache misses, however, subsequently running B and C together will yield beneficial simultaneous multi-threading (SMT) performance accordingly, which is otherwise obviated by running all three programs sequentially (i.e., B and C *can* still benefit from SMT accordingly).
+
+## 22. Lesson Outro
+
+This lesson examined two ***approaches*** for writing parallel programs: Message passing, and shared memory.
+
+The next lesson will discuss how to correctly perform caching across multi-cores with shared memory.
