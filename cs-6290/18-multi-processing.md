@@ -327,4 +327,27 @@ Once data distribution is implemented correctly, message passing requires *no* a
 
 ***N.B.*** These observations are typical of shared-memory vs. message-passing implementations. Message passing requires more "programming overhead" to effectively manage distribution of the data (which inherently yields "already implemented" synchronization), whereas shared memory does not require explicit data distribution (but consequently does require additional implementation if/when synchronization is needed to access and manage this distributed data).
 
-## 15. Shared-Memory Hardware
+## 15-16. Shared-Memory Hardware
+
+### 15. Introduction
+
+<center>
+<img src="./assets/18-018.png" width="650">
+</center>
+
+There are several ***types*** of shared-memory hardware available:
+  * `1` - ***Multiple*** (single) cores sharing the ***same*** physical address space
+    * All of the cores can issue requests to/from any memory address.
+    * Representative ***examples*** include **uniform memory access (UMA)** and **non-uniform memory access (NUMA)**.
+  * `2` - At the opposite extreme of `1`, only ***one*** core performs multi-threading via **time-sharing** of this core via its multiple threads
+    * Because this involves running on the *same* core, the threads are inherently accessing the ***same*** physical memory (which naturally provides the corresponding shared-memory behavior). In this regard, there is no "true" multi-threading (in the multi-core sense).
+  * `3` - An intermediate between `1` and `2`, this involves **hardware multi-threading support** in the core itself, allowing to benefit from "true" multi-threading (i.e., multiple threads per core)
+    * This hardware multi-threading support can be provided at a **coarse-grain** level, whereby the thread of execution is simply changed every ***few*** cycles, with corresponding thread-dedicated hardware support (e.g., dedicated registers, etc.) to enabling this switching among the threads (i.e., as opposed to expending additional resources on saving and restoring registers and related state in between thread context switches, etc.).
+    * Conversely, this hardware multi-threading support can also be provided at a **fine-grain** level, whereby the thread of execution is changed in ***every*** cycle, which correspondingly requires even more thread-specific hardware support to facilitate performing this cycle-wise rapid switching quickly and efficiently.
+    * Furthermore, there is also hardware multi-threading support available via **simultaneous multi-threading (SMT)**, whereby in any given cycle, a combination of these different types of thread operations can occur.
+      * ***N.B.*** This is also called **hyper-threading** by some processor manufacturers.
+
+Accordingly, hardware support is required for all of these configurations, which in turn becomes more extensive moving from course-grain to fine-grain to simultaneous multi-threading (SMT). This, then, begs the question: What ***benefit*** is provided by sharing a given core by multiple threads in this manner? This is the topic of the next section.
+
+### 16. Multi-Threading Performance
+
