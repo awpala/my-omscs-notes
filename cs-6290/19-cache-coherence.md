@@ -593,3 +593,48 @@ Conversely, in the optimized write-invalidate protocol, the initial write operat
   * Conversely, the write-invalidate protocol involves the broadcast of the invalidation on write from the writer/producer, while the reader/consumer incurs successive read misses, thereby necessitating bus access to update the data accordingly.
 
 ### 14. Write-Update vs. Write-Invalidate Quiz 2 and Answers
+
+<center>
+<img src="./assets/19-052Q.png" width="650">
+</center>
+
+Consider the same system from the previous section (cf. Section 13), however, the program running on this two-core system is now comprised of the following (which occur simultaneously on each core):
+
+| Sequence(s) | Core `0` | Core `1` |
+|:--:|:--:|:--:|
+| `1` | `RD A` | (N/A) |
+| `2` | `WR A` | (N/A) |
+| `3` through `1000` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
+| `1001` | (N/A) | `RD A` |
+| `1002` | (N/A) | `WR A` |
+| `1003` through `2000` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
+
+Upon conclusion of this program, what are the following resulting counts of bus uses with respect to shared memory block `A` in the following configurations:
+  * Write-update protocol with shared bit and dirty bit optimizations?
+    * `502`
+  * Write-invalidate protocol with shared bit and dirty bit optimizations?
+    * `3`
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/19-053A.png" width="650">
+</center>
+
+In the optimized write-update protocol (as in the figure shown above), there is a single bus access on initial read operation in core `0` (i.e., `RD A` via sequence `1`) due to read miss, however, due to no obligatory sharing, the subsequent write operation in core `0` (i.e., `WR A` via sequence `2`) is localized to core `0` (i.e., no additional bus access necessary). Furthermore, in the subsequent `499` iterations of this read/write pair (i.e., sequences `3` through `1000`), there are subsequent cache hits.
+
+Next, on initial read operation in core `1` (i.e., `RD A` via sequence `1001`), it reads the data from core `0` via the bus; furthermore, the shared bit is correspondingly set to `1` in both cores' respective caches. In the subsequent write operation in core `1` (i.e., `WR A` via sequence `1002`), there is a broadcast on the bus. Furthermore, each subsequent write operation (i.e., `499` total iterations) accesses the bus in order to broadcast the updated value over to core `0`. Note that this is wasteful, as core `0` no longer requires this data.
+
+<center>
+<img src="./assets/19-054A.png" width="650">
+</center>
+
+In the optimized write-invalidate protocol (as in the figure shown above), there is a single bus access on initial read operation in core `0` (i.e., `RD A` via sequence `1`) due to read miss, however, due to no obligatory sharing, the subsequent write operation in core `0` (i.e., `WR A` via sequence `2`) is localized to core `0` (i.e., no additional bus access necessary). Furthermore, in the subsequent `499` iterations of this read/write pair (i.e., sequences `3` through `1000`), there are subsequent cache hits.
+  * ***N.B.*** This occurs identically/analogously to the corresponding write-update protocol sequences.
+
+Next, on initial read operation in core `1` (i.e., `RD A` via sequence `1001`), it reads the data from core `0` via the bus; furthermore, the shared bit is correspondingly set to `1` in both cores' respective caches. In the subsequent write operation in core `1` (i.e., `WR A` via sequence `1002`), there is a broadcast on the bus, which invalidates the data in core `0` accordingly. Furthermore, each subsequent write operation (i.e., `499` total iterations) do not access the bus, as the other reader (i.e., core `0`) is now invalidated; at this point, the shared location `A` is effectively "private" with respect to core `1`.
+
+***N.B.*** Observe that the write-invalidate protocol is therefore much more efficient if the data usage is restricted to a given core for successive accesses.
+
+### 15. Update vs. Invalidate Coherence
+
