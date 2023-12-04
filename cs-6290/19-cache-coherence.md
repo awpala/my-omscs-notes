@@ -174,3 +174,83 @@ Strategies 4A and 4B ensure that subsequent reads receive updated values produce
 ## 7-15. Write-Update and Write-Invalidate Coherence
 
 ### 7. Write-Update Snooping Coherence
+
+<center>
+<img src="./assets/19-008.png" width="650">
+</center>
+
+Consider a two-cache, two-processor system (as in the figure shown above), with each cache comprised of two blocks (with each block comprised of a valid bit [`V`], a tag [`T`], and the cache data). Each cache is connected to the ***same*** shared bus, which in turn is connected to the main memory. Furthermore, assume that both caches are initially empty (with all valid bits correspondingly set to `0`).
+
+<center>
+<img src="./assets/19-009.png" width="650">
+</center>
+
+The left processor initially reads from shared block `A` (i.e., `RD A`, as in the figure shown above), resulting in a cache miss with respect to the left cache block and consequent request to main memory.
+
+The right cache constantly monitors activity on the bus, however, it is only specifically interested in write operations. Consequently, `RD A` is ignored by the right cache.
+
+<center>
+<img src="./assets/19-010.png" width="650">
+</center>
+
+On retrieval of the data from main memory, the left cache is updated accordingly (as in the figure shown above).
+
+<center>
+<img src="./assets/19-011.png" width="650">
+</center>
+
+Next, the right processor performs a write operation on shared block `A` (i.e., `WR A`, as in the figure shown above).
+
+<center>
+<img src="./assets/19-012.png" width="650">
+</center>
+
+Even on write-through access to main memory from the right processor, a subsequent read from the left processor will yield a "stale" read of `A` (as in the figure shown above). Assume that the left processor reads value `0` accordingly.
+
+<center>
+<img src="./assets/19-013.png" width="650">
+</center>
+
+Next, the right processor writes value `1` to shared block `A` (i.e., `WR A ← 1` as in the figure shown above). Even if this write operation were to write-through to main memory, this alone does not yield coherent behavior from the left cache, as a subsequent cache hit by the left processor will still yield (incorrect) value `0`.
+
+Consequently, this situation is where **write-update** and **snooping** become significant.
+
+<center>
+<img src="./assets/19-014.png" width="650">
+</center>
+
+Since a cache miss occurs here with respect to the right cache (as in the figure shown above), the block is requested from main memory, along with an indication of a write operation (along with the corresponding value and address), with a corresponding update to the main memory's value.
+
+Because the left cache is monitoring (i.e., ***snooping***) the bus, it correspondingly detects this activity, and detects this update relative to its own internal cache state (which is now invalidated accordingly).
+
+<center>
+<img src="./assets/19-015.png" width="650">
+</center>
+
+Correspondingly, a ***write update*** also occurs with respect to the left cache (as in the figure shown above), whereby the corresponding cache-block entry for `A` is updated accordingly to value `1`. Furthermore, subsequent read operations (i.e., `RD A`) in the left cache will read this updated value accordingly.
+
+In this manner, if there are multiple cores, there will not be any disagreement among the ordering of the write operations, as this ordering is enforced by the shared bus (which broadcasts writes sequentially, one at a time).
+
+<center>
+<img src="./assets/19-016.png" width="650">
+</center>
+
+Now, consider the scenario whereby both caches attempt to write to `A` ***simultaneously*** (as in the figure shown above).
+
+In this situation, the processors must ***arbitrate*** for the shared bus immediately prior to writing to it. This ***arbitration*** process in turn will enforce ordering among these write operations.
+
+<center>
+<img src="./assets/19-017.png" width="650">
+</center>
+
+Assuming the left core "wins" the arbitration process (as in the figure shown above), the corresponding write operation will be performed first, with each core updating its respective cache appropriately.
+
+<center>
+<img src="./assets/19-018.png" width="650">
+</center>
+
+Next, the subsequent write operation is performed, with corresponding update of each respective cache accordingly.
+
+In this manner, there is consensus among both caches with respect to the "true" value of `A` at any given time, which is accomplished via corresponding snooping of the common bus (i.e., by the non-writing cache[s]) and subsequent write-update.
+
+### 8. Write-Update Coherence Quiz and Answers
