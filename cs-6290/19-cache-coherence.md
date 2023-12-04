@@ -776,8 +776,48 @@ Since the cache block `X` is only present in memory initially, then both caches 
 After cache `C1` performs operation `READ X` (i.e., sequence `S1`), this will transition the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C1`.
   * ***N.B.*** Even though cache block `X` is not truly "shared" at this point, the shared (S) state effectively denotes a "clean" block, which is only read at this point.
 
-After cache `C2` performs operation `READ X` (i.e., sequence `S2`), this similarly transitions the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C2`. Furthermore, snooping of this transition by cache `C1` maintains cache `C2` in its current shared (S) state.
+After cache `C2` performs operation `READ X` (i.e., sequence `S2`), this similarly transitions the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C2`. Furthermore, snooping of this transition by cache `C1` maintains cache `C1` in its current shared (S) state.
 
 After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcasts an invalidation on the bus, which correspondingly transitions cache `C2` to the invalid (I) state (i.e., cache `C2` can no longer be read until an updated copy of the cache block is retrieved from cache `C1`). Furthermore, on writing, cache `C1` transitions to the modified (M) state.
 
 ### 18. MSI (Modified-Shared-Invalid) Quiz 2 and Answers
+
+<center>
+<img src="./assets/19-061A.png" width="650">
+</center>
+
+Consider the same (cf. Section 17) system comprised of two cores, each with private caches, which follow the MSI (modified-shared-invalid) coherence protocol.
+
+Initially, cache block `X` is only present in memory, but not in either private cache.
+
+Designate the appropriate state (i.e., M, S, or I) in the following sequence of operations:
+
+| Sequence | Cache `C1` | Cache `C2` | State of `X` in cache `C1` | State of `X` in cache `C2` |
+|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `READ X` | (N/A) | | |
+| `S2` | (N/A) | `WRITE X` | | |
+| `S3` | `WRITE X` | (N/A) | | |
+
+***Answer and Explanation***:
+
+| Sequence | Cache `C1` | Cache `C2` | State of `X` in cache `C1` | State of `X` in cache `C2` |
+|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `READ X` | (N/A) | `S` | `I` |
+| `S2` | (N/A) | `WRITE X` | `I` | `M` |
+| `S3` | `WRITE X` | (N/A) | `M` | `I` |
+
+Since the cache block `X` is only present in memory initially, then both caches are initialized to state I.
+
+After cache `C1` performs operation `READ X` (i.e., sequence `S1`), this will transition the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C1`.
+  * ***N.B.*** Even though cache block `X` is not truly "shared" at this point, the shared (S) state effectively denotes a "clean" block, which is only read at this point.
+
+After cache `C2` performs operation `WRITE X` (i.e., sequence `S2`), this  transitions the corresponding cache block from invalid (I) state to modified (M) state with respect to cache `C2` (i.e., a write miss occurs). Furthermore, snooping of this transition by cache `C1` in turn transitions cache `C1` to the invalid (I) state.
+
+After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcasts an invalidation on the bus, which correspondingly transitions cache `C2` to the invalid (I) state (i.e., cache `C2` can no longer be read until an updated copy of the cache block is retrieved from cache `C1`). Furthermore, on writing, cache `C1` transitions to the modified (M) state.
+
+***N.B.*** Observe the following ***key state configurations***:
+  * If a cache block is in the modified (M) state in any given cache, then all other caches sharing this cache block must be in the invalid (I) state.
+  * If a cache block is in the shared (S) state, then all other caches sharing this cache block must be in either the shared (S) state or in the invalid (I) state.
+  * Furthermore, the shared (S) and modified (M) states cannot exist simultaneously in the system (i.e., across caches) for a given shared cache block.
+
+### 19. Avoiding Memory Writes on Cache-to-Cache Transfers
