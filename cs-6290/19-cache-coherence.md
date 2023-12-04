@@ -254,3 +254,50 @@ Next, the subsequent write operation is performed, with corresponding update of 
 In this manner, there is consensus among both caches with respect to the "true" value of `A` at any given time, which is accomplished via corresponding snooping of the common bus (i.e., by the non-writing cache[s]) and subsequent write-update.
 
 ### 8. Write-Update Coherence Quiz and Answers
+
+<center>
+<img src="./assets/19-019Q.png" width="650">
+</center>
+
+Consider a four-core system, with each core comprised of a single-block cache (as in the figure shown above). Furthermore, the system exhibits write-update cache coherence.
+
+First, operation `RD 0x700` occurs on core `0`, resulting in the state as in the figure shown above.
+
+Subsequent operations occur as follows (the previous operation is repeated below as sequence `1` for reference):
+
+| Sequence | Core | Operation |
+|:--:|:--:|:--:|
+| `1` | `0` | `RD 0x700` |
+| `2` | `1` | `RD 0x700` |
+| `3` | `2` | `WR 0x700 ← 17` |
+| `4` | `3` | `RD 0x700` |
+
+What is the resulting respective states of the four cores on completion of these operations?
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/19-020A.png" width="650">
+</center>
+
+On completion of sequence `1`, the state of the four cores is as in the figure shown above.
+
+<center>
+<img src="./assets/19-021A.png" width="650">
+</center>
+
+On completion of sequence `2`, the state of the four cores is as in the figure shown above, with core `1` updating its valid bit to `1` accordingly on read.
+
+<center>
+<img src="./assets/19-022A.png" width="650">
+</center>
+
+On completion of sequence `3`, the state of the four cores is as in the figure shown above. When core `2` writes, it broadcasts the write-through data accordingly, which in turn is snooped by the other caches (i.e., those of cores `0` and `1`) for which valid bits are already set to `1` at this point.
+
+<center>
+<img src="./assets/19-023A.png" width="650">
+</center>
+
+On completion of sequence `4`, the state of the four cores is as in the figure shown above, wherein all four cores now contain the same block data, which is coherent and consistent with that currently in shared main memory.
+
+### 9. Write-Update Optimization
