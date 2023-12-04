@@ -745,4 +745,39 @@ The ***second*** solution involves a more direct ***intervention***.
 The main ***disadvantage*** with this second approach is that it requires
 additional complex hardware in order to implement it. However, this is nevertheless akin to the approach used by modern processors (which use a ***variant*** of this intervention approach, wherein more sophisticated snooping protocols have eliminated the additional step of having main memory retrieve the data and otherwise eliminating much of the complexity in the cache-to-cache transfer of this data)
 
-### 18. MSI (Modified-Shared-Invalid) Quiz and Answers
+### 18. MSI (Modified-Shared-Invalid) Quiz 1 and Answers
+
+<center>
+<img src="./assets/19-059A.png" width="650">
+</center>
+
+Consider a system comprised of two cores, each with private caches, which follow the MSI (modified-shared-invalid) coherence protocol.
+
+Initially, cache block `X` is only present in memory, but not in either private cache.
+
+Designate the appropriate state (i.e., M, S, or I) in the following sequence of operations:
+
+| Sequence | Cache `C1` | Cache `C2` | State of `X` in cache `C1` | State of `X` in cache `C2` |
+|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `READ X` | (N/A) | | |
+| `S2` | (N/A) | `READ X` | | |
+| `S3` | `WRITE X` | (N/A) | | |
+
+***Answer and Explanation***:
+
+| Sequence | Cache `C1` | Cache `C2` | State of `X` in cache `C1` | State of `X` in cache `C2` |
+|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `READ X` | (N/A) | `S` | `I` |
+| `S2` | (N/A) | `READ X` | `S` | `S` |
+| `S3` | `WRITE X` | (N/A) | `M` | `I` |
+
+Since the cache block `X` is only present in memory initially, then both caches are initialized to state I.
+
+After cache `C1` performs operation `READ X` (i.e., sequence `S1`), this will transition the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C1`.
+  * ***N.B.*** Even though cache block `X` is not truly "shared" at this point, the shared (S) state effectively denotes a "clean" block, which is only read at this point.
+
+After cache `C2` performs operation `READ X` (i.e., sequence `S2`), this similarly transitions the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C2`. Furthermore, snooping of this transition by cache `C1` maintains cache `C2` in its current shared (S) state.
+
+After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcasts an invalidation on the bus, which correspondingly transitions cache `C2` to the invalid (I) state (i.e., cache `C2` can no longer be read until an updated copy of the cache block is retrieved from cache `C1`). Furthermore, on writing, cache `C1` transitions to the modified (M) state.
+
+### 18. MSI (Modified-Shared-Invalid) Quiz 2 and Answers
