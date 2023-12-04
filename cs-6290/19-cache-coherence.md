@@ -659,7 +659,7 @@ Because write-invalidate protocols are commonly used, this will be the primary f
 
 ## 16-25. Cache Coherence Protocols
 
-### 16. Modified-Shared-Invalid (MSI) Coherence
+### 16. MSI (Modified-Shared-Invalid) Coherence
 
 <center>
 <img src="./assets/19-056.png" width="650">
@@ -722,3 +722,27 @@ Lastly, if a cache block is in the ***invalid (I)*** state, any snooping (i.e., 
   * Furthermore, while in the ***modified (M)*** state, a write operation will be observed when a write request is snooped on the bus, rather than an invalidation. This is because a cache block in the modified (M) state effectively implies that all other caches are in the invalid (I) state with respect to this cache block; correspondingly, if any other cache attempts to write, this will necessitate broadcasting a write request onto the bus accordingly (rather than simply broadcasting an invalidation).
 
 ### 17. Cache-to-Cache Transfers
+
+<center>
+<img src="./assets/19-057.png" width="650">
+</center>
+
+A **cache-to-cache transfer** occurs when cache `C1` has block `B` in the modified (M) state, while another cache `C2` broadcasts a read request onto the bus (i.e., to fetch this cache block into its own cache). At this point, cache `C1` must react in order to provide this data since it is in the modified (M) state (i.e., the *only* up-to-date copy of the data in the system at this point, even relative to main memory); but how can this be accomplished? There are two solutions for this, described as follows.
+
+The ***first*** solution involves ***aborting*** and ***retrying***.
+  * Cache `C1` cancels cache `C2`'s request using a corresponding ***abort bus signal***.
+  * On abortion of cache `C2`'s request, cache `C1` performs a normal write-back to main memory, at which point the main memory is now updated with the most up-to-date data.
+  * Cache `C2` retries requesting the data, and subsequently retrieves the data from main memory.
+
+A fundamental ***issue*** with this first approach is that from the time that cache `C2` makes the initial request, if the data were otherwise originating from main memory, then a read miss would occur (with correspondingly incurred memory latency). However, if the read miss additionally results from another core having the data, then this incurs an ***additional*** memory latency prior to cache `C2` finally retrieving the data.
+
+The ***second*** solution involves a more direct ***intervention***.
+  * Cache `C1` informs main memory that it will supply the data using a corresponding ***intervention bus signal***.
+  * Cache `C1` provides the data to cache `C2`.
+  * Main memory also retrieves the data supplied by cache `C1`.
+    * This additional step is necessary, because on broadcast of the data from cache `C1` to cache `C2`, both caches will now transition to the shared (S) state (i.e., both will regard the cache block as "not dirty," and therefore the main memory must also receive this "clean" data at this critical point, otherwise it will never receive this data). Therefore, by receiving this data, the main memory ensures that this data is retained on this "last write-back" of the corresponding data from the cache.
+
+The main ***disadvantage*** with this second approach is that it requires
+additional complex hardware in order to implement it. However, this is nevertheless akin to the approach used by modern processors (which use a ***variant*** of this intervention approach, wherein more sophisticated snooping protocols have eliminated the additional step of having main memory retrieve the data and otherwise eliminating much of the complexity in the cache-to-cache transfer of this data)
+
+### 18. MSI (Modified-Shared-Invalid) Quiz and Answers
