@@ -300,4 +300,89 @@ On completion of sequence `3`, the state of the four cores is as in the figure s
 
 On completion of sequence `4`, the state of the four cores is as in the figure shown above, wherein all four cores now contain the same block data, which is coherent and consistent with that currently in shared main memory.
 
-### 9. Write-Update Optimization
+### 9. Write-Update Optimization 1: Memory Writes
+
+We will now consider two possible ***optimizations*** of the write-update protocol.
+
+The first optimization involves avoiding memory writes.
+
+<center>
+<img src="./assets/19-024.png" width="650">
+</center>
+
+Recall (cf. Section 4) that in a **write-update protocol**, ***every*** write in any given processor must be broadcasted to the shared bus and correspondingly update the main memory (as in the figure shown above). However, since main memory is large and slow, it cannot keep up with with these write operations, thereby forming a ***bottleneck*** accordingly with respect to system memory throughput. Therefore, it is necessary to ***avoid*** any unnecessary/superfluous writes accordingly.
+
+Up to this point in the lesson, each cache has been individually regarded as a ***write-through*** cache, however, this is generally harmful to performance of memory (in a single-core system, let alone in a multi-core system).
+
+<center>
+<img src="./assets/19-025.png" width="650">
+</center>
+
+To resolve this issue (i.e., reduction in memory traffic), a ***dirty bit*** (`D`) is added to each cache block (as in the figure shown above), which in turn "delays" writes to main memory until a dirty block is eventually replaced.
+
+<center>
+<img src="./assets/19-026.png" width="650">
+</center>
+
+First, consider a read operation in the left cache (i.e., `RD A`, as in the figure shown above), resulting in a corresponding update of the cache accordingly.
+
+<center>
+<img src="./assets/19-027.png" width="650">
+</center>
+
+Next, a write operation is performed by the right cache (i.e., `WR A, 17`, as in the figure shown above). This write operation is broadcasted on the shared bus, and correspondingly updated in the left cache accordingly.
+
+Furthermore, ***without*** a dirty bit, there would be a corresponding "naive" update to main memory with this value as well (as in the figure shown above). However, this is generally undesirable, as the right cache may perform subsequent write operations, prior to ultimately writing through to the main memory.
+
+<center>
+<img src="./assets/19-028.png" width="650">
+</center>
+
+Conversely, ***with*** a dirty bit (as in the figure shown above), the value is placed in the right cache, with the corresponding dirty bit set to `1`.
+
+In this context, "dirty" has two ***aspects***:
+  * 1 - The main memory is no longer up-to-date, and therefore it must be updated accordingly
+    * ***N.B.*** This is the same as for a uni-processor with a write-back cache (cf. Lesson 12)
+  * 2 - Additionally, in the write-update protocol, "dirty" entails writing only when there is a necessary write-update event (as discussed subsequently in this section)
+
+<center>
+<img src="./assets/19-029.png" width="650">
+</center>
+
+Suppose that the left cache instead replaces the block by reading again (as in the figure shown above), issuing a corresponding request over the bus accordingly.
+
+Typically, the main memory would simply provide the value in question (i.e., `A`). However, at this point, the main memory still has the old value (i.e., `6`); only the right cache has the most up-to-date value at this point (as designated by its respective dirty bit value of `1`).
+
+<center>
+<img src="./assets/19-030.png" width="650">
+</center>
+
+Since the right cache is the only one with the most up-to-date copy of the value for `A` (as in the figure shown above), as per the dirty bit value `1`, the left cache ***snoops*** this value first, with the corresponding cache write-through operation being significantly faster than a read from main memory. The left cache updates its own value accordingly, with appropriate setting of its dirty bit to `0` (i.e., rather than reading from main memory).
+
+<center>
+<img src="./assets/19-031.png" width="650">
+</center>
+
+Consider a subsequent write operation by the right cache (i.e., `WR A, 20`, as in the figure shown above). Similarly, the value is broadcasted over the bus, and consequently snooped by the left cache (and updated accordingly in the left cache), without otherwise updating the main memory at this point.
+
+<center>
+<img src="./assets/19-032.png" width="650">
+</center>
+
+However, once the block in the right cache is eventually ***replaced***, then this value is consequently written-through to main memory (as in the figure shown above).
+
+<center>
+<img src="./assets/19-033.png" width="650">
+</center>
+
+Another interesting situation arises when, given a dirty block in the right cache, a subsequent write operation is performed by the left cache (i.e., `WR A = 30`, as in the figure shown above).
+
+In this case, the left cache broadcasts this write operation onto the bus, and the right cache consequently snoops this write operation, updating its cache block accordingly (along with setting the appropriate dirty bit value of `0`, indicating that the write cache is no longer responsible for writing-through to main memory). Furthermore, the left cache (the current "writer") sets its own dirty bit to `1`, thereby assuming responsibility for subsequent write-through to main memory.
+
+Therefore, many writes can be performed by the caches prior to updating main memory, and the "writing responsibility" can also shift among the caches/cores prior to updating main memory as well. Only when the "last writer" finally replaces its own cache block, does the write-through to main memory occur.
+
+The ***benefits*** of using a dirty bit in a cache-coherent system are therefore:
+  * Write-through to main memory only occurs when the cache block is replaced (with many writes occurring prior to this point)
+  * Reads from main memory only occur if ***no*** cache block is in the "dirty" state (i.e., dirty bit set to `0`), otherwise the pending-update value is simply snooped from the bus instead
+
+### 10. Write-Update Optimization 2: Bus Writes
