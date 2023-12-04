@@ -444,3 +444,52 @@ Similarly, if the right cache retrieves block `C` from main memory, it can write
 Therefore, only shared/common cache blocks require shared (i.e., coherent) read and write operations accordingly. This is particularly advantageous for program-specific data, which otherwise does not require sharing across the cores (e.g., thread-specific stack data).
 
 ### 11. Write-Update Optimization Quiz and Answers
+
+<center>
+<img src="./assets/19-042A.png" width="650">
+</center>
+
+Consider a system comprised of two cores, which uses the write-update protocol for cache coherence.
+
+Furthermore, the program running on this two-core system is comprised of the following (which occur simultaneously on each core):
+
+| Sequence(s) | Core `0` | Core `1` |
+|:--:|:--:|:--:|
+| `1` | `WR A` | (N/A) |
+| `2` | (N/A) | `RD A` |
+| `3` through `2001` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
+| `2002` | `REPLACE A` | `REPLACE A` |
+
+Upon conclusion of this program, what are the following resulting counts with respect to shared memory block `A`?
+
+| System operation | Without optimizations | With dirty bit optimization only | With both dirty bit and shared bit optimizations |
+|:--:|:--:|:--:|:--:|
+| How many bus uses? | | |
+| How many writes to main memory? | | |
+
+***Answer and Explanation***:
+
+| System operation | Without optimizations | With dirty bit optimization only | With both dirty bit and shared bit optimizations |
+|:--:|:--:|:--:|:--:|
+| How many bus uses? | `1001` | `1002` | `1002` |
+| How many writes to main memory? | `1000` | `1` | `1` |
+
+In the case of ***no optimization***:
+  * Sequence `1` (i.e., `WR A`) uses the bus, as well as writes-through to main memory
+  * Sequence `2` uses the bus (i.e., `RD A`), however, it does not write-through to main memory (it is a read miss only)
+  * Generalizing in this manner, in the subsequent `999` write/read pairs (i.e., sequences `3` through `2001`), each core `0` write operation (i.e., `WR A`) will add an additional `999` writes-through to main memory and an additional `999` uses of the bus, however, the core `1` read operations (i.e., `RD A`) will neither use the bus nor write to main memory, as these subsequent read operations will ***not*** be cache misses
+  * On subsequent replacement of `A` in the respective caches (i.e., sequence `2002`), the state is already up-to-date (i.e., relative to main memory)
+
+In the case of only ***dirty bit optimization***:
+  * The write operations on core `0` (i.e., ` WR A`) will be localized to core `0`'s own cache, with only a ***single*** write to main memory on replacement of the cache block (i.e., sequence `2002`)
+  * With respect to the uses, all `1000` write operations on core `0` (i.e., `WR A`) will be broadcasted on the bus, however, only the initial read operation on core `1` (i.e., `RD A`) requires reading from the bus (with the subsequent `999` occurring as read hits). Furthermore, the replacement of the cache block for `A` in core `0` incurs an additional use of the bus to read from main memory.
+
+Therefore, overall, there is one additional bus use in the dirty bit optimization, however, this reduces writes dramatically (i.e., down from `1000` to `1`).
+
+Lastly, in the case of both ***dirty bit and shared bit optimizations***:
+  * By inspection, on initial write operation on core `0` (i.e., `WR A`), core `0` is the sole accessor of this block (correspondingly setting shared bit to `0` accordingly), however, on subsequent read operation on core `1` (i.e., `RD A`), sharing commences between the cores with respect to memory location `A`. Consequently, the resulting counts are identical to those for "only dirty bit optimization" case.
+
+***N.B.*** The additional shared bit optimization is only effective in bypassing bus accesses when cache blocks are ***isolated*** to specific cores (however, if this *is* the case, then there will be a corresponding dramatic reduction in bus accesses as well).
+
+### 12. Write-Invalidate Snooping Coherence
+
