@@ -821,3 +821,43 @@ After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcas
   * Furthermore, the shared (S) and modified (M) states cannot exist simultaneously in the system (i.e., across caches) for a given shared cache block.
 
 ### 19. Avoiding Memory Writes on Cache-to-Cache Transfers
+
+<center>
+<img src="./assets/19-062.png" width="650">
+</center>
+
+Recall (cf. Section 17) that in the MSI (modified-shared-invalid) protocol, even with an ***intervention*** mechanism, it is still necessary to write to main memory every time a cache-to-cache transfer occurs.
+
+For example, consider the following sequence:
+  * 1 - Cache `C1` has the cache block in the modified (M) state
+  * 2 - Cache `C2` attempts to read the data via bus request, and then cache `C1` responds with the data accordingly
+    * Rather than writing directly to the cache block, both caches `C1` and `C2` transition to the shared (S) state
+    * Furthermore, the main memory also necessarily updated at the point of cache `C1` broadcasting the data.
+  * 3 - Cache `C2` writes (correspondingly broadcasting an invalidation, since it already has the data at this point)
+    * Cache `C1` transitions to the invalid (I) state
+    * Cache `C2` transitions to the modified (M) state
+
+At this point, the data is effectively simply moving around the caches, however, this also necessitates a ***main memory write*** to main memory in the process (furthermore, note that main memory does not have as much bandwidth as the caches do). Note that this is ***problematic***.
+
+The sequence continues as follows:
+  * 4 - Cache `C1` reads, and then cache `C2` responds with the data
+    * Rather than writing directly to the cache block, both caches `C1` and `C2` transition to the shared (S) state
+    * Furthermore, the main memory also necessarily updated at the point of cache `C1` broadcasting the data. As before, this ***main memory write*** is again ***problematic***.
+  * 5 - Cache `C3` reads, and then the main memory responds with the data
+    * Because both caches `C1` and `C2` are in the shared (S) state at this point, the data is consequently provided via ***main memory read*** (even though the valid/clean data *is* otherwise available in the other two caches), which is ***problematic***.
+  * 6 - Cache `C4` reads, and so on...
+
+Therefore:
+  * It is desirable to avoid updates to main memory (i.e., ***main memory writes***) as long as there is at least one cache in the system holding the most recent value of the cache block.
+  * Similarly, it is desirable to avoid ***main memory reads*** if there is at least one cache in the system holding the most recent value of the cache block.
+
+***N.B.*** Recall that using main memory bandwidth is undesirable, because it is a lot lower than cache bandwidth, and furthermore main memory read/write operations are also correspondingly more expensive with respect to power consumption and higher latency.
+
+In order to resolve this issue, a ***non-modified (non-M)*** version of the cache block must be made available among one of the caches, which is responsible for the following:
+  * Providing the most recent cache-block data to the other caches (thereby bypassing excessive main memory reads)
+  * Eventually writing the block to main memory (thereby bypassing excessive main memory writes)
+
+To designate such a cache, it is necessary to determine which of the cache blocks in the shared (S) state holding the copy of the data is responsible for these duties; this is handled via additional state **owned (O)** (i.e,. owner of this cache block).
+  * The owned (O) state resembles that of the shared (S) state, except that whenever there is a request for the cache-block data, the cache block in the owned (O) state is responsible for fulfilling this request. Furthermore, if the the cache block in the owned (O) state replaces the cache block from the cache, then it subsequently writes the cache-block data to main memory.
+
+### 20. MOSI (Modified-Owned-Shared-Invalid) Coherence
