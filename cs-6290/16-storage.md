@@ -252,7 +252,7 @@ One popular approach is to combine magnetic disks with flash-drive technology.
 Magnetic disks are characterized by the following:
   * benefits:
     * cheap to manufacture (i.e., low cost per-unit gigabyte)
-    * can be built to have large capacities (on the order of terabytes in a relatively small physical pacakge)
+    * can be built to have large capacities (on the order of terabytes in a relatively small physical package)
   * drawbacks:
     * very power-consumptive (it spins constantly, thereby consuming power even when not accessing data)
     * slow due to mechanical movement of its constituent parts

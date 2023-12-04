@@ -1112,7 +1112,7 @@ On completion of the initial/upstream memory-access operation (as in the figure 
 <img src="./assets/14-089.png" width="550">
 </center>
 
-Reviewing the blocking vs. non-blocking caches comparatively (as in the figure shown above), the effectively "induced inactivity" due to the fetching from memory (as denoted by orange in the figure shown above) is reduced in the latter, by a fairly substantial amount (e.g., effectivley a halving), thereby decreasing the corresponding `Miss Penalty` accordingly.
+Reviewing the blocking vs. non-blocking caches comparatively (as in the figure shown above), the effectively "induced inactivity" due to the fetching from memory (as denoted by orange in the figure shown above) is reduced in the latter, by a fairly substantial amount (e.g., effectively a halving), thereby decreasing the corresponding `Miss Penalty` accordingly.
 
 Accordingly, if three, four, etc. such overlaps can be achieved, there is a corresponding improvement in the `Miss Penalty` reduction in a non-blocking cache relative to an equivalent blocking cache. This property is appropriately called **memory-level parallelism** (i.e., a memory-access operation is effectively "parallelized" relative to a single/blocking operation, with corresponding reduction in `Miss Penalty` latency).
 
@@ -1145,7 +1145,7 @@ This begs the question: How many such miss status handling registers (MHSRs) are
 <img src="./assets/14-092A.png" width="650">
 </center>
 
-What kind of application experiences ***no*** benefit from miss-under-miss suport? (Select all that apply.)
+What kind of application experiences ***no*** benefit from miss-under-miss support? (Select all that apply.)
   * An application which *always* hits in the cache
     * `APPLIES` - If the application does not experience any cache misses, then by definition there is no benefit gained from miss-under-miss support.
   * An application which experiences a *miss* every `1000` instructions

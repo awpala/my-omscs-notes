@@ -315,9 +315,9 @@ With respect to data distribution (i.e., of the array data on initialization), d
 
 Furthermore, on achievement of a correct data distribution implementation, what is the relative addition of lines with respect to ***synchronization*** (i.e., ensuring that the initialization is completed prior to reading the array data) in the following (equivalent) implementations? (Select `MORE` or `EQUAL`.)
    * In message passing?
-    * `EQUAL`
+     * `EQUAL`
    * In shared memory?
-    * `MORE`
+     * `MORE`
 
 ***Explanation***:
 
@@ -484,11 +484,11 @@ Correspondingly, to add additional simultaneous multi-threading (SMT) to such a 
       * There is either a separate/dedicated (i.e., per-thread) ROB, each with its own commit point (in which case each thread commits its respective instructions in-order)
         * Because the Rob is a large, complex hardware component, it is ***not*** typical to follow this approach in practice.
       * Or otherwise all instructions are ***interleaved*** in-order in the same/shared ROB, in which case instructions from one thread cannot be committed until all upstream instructions from the other thread(s) have been committed first
-        * This is adds a slight performance hit, however, it is comparatively much simpler to implement in hardware.
+        * This adds a slight performance hit, however, it is comparatively much simpler to implement in hardware.
         * ***N.B.*** If the instructions are sent from the reservation stations (RSes) in-order, then the corresponding "composite" order (i.e., across the threads) is still effectively "in-order," however, the additional inefficiency is introduced if this ordering is out-of-order (i.e., among the threads) in a "blocking" manner (however, while this is slightly sub-optimal, in practice it is not a major issue).
       * As before, on instruction ***commit***, the result is deposited into the **architecture register file (ARF)**, which in turn is broadcasted back to the registration stations (RSes), however, these architecture register files (ARFs) are correspondingly separate/dedicated (i.e., per-thread), along with corresponding **read ports** to update the registration stations (RSes) on broadcast
 
-Therefore, the complexity of simultaneous multi-threading (SMT) is largely introduced by multiple program counters, as well as the (hardware-based) logic immediately preceding the action of the reservation stations (RSes). Otherwise, the more complicated aspects of the processor's hardware (e.g., the reservation stations [RSes] themselves, results broadcasting, etc.) is largely unaffected by this change, and accordingly the cost is only incremental (i.e., rather than an effective doubling for a two threads, tripling for three threads, etc.).
+Therefore, the complexity of simultaneous multi-threading (SMT) is largely introduced by multiple program counters, as well as the (hardware-based) logic immediately preceding the action of the reservation stations (RSes). Otherwise, the more complicated aspects of the processor's hardware (e.g., the reservation stations [RSes] themselves, results broadcasting, etc.) is largely unaffected by this change, and accordingly the cost is only incremental (i.e., rather than an effective doubling for two threads, tripling for three threads, etc.).
 
 ### 19. Simultaneous Mult-Threading (SMT), Data Cache, and Translation Look-Aside Buffer (TLB)
 

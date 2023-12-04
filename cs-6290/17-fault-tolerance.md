@@ -535,7 +535,7 @@ In sequence 1→2A (no repair), the `MTTF` is as follows:
 ```
 MTTF = (MTTF_1 / N) + [MTTF_1 / (N - 1)]
 ```
-  * ***N.B.*** In this case, `MTTF` is generally ***worse*** than the single-disk equivalent (i.e., `MTTF_1`). Therefore, RAID 4 is not an advisable configuration/strategy if there is no intention to perform repairs (i.e,. the reliability is *decreased* in this case!).
+  * ***N.B.*** In this case, `MTTF` is generally ***worse*** than the single-disk equivalent (i.e., `MTTF_1`). Therefore, RAID 4 is not an advisable configuration/strategy if there is no intention to perform repairs (i.e., the reliability is *decreased* in this case!).
 
 Conversely, in sequence 1→2B (with repair), the `MTTF` is as follows:
 
