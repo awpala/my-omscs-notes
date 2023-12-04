@@ -657,6 +657,68 @@ Given the complementary strengths and weaknesses of these two protocols, which o
 
 Because write-invalidate protocols are commonly used, this will be the primary focus for the remainder of this lesson accordingly.
 
-## 16. Coherence Protocols
+## 16-25. Cache Coherence Protocols
 
-### 17. Modified-Shard-Invalid (MSI) Coherence
+### 16. Modified-Shared-Invalid (MSI) Coherence
+
+<center>
+<img src="./assets/19-056.png" width="650">
+</center>
+
+One of the simpler cache coherence protocols is called **MSI (modified-shared-invalid)** (as in the figure shown above).
+
+In the MSI protocol, a given cache block can be in one of the three following ***states***:
+  * **invalid (I)** → the cache block is either present in the cache without a valid bit being set, or the cache block is absent from the cache
+  * **shared (S)** → the cache block can be subsequently readily read, however, subsequent write operations require additional actions
+    * Furthermore, a ***local read*** to a cache block that is in the shared state maintains the block in the shared state.
+  * **modified (M)** → both local reads and local writes are localized to the cache block, without necessitating any additional actions (i.e., broadcasts)
+
+Since MSI is an invalidation-based protocol, in the ***modified (M)*** state, there is certainty that there are ***no*** other existing copies of the data in other caches, thereby allowing writes to be localized.
+  * This is equivalent to having a valid bit of `1` and a dirty bit of `1` in an equivalent uni-processor cache.
+
+***N.B.*** While the valid bit and dirty bit tracking here is relatively trivial, subsequent coherence protocols (discussed later in this lesson) will involve additional states, and corresponding bits to track appropriately.
+
+In the ***invalid (I)*** state, this is equivalent to the valid bit being set to `0` (i.e., effectively, the cache block is absent).
+  * On ***local write*** operation, the cache block is moved from the invalid (I) state to the modified (M) state. This requires a corresponding write request is broadcasted onto the bus (i.e., a ***write miss*** has occurred).
+
+If a cache block is in the ***modified (M)*** state while another cache is observed to have broadcasted a write operation onto the bus, then this will move the cache block to the ***invalid (I)*** state.
+  * This correspondingly occurs when ***snooping*** the write operation on the bus.
+  * Furthermore, an obligatory ***write-back*** of the cache block occurs, in order to transition the cache block to the invalid (I) state accordingly.
+    * This in turn requires a delay of the data that would otherwise be sent to the write request, until the write-back operation concludes. This delay can be accomplished by one of two ways:
+      * 1 - Cancel the request, write-back, move to invalid (I) state, and then repeat the request (i.e., fetch the data from main memory).
+      * 2 - On observation of a write request on the bus, suppress the memory response and simply feed the data to the processor.
+    * In either case, before moving from modified (M) state to invalid (I) state, it is imperative to write-back the data to main memory and to ensure that the write request (if it is a write miss) fetches the ***new*** data (i.e., rather than the stale data from main memory).
+
+If a cache block is in the ***modified (M)*** state while another cache is observed to have broadcasted a read operation onto the bus, then this will move the cache block to the ***shared (S)*** state (which is equivalent to having a valid bit set to `1` and a dirty bit set to `0`).
+  * This correspondingly occurs when ***snooping*** the read operation on the bus.
+  * Furthermore, an obligatory ***write-back*** of the cache block occurs, in order to transition the cache block to the shared (S) state accordingly.
+    * ***N.B.*** The shared (S) disallows a write-back originating from the shared (S) state (since it only permits read operations).
+    * This in turn requires a delay of the data that would otherwise be sent to the read requester, until the write-back operation concludes. This delay can be accomplished by one of two ways:
+      * 1 - Cancel the request, write-back, move to shared (S) state, and then repeat the request (i.e., fetch the data from main memory).
+      * 2 - On observation of a read request on the bus, suppress the memory response and simply feed the data to the processor during the transition into the shared (S) state.
+
+If a cache block is in the ***invalid (I)*** state while a local read operation occurs, then this will move the cache block to the ***shared (S)*** state.
+  * This correspondingly broadcasts a read operation onto the bus.
+  * ***N.B.*** The read data may originate either from main memory or from another cache (which was presumably in the modified [M] state at the point of local read of the current cache).
+  * On reaching the shared (S) state, subsequent reads can be performed locally.
+
+If a cache block is in the ***shared (S)*** state while another cache is observed to have broadcasted a write operation onto the bus, then this will move the cache block to the ***invalid (I)*** state.
+  * This correspondingly occurs when ***snooping*** the write operation on the bus.
+  * There is no additional action required, as the block is "clean" for practical purposes, and does not require a corresponding write-back, but rather this is equivalent to effectively "resetting" the valid bit to `0`. However, on subsequent read, it will be placed on the bus again (thereby moving the cache block back to the shared [S] state).
+
+***N.B.*** Snooping a read operation on the bus while in the shared (S) state does not require any additional actions, as the shared (S) state is not otherwise impacted by other "sharers" among the caches, if all such "sharers" are simply reading the data. Furthermore, local reads in the shared (S) state are also localized to the cache block accordingly as well.
+
+If a cache block is in the ***shared (S)*** state while a local write operation occurs, then this will move the cache block to the ***modified (M)*** state.
+  * This correspondingly broadcasts an invalidation onto the bus.
+
+***N.B.*** The situation is slightly different when moving the invalid (I) state to the modified (M) state on local write vs. moving from the shared (S) state to the modified (M) state on local write.
+  * When starting from the invalid (I) state, the write request is broadcasted on the bus in order to retrieve the cache block for writing to it.
+  * Conversely, when starting from the shared (S) state, the cache block is necessarily already "in possession" (i.e., most up-to-date copy), because any subsequent write operation would have precluded the cache block's transition into the shared (S) state in the first place. At this point, writing simply entails broadcasting the invalidation accordingly (but without otherwise requiring an request of the "updated" data).
+
+Lastly, if a cache block is in the ***invalid (I)*** state, any snooping (i.e., of either read or write operations) will not change the state of the cache block.
+
+***N.B.*** With respect to invalidation:
+  * While in the ***shared (S)*** state, it does not matter whether a write request or invalidation is snooped on the bus, as in either case, this will simply result in a transition to the ***invalid (I)*** state.
+  * Furthermore, while in the ***modified (M)*** state, a write operation will be observed when a write request is snooped on the bus, rather than an invalidation. This is because a cache block in the modified (M) state effectively implies that all other caches are in the invalid (I) state with respect to this cache block; correspondingly, if any other cache attempts to write, this will necessitate broadcasting a write request onto the bus accordingly (rather than simply broadcasting an invalidation).
+
+### 17. Cache-to-Cache Transfers
