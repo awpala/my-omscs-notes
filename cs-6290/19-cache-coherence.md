@@ -861,3 +861,26 @@ To designate such a cache, it is necessary to determine which of the cache block
   * The owned (O) state resembles that of the shared (S) state, except that whenever there is a request for the cache-block data, the cache block in the owned (O) state is responsible for fulfilling this request. Furthermore, if the the cache block in the owned (O) state replaces the cache block from the cache, then it subsequently writes the cache-block data to main memory.
 
 ### 20. MOSI (Modified-Owned-Shared-Invalid) Coherence
+
+<center>
+<img src="./assets/19-063.png" width="650">
+</center>
+
+In the **MOSI (modified-owned-shared-invalid)** coherence protocol, the states **modified (M)**, **shared (S)**, and **invalid (I)** are as before (cf. Section 16), however, there is now the additional state **owned (O)**. 
+
+The corresponding transition from ***modified (M)*** state to ***owned (O)*** state is characterized as follows:
+  * A read is snooped from another cache, but the data is otherwise provided as before, resulting in a transition to the ***owned (O)*** state (***rather*** than to the shared [S] state, as done previously in the MSI protocol)
+  * Furthermore, when providing the data, the main memory is ***not*** accessed anymore
+
+Furthermore, the ***owned (O)*** state is similar to the shared (S) state, except for the following deviations:
+  * If a read is snooped from another cache, then the data continues to be provided by the cache in the owned (O) state (***similarly*** to role of the modified [M] state previously in the MSI protocol)
+  * A write-back to main memory is performed if the cache block is replaced by the cache in the owned (O) state
+    * At this point, all of the other caches will be in either the invalid (I) or shared (S) states, and will be unaware that the cache block is dirty and pending replacement
+
+By contrast, in the MSI protocol:
+  * The ***modified (M)*** state implies ***exclusive*** read and write access to the cache block (i.e., all other caches contain a ***dirty*** versions of the same cache block in question).
+  * The ***shared (S)*** state implies ***shared*** read access to the cache block, and correspondingly that this cache block is ***clean*** accordingly (i.e., the main memory has a clean copy of the data at this point).
+
+Now, the ***owned (O)*** state effectively ***combines*** the properties of the modified (M) and shared (S) states from the MSI protocol, whereby read access is ***shared***, however, the cache block is ***dirty*** (i.e., the cache in the owned [O] state is now responsible for handling write-backs to main memory for corresponding updates).
+
+### 21. M(O)SI Inefficiency
