@@ -377,7 +377,7 @@ However, once the block in the right cache is eventually ***replaced***, then th
 
 Another interesting situation arises when, given a dirty block in the right cache, a subsequent write operation is performed by the left cache (i.e., `WR A = 30`, as in the figure shown above).
 
-In this case, the left cache broadcasts this write operation onto the bus, and the right cache consequently snoops this write operation, updating its cache block accordingly (along with setting the appropriate dirty bit value of `0`, indicating that the write cache is no longer responsible for writing-through to main memory). Furthermore, the left cache (the current "writer") sets its own dirty bit to `1`, thereby assuming responsibility for subsequent write-through to main memory.
+In this case, the left cache broadcasts this write operation onto the bus, and the right cache consequently snoops this write operation, updating its cache block accordingly (along with setting the appropriate dirty bit value of `0`, indicating that the right cache is no longer responsible for writing-through to main memory). Furthermore, the left cache (the current "writer") sets its own dirty bit to `1`, thereby assuming responsibility for subsequent write-through to main memory.
 
 Therefore, many writes can be performed by the caches prior to updating main memory, and the "writing responsibility" can also shift among the caches/cores prior to updating main memory as well. Only when the "last writer" finally replaces its own cache block, does the write-through to main memory occur.
 
@@ -493,3 +493,71 @@ Lastly, in the case of both ***dirty bit and shared bit optimizations***:
 
 ### 12. Write-Invalidate Snooping Coherence
 
+Recall (cf. Section 6) that there are two snooping-based approaches to coherence: Write-updated (discussed in the previous sections) and write-invalidate. This section will discuss the latter.
+
+<center>
+<img src="./assets/19-043.png" width="650">
+</center>
+
+Recall (cf. Section 10) the optimized write-update cache coherence system (as in the figure shown above), which includes a dirty bit and a shared bit on each cache block.
+
+A **write-invalidate protocol** involves broadcasting write operations over the bus in order to be detected by the other cores, however, rather than ***updating*** their respective copies of the data, they simply ***invalidate*** their respective cache block entries.
+
+<center>
+<img src="./assets/19-044.png" width="650">
+</center>
+
+Initially, the left core performs a read operation on shared location `A` (i.e., `RD A`, as in the figure shown above), with corresponding read from main memory.
+
+<center>
+<img src="./assets/19-045.png" width="650">
+</center>
+
+Next, the right core performs a write operation on shared location `A` (i.e., `WR A ← 1`, as in the figure shown above). This results in a cache miss with respect to the right cache, and consequent broadcast to the bus. However, it is not necessary to write-through to memory with this value (i.e., `1`), but rather the left core snoops the value on broadcast with respect to shared location `A`. Furthermore, in following the write-invalidate protocol, rather than updating the value in the cache block of the left cache, the left cache simply sets the valid bit to `0` for this block, thereby rendering it ***invalidated*** accordingly (i.e., subsequent read attempt will yield a cache miss).
+  * ***N.B.*** On each such write-and-broadcast operation, the right cache will have a shared bit value of `0`, because up to this point, all other copies of the value (i.e., in the left cache) will be invalidated in such a manner. Therefore, in general, a write operation will render the writing cache as being in the non-shared (i.e., shared bit value of `0`) accordingly.
+
+<center>
+<img src="./assets/19-046.png" width="650">
+</center>
+
+Next, the left core performs another read operation on shared location `A` (i.e., `RD A`, as in the figure shown above). In a write-update protocol, the read would simply be a cache hit localized to the left core; however, in a write-invalidate protocol, since the previous value is invalidated, there is a corresponding ***broadcast*** on the bus (i.e., resulting from a cache miss), which is correspondingly snooped by the right cache, since the main memory has not been written-through to yet. Furthermore, since the right cache has a dirty bit of `1`, it will also broadcast the updated value (i.e., `1`) to the bus, resulting in an update of the value in the left cache's block, as well as corresponding update in both cache's shared bits to `1`.
+
+Therefore, with respect to the write-invalidate protocol, observe the following:
+  * Similarly to the write-update protocol, localized reads can yield successive cache hits.
+  * However, unlike in the write-update protocol, a write-update from another core's cache will invalidate the other cache's value, resulting in a cache miss and consequent read from the bus. Therefore, in the write-invalidate protocol, there is a ***disadvantage*** whereby a read miss occurs on all reading cache whenever another cache writes.
+
+However, the write-invalidate protocol also provides a distinct ***advantage*** whenever writing to the ***same*** block multiple times (as demonstrated in the following sequences).
+
+<center>
+<img src="./assets/19-047.png" width="650">
+</center>
+
+Next, the right core performs another write operation on shared location `A` (i.e., `WR A ← 2`, as in the figure shown above). The right core broadcasts this value, thereby invalidating the cache block in the left cache (i.e., its valid bit is set to `0`). Furthermore, the shared bit of the right cache is set to `0`.
+
+<center>
+<img src="./assets/19-048.png" width="650">
+</center>
+
+Next, the right core performs another write operation on shared location `A` (i.e., `WR A ← 3`, as in the figure shown above). Since the previous write operation invalidated the local copy of the data in the left cache, the write cache can simply perform this write operation "locally" with respect to `A` accordingly, without otherwise requiring broadcasting.
+
+Therefore, in such a scenario where the cores alternatively perform successive write operations on a shared memory location, only the ***first*** such write operation must be broadcasted when following the write-invalidate protocol, as subsequent write operations are localized accordingly. Conversely, in the write-update protocol, each such successive write operation requires a corresponding broadcast in order to update the other cache(s) accordingly.
+
+<center>
+<img src="./assets/19-049.png" width="650">
+</center>
+
+Furthermore, as with write-invalidate (cf. Section 10), an analogous optimization occurs when writing ***simultaneously*** on both cores with respect to two ***different*** shared locations (as in the figure shown above).
+  * The left cache can perform localized reads and writes with respect to shared location `B`, and similarly the right cache can perform localized reads and writes with respect to shared location `C`, with neither caches performing necessary broadcasts.
+  * In this manner, cache blocks which are isolated to a given core will be "localized," similarly to that which occurs when following the write-invalidate protocol.
+
+Therefore:
+  * The write-update protocol generally yields more hits, but results in more broadcasts when repeatedly updating.
+  * Conversely, the write-invalidate protocol generally generates misses on all reading caches upon occurrence of an initial write operation, however, it allows to localize writes on subsequent write operations.
+
+Note that in the write-update protocol, the second property of cache coherence (cf. Section 4) is ensured by updating ***all*** of the copies of the data in all caches (and thus on subsequent write operation, all copies are up-to-date, thereby returning the updated value of the most recent write operation). Conversely, the write-invalidate protocol ensures this property by write-invalidating ***all*** other copies of the data, thereby forcing an update of the data to the new version across all other caches.
+  * Therefore, in following either protocol, read operations will yield the ***correct*** data in both protocols.
+
+Furthermore, with respect to the third property of cache coherence, in the write-invalidate protocol, this is ensured by snooping on the bus, which orders the write operations according to their successive occurrences on the shared bus.
+  * In fact, proceeding in this manner, at any given time, only the ***last*** version of the value effectively "survives" in all of the caches (i.e., a write operation invalidates all other copies otherwise, forcing all of the reading caches to read this last value accordingly).
+
+### 13. Write-Update vs. Write-Invalidate Quiz and Answers
