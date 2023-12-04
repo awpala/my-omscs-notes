@@ -638,3 +638,25 @@ Next, on initial read operation in core `1` (i.e., `RD A` via sequence `1001`), 
 
 ### 15. Update vs. Invalidate Coherence
 
+<center>
+<img src="./assets/19-055.png" width="650">
+</center>
+
+Consider a comparison of write-update vs. write-invalidate protocols with respect to applications as follows:
+
+| Application behavior | Write-update | Write-invalidate |
+|:--:|:--:|:--:|
+| Burst of write operations to a single address (e.g., repeated calculations to yield a final result) | Each write operation sends an update. This is ***bad***, because ***each*** update results in competition for the bus, thereby adding bus contention and yielding slower write operations (due to increased energy consumption). | Only the ***first*** write operation invalidates, while the subsequent write operations yield cache hits which are localized. This results in ***good*** performance. |
+| Write different words to the same cache block (e.g., initializing the cache block) which is shared across cores | An update is sent for ***each*** word that is written. This is ***bad***, because one cache line worth of write operations can result in multiple corresponding updates per write operation. | Only the ***first*** write operation invalidates, while the subsequent write operations yield cache hits which are localized. This results in ***good*** performance. |
+| Producer-consumer pairs (i.e., `WR → RD`) (e.g., a buffer used in successive read/write operations) | The producer sends updates on ***each*** data modification, and then the consumer subsequently yields cache hits. In this scenario, the write-update protocol is well suited and yields ***good*** performance accordingly. | The producer invalidates the data, and the consumer consequently yields cache misses (which in turn require retrieving the data again from the producer, and so on). This results in ***bad*** performance. |
+
+Given the complementary strengths and weaknesses of these two protocols, which one is used in practice? Modern processors in fact generally use the ***write-invalidate protocol***. However, the reason for this is not necessarily due to the factors in the table shown above,but rather its advantages are particularly amplified in the ***scenario*** of when a thread moves to another core (i.e., the operating system moves the thread across cores).
+  * In this scenario, following the write-update protocol, the old core's cache will continue to be updated until the cache block is replaced in that (now-former) core, even after the thread has been moved to another core. This results in ***horrible*** performance accordingly.
+  * Conversely, following the write-invalidate protocol, the ***first*** write to each of the cache blocks will incur a cost to invalidate the old copy, however, subsequent bus traffic will be eliminated. This results in ***good*** performance, as it effectively eliminates subsequent interaction with the old core on movement of the thread to the new core.
+    * ***N.B.*** Since such "thread movement" is common in modern processors, the write-update is practically advantageous for this reason accordingly.
+
+Because write-invalidate protocols are commonly used, this will be the primary focus for the remainder of this lesson accordingly.
+
+## 16. Coherence Protocols
+
+### 17. Modified-Shard-Invalid (MSI) Coherence
