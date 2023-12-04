@@ -884,3 +884,26 @@ By contrast, in the MSI protocol:
 Now, the ***owned (O)*** state effectively ***combines*** the properties of the modified (M) and shared (S) states from the MSI protocol, whereby read access is ***shared***, however, the cache block is ***dirty*** (i.e., the cache in the owned [O] state is now responsible for handling write-backs to main memory for corresponding updates).
 
 ### 21. M(O)SI Inefficiency
+
+<center>
+<img src="./assets/19-064.png" width="650">
+</center>
+
+Recall (cf. Section 20) that the ***owned (O)*** state can be use to avoid inefficiency in the MSI (modified-shared-invalid) protocol pertaining to superfluous main memory access. However, there is ***another*** inefficiency which is common to ***both*** the MSI (modified-shared-invalid) and MOSI (modified-owned-shared-invalid) protocols, pertaining to **thread-private data** (i.e., data which is only exclusively accessed by a ***single*** thread).
+
+The following are characterized by thread-private data:
+  * All of the run-time data in a single-threaded program
+  * The thread-specific stacks of a multi-threaded (i.e., parallel) program
+
+The corresponding inefficiency in thread-private data arises when ***reading*** the data in a given thread, and then subsequently ***writing*** data to this thread (which otherwise uses this data ***exclusively***).
+  * In both MSI and MOSI protocols, the corresponding sequence of the cache's states transitions is as follows: invalid (I) → read miss → shared (S) → broadcast invalidation (in order to write) → modified (M)
+    * This is performed for ***every*** block of cache data (i.e., in ***each*** thread)
+  * Conversely, in an equivalent uni-processor, the analogous "state transitions" (i.e., bit values via valid/`V` and dirty/`D` bits) are as follows: `V = 0` → read miss → `V = 1` → cache hit on write → `D = 1`
+    * ***N.B.*** This does not incur the additional "invalidation" step, which adds additional bus overhead (which in turn is comparatively much slower than a cache hit).
+
+***N.B.*** It is not inherently bad to incur an "invalidation overhead" penalty if the data ***is*** indeed shared, however, when the data is ***not*** shared, then this is simply a superfluous overhead.
+
+In order to avoid unnecessary "invalidation overhead," a new state called ***exclusive (E)*** is additionally introduced, as discussed in the next section.
+
+### 22. The Exclusive (E) State
+
