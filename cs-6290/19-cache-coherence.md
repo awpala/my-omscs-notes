@@ -386,3 +386,61 @@ The ***benefits*** of using a dirty bit in a cache-coherent system are therefore
   * Reads from main memory only occur if ***no*** cache block is in the "dirty" state (i.e., dirty bit set to `0`), otherwise the pending-update value is simply snooped from the bus instead
 
 ### 10. Write-Update Optimization 2: Bus Writes
+
+The second optimization to the write-update protocol involves minimizing bus writes.
+
+<center>
+<img src="./assets/19-034.png" width="650">
+</center>
+
+After adding the dirty bit (cf. Section 9), there is substantially less writing-through to main memory. However, in this configuration, the bus still receives ***all*** of the traffic for ***all*** write operations, thereby similarly adding a ***bottleneck*** to the system accordingly (as in the figure shown above).
+
+These bus-broadcasted write operations are necessary, however, because copies of the data must be state-synchronized among the cores/caches. Nevertheless, there is still a possible optimization involving eliminating unnecessary/superfluous writes when there are no other cores pending an updated value to be read.
+
+<center>
+<img src="./assets/19-035.png" width="650">
+</center>
+
+In order to achieve this additional optimization, a **shared bit** (`S`) is added to each cache block accordingly. This shared bit indicates whether or not the cache block is shared with other cores' cache blocks.
+
+<center>
+<img src="./assets/19-036.png" width="650">
+</center>
+
+Suppose that the left cache performs a read operation on shared location `A` (i.e., `RD A`, as in the figure shown above). For this purpose, an additional ***line*** is added to the bus. When the read operation goes to main memory, the other core snoops this read operation, and if the other core also contains this same cache block, then the other core pulls this line to state `1` (and setting its own shared bit to `1` accordingly).
+
+In this initial read, the line is not in a shared state, so the left cache simply writes the value `0` in its shared bit.
+
+<center>
+<img src="./assets/19-037.png" width="650">
+</center>
+
+Next, the right cache performs a write operation on shared location `A` (i.e., `WR A ← 17`, as in the figure shown above). This results in a cache miss and corresponding broadcast of the write operation on the bus. Furthermore, on snooping of the write operation from the right cache, the left cache correspondingly sets its shared bit to `1` in addition to updating its own cache block value accordingly. Additionally, the left cache also pulls the line to state `1`, which is correspondingly recorded as shared bit value `1` in the right cache accordingly as well.
+
+So far, the demonstrated behavior is comparable to that without the additional line and shared bit being present. So, then, what is the benefit of this additional line and shared bit?
+
+<center>
+<img src="./assets/19-038.png" width="650">
+</center>
+
+The benefit is more discernable when a subsequent write operation is performed by the right cache (i.e., `WR A ← 20`, as in the figure shown above).
+
+The right cache detects a shared bit value of `1`, and broadcasts the write operation accordingly (as before), with corresponding updates in the value in both caches (i.e., `20`).
+
+<center>
+<img src="./assets/19-039.png" width="650">
+</center>
+
+When the left block performs a subsequent read operation on block `B` (i.e., `RD B`, as in the figure shown above), it adds the new cache block accordingly.
+
+<center>
+<img src="./assets/19-040.png" width="650">
+</center>
+
+Now, when the left cache subsequently performs a write operation on block `B` (i.e., `WR B = 5`, as in the figure shown above), setting the dirty bit to `1` accordingly. Furthermore, since the shared bit is set to `0`, it simply writes the value locally only (i.e, `B` is not pertinent to any other caches at this point), ***without*** otherwise broadcasting to the bus.
+
+Similarly, if the right cache retrieves block `C` from main memory, it can write values to this block (i.e., `17`, `65`, etc.) independently of the other cores, as long as the shared bit is set to `0`.
+
+Therefore, only shared/common cache blocks require shared (i.e., coherent) read and write operations accordingly. This is particularly advantageous for program-specific data, which otherwise does not require sharing across the cores (e.g., thread-specific stack data).
+
+### 11. Write-Update Optimization Quiz and Answers
