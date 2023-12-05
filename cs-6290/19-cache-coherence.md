@@ -1061,3 +1061,61 @@ Note that with a directory-based protocol, the caches still have the ***same*** 
   * In this manner, many requests can travel to their corresponding individual "slices," for subsequent management by the directory.
 
 ### 28. Directory Entry
+
+<center>
+<img src="./assets/19-072.png" width="650">
+</center>
+
+A **directory entry** is comprised of the following:
+  * One ***dirty bit*** (`D`), indicating that the cache block is ***possibly*** dirty in at least one cache within the system
+  * One ***presence bit*** (`P`) bit per cache which indicates whether the cache block is ***definitely*** present within the cache in question
+    * A bit value of `1` indicates that the cache in question has a copy of the cache block
+    * A bit value of `0` indicates that the cache in question does not have a copy of the cache block (in an otherwise non-invalid [non-I] state)
+
+Consider an eight-core system, along with two of its caches `0` and `1` (as in the figure shown above), and with the corresponding directory for block `B`.
+
+<center>
+<img src="./assets/19-073.png" width="650">
+</center>
+
+Initially, the directory is neither dirty nor present among any of its cores' cache block entries (as in the figure shown above).
+
+<center>
+<img src="./assets/19-074.png" width="650">
+</center>
+
+On operation `RD B` from cache `0` (as in the figure shown above), since the cache block is not present, the read request is sent (i.e., `RREQB`).
+  * ***N.B.*** In snooping, this read request is broadcasted onto the bus, and since no other cache contains the cache-block data, the main memory would provide the data instead.
+
+The read request is sent to the home slice of the block (whose address is determined by examining the request), and upon locating the directory for block `B`, it is determined that cache block `B` is not currently present in the system.
+
+The data is consequently fetched from main memory and sent back to cache `0`. Furthermore, this transmission also includes the corresponding updated state information, which in this case updates cache `0` to the exclusive (E) state (i.e., there is exclusive access, since there are currently no other "sharers").
+  * On receipt of the transmission, cache `0` updates its state to exclusive (E) accordingly, and stores the current cache-block data for `B`.
+  * Furthermore, on transmission, the directory updates its present bit for cache `0` to bit value `1`, and also updates its dirty bit to `1` (because it sent the data with exclusive access to cache `0`).
+    * ***N.B.*** Setting the dirty bit to `1` does not induce a write-back, but rather it indicates that it will be necessary to later determine if such a subsequent write-back is indeed necessary.
+
+This begs the question: Why does this work better than a bus? The reason is that while cache `0` manages its state and data via the directory in this manner, cache `1` is able to perform analogous ***independent*** operations with respect to another block (and corresponding directory slice), without otherwise violating coherence.
+
+<center>
+<img src="./assets/19-075.png" width="650">
+</center>
+
+Conversely, if cache `1` attempts a write request (i.e., `WREQB`) operation `WR B` temporally closely to the read operation of cache `0` (as in the figure shown above), then the **directory controller** arbitrates the ordering of these requests (in this case, processing the read request from cache `0` first accordingly).
+
+<center>
+<img src="./assets/19-076.png" width="650">
+</center>
+
+On completion of the read request from cache `0`, the write request from cache `1` commences subsequently (as in the figure shown above).
+  * ***N.B.*** In snooping, this write request is broadcasted onto the bus by cache `1`, and on snooping by cache `0`, cache `0` is transitioned to the invalidated (I) state via corresponding broadcasted invalidation, and cache `1` correspondingly transitions to the modified (M) state (in fact, these are the same state updates which occur in this directory-based scenario, too).
+
+Since the directory detects that cache block `B` is present (i.e., via corresponding presence bit value of `1` for cache `0`) and possibly dirty (i.e., via corresponding dirty bit value of `1`), the directory consequently forwards this write request to the present cache(s) (i.e,. cache `0` in this particular case). Correspondingly, cache `0` detects this request (analogously to snooping from the bus), and since cache `0` is in the exclusive (E) state with respect to cache block `B`, it can elect to either respond with the data or to simply "passively" acknowledge the invalidation, back to the directory controller (which in turn records that invalidation of the data copy has been concluded).
+
+On receipt of ***acknowledgement*** by the directory, the directory updates the corresponding present bit(s) to bit value `0`. Furthermore, if the data was not also transmitted, then the dirty bit can be reset to `0` (not indicated in the figure shown above).
+
+The data is subsequently fetched from main memory, and then transmitted to cache `1`, along with corresponding update of the dirty bit to `1` and the present bit for cache `1` to bit value `1`. Correspondingly, cache `1`  transitions to state modified (M), and stores the cache-block data accordingly.
+
+In this manner, coherence is still maintained in a directory-based system. However, rather than broadcasting *all* requests among *all* caches, instead the directory mediates these requests, and correspondingly interacts with the pertinent caches on a "strictly necessary" basis only (i.e., those which may be currently interacting with the cache block in question).
+  * In this example, since the cache block `B` is only shared by two cores (`0` and `1`), no other cores are affected by these operations. Correspondingly, this greatly reduces the "traffic" relative to an equivalent snooping-based system-wide-broadcasting cache.
+
+### 29. Directory Example
