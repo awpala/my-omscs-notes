@@ -780,7 +780,7 @@ After cache `C2` performs operation `READ X` (i.e., sequence `S2`), this similar
 
 After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcasts an invalidation on the bus, which correspondingly transitions cache `C2` to the invalid (I) state (i.e., cache `C2` can no longer be read until an updated copy of the cache block is retrieved from cache `C1`). Furthermore, on writing, cache `C1` transitions to the modified (M) state.
 
-### 18. MSI (Modified-Shared-Invalid) Quiz 2 and Answers
+### 19. MSI (Modified-Shared-Invalid) Quiz 2 and Answers
 
 <center>
 <img src="./assets/19-061A.png" width="650">
@@ -820,7 +820,7 @@ After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcas
   * If a cache block is in the shared (S) state, then all other caches sharing this cache block must be in either the shared (S) state or in the invalid (I) state.
   * Furthermore, the shared (S) and modified (M) states cannot exist simultaneously in the system (i.e., across caches) for a given shared cache block.
 
-### 19. Avoiding Memory Writes on Cache-to-Cache Transfers
+### 20. Avoiding Memory Writes on Cache-to-Cache Transfers
 
 <center>
 <img src="./assets/19-062.png" width="650">
@@ -860,7 +860,7 @@ In order to resolve this issue, a ***non-modified (non-M)*** version of the cach
 To designate such a cache, it is necessary to determine which of the cache blocks in the shared (S) state holding the copy of the data is responsible for these duties; this is handled via additional state **owned (O)** (i.e,. owner of this cache block).
   * The owned (O) state resembles that of the shared (S) state, except that whenever there is a request for the cache-block data, the cache block in the owned (O) state is responsible for fulfilling this request. Furthermore, if the the cache block in the owned (O) state replaces the cache block from the cache, then it subsequently writes the cache-block data to main memory.
 
-### 20. MOSI (Modified-Owned-Shared-Invalid) Coherence
+### 21. MOSI (Modified-Owned-Shared-Invalid) Coherence
 
 <center>
 <img src="./assets/19-063.png" width="650">
@@ -883,7 +883,7 @@ By contrast, in the MSI protocol:
 
 Now, the ***owned (O)*** state effectively ***combines*** the properties of the modified (M) and shared (S) states from the MSI protocol, whereby read access is ***shared***, however, the cache block is ***dirty*** (i.e., the cache in the owned [O] state is now responsible for handling write-backs to main memory for corresponding updates).
 
-### 21. M(O)SI Inefficiency
+### 22. M(O)SI Inefficiency
 
 <center>
 <img src="./assets/19-064.png" width="650">
@@ -905,5 +905,30 @@ The corresponding inefficiency in thread-private data arises when ***reading*** 
 
 In order to avoid unnecessary "invalidation overhead," a new state called ***exclusive (E)*** is additionally introduced, as discussed in the next section.
 
-### 22. The Exclusive (E) State
+### 23. The Exclusive (E) State
 
+<center>
+<img src="./assets/19-065.png" width="650">
+</center>
+
+The **exclusive (E)** state is characterized as follows (in the context of the previously seen states):
+
+| State | Access level of cache-block data | Cache block status | Comment |
+|:--:|:--:|:--:|:--:|
+| Modified (M) | Exclusive with respect to both read and write | Dirty | The cache is responsible for responding with the data as well as updating main memory |
+| Shared (S) | Shared with respect to read | Clean | The cache can only read the data, but is not otherwise responsible for providing the data to other caches or for updating main memory |
+| Owned (O) | Shared with respect to read | Dirty | The cache is responsible for updating main memory and for providing the data to other caches (thereby avoiding superfluous main memory writes otherwise) |
+| Exclusive (E) | Exclusive with respect to both read and write | Clean | Since the cache-block data is still clean, it is not necessary to update main memory |
+
+Correspondingly, note the state transitions among the various protocols in the following sequence (i.e., read followed by write):
+
+| Sequence | Operation | MSI* | MOSI* | MESI** | MOESI** |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `RD A` | I → S (read miss incurred) | I → S (read miss incurred) | I → E (read miss incurred) | I → E (read miss incurred) |
+| `S2` | `WR A` | S → M (broadcast invalidation) | S → M (broadcast invalidation) | E → M (write hit) | E → M (write hit) |
+  * ****N.B.*** The MOSI protocol yields the same state transitions as the MSI protocol, because the owned (O) state is not particularly advantageous in this sequence. However, the owned (O) state can later prevent superfluous main memory accesses subsequently to the write operation (i.e., `WR A`) if other cores commence reading the data.
+  * *****N.B.*** On read, in both the MESI and MOESI protocols, it is detected that the reading of the cache block is exclusively performed by the cache, thereby transitioning to the exclusive (E) state accordingly (i.e., rather than to the shared [S] state). Furthermore, on subsequent write, since this access is now exclusive, there is no need to broadcast to other caches, but rather write-through can be performed ***locally*** instead (however, there is a corresponding transition to the modified [M] state, because the block is now dirty). This effectively creates a sequence of state transitions which is analogous to a uni-processor equivalent (i.e., one which does not otherwise share the data).
+
+Observe that while the MSI and MOSI protocols incur ***two*** bus accesses, MES and MOESI only incur ***one*** bus access on read.
+
+### 24. MOESI (Modified-Owned-Exclusive-Shared-Invalid) Quiz and Answers
