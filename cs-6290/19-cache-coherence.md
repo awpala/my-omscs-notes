@@ -1119,3 +1119,63 @@ In this manner, coherence is still maintained in a directory-based system. Howev
   * In this example, since the cache block `B` is only shared by two cores (`0` and `1`), no other cores are affected by these operations. Correspondingly, this greatly reduces the "traffic" relative to an equivalent snooping-based system-wide-broadcasting cache.
 
 ### 29. Directory Example
+
+Now, consider a slightly more detailed directory example, in order to demonstrate how the directory does not become a bottleneck where a bus otherwise would.
+
+<center>
+<img src="./assets/19-077.png" width="650">
+</center>
+
+Consider a system comprised of four cores (i.e., caches `0`, `1`, `2`, and `3`) (as in the figure shown above), each with its own private cache. Furthermore, each cache has an associated slice (i.e., slices `X`, `Y`, `Z`, and `W`, respectively) of the directory (for simplicity, assume that each slice simply tracks its respectively associated cache block).
+
+<center>
+<img src="./assets/19-078.png" width="650">
+</center>
+
+First, simultaneous operations occur in the system as follows (as in the figure shown above):
+  * `WR X` in cache `0` with respect to cache block `X`, which results in a cache miss that is sent to slice `X`
+  * `RD Y` in cache `1` with respect to cache block `Y`, which results in a cache miss that is sent to slice `Y`
+  * `RD Y` in cache `2` with respect to cache block `Y`, which transmits through the network during this time
+    * ***N.B.*** In the case of the other two operations, the cache blocks are co-located with the respective directories and corresponding home slice.
+
+Since neither directory contains the requested block, the cache states are updated as follows:
+  * Cache `0` transitions to the modified (M) state on write, with dirty bit set to bit value `1` (and corresponding presence bit for cache `0` set to `1`) accordingly in the directory
+  * Cache `1` transitions to the exclusive (E) state on read, with dirty bit set to bit value `1` (and corresponding presence bit for cache `1` set to `1`) accordingly in the directory
+
+<center>
+<img src="./assets/19-079.png" width="650">
+</center>
+
+On arrival of the transmission of operation `RD Y` from cache `2` (as in the figure shown above), simultaneously as cache `1` is still being accessed via operation `WR X`.
+
+Since `RD Y` yields a cache miss, it is sent to the corresponding directory for cache block `Y`. Since the directory for cache block `Y` indicates a presence bit of value `1` for cache `1` (as well as indicating that it may be dirty, per dirty bit value `1`), the request is consequently forwarded to cache `1` as a read request accordingly.
+
+Cache `1` subsequently acknowledges this request and transitions to the shared (S) state accordingly, relaying back the acknowledgement (but without otherwise sending the data, thereby updating the dirty bit to bit value `0` accordingly in the directory for cache block `Y`). The data is then forwarded to cache `2`, with corresponding update of the presence bit to bit value `1` for cache `2` entry in the directory for cache block `Y`.
+
+On receipt of the data, cache `2` transitions to the shared (S) state.
+
+Meanwhile, the operation `WR X` arrives at the directory for cache block `X`. Since this is a write request, an invalidation is sent from cache `1` to the directory for cache block `X`, which in turn forwards the write request to cache `0`.
+
+Cache `0` responds with the data due to the write request, correspondingly transitioning itself to the invalid (I) state accordingly. Correspondingly, the dirty bit is set to bit value `0` in the directory for cache block `X`, and furthermore the presence bit is set to bit value `1` for the cache `1` entry in the directory for cache block `X`. Furthermore, cache `1` received the data and transitions to the modified (M) state with respect to cache block `X`.
+
+***N.B.*** Observe that `WR X` and `RD Y` proceed largely independently of each other (aside from slight network delays). Therefore, provided that the network is reliable and robust (i.e,. containing many different paths among these caches and directories), these requests effectively do not "compete" with each other.
+
+<center>
+<img src="./assets/19-080.png" width="650">
+</center>
+
+Lastly, consider a subsequent operation whereby `WR Y` in cache `3` with respect to cache block `Y` occurs, which results in a cache miss that is sent to slice `Y` (as in the figure shown above).
+
+At this point, the directory for cache block `Y` detects that caches `1` and `2` may contain the data, and that none of them are dirty (see the penultimate figure). 
+
+Accordingly, the directory for cache block `Y` sends an invalidation request to caches `1` and `2` (denoted by green arrows in the figure shown above). Consequently, these two respective caches transition to the invalid (I) state accordingly with respect to cache block `Y`. Furthermore, they respond with acknowledgements of these invalidations back to the directory for cache block `Y` accordingly (denoted by magenta arrows in the figure shown above).
+
+On receipt of the acknowledgements, the directory sets the corresponding presence bits to `1` for caches `1` and `2` accordingly.
+
+Now that there are no more "sharers" for cache block `Y`, the data is correspondingly sent to the writer (i.e., cache `3`).
+  * The presence bit is set to bit value `1` for cache `3` in the directory for cache block `Y`, and the dirty bit is also set to bit value `1` (indicating that the block may be dirty on subsequent write).
+  * Cache `3` transitions to the modified (M) state on receipt of the cache-block data as the now-current writer cache.
+
+***N.B.*** As before, this write operation only involves the "minimally necessary" caches (i.e., caches `1`, `2`, and `3`) and directory (i.e., that of cache block `Y`) to manage the cache block in question (i.e., `Y`), without otherwise impacting any other caches or directories (which are otherwise free to perform separate, independent operations from this).
+
+### 30. Directory MOESI Quiz and Answers
