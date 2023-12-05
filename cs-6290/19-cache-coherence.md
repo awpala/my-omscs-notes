@@ -1224,5 +1224,30 @@ Provide the counts of the corresponding operations according to MOESI protocol a
 
 ***N.B.*** In general, the requests sent to the directory (i.e., `5` total) is equal to the subsequent responses sent from the directory (i.e., `5` total). Similarly, every message (i.e., `4` total) receives a corresponding response (i.e., `4` total), because the directory must enforce consensus (i.e., transition to invalidated among the "sharers") before granting exclusive write access to the "writer" cache.
 
-## 31. Cache Misses with Coherence
+## 31-32. Cache Misses with Coherence
 
+### 31. Introduction
+
+<center>
+<img src="./assets/19-083.png" width="650">
+</center>
+
+Consider now a reprise of the topic of **cache misses** (cf. Lesson 14, i.e, the "three Cs"), in the additional context of cache coherence.
+
+Recall that there are three types of cache misses (i.e., "three Cs") as follows:
+  * **compulsory** → the cache block is accessed for the first time (i.e., it was not previously in the cache), thereby yielding a cache miss "by default"
+  * **capacity** → the cache block does not fit in a cache of the given size
+  * **conflict** → the cache has insufficient associativity to accommodate the incoming cache block
+
+Additionally, cache coherence gives rise to a fourth type of cache miss: A **coherence** miss.
+  * For example, when reading a cache block, another cache may write to the cache block, and consequently on subsequent read attempt, a "read miss" results due to coherence.
+
+Therefore, be advised that in a multi-core, coherent system there are ***four Cs (4 Cs)*** of concern with respect to cache misses!
+
+Furthermore, within the scope of ***coherence misses***, there are the following two ***sub-types***:
+  * 1 - **true sharing** → different cores/caches access the ***same*** data, thereby necessitating coherence-related interventions/protocols (which in turn yield coherence misses)
+    * ***N.B.*** This is the type of coherence miss demonstrated thus far in this lesson.
+  * 2 - **false sharing** → different cores/caches access ***different*** data in the ***same*** cache block
+    * In this case, while there is no "true" data sharing, as far as coherency is concerned, actions are performed at a granularity level of a cache block (i.e., two items being present in the same block makes them behave as the "same" item in this regard).
+
+### 32. False Sharing Quiz and Answers
