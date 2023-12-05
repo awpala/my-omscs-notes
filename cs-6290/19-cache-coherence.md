@@ -753,9 +753,9 @@ additional complex hardware in order to implement it. However, this is neverthel
 
 Consider a system comprised of two cores, each with private caches, which follow the MSI (modified-shared-invalid) coherence protocol.
 
-Initially, cache block `X` is only present in memory, but not in either private cache.
+Initially, cache block `X` is only present in main memory, but not in either private cache.
 
-Designate the appropriate state (i.e., M, S, or I) in the following sequence of operations:
+Designate the appropriate final state (i.e., M, S, or I) in the following sequence of operations:
 
 | Sequence | Cache `C1` | Cache `C2` | State of `X` in cache `C1` | State of `X` in cache `C2` |
 |:--:|:--:|:--:|:--:|:--:|
@@ -771,7 +771,7 @@ Designate the appropriate state (i.e., M, S, or I) in the following sequence of 
 | `S2` | (N/A) | `READ X` | `S` | `S` |
 | `S3` | `WRITE X` | (N/A) | `M` | `I` |
 
-Since the cache block `X` is only present in memory initially, then both caches are initialized to state I.
+Since the cache block `X` is only present in main memory initially, then both caches are initialized to the invalid (I) state.
 
 After cache `C1` performs operation `READ X` (i.e., sequence `S1`), this will transition the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C1`.
   * ***N.B.*** Even though cache block `X` is not truly "shared" at this point, the shared (S) state effectively denotes a "clean" block, which is only read at this point.
@@ -788,9 +788,9 @@ After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcas
 
 Consider the same (cf. Section 17) system comprised of two cores, each with private caches, which follow the MSI (modified-shared-invalid) coherence protocol.
 
-Initially, cache block `X` is only present in memory, but not in either private cache.
+Initially, cache block `X` is only present in main memory, but not in either private cache.
 
-Designate the appropriate state (i.e., M, S, or I) in the following sequence of operations:
+Designate the appropriate final state (i.e., M, S, or I) in the following sequence of operations:
 
 | Sequence | Cache `C1` | Cache `C2` | State of `X` in cache `C1` | State of `X` in cache `C2` |
 |:--:|:--:|:--:|:--:|:--:|
@@ -806,7 +806,7 @@ Designate the appropriate state (i.e., M, S, or I) in the following sequence of 
 | `S2` | (N/A) | `WRITE X` | `I` | `M` |
 | `S3` | `WRITE X` | (N/A) | `M` | `I` |
 
-Since the cache block `X` is only present in memory initially, then both caches are initialized to state I.
+Since the cache block `X` is only present in main memory initially, then both caches are initialized to the invalid (I) state.
 
 After cache `C1` performs operation `READ X` (i.e., sequence `S1`), this will transition the corresponding cache block from invalid (I) state to shared (S) state with respect to cache `C1`.
   * ***N.B.*** Even though cache block `X` is not truly "shared" at this point, the shared (S) state effectively denotes a "clean" block, which is only read at this point.
@@ -929,6 +929,44 @@ Correspondingly, note the state transitions among the various protocols in the f
   * ****N.B.*** The MOSI protocol yields the same state transitions as the MSI protocol, because the owned (O) state is not particularly advantageous in this sequence. However, the owned (O) state can later prevent superfluous main memory accesses subsequently to the write operation (i.e., `WR A`) if other cores commence reading the data.
   * *****N.B.*** On read, in both the MESI and MOESI protocols, it is detected that the reading of the cache block is exclusively performed by the cache, thereby transitioning to the exclusive (E) state accordingly (i.e., rather than to the shared [S] state). Furthermore, on subsequent write, since this access is now exclusive, there is no need to broadcast to other caches, but rather write-through can be performed ***locally*** instead (however, there is a corresponding transition to the modified [M] state, because the block is now dirty). This effectively creates a sequence of state transitions which is analogous to a uni-processor equivalent (i.e., one which does not otherwise share the data).
 
-Observe that while the MSI and MOSI protocols incur ***two*** bus accesses, MES and MOESI only incur ***one*** bus access on read.
+Observe that while the MSI and MOSI protocols incur ***two*** bus accesses, MESI and MOESI only incur ***one*** bus access on read.
 
 ### 24. MOESI (Modified-Owned-Exclusive-Shared-Invalid) Quiz and Answers
+
+<center>
+<img src="./assets/19-067A.png" width="650">
+</center>
+
+Consider a system comprised of three cores, each with private caches, which follow the MOESI (modified-owned-exclusive-shared-invalid) coherence protocol.
+
+Initially, cache block `X` is only present in main memory, but not in any private cache.
+
+Designate the appropriate final state (i.e., M, O, E, S, or I) in the following sequence of operations:
+
+| Sequence | Cache `C0` | Cache `C1` | Cache `C2` | State of `X` in cache `C0` | State of `X` in cache `C1` | State of `X` in cache `C2` |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `READ X` | (N/A) | (N/A) | | | |
+| `S2` | (N/A) | `READ X` | (N/A) | | | |
+| `S3` | (N/A) | (N/A) | `READ X` | | | |
+| `S4` | (N/A) | `WRITE X` | (N/A) | | | |
+
+***Answer and Explanation***:
+
+| Sequence | Cache `C0` | Cache `C1` | Cache `C2` | State of `X` in cache `C0` | State of `X` in cache `C1` | State of `X` in cache `C2` |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `READ X` | (N/A) | (N/A) | `E` | `I` | `I` |
+| `S2` | (N/A) | `READ X` | (N/A) | `S` | `S` | `I` |
+| `S3` | (N/A) | (N/A) | `READ X` | `S` | `S` | `S` |
+| `S4` | (N/A) | `WRITE X` | (N/A) | `I` | `M` | `I` |
+
+Since the cache block `X` is only present in main memory initially, then all three caches are initialized to the invalid (I) state.
+
+After cache `C0` performs operation `READ X` (i.e., sequence `S1`), cache `C0` detects that it is the only cache possessing a copy of the cache-block data. Furthermore, since cache `C0` is a read operation, rather than transitioning to the modified (M) state, instead cache `C0` transitions to the exclusive (E) state. Furthermore, the other two caches remain in the invalid (I) state.
+
+After cache `C1` performs operation `READ X` (i.e., sequence `S2`), cache `C1` detects that it does *not* have exclusive access to the cache block, so it proceeds to the shared (S) state as usual. Furthermore, cache `C0` snoops cache `C1` as another "reader" cache, and correspondingly transitions itself to the shared (S) state accordingly (i.e., its access is no longer exclusive). Cache `C2` still remains in the invalid (I) state.
+
+After cache `C2` performs operation `READ X` (i.e., sequence `S3`), cache `C2` detects that it does *not* have exclusive access to the cache block (i.e., the other two cache blocks are also "sharers"), so it proceeds to the shared (S) state as usual. Furthermore, caches `C0` and `C1` snoop cache `C2` as another "reader" cache, and correspondingly remain in the shared (S) state accordingly (i.e., their respective accesses are not exclusive).
+
+After cache `C1` performs operation `WRITE X` (i.e., sequence `S4`), because it was previously in the shared (S) state, it now broadcasts an invalidation onto the bus, and subsequently transitions itself to the modified (M) state. Furthermore, caches `C0` and `C2` both detect this invalidation and correspondingly transition themselves to the invalid (I) state accordingly.
+  * ***N.B.*** Generally, after a write operation, the resulting transition is to a modified (M) state by the writing cache, and a corresponding transition to the invalid (I) state among the reading caches accordingly.
+
