@@ -1179,3 +1179,50 @@ Now that there are no more "sharers" for cache block `Y`, the data is correspond
 ***N.B.*** As before, this write operation only involves the "minimally necessary" caches (i.e., caches `1`, `2`, and `3`) and directory (i.e., that of cache block `Y`) to manage the cache block in question (i.e., `Y`), without otherwise impacting any other caches or directories (which are otherwise free to perform separate, independent operations from this).
 
 ### 30. Directory MOESI Quiz and Answers
+
+<center>
+<img src="./assets/19-082A.png" width="650">
+</center>
+
+Consider a system comprised of four cores (numbered `0` through `3`, inclusive), each with private caches.
+
+The directory for cache block `A` is present in slice `0`, and initially none of the caches contains cache-block data for `A`.
+
+Furthermore, the following sequence of operations occurs:
+
+| Sequence | Core | Operation |
+|:--:|:--:|:--:|
+| `S1` | `C0` | `RD A` |
+| `S2` | `C0` | `WR A` |
+| `S3` | `C1` | `RD A` |
+| `S4` | `C2` | `RD A` |
+| `S5` | `C3` | `RD A` |
+| `S6` | `C0` | `WR A` |
+
+***N.B.*** Assume that only cache block `A` is accessed (i.e., it is replaced in the context of cohesion, but not otherwise).
+
+Provide the counts of the corresponding operations according to MOESI protocol as follows:
+  * Requests sent from the caches to the directory?
+    * `5`
+  * How many of these requests are subsequently forwarded as messages? (***N.B.*** This count will not necessarily be the same as that of the previous.)
+    * `4`
+  * How many replies are subsequently received by the directory?
+    * `4`
+  * How many subsequent responses are then sent by the directory?
+    * `5`
+
+***Explanation***:
+
+| Sequence | Operation | States of caches: {`0`,`1`,`2`,`3`} | Requests from caches to directory (cumulative) | Forwarded requests (cumulative) | Replies received by directory (cumulative) | Responses sent from directory (cumulative) | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `C0: RD A` | {`I`,`I`,`I`,`I`} | `1` | (N/A) | (N/A) | `1` | When cache `0` initially reads, it sends a request to the directory. The directory neither forwards nor receives any replies, but rather simply sends the response. |
+| `S2` | `C0: WR A` | {`E`,`I`,`I`,`I`} | (N/A) | (N/A) | (N/A) | (N/A) | When cache `0` subsequently writes, cache `0` receives cache block `A` in an ***exclusive (E)*** state, and can consequently perform writing without otherwise notifying other caches. |
+| `S3` | `C1: RD A` | {`O`,`S`,`I`,`I`} | `2` | `1` | `1` | `2` | When cache `1` subsequently reads, it sends a request to the directory. Consequently, the directory forwards a request to the only cache currently involved in sharing cache block `A`, i.e., cache `0`. Core `0` subsequently replies with the data, acknowledging that the cache block can now be read. On receipt of this reply, the directory sends this response to cache `1` accordingly. At this point, cache `1` transitions to the ***shared (S)*** state with respect to cache block `A`, and cache `0` transitions to the ***owned (O)*** state with respect to cache block `A` (which is a "downgrade" from otherwise transitioning to the modified [M] state). |
+| `S4` | `C2: RD A` | {`O`,`S`,`S`,`I`} | `3` | (N/A) | (N/A) | `3` | When cache `2` subsequently reads, it sends a request to the directory. At this point, the directory cannot unambiguously identify the owner of the cache-block data, however, it does not need to forward a request at this point since the cache block is effectively no longer "visible" in the directory in its current "dirty" state. Accordingly, it also does not receive any replies, but rather simply sends a response back to cache `2` via main memory. (***N.B.*** Here, there is no benefit conferred by the owned [0] state of core `0`, because the directory cannot unambiguously identify core `0` as the source of this data at this point; this would otherwise require a more sophisticated directory implementation, which provides further optimizations beyond simply a dirty bit and presence bits.) Cache `2` correspondingly transitions to the shared (S) state. |
+| `S5` | `C3: RD A` | {`O`,`S`,`S`,`S`} | `4` | (N/A) | (N/A)| `4` | When cache `3` subsequently reads, it sends a request to the directory; an analogous series of updates occur as for the previous sequence (cf. sequence `S4`). At this point, the directory cannot unambiguously identify the owner of the cache-block data, however, it does not need to forward a request at this point since the cache block is effectively no longer "visible" in the directory in its current "dirty" state. Accordingly, it also does not receive any replies, but rather simply sends a response back to cache `3` via main memory. Cache `3` correspondingly transitions to the shared (S) state.  |
+| `S6` | `C0: WR A` | {`E`,`I`,`I`,`I`} | `5` | `4` | `4` | `5` | | Finally, when cache `0` subsequently writes, since cache `0` is in the owned (O) state, it cannot write without otherwise notifying the directory. This write is an invalidation request, because cache `0` possesses the data in question; correspondingly, these invalidations are forwarded to the other three caches (which all share the cache block at this point), originating from cache `0`. Furthermore, the directory relays three corresponding responses from these respective caches accordingly; these caches in turn transition to the invalidated (I) state on acknowledgement reply back to the directory. Finally, the directory sends the response back to cache `0`, thereby allowing cache `0` to commence writing; cache `0` correspondingly transitions to the exclusive (E) state as the dedicated "writer" cache at this point. |
+
+***N.B.*** In general, the requests sent to the directory (i.e., `5` total) is equal to the subsequent responses sent from the directory (i.e., `5` total). Similarly, every message (i.e., `4` total) receives a corresponding response (i.e., `4` total), because the directory must enforce consensus (i.e., transition to invalidated among the "sharers") before granting exclusive write access to the "writer" cache.
+
+## 31. Cache Misses with Coherence
+
