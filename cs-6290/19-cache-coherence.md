@@ -168,7 +168,7 @@ There are several ***strategies*** for achieving cache coherence, as follows:
       * ***N.B.*** In this strategy, the shared bus can become ***bottlenecking***.
     * 4D - **directory-based coherence** → each cache block is assigned an ***ordering point*** (called a **directory** in the context of cache coherence), with different ordering points generally being used by different cache blocks (i.e., for a given cache block, all accessed are ordered by the ***same*** entity, but otherwise these entities are different/distinct among the blocks, thereby precluding any possible contention)
 
-Strategies 4A and 4B ensure that subsequent reads receive updated values produced by writes (i.e., the second coherence property, cf. Section 4). Strategies 4C and 4B ensure that all cores observe the same ordering of the writes (i.e., the third coherence property, cf. Section 4).
+Strategies 4A and 4B ensure that subsequent reads receive updated values produced by writes (i.e., the second coherence property, cf. Section 4). Strategies 4C and 4D ensure that all cores observe the same ordering of the writes (i.e., the third coherence property, cf. Section 4).
   * Accordingly, it is necessarily to select one strategy apiece among the pairs 4A/4B and 4C/4D, with all possible combinations being generally useful.
 
 ## 7-15. Write-Update and Write-Invalidate Coherence
@@ -977,7 +977,6 @@ After cache `C1` performs operation `WRITE X` (i.e., sequence `S4`), because it 
 <img src="./assets/19-069A.png" width="650">
 </center>
 
-
 Consider the same (cf. Section 25) system comprised of three cores, each with private caches.
 
 Initially, cache block `A` is only present in main memory, but not in either private cache. Correspondingly, all caches are initialized to the invalid (I) state accordingly.
@@ -1025,3 +1024,24 @@ Consider the per-sequence analysis as follows:
 ## 26-30. Directory-Based Coherence
 
 ### 26. Introduction
+
+<center>
+<img src="./assets/19-070.png" width="650">
+</center>
+
+Recall (cf. Section 6) that in addition to snooping, **directory-based coherence** is another strategy for ensuring write-ordering in a coherent system.
+
+To better contextualize directory-based coherence, first consider the key ***disadvantage*** of **snooping** (i.e., broadcasting of requests on the bus and establishing ordering of write operations): Snooping requires a ***single*** bus (which handles cache misses, coherence requests that broadcast invalidations [including perhaps frivolously], etc.), which eventually becomes a ***bottleneck***.
+  * Consequently, snooping does ***not*** perform well once the multi-core system exceeds 8 to 16 cores or so. Beyond this point, most of the cores are idle, pending further broadcasted requests on the bus.
+
+Therefore, in order to resolve this bottleneck, a **non-broadcast network** is needed to manage the requests. However, this begs the following questions:
+  * How are these requests observed (i.e., those which require such observation)?
+    * For example, if a given cache's block is in the shared (S) state, it *must* observe write requests for other caches for consequent transition to the invalid (I) state (i.e., to avoid incoherence). 
+  * How are requests orders to the ***same*** cache block?
+    * For example, how to manage write requests originating from different cores, if the request can be made on different parts of the network?
+
+The corresponding structure which handles these requests is called a **directory**, as discussed in the next section.
+
+### 27. Directory
+
+
