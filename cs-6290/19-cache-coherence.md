@@ -1044,4 +1044,20 @@ The corresponding structure which handles these requests is called a **directory
 
 ### 27. Directory
 
+<center>
+<img src="./assets/19-071.png" width="650">
+</center>
 
+The **directory** is a distributed structure which spans across the cores, rather than being centralized (i.e., as is the case with the bus). Correspondingly, not all requests *necessarily* must proceed through the *same* part of the directory.
+
+Each (fractional) "***slice***" of the directory serves a set of blocks, whereby each such "slice" is the part of the directory which is adjacent to a particular core (correspondingly, different cache blocks are served by these distributed "slices" accordingly, thereby achieving a relatively higher bandwidth via this pseudo-independent operation of this "disjoint set" of blocks).
+  * Each "slice" contains ***one*** **entry** for each cache block that is served from this "slice."
+  * Each such **entry** in turn tracks which caches in the system contain the cache block in a non-invalid (non-I) state
+    * ***N.B.*** A cache block in the invalid (I) state is effectively absent from the cache otherwise.
+  * The ***order*** of accesses for a particular cache block is determined by the "***home slice***" for that cache block
+    * The "home slice" contains the entry for the cache block in question, and accessed to the ***same*** cache block are effectively serialized by virtue of how they access this entry.
+
+Note that with a directory-based protocol, the caches still have the ***same*** states as those occurring with snooping (cf. Section 16). However, now, when a request to read or to write is sent, rather than broadcasting this request on a bus, instead the request is transmitted via the network to the directory.
+  * In this manner, many requests can travel to their corresponding individual "slices," for subsequent management by the directory.
+
+### 28. Directory Entry
