@@ -970,3 +970,58 @@ After cache `C2` performs operation `READ X` (i.e., sequence `S3`), cache `C2` d
 After cache `C1` performs operation `WRITE X` (i.e., sequence `S4`), because it was previously in the shared (S) state, it now broadcasts an invalidation onto the bus, and subsequently transitions itself to the modified (M) state. Furthermore, caches `C0` and `C2` both detect this invalidation and correspondingly transition themselves to the invalid (I) state accordingly.
   * ***N.B.*** Generally, after a write operation, the resulting transition is to a modified (M) state by the writing cache, and a corresponding transition to the invalid (I) state among the reading caches accordingly.
 
+
+### 25. MESI, MOSI, and MOESI Quiz and Answers
+
+<center>
+<img src="./assets/19-069A.png" width="650">
+</center>
+
+
+Consider the same (cf. Section 25) system comprised of three cores, each with private caches.
+
+Initially, cache block `A` is only present in main memory, but not in either private cache. Correspondingly, all caches are initialized to the invalid (I) state accordingly.
+
+Furthermore, the following sequence of operations occurs:
+
+| Sequence | Core | Operation |
+|:--:|:--:|:--:|
+| `S1` | `C1` | `RD A` |
+| `S2` | `C1` | `WR A` |
+| `S3` | `C2` | `RD A` |
+| `S4` | `C2` | `WR A` |
+| `S5` | `C3` | `RD A` |
+| `S6` | `C1` | `RD A` |
+| `S7` | `C2` | `RD A` |
+
+***N.B.*** Assume that only cache block `A` is accessed (i.e., it is replaced in the context of cohesion, but not otherwise).
+
+Provide the counts of the corresponding operations according to protocol as follows:
+
+| Operation | MESI | MOSI | MOESI |
+|:--:|:--:|:--:|:--:|
+| Main memory reads | | | |
+| Bus requests | | | |
+
+***Answer and Explanation***:
+
+| Operation | MESI | MOSI | MOESI |
+|:--:|:--:|:--:|:--:|
+| Main memory reads | `2` | `1` | `1` |
+| Bus requests | `5` | `6` | `5` |
+
+Consider the per-sequence analysis as follows:
+
+| Sequence | Operation | Main memory read (cumulative counts) | Bus request (cumulative counts) | Cache `C1` state | Cache `C2` state | Cache `C3` state | Comment |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| `S1` | `C1: RD A` | MESI (1), MOSI (1), MOESI (1) | MESI (1), MOSI (1), MOESI (1) | `S` or `E` | `I` | `I` | A read miss occurs, and consequently cache `C1` transitions to the shared (S) or (if available) exclusive (E) state. Furthermore, a memory read begets an obligatory bus request. |
+| `S2` | `C1: WR A` | (N/A) | MOSI (2) | `M` | `I` | `I` | If cache `C1` was previously in the shared (S) state, then an invalidation is broadcasted on the bus (i.e., other outstanding sharers are indeterminate at this point), and cache `C1` subsequently transitions to the modified (M) state. Otherwise, with protocols having the exclusive (E) state available, cache `C1` simply transitions directly to the modified (M) state (without corresponding memory read or bus request). There is no main memory read in either case. |
+| `S3` | `C2: RD A` | (N/A)  | MESI (2), MOSI (3), MOESI (2) | `S` or `O` | `S` | `I` | When cache `C2` reads cache block `A`, cache `C1` must supply this data accordingly, which requires a bus request to read in from the other caches. Consequently, cache `C1` is "downgraded" to the shared (S) state or (if available) the owned (O) state, while cache `C2` transitions to the shared (S) state accordingly. Furthermore, assuming there is ***intervention*** (i.e., on supply of the data value from cache `C1` to cache `C2`), then there is no corresponding read from main memory. |
+| `S4` | `C2: WR A` | (N/A) | MESI (3), MOSI (4), MOESI (3) | `I` | `M` | `I` | Since cache `C2` was previously in the shared (S) state, on write, there is a corresponding broadcast of invalidation onto the bus accordingly, and cache `C2` subsequently transitions to the modified (M) state. Consequently, cache `C1` transitions to the invalid (I) state. In this case, the availability of the exclusive (E) state is not advantageous, since there is no exclusive access of the cache block (i.e., the cache block was already "owned" by cache `C1` by this point). |
+| `S5` | `C3: RD A` | (N/A) | MESI (4), MOSI (5), MOESI (4) | `I` | `S` or `O` | `S` | On read, cache `C3` transitions to the shared (S) state. Furthermore, a read miss occurs, yielding a corresponding bus access. Furthermore, cache `C2` transitions to either the shared (S) state or (if available) the owned (O) state. In this case (similarly to before, cf. sequence `S3`), cache `C2` supplies the data to cache `C3`, so there is no corresponding main memory read. |
+| `S6` | `C1: RD A` | MESI (2) |  MESI (5), MOSI (6), MOESI (5) | `S` | `S` or `O` | `S` | On read, cache `C1` reads from main memory if cache `C2` was previously in the shared (S) state. Conversely, if the owned (O) state is available, then if cache `C2` was previously in the owned (O) state, then cache `C2` can provide the data via ***intervention***, thereby bypassing a main memory read access accordingly. Furthermore, since cache `C1` was previously in the invalid (I) state, a bus access is necessary to perform the read accordingly.  |
+| `S7` | `C2: RD A` | (N/A) | (N/A) | `S` | `S` or `O` | `S` | On read, cache `C2` is able to read the block directly, regardless of it being in the shared (S) state or owned (O) state previously, without any corresponding main memory read access or bus request. |
+
+## 26-30. Directory-Based Coherence
+
+### 26. Introduction
