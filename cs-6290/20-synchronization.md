@@ -54,3 +54,24 @@ These thread-coordinated operations are called **atomic (or critical) sections**
 
 ### 3. Lock
 
+<center>
+<img src="./assets/20-002.png" width="650">
+</center>
+
+Continuing from the previous example (cf. Section 2), the type of synchronization used for atomic sections is called **mutual exclusion** (or **lock**). Such a lock is used to "flank" the atomic section in order to coordinate accordingly among the threads.
+
+<center>
+<img src="./assets/20-003.png" width="650">
+</center>
+
+To perform this locking, an explicit mechanism of `lock` and `unlock` is used (as in the figure shown above).
+
+The lock `CountLock[L]` has a status of open/closed at any given time.
+  * When the lock `CountLock[L]` is ***open***, then the atomic section can be entered.
+  * Otherwise, when the lock `CountLock[L]` is ***closed***, then **spinning** will occur by the thread, until the lock is once again opened.
+
+On ***acquisition*** of the lock (and consequently closing the lock to other threads), the thread enters the atomic section and performs its operations. On exit of the atomic section, the lock becomes unlocked and subsequently available to another thread.
+
+By having the lock present in this manner, this enforces mutual exclusion of the atomic-section code. However, this does not otherwise impose ***order*** among execution by the respective threads (it simply prevent ***simultaneous*** execution at any given time).
+
+## 4. Lock Variable Quiz and Answers
