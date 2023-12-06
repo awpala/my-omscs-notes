@@ -102,4 +102,48 @@ A lock is essentially just another "variable" like any other, having a memory ad
 
 This lesson will subsequently explore the nature of these lock variables and associated functions `lock()` and `unlock()` accordingly.
 
-## 5. Lock Synchronization
+## 5-6. Lock Synchronization
+
+### 5. Introduction
+
+<center>
+<img src="./assets/20-006.png" width="650">
+</center>
+
+To further examine lock-based synchronization, consider the following function definitions:
+
+```cpp
+typedef int mutex_type;
+
+void lock_init(mutex_type &lock_var) {
+  lock_var = 0;
+}
+
+void lock(mutex_type &lock_var) {
+  while (lock_var == 1);
+  lock_var = 1;
+}
+
+void unlock(mutex_type &lock_var) {
+  lock_var = 0;
+}
+```
+
+For simplicity, an integer is used here to represent "*a location in (shared) memory*" (cf. Section 4).
+
+The function `lock_init()` initializes the lock variable `lock_var` to `0` (unlocked).
+
+The function `lock()` "spins" on value `1` (locked) via `while` loop until the `lock_var` is set to `0`. On exit of the `while` loop, `lock()` sets `lock_var` to `1` (i.e., the lock is acquired, for subsequent entry into the critical section).
+
+The function `unlock()` sets the lock `lock_var` to `0` on exit from the critical section, thereby opening/freeing the lock for subsequent use.
+  * Coherence ensures that the other thread(s) waiting on `lock_var` within function `lock()` at this point observe this update to value `lock_var` accordingly (i.e., for subsequent lock acquisition)
+
+However, note that the function `lock()` does not work in practice as implemented here.
+  * Suppose there are two threads (one purple, one green), which both initially encounter the `while` loop with `lock_var` having value `0` and subsequently *both* acquire the lock via setting of `lock_var` to `1`.
+  * Now, *both* threads are simultaneously accessing the critical section.
+
+Therefore, in order to ***correctly*** implement the function `lock()`, both the ***checking*** and ***setting*** of the lock value `lock_var` must be ***atomic operations*** (i.e., performed in its own critical section accordingly).
+
+This gives rise to an apparent ***paradox***: A critical section is needed in order to implement a critical-section-based lock.
+
+### 6. Implementing `lock()`
