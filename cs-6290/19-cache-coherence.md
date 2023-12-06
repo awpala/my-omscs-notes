@@ -437,7 +437,7 @@ When the left block performs a subsequent read operation on block `B` (i.e., `RD
 <img src="./assets/19-040.png" width="650">
 </center>
 
-Now, when the left cache subsequently performs a write operation on block `B` (i.e., `WR B = 5`, as in the figure shown above), setting the dirty bit to `1` accordingly. Furthermore, since the shared bit is set to `0`, it simply writes the value locally only (i.e, `B` is not pertinent to any other caches at this point), ***without*** otherwise broadcasting to the bus.
+Now, when the left cache subsequently performs a write operation on block `B` (i.e., `WR B = 5`, as in the figure shown above), setting the dirty bit to `1` accordingly. Furthermore, since the shared bit is set to `0`, it simply writes the value locally only (i.e., `B` is not pertinent to any other caches at this point), ***without*** otherwise broadcasting to the bus.
 
 Similarly, if the right cache retrieves block `C` from main memory, it can write values to this block (i.e., `17`, `65`, etc.) independently of the other cores, as long as the shared bit is set to `0`.
 
@@ -857,7 +857,7 @@ In order to resolve this issue, a ***non-modified (non-M)*** version of the cach
   * Providing the most recent cache-block data to the other caches (thereby bypassing excessive main memory reads)
   * Eventually writing the block to main memory (thereby bypassing excessive main memory writes)
 
-To designate such a cache, it is necessary to determine which of the cache blocks in the shared (S) state holding the copy of the data is responsible for these duties; this is handled via additional state **owned (O)** (i.e,. owner of this cache block).
+To designate such a cache, it is necessary to determine which of the cache blocks in the shared (S) state holding the copy of the data is responsible for these duties; this is handled via additional state **owned (O)** (i.e., owner of this cache block).
   * The owned (O) state resembles that of the shared (S) state, except that whenever there is a request for the cache-block data, the cache block in the owned (O) state is responsible for fulfilling this request. Furthermore, if the the cache block in the owned (O) state replaces the cache block from the cache, then it subsequently writes the cache-block data to main memory.
 
 ### 21. MOSI (Modified-Owned-Shared-Invalid) Coherence
@@ -1109,7 +1109,7 @@ Conversely, if cache `1` attempts a write request (i.e., `WREQB`) operation `WR 
 On completion of the read request from cache `0`, the write request from cache `1` commences subsequently (as in the figure shown above).
   * ***N.B.*** In snooping, this write request is broadcasted onto the bus by cache `1`, and on snooping by cache `0`, cache `0` is transitioned to the invalidated (I) state via corresponding broadcasted invalidation, and cache `1` correspondingly transitions to the modified (M) state (in fact, these are the same state updates which occur in this directory-based scenario, too).
 
-Since the directory detects that cache block `B` is present (i.e., via corresponding presence bit value of `1` for cache `0`) and possibly dirty (i.e., via corresponding dirty bit value of `1`), the directory consequently forwards this write request to the present cache(s) (i.e,. cache `0` in this particular case). Correspondingly, cache `0` detects this request (analogously to snooping from the bus), and since cache `0` is in the exclusive (E) state with respect to cache block `B`, it can elect to either respond with the data or to simply "passively" acknowledge the invalidation, back to the directory controller (which in turn records that invalidation of the data copy has been concluded).
+Since the directory detects that cache block `B` is present (i.e., via corresponding presence bit value of `1` for cache `0`) and possibly dirty (i.e., via corresponding dirty bit value of `1`), the directory consequently forwards this write request to the present cache(s) (i.e., cache `0` in this particular case). Correspondingly, cache `0` detects this request (analogously to snooping from the bus), and since cache `0` is in the exclusive (E) state with respect to cache block `B`, it can elect to either respond with the data or to simply "passively" acknowledge the invalidation, back to the directory controller (which in turn records that invalidation of the data copy has been concluded).
 
 On receipt of ***acknowledgement*** by the directory, the directory updates the corresponding present bit(s) to bit value `0`. Furthermore, if the data was not also transmitted, then the dirty bit can be reset to `0` (not indicated in the figure shown above).
 
@@ -1158,7 +1158,7 @@ Meanwhile, the operation `WR X` arrives at the directory for cache block `X`. Si
 
 Cache `0` responds with the data due to the write request, correspondingly transitioning itself to the invalid (I) state accordingly. Correspondingly, the dirty bit is set to bit value `0` in the directory for cache block `X`, and furthermore the presence bit is set to bit value `1` for the cache `1` entry in the directory for cache block `X`. Furthermore, cache `1` received the data and transitions to the modified (M) state with respect to cache block `X`.
 
-***N.B.*** Observe that `WR X` and `RD Y` proceed largely independently of each other (aside from slight network delays). Therefore, provided that the network is reliable and robust (i.e,. containing many different paths among these caches and directories), these requests effectively do not "compete" with each other.
+***N.B.*** Observe that `WR X` and `RD Y` proceed largely independently of each other (aside from slight network delays). Therefore, provided that the network is reliable and robust (i.e., containing many different paths among these caches and directories), these requests effectively do not "compete" with each other.
 
 <center>
 <img src="./assets/19-080.png" width="650">
@@ -1232,7 +1232,7 @@ Provide the counts of the corresponding operations according to MOESI protocol a
 <img src="./assets/19-083.png" width="650">
 </center>
 
-Consider now a reprise of the topic of **cache misses** (cf. Lesson 14, i.e, the "three Cs"), in the additional context of cache coherence.
+Consider now a reprise of the topic of **cache misses** (cf. Lesson 14, i.e., the "three Cs"), in the additional context of cache coherence.
 
 Recall that there are three types of cache misses (i.e., "three Cs") as follows:
   * **compulsory** → the cache block is accessed for the first time (i.e., it was not previously in the cache), thereby yielding a cache miss "by default"

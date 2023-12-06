@@ -707,7 +707,7 @@ When one disk fails, then the parity block is used to recover the system.
 Conversely, when two disks fail, then equations are solved (incorporating the data itself and the check block) in order to recover the content of the two failed disks.
 
 With respect to RAID 5, RAID 6 is characterized as follows:
-  * 2× the overhead (i.e, the reliability is twice as costly)
+  * 2× the overhead (i.e., the reliability is twice as costly)
   * a relatively higher write overhead (update of the data blocks now entails reading and writing the data block and *both* parity blocks, yielding ***six*** total accesses per write operation vs. four total accesses in RAID 5)
 
 Therefore, the main advantage of RAID 6 over RAID 5 is simply in the case where the chance of more than one disk failing (without sufficient time to replace the first-failing disk) is relatively likely.
