@@ -177,3 +177,33 @@ Of course, there is no such "magic." Instead, the correspondingly available ***r
 
 ### 7. Atomic Instruction Quiz and Answer
 
+<center>
+<img src="./assets/20-009A.png" width="650">
+</center>
+
+To implement atomic instructions for locks relatively easily (i.e., without otherwise resorting to complicated algorithms), which of the following properties is necessary? (Select the correct option.)
+  * A load instruction (read memory)
+    * `INCORRECT`
+  * A store instruction (write memory)
+    * `INCORRECT`
+  * An instruction that *both* reads *and* writes memory
+      * `CORRECT`
+  * An instruction that does not access memory at all
+    * `INCORRECT`
+
+***Explanation***:
+
+Recall (cf. Section 6) that an instruction of the following general form must be performed:
+
+```c
+if (lock_var == 0) {
+  lock_var = 1;
+}
+```
+
+This entails both a read (i.e., `lock_var == 0`) and a write (i.e., `lock_var = 1`).
+
+## 8-13. Atomic Instructions
+
+### 8. Introduction
+
