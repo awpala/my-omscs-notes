@@ -358,3 +358,50 @@ Consequently, the paired atomic instructions **load linked (LL)** and **store co
 Collectively, these instruction pairs effectively form a "single/composite" atomic operation via the link register.
 
 ### 12. How is Load Linked (LL) / Store Conditional (SC) Atomic?
+
+<center>
+<img src="./assets/20-015.png" width="650">
+</center>
+
+So, then, how exactly do load linked (LL) and store conditional (SC) behave in an ***atomic*** manner, such that intermediate writes from other processors/cores do not otherwise interfere with this paired operation?
+
+To achieve this atomicity, the instruction pairs are used as follows:
+
+```mips
+LL R1, lock_var
+SC R2, lock_var
+```
+
+If load linked (LL) detects the variable `lock_var` in the appropriate state (i.e., `1`), then the subsequent store conditional (SC) should only succeed if the lock is still available at the point of execution, otherwise, if the lock has already been written to, then store conditional (SC) should fail.
+
+In order to ensure this desired behavior, the key to accomplish this is to ***snoop*** the writes to `lock_var` and to set the link register to value `0` if the lock is already acquired accordingly. Consequently, matching of the addresses by store conditional (i.e., `R2` and `lock_var`) will fail.\
+  * Therefore, there is a reliance on ***cache coherence*** (cf. Lesson 19) to accomplish synchronization in this manner.
+
+Note that both load linked (LL) and store conditional (SC) are both individually atomic operations. Therefore, it is not necessary to use a "sub-lock" to further ensure atomicity with respect to either of these instructions.
+
+Correspondingly, observe the following transformation:
+
+(*instruction*)
+```c
+lock(...);
+var++;
+unlock(...);
+```
+
+(*transformation*)
+```c
+Try:
+  LL R1, var;
+  R1++;
+  SC R1, var;
+  if (R1 == 0)
+    goto Try;
+```
+
+If multiple threads perform these operations, they will simply "compete" for `R1` in this manner, with the first to reach `R1` "succeeding," and the other threads consequently "failing" the condition `R1 == 0`.
+  * ***N.B.*** This specific example increments `var` atomically, however, the same general principle/construct applies for other critical-section instructions performed in this manner as well.
+
+Therefore, load linked / store conditional give rise to relatively ***simple/direct*** implementation of a critical section with corresponding atomic operations accordingly, otherwise ***obviating*** the need for locks in the transformed implementation (but rather using these atomic instructions load linked and stored conditional ***directly*** on the variable in question itself [i.e., `var`]).
+  * ***N.B.*** For more complicated critical sections, such as those accessing multiple variables simultaneously, this does not work as well, however.
+
+### 13. Load Linked (LC) / Store Conditional (SC) Quiz and Answers
