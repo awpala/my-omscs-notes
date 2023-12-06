@@ -374,7 +374,7 @@ SC R2, lock_var
 
 If load linked (LL) detects the variable `lock_var` in the appropriate state (i.e., `1`), then the subsequent store conditional (SC) should only succeed if the lock is still available at the point of execution, otherwise, if the lock has already been written to, then store conditional (SC) should fail.
 
-In order to ensure this desired behavior, the key to accomplish this is to ***snoop*** the writes to `lock_var` and to set the link register to value `0` if the lock is already acquired accordingly. Consequently, matching of the addresses by store conditional (i.e., `R2` and `lock_var`) will fail.\
+In order to ensure this desired behavior, the key to accomplish this is to ***snoop*** the writes to `lock_var` and to set the link register to value `0` if the lock is already acquired accordingly. Consequently, matching of the addresses by store conditional (i.e., `R2` and `lock_var`) will fail.
   * Therefore, there is a reliance on ***cache coherence*** (cf. Lesson 19) to accomplish synchronization in this manner.
 
 Note that both load linked (LL) and store conditional (SC) are both individually atomic operations. Therefore, it is not necessary to use a "sub-lock" to further ensure atomicity with respect to either of these instructions.
@@ -405,3 +405,83 @@ Therefore, load linked / store conditional give rise to relatively ***simple/dir
   * ***N.B.*** For more complicated critical sections, such as those accessing multiple variables simultaneously, this does not work as well, however.
 
 ### 13. Load Linked (LC) / Store Conditional (SC) Quiz and Answers
+
+<center>
+<img src="./assets/20-017A.png" width="650">
+</center>
+
+Given the following function `lock()`:
+
+```cpp
+void lock(mutex_type &lock_var) {
+  try_lock:
+    MOV R1, 1
+    LL  R2, lock_var
+    SC  R1, lock_var
+    // TODO: Select instructions
+}
+```
+
+The intended behavior of function `lock()` is such that on exit of the function, the lock (i.e., `lock_var`) has been acquired *exclusively* (i.e., setting `R1` to value `1` accordingly).
+
+How can load linked (LL) / store conditional (SC) be used to implement this function as follows (where `LINK` is the link register, as applicable)? (Select the applicable set of instructions.)
+
+(*Instructions 1*)
+```mips
+BEQZ R1, try_lock
+```
+  * `INCORRECT`
+
+(*Instructions 2*)
+```mips
+BEQZ R2, try_lock
+```
+  * `INCORRECT`
+
+(*Instructions 3*)
+```mips
+BNEZ R2, try_lock
+BEQZ LINK, try_lock
+```
+  * `INCORRECT`
+
+(*Instructions 4*)
+```mips
+BNEZ R2, try_lock
+BEQZ R1, try_lock
+```
+  * `CORRECT`
+
+(*Instructions 5*)
+```mips
+BNEZ R2, try_lock
+BNEZ LINK, try_lock
+```
+  * `INCORRECT`
+
+***Explanation***:
+
+All of these prospective instructions sets repeatedly attempt to acquire the lock `lock_var` via `try_lock` via appropriately provided conditions.
+
+In order to select the *correct* conditions to accomplish this, two conditions must be checked, as follows:
+  * 1 - Was a free lock observed with respect to `LL R2, lock_var`? If so, then rather than jumping back to `try_lock`, instead proceed out of the function `lock()` accordingly.
+  * 2 - Otherwise, if a free lock is *not* observed, then jump back to `try_lock`.
+
+Instruction `BNEZ R2, try_lock` satisfies both conditions.
+  * A *non-zero* value in `R2` indicates that the lock is busy, necessitating going back to `try_lock`.
+
+Additionally, it must be determined whether `R1` has been stored successfully, prior to another thread already accomplishing this. `R1` is stored successfully in this manner if `R1` contains the value `1` subsequently to (given) instruction `SC R1, lock_var`.
+
+Instruction `BEQZ R1, try_lock` satisfies this determination accordingly.
+  * If `R1` fails to store `0` via upstream instruction `SC`, then the function must jump back to `try_lock` accordingly.
+
+Therefore, the correct set of instructions is Instructions 4. In summary, in the implementation of `lock()` using this pair of instructions:
+  * If the lock is observed as free (via `BNEZ R2, try_lock` with `R2` having value `0`) *and* managing to store it at this point (via `BEQZ R1, try_lock` with `R1` having value non-zero), then the lock is acquired and the function `lock()` consequently exits accordingly.
+  * Otherwise, if the lock is observed as busy/acquired (via `BNEZ R2, try_lock` with `R2` having value non-zero), then the function `lock()` jumps back to `try_lock` for subsequent attempt to acquire the lock.
+  * Otherwise, if the lock is observed as free (via `BNEZ R2, try_lock` with `R2` having value `0`) but having been stored by another thread already at this point (via `BEQZ R1, try_lock` with `R1` having value `0`), then the function `lock()` jumps back to `try_lock` for subsequent attempt to acquire the lock.
+
+***N.B.*** Instructions 3 and 5 check the link register (`LINK`) directly, however, note that this is a "hidden/abstracted" register, which generally is not "checked directly" in this manner. The corresponding access is performed ***implicitly*** by the atomic operations linked load (LL) / store conditional (SC) accordingly.
+
+## 14-17. Locks and Performance
+
+### 14. Introduction
