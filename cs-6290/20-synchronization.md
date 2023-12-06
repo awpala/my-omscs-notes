@@ -648,3 +648,25 @@ Unlike the function `lock()` (cf. Section 16), which required two checks (whethe
 ## 18-22. Barrier Synchronization
 
 ### 18. Introduction
+
+<center>
+<img src="./assets/20-024.png" width="650">
+</center>
+
+Another type of synchronization that is often needed in programs is called **barrier synchronization**. This often occurs when there is a parallel section wherein several threads perform independent actions simultaneously (as in the figure shown above), e.g., each thread adds the numbers in a designated sub-array section of a shared array.
+
+Eventually, this separate work must be coordinated (e.g., determining the total sum for the entire array, across all of the threads). In order to do this, it is necessary to ensure that each thread has concluded performing its own individual work; this is provided by the **barrier** accordingly. Only on reaching the barrier in this manner can the final result be used (e.g., `print(sum);`).
+
+Another possibility is that on computation, all of the threads must access the sum simultaneously (as in the figure shown above). For this purpose, the barrier also serves as a corresponding "checkpoint" in this manner, serving as a ***global wait*** which ensures that ***all*** threads have first entered the barrier prior to commencing with access of this "global" value. The barrier synchronization ensures that all threads have ***arrived*** first, prior to commencing with departure from the barrier.
+
+A barrier ***implementation*** typically consists of two variables, as follows:
+  * **counter** → counts how many threads have arrived
+    * Each arriving thread increments this value accordingly on arrival to the barrier
+  * **flag** → sets when the counter finally reaches the total threads count (i.e., condition `counter == N`)
+    * Each arriving thread checks the flag on arrival, and sets accordingly (i.e., set the flag to "all have arrived," or otherwise spin while pending arrival of the remaining threads)
+
+However, it is not quite so straightforward to implement this in practice; the remainder of this section will discuss matter accordingly.
+
+### 19. Simple Barrier Implementation
+
+
