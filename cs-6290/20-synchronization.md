@@ -102,7 +102,7 @@ A lock is essentially just another "variable" like any other, having a memory ad
 
 This lesson will subsequently explore the nature of these lock variables and associated functions `lock()` and `unlock()` accordingly.
 
-## 5-6. Lock Synchronization
+## 5-7. Lock Synchronization
 
 ### 5. Introduction
 
@@ -147,3 +147,33 @@ Therefore, in order to ***correctly*** implement the function `lock()`, both the
 This gives rise to an apparent ***paradox***: A critical section is needed in order to implement a critical-section-based lock.
 
 ### 6. Implementing `lock()`
+
+<center>
+<img src="./assets/20-007.png" width="650">
+</center>
+
+Per the apparent "paradox" identified in the previous section (cf. Section 6), some sort of "magic locK" modification is necessary, as follows:
+
+```cpp
+void lock(mutex_type &lock_var) {
+Wait:
+  lock_magic();
+  if (lock_var == 0) {
+    lock_var = 1;
+    unlock_magic();
+    goto Exit;
+  }
+  unlock_magic();
+  goto Wait;
+
+Exit:
+}
+```
+
+Of course, there is no such "magic." Instead, the correspondingly available ***resolution measures*** for this issue are as follows:
+  * Lamport's **bakery algorithm** (or another comparable algorithm) which is able to use normal load/store instructions in this manner
+    * This approach is fairly ***expensive*** and complicated to implement (i.e., tens of instructions), however.
+  * Use special ***atomic*** read and write instructions
+
+### 7. Atomic Instruction Quiz and Answer
+
