@@ -669,4 +669,39 @@ However, it is not quite so straightforward to implement this in practice; the r
 
 ### 19. Simple Barrier Implementation
 
+<center>
+<img src="./assets/20-025.png" width="650">
+</center>
 
+Consider the following relatively simple implementation of a barrier in a program:
+
+```c
+lock(counter_lock);          // begin critical section
+if (count == 0) release = 0; // re(initialize) release flag to `0` (acquired)
+count++;                     // count the arrivals
+unlock(counter_lock);        // end critical section
+if (count == total) {
+  count = 0;                 // (re)initialize the counter to `0`
+  release = 1;               // (re)set release flag to `1` (released)
+} else {
+  spin(release == 1);        // wait for `release` to attain value `1` (released)
+}
+```
+
+The counter `count` is a shared variable, which is contended over by the threads (for subsequent incrementing).
+
+On exit of the critical section, this implies that the thread in question is either the last thread, or that the last thread has arrived.
+  * ***N.B.*** These two conditions are distinct. For example, in general, the currently incrementing thread might not necessarily be the last-arriving. However, by the point of checking the total immediately following exit of the critical section, the last thread has arrived.
+
+Subsequently:
+  * If `count == total` at this point, then the counter `counter` is re-initialized (i.e., reset to `count = 0`) for subsequent thread-wise access to the critical section. Furthermore, the release flag `release` is set to `1`, thereby informing the waiting threads that the barrier can now be released accordingly.
+  * Otherwise, the thread waits via `spin()`, pending release by the last thread.
+
+Furthermore, on entry into the critical section, the first-arriving thread resets the release flag `release` to `0` (i.e., acquired) to notify the other threads accordingly.
+
+This simple implementation is ***not*** entirely correct, however. Consider the scenario of two threads synchronizing on this barrier (as in the figure shown above).
+  * In this case, `total == 2` for the total number of threads in the system.
+  * On first pass, the barrier works correctly, as intended.
+  * However, on subsequent arrivals to the barrier, a **deadlock** condition can result (as discussed in the next section).
+
+### 20. Simple Barrier Implementation Does *Not* Work
