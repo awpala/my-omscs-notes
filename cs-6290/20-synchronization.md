@@ -576,3 +576,42 @@ Therefore, while cache `0` owns the lock, the other two caches do not correspond
 The system proceeds in this manner until cache `0` ultimately releases the lock, at which point there is a consequent invalidation and subsequent read by the other two cores in the system (which now compete for the lock). However, now, these "activity bursts" are confined strictly to these (relatively brief) "lock exchange" periods only. Otherwise, during periods when the lock is "busy," the other caches simply persistently use "normal" loads in the meantime, which is correspondingly much more energy-efficient.
 
 ### 16. Test-and-Atomic-Op Quiz
+
+<center>
+<img src="./assets/20-021A.png" width="650">
+</center>
+
+Recall (cf. Section 13) the following implementation for function `lock()`:
+
+```cpp
+void lock(mutex_type &lock_var) {
+  try_lock:
+    MOV  R1, 1
+    LL   R2, lock_var
+    SC   R1, lock_var // Instruction A
+    BNEZ R2, try_lock // Instruction B
+    BEQZ R1, try_lock // Instruction C
+}
+```
+
+For the corresponding test-and-atomic-op operations, reorder instructions `A`, `B`, and `C` appropriately.
+
+***Answer and Explanation***:
+
+```cpp
+void lock(mutex_type &lock_var) {
+  try_lock:
+    MOV  R1, 1
+    LL   R2, lock_var
+    BNEZ R2, try_lock // Instruction B′
+    SC   R1, lock_var // Instruction A′
+    BEQZ R1, try_lock // Instruction C
+}
+```
+
+The idea with the test-and-atomic-op version is to simply refrain from writing until the lock is observed to be free. Therefore, prior to attempting to store (Instruction A), first the corresponding check of the lock is performed accordingly (Instruction B).
+  * On loading the value into `R2` (i.e., `LL R2, lock_var`), if the value is `1`, then the lock is ***not*** free and correspondingly the function jumps back to `try_lock`. This pattern continues as long as the lock busy. Correspondingly, the operation load linked (LL) simply performs a "normal" load if the corresponding link register is not populated (and correspondingly there is no further "noisy traffic" among the caches).
+  * Subsequently, when `R2` eventually loads value `0` (i.e., the lock becomes free), then (and only then) a subsequent store conditional (SC) operation is performed (i.e., `SC R1, lock_var`). Additionally, the subsequent check is performed to ensure that the lock has actually been acquired (i.e., `BEQZ R1, try_lock`).
+
+### 17. Unlock Quiz and Answers
+
