@@ -526,3 +526,53 @@ Therefore, this is a very ***heavily power-consumptive*** process, as each such 
 
 ### 15. Test-and-Atomic-Op Lock
 
+<center>
+<img src="./assets/20-019.png" width="650">
+</center>
+
+Recall (cf. Section 14) that preforming atomic read and atomic write operations on the lock repeatedly (even while waiting for the lock) is inefficient with respect to power consumption, and correspondingly even have a deleterious effect on the operation of the thread currently performing useful work (i.e., inside of the critical section).
+
+In order to reduce this inefficiency, a **test-and-atomic-op lock** approach can be used accordingly. A representative example of this can be implemented as follows:
+
+(*original version - repeated atomic op*)
+```c
+R1 = 1;
+while (R1 == 1)
+  EXCH R1, lock_var;
+```
+
+(*improved version - test-and-atomic-op approach*)
+```c
+R1 = 1;
+while (R1 == 1) {
+  while (lock_var == 1); // use "normal" load operations
+  EXCH R1, lock_var;
+}
+```
+
+In the original version, "bare" `EXCH R1, lock_var` yields persistent invalidations (and corresponding cache misses) while waiting on the lock to be freed.
+
+Conversely, in the improved version, "normal" load operations are used while the lock (i.e., `lock_var`) is busy. Once it is observed that the lock is free (i.e., `lock_var == 0`), then (and only then) there is a subsequent attempt to acquire the lock using `EXCH` (but ***not*** via "normal" store operation, as an atomic operation is necessary to acquire the exclusively lock at this point).
+
+With this corresponding update, consider the sequence as before (cf. Section 14):
+
+The following sequence is performed involving atomic operation `EXCH`:
+
+| Sequence | Cache `0` | Cache `1` | Cache `2` |
+|:--:|:--:|:--:|:--:|
+| `S1` | `EXCH R1, lock_var`| (N/A) | (N/A) |
+| `S2` | (N/A) | `EXCH R1, lock_var`| (N/A) |
+| `S3` | (N/A) | (N/A) | `EXCH R1, lock_var`|
+| ⋮ | ⋮ | ⋮ | ⋮ |
+
+In sequence `S1`, cache `0` acquires the lock in the modified (M) state (the other two caches are in the invalid [I] state at this point).
+
+In sequence `S2`, cache `1` attempts to acquire the lock and transfers the cache block to itself via the shared (S) state, while cache `0` transitions to the owned (O) state with respect to this cache block. While cache `1` is in the shared (S) state, subsequent loads will yield cache hits, rather than cache misses, thereby obviating the need to access the bus.
+
+Similarly, in sequence `S3`, cache `1` attempts to acquire the lock and transfers the cache block to itself via the shared (S) state. While cache `2` is in the shared (S) state, subsequent loads will similarly yield cache hits, rather than cache misses, thereby obviating the need to access the bus.
+
+Therefore, while cache `0` owns the lock, the other two caches do not correspondingly generate superfluous bus traffic during this time; effectively, cache `0` has exclusive access over the coherence bus during this time, thereby allowing it to service cache misses much more quickly and efficiently. Furthermore, cache hits on cache `0` are also correspondingly much more efficient compared to coherence bus accesses accordingly.
+
+The system proceeds in this manner until cache `0` ultimately releases the lock, at which point there is a consequent invalidation and subsequent read by the other two cores in the system (which now compete for the lock). However, now, these "activity bursts" are confined strictly to these (relatively brief) "lock exchange" periods only. Otherwise, during periods when the lock is "busy," the other caches simply persistently use "normal" loads in the meantime, which is correspondingly much more energy-efficient.
+
+### 16. Test-and-Atomic-Op Quiz
