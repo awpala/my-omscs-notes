@@ -205,7 +205,7 @@ This entails both a read (i.e., `lock_var == 0`) and a write (i.e., `lock_var = 
 
 ## 8-13. Atomic Instructions
 
-### 8. Introduction
+### 8. Introduction: Part 1
 
 <center>
 <img src="./assets/20-010.png" width="650">
@@ -257,3 +257,47 @@ The idea here is to test whether the lock is free (i.e., via condition `Mem[78 +
 
 ### 9. Test-and-Set Quiz and Answers
 
+<center>
+<img src="./assets/20-012A.png" width="650">
+</center>
+
+Consider a test-and-set atomic instruction of the general form `TSET R1, Addr`, defined equivalently as follows:
+
+```c
+if (Mem[Addr] == 0) {
+  Mem[Addr] = R1;
+  R1 = 1;
+} else {
+  R1 = 0;
+}
+```
+
+***N.B.*** `Addr` is a memory address (typically in the form of a register and its corresponding offset).
+
+For the corresponding implementation for function `lock()`:
+
+```cpp
+lock(mutex_type &lock_var) {
+  R1 = 0;
+  while (R1 == 0) {
+    // TODO: Specify instruction here
+  }
+}
+```
+
+How can this atomic instruction be used here accordingly?
+
+***Answer and Explanation***:
+
+```cpp
+lock(mutex_type &lock_var) {
+  R1 = 0;
+  while (R1 == 0) {
+    TSET R1, lock_var; // Answer
+  }
+}
+```
+
+Here, `TSET R1, lock_var` checks the status of `lock_var`, and will only perform action if the value of `lock_var` is currently `0`, otherwise it will simply "fall through" on read of value `1`.
+
+### 10. Atomic Instructions Part 2
