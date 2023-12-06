@@ -75,3 +75,31 @@ On ***acquisition*** of the lock (and consequently closing the lock to other thr
 By having the lock present in this manner, this enforces mutual exclusion of the atomic-section code. However, this does not otherwise impose ***order*** among execution by the respective threads (it simply prevent ***simultaneous*** execution at any given time).
 
 ## 4. Lock Variable Quiz and Answers
+
+<center>
+<img src="./assets/20-005A.png" width="650">
+</center>
+
+Consider the following code fragment denoting an atomic section:
+
+```c
+lock(CountLock[L]);
+count[L]++;
+unlock(CountLock[L]);
+```
+
+How is `CountLock[L]` described in this context? (Select the correct option.)
+  * Just another location in shared memory
+    * `CORRECT`
+  * A location in a special synchronization memory
+    * `INCORRECT`
+  * A special variable without a memory address
+    * `INCORRECT`
+
+***Explanation***:
+
+A lock is essentially just another "variable" like any other, having a memory address, which in turn can be loaded, modified, etc.
+
+This lesson will subsequently explore the nature of these lock variables and associated functions `lock()` and `unlock()` accordingly.
+
+## 5. Lock Synchronization
