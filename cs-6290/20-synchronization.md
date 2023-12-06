@@ -301,3 +301,37 @@ lock(mutex_type &lock_var) {
 Here, `TSET R1, lock_var` checks the status of `lock_var`, and will only perform action if the value of `lock_var` is currently `0`, otherwise it will simply "fall through" on read of value `1`.
 
 ### 10. Atomic Instructions Part 2
+
+<center>
+<img src="./assets/20-013.png" width="650">
+</center>
+
+Returning to the topic of atomic instructions (cf. Section 8), with respect to test-and-store atomic instruction, a representative instruction `TSTSW` (i.e., test-and-store word) can be implemented as follows:
+
+(*instruction*)
+```mips
+TSTSW R1, 78(R2)
+```
+
+(*transformation*)
+```c
+do {
+  R1 = 1;
+  TSTSW R1, lock_var;
+} while (R1 == 0)
+```
+
+***N.B.*** This is an alternate implementation to that shown in Section 8.
+
+Given instruction `TESTSW`, as long as the lock is occupied, then as long as the store "sub-operation" is only ***reading*** the lock variable, then it is not otherwise ***writing*** to it.
+  * With respect to coherence (cf. Lesson 19), this is ***desirable***, as this prevents superfluous broadcasts of write invalidations across the respective threads' copies of the data. Instead, the "waiting" threads simply "share" the lock variable, iterating on their respective cached copies of the data at this point.
+  * Subsequently on freeing of the lock, these shared copies are consequently ***invalidated*** via write to the lock variable using corresponding `unlock()`, at which point the update is broadcasted to the other threads.
+  * Therefore, cross-thread communication with respect to the lock occurs only on acquisition.
+
+This test-and-write approach solves the problem of continuously writing to the lock variable, however, it still involves the otherwise "strange" instruction `TSTSW` (and similar), i.e., an instruction which is neither a "pure load" nor a "pure store."
+  * From a processor design standpoint, it would be more ideal to perform an operation that is more similar to correspondingly "pure" load and store operations, but providing the corresponding atomic functionality.
+
+To address this particular issue, there is a third type of atomic instruction, comprising a pair called **load linked / store conditional (LL/SC)** (as discussed in the next section).
+
+### 11. Load Linked / Store Conditional (LL/SC)
+
