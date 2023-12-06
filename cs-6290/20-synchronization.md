@@ -485,3 +485,44 @@ Therefore, the correct set of instructions is Instructions 4. In summary, in the
 ## 14-17. Locks and Performance
 
 ### 14. Introduction
+
+<center>
+<img src="./assets/20-018.png" width="650">
+</center>
+
+Consider now how different lock implementations interact with the coherence protocols (cf. Lesson 19), and what the corresponding implications are with respect to ***performance***.
+
+Consider a system of three cores numbered `0` through `2`, as in the figure shown above.
+
+The following sequence is performed involving atomic operation `EXCH`:
+
+| Sequence | Cache `0` | Cache `1` | Cache `2` |
+|:--:|:--:|:--:|:--:|
+| `S1` | `EXCH R1, lock_var`| (N/A) | (N/A) |
+| `S2` | (N/A) | `EXCH R1, lock_var`| (N/A) |
+| `S3` | (N/A) | (N/A) | `EXCH R1, lock_var`|
+| ⋮ | ⋮ | ⋮ | ⋮ |
+| `SN` | `lock_var = 0` | (N/A) | (N/A) |
+
+In sequence `S1`:
+  * `lock_var` transitions to the modified (M) state with respect to cache `0`
+  * `lock_var` is absent (i.e., invalid) in the other two cores
+
+Eventually, cache `0` (which acquires the lock in sequence `S1`) will unlock by setting `lock_var = 0` (i.e., in downstream sequence `SN`). However, several events transpire in the intervening sequences prior to this.
+
+In sequence `S2`:
+  * Since `R1` has value `1` immediately prior to this (via cache `0`'s prior acquisition in sequence `S1`), on attempted acquisition by cache `1`, there is a corresponding transfer of the lock to cache `1`.
+  * Cache `0` writes to `lock_var` and broadcasts this update, and consequently the modified (M) state is transferred from cache `0` to cache `1` accordingly.
+
+Similarly, in sequence `S3`:
+  * Since `R1` has value `1` immediately prior to this (via cache `1`'s prior acquisition in sequence `S2`), on attempted acquisition by cache `2`, there is a corresponding transfer of the lock to cache `2`.
+  * Cache `1` writes to `lock_var` and broadcasts this update, and consequently the modified (M) state is transferred from cache `1` to cache `2` accordingly.
+
+Subsequently to0 sequence `S3`, as long as the lock is busy in any given sequence, the other cores will ***spin*** accordingly. Consequently, the cache block will move among cores many times before the lock is finally freed/unlocked (i.e., via `lock_var = 0` in downstream sequence `SN`). This additionally incurs communication on the shared bus, with corresponding power consumption accordingly. Since none of this activity succeeds in reacquiring the lock (i.e., until `lock_var` resets to `0`).
+
+If at some later point cache `1` is the core which acquires the lock most recently (i.e., immediately following sequence `SN`, during which cache `0` is in the modified [M] state). The correspondingly write will consequently transfer the modified (M) state back to cache `1` accordingly. Downstream of this, similar superfluous spinning and power consumption will commence as before.
+
+Therefore, this is a very ***heavily power-consumptive*** process, as each such movement of the cache block requires a lot of energy per transfer operation. Furthermore, the interconnection among the cores (e.g., shared bus) experiences a high volume of traffic, adding corresponding "throttling" to the system accordingly (e.g., the one "active" core at any given time, if experiencing cache misses, will also handle these more slowly as a result, thereby effectively reducing the ***useful work*** performed by the system as a whole accordingly).
+
+### 15. Test-and-Atomic-Op Lock
+
