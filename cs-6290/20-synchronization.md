@@ -333,5 +333,28 @@ This test-and-write approach solves the problem of continuously writing to the l
 
 To address this particular issue, there is a third type of atomic instruction, comprising a pair called **load linked / store conditional (LL/SC)** (as discussed in the next section).
 
-### 11. Load Linked / Store Conditional (LL/SC)
+### 11. Load Linked (LL) / Store Conditional (SC)
 
+<center>
+<img src="./assets/20-014.png" width="650">
+</center>
+
+Atomic read and atomic write operations in the ***same*** instruction (even if the atomic write only occurs on detection of appropriate condition via atomic read) is very ***bad*** for pipelining insofar as processor design is concerned.
+
+Consider a classical five-stage pipeline (as in the figure shown above).
+  * A load instruction is fetched (F), decoded/read (D/R), has its address computed (A), is accessed via this computed address from memory (M), and then finally written to the register (W).
+  * Given an atomic read/write operation, on reaching stage M, it cannot perform all necessary tasks in only ***one*** memory access operation (i.e., reading or writing are mutually exclusive in any given cycle at this point in the pipeline, without otherwise complicating the stage M). Therefore, just for this special case of an atomic read/write operation, the stage M would have to be expanded to a two- or three-stage (or more) memory stage (and correspondingly increasing the size of the pipeline accordingly) in order to perform appropriate checks immediately prior to writing to memory.
+    * ***N.B.*** Such an expanded pipeline would impact ***all*** other instructions, not just these particular atomic read/write operations!
+
+Consequently, the paired atomic instructions **load linked (LL)** and **store conditional (SC)** resolve this issue accordingly by splitting these atomic operations into two distinct instructions.
+  * **Load linked (LL)** implements the "read" atomic operation
+    * Load linked (LL) behaves as a "normal load" instruction (i.e., `LW`), simply reading from a memory location and placing the corresponding value into the target register
+    * However, load linked (LL) additionally ***saves*** the address from which it loaded into a special **link register**
+  * **Store conditional (SC)** implements the "write" atomic operation
+    * Store conditional (SC) first checks if the address that it computes is present in the link register
+      * If the address ***is*** present in the link register, then store conditional (SC) performs a "normal store" instruction (i.e., `SW`) to the memory location in question, and consequently returns the value `1` in its register
+      * Conversely, if the address is ***not*** present in the link register, then store conditional (SC) simply returns the value `0` in its register (without otherwise storing a value)
+
+Collectively, these instruction pairs effectively form a "single/composite" atomic operation via the link register.
+
+### 12. How is Load Linked (LL) / Store Conditional (SC) Atomic?
