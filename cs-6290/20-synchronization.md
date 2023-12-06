@@ -615,3 +615,36 @@ The idea with the test-and-atomic-op version is to simply refrain from writing u
 
 ### 17. Unlock Quiz and Answers
 
+<center>
+<img src="./assets/20-023A.png" width="650">
+</center>
+
+As a follow-up, now consider the corresponding test-and-atomic-op implementation for the function `unlock()`, as follows:
+
+```cpp
+void unlock(mutex_type &lock_var) {
+  // TODO: Select appropriate instruction
+}
+```
+
+Which of the following is the appropriate choice for this implementation? (Select the correct option.)
+  * `SW 0, lock_var`
+    * `CORRECT`
+  * `LL`, check if `1`, then `SC`
+    * `INCORRECT`
+  * Additional atomic instructions are required
+    * `INCORRECT`
+
+***Explanation***:
+
+```cpp
+void unlock(mutex_type &lock_var) {
+  SW 0, lock_var;
+}
+```
+
+Unlike the function `lock()` (cf. Section 16), which required two checks (whether the lock is available, and then whether it can be acquired), the function `unlock()` is only performed ***exclusively*** by the thread possessing the lock at any given time. Therefore, to free the lock, `lock_var` is simply set to `0` accordingly, without otherwise requiring any additional atomic operations to accomplish this.
+
+## 18-22. Barrier Synchronization
+
+### 18. Introduction
