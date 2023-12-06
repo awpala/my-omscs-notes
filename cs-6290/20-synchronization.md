@@ -207,3 +207,53 @@ This entails both a read (i.e., `lock_var == 0`) and a write (i.e., `lock_var = 
 
 ### 8. Introduction
 
+<center>
+<img src="./assets/20-010.png" width="650">
+</center>
+
+Recall (cf. Section 7) that in order to implement atomic instructions, *both* read *and* write operations are necessary. There are three main ***types*** of such atomic instructions accordingly.
+
+The first such atomic instruction is an **atomic exchange** instruction, which perform the following transformation:
+
+(*instruction*)
+```mips
+EXCH R1, 78(R2)
+```
+
+(*transformation*)
+```c
+R1 = 1;
+while (R1 == 1)
+  EXCH R1, lock_var;
+```
+
+The instruction `EXCH` resembles a load (`LW`) or store (`SW`) instruction, however, it essentially performs both simultaneously.
+
+In the transformed version, the value stored in `R1` is managed (i.e., exchanged) via `lock_var`. In this manner, looping persists until `R1` succeeds in obtaining the value `0`, which in turn atomically sets the variable `lock_var` to `1` accordingly (i.e., thereby acquiring the lock and precluding other threads from doing so at this point as well).
+
+A key ***drawback*** of this atomic exchange instruction is that it writes ***persistently*** to the memory location, even while the lock is ***busy*** (i.e., locked by another thread).
+
+The second type of atomic instruction is a ***family*** of instructions which are generally classified as **test-and-write**.
+  * First, the location is ***tested***, and then if it satisfies some ***conditions***, then (and only then) ***writing*** occurs.
+
+For example, consider a representative instruction `TSTSW` (i.e., test-and-store word), as follows:
+
+(*instruction*)
+```mips
+TSTSW R1, 78(R2)
+```
+
+(*transformation*)
+```c
+if (Mem[78 + R2] == 0) {
+  Mem[78 + R2] = R1;
+  R1 = 1;
+} else {
+  R1 = 0;
+}
+```
+
+The idea here is to test whether the lock is free (i.e., via condition `Mem[78 + R2] == 0`), and if so, then write a value `1` to the lock; otherwise, if not, then simply proceed as usual (i.e., without otherwise attempting to access the lock).
+
+### 9. Test-and-Set Quiz and Answers
+
