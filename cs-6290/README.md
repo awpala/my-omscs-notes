@@ -22,6 +22,7 @@
 | [16](./16-storage.md) | Storage |
 | [17](./17-fault-tolerance.md) | Fault Tolerance |
 | [18](./18-multi-processing.md) | Multi-Processing |
+| [19](./19-cache-coherence.md) | Cache Coherence |
 
 ## Videos Reference
 

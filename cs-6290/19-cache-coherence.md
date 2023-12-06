@@ -1251,3 +1251,50 @@ Furthermore, within the scope of ***coherence misses***, there are the following
     * In this case, while there is no "true" data sharing, as far as coherency is concerned, actions are performed at a granularity level of a cache block (i.e., two items being present in the same block makes them behave as the "same" item in this regard).
 
 ### 32. False Sharing Quiz and Answers
+
+<center>
+<img src="./assets/19-085A.png" width="650">
+</center>
+
+Consider a system comprised of two memory blocks (`0` and `1`), with each containing four words apiece (as in the figure shown above). Assume that all caches are initially empty with respect to these words.
+
+Which of the following sequences of operations yield false-sharing misses? (Select all applicable programs.)
+
+| Sequence | Program 1 | Program 2 | Program 3 |
+|:--:|:--:|:--:|:--:|
+| `S1` | `C0: RD X` | `C0: RD X` | `C0: RD X` |
+| `S2` | `C1: WR X` | `C1: WR X` | `C1: WR X` |
+| `S3` | `C2: RD A` | `C2: RD Z` | `C2: WR W` |
+| `S4` | `C3: WR B` | `C3: WR Z` | `C0: RD X` |
+
+***Answer and Explanation***:
+
+In program 1:
+  * Sequences `S1` and `S2` result in a compulsory miss (`X` is not present in block `1` of either cache `C0` or `C1`).
+  * Sequence `S3` is also a compulsory miss (`D` is not present in block `0` of cache `C2`).
+  * Sequence `S4` is also a compulsory miss (`B` is not present in block `0` of cache `C3`)
+
+Therefore, ***no*** false-sharing coherence misses occur in program 1. In fact, there are no coherence misses at all in this program.
+
+In program 2:
+  * Sequences `S1` and `S2` result in a compulsory miss (`X` is not present in block `1` of either cache `C0` or `C1`).
+  * Sequence `S3` is also a compulsory miss (`Z` is not present in block `1` of cache `C2`).
+  * Sequence `S4` is also a compulsory miss (`Z` is not present in block `1` of cache `C3`)
+
+Therefore, ***no*** false-sharing coherence misses occur in program 2. In fact, there are no coherence misses at all in this program.
+
+In program 3:
+  * When cache `C1` writes to `X` subsequently to cache `C0` reading `X`, this invalidates `X` in cache `C0`.
+    * Both of these are compulsory misses.
+  * Next, when cache `C2` writes to `W`, this invalidates the data in cache `C1`. (cache `C0`'s data is also invalidated from previously at this point.)
+    * This is a compulsory miss.
+  * Lastly, when cache `C0` attempts to re-read `X` in sequence `S4`, it no longer has valid data (due to invalidation previously by cache `C1` in sequence `S2`).
+    * ***N.B.*** This is an example of a true-sharing coherence miss, whereby invalidation occurs due to another cache writing to the ***same*** word as that which was accessed previously.
+
+Therefore, ***no*** false-sharing coherence misses occur in program 3, however, a true-sharing coherence miss does occur.
+
+## 33. Lesson Outro
+
+This lesson has demonstrated that if cores in a multi-core system have respective private caches, then it is necessary to maintain coherence in such a system in order to ensure correct behavior of shared-memory programs accordingly. Several techniques for maintaining this cache coherence were additionally explored.
+
+The next lesson will examine what is necessary for multiple cores to do in order to coordinate their work in a parallel program.
