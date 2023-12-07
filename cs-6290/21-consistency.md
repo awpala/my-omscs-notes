@@ -162,3 +162,30 @@ Therefore, some ***additional ordering restrictions*** are necessary to resolve 
 ## 6-8. Sequential Consistency
 
 ### 6. Introduction
+
+<center>
+<img src="./assets/21-007.png" width="650">
+</center>
+
+From the programmer's perspective, the most natural form of consistency is **sequential consistency**, whereby the result of ***any*** execution should be equivalent to as if accesses by each processor were executed ***in-order***, with corresponding accesses among ***different*** processors as if they were ***arbitrarily interleaved***.
+  * In this manner, essentially the processors "take turns" with respect to accesses, or otherwise let another processor access "several times" (i.e., sequentially) prior to another processor accessing, and so on.
+  * However, the consequent output from the system (i.e., among the various processors) must be ***exactly*** in program order.
+
+The ***simplest implementation*** of sequential consistency comprises the one whereby the clause "should be equivalent to as if..." in the aforementioned definition is simply ***removed***.
+  * Essentially, with this relaxed constraint, any execution proceeds by executing accesses from each processor strictly in order.
+  * More specifically, a given core performs the next access ***only*** when ***all*** previous accesses have been completed.
+
+Recalling the previous example (cf. Section 4):
+
+```c
+while (!flag);
+print(data);
+```
+
+in the corresponding "simple implementation," `print(data);` cannot commence execution until `while (!flag);` has completed.
+  * ***N.B.*** Recall (cf. Section 4) that the fundamental issue introduced here by an ***absence*** of consistency is that branch prediction can otherwise "subvert" the otherwise expected "in-program-order" execution. Therefore, in a simple implementation of sequential consistency, any such "premature exit" from the `while` loop would be deliberately delayed, in order to prevent this possibility.
+
+This "simple implementation" works ***well*** with respect to ***program correctness***, however, it is ***poor*** with respect to ***performance***.
+
+### 7. Sequential Consistency Quiz and Answers
+
