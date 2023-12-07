@@ -115,3 +115,27 @@ Therefore, the overall speed up is `2`.
 ## 5-7. Many-Cores Challenges: Part 2
 
 ### 5. Introduction
+
+<center>
+<img src="./assets/22-011.png" width="650">
+</center>
+
+Returning to the challenges present in many-cores processors (cf. Section 2), recall (cf. Section 2) that as the number of cores increases, the coherence traffic on the chip correspondingly increases. Furthermore, recall (cf. Section 3) that resolving this issue requires a scalable on-chip network (e.g., mesh) supported by directory coherence (cf. Lesson 19).
+
+Furthermore, another issue introduced by adding more cores to the system is that as the number of cores increases, so does the **off-chip traffic**.
+  * To maintain adequate performance, as the number of cores increases, the number of **on-chip caches** must increase accordingly (e.g., a four-core processor requires four level 1 [L1] caches, and possibly a level 2 [L2] cache; a 64-core processor requires `64` level 1 [L1] caches and corresponding level 2 [`L2`] caches; and so on).
+    * Accordingly, each core individually does not necessarily generate more cache misses, however, the overall number of cache misses is generally the same across the entire system (i.e., on a per-core basis), regardless of how many cores are present. Therefore, as the number of cores increases, so does the number of ***memory requests*** (i.e., resulting from proportionally more cache misses).
+  * However, note that the number of **connecting pins** on the chip increases slowly relative to the number of cores as more cores are added (e.g., a doubling of cores may add 10% more pins, but nowhere close to 100%).
+    * The pins themselves must be physically large enough to prevent breaking on connecting/reconnecting the chip to the motherboard, etc.
+    * Therefore, the slight improvement in off-chip throughput is not proportional to the corresponding increase in demand for this throughput grows directly proportionally to the amount of cores added. Correspondingly, this **off-chip available throughput** therefore becomes ***bottlenecking*** accordingly.
+
+In order to avoid saturating the off-chip available throughput, it is necessary to reduce the number of memory requests per core. This can be accomplished using a **last level cache (LLC)** (which in modern processors is typically a **level 3 [L3] cache**) which is ***shared*** (equally) among the cores, with the size of this last level cache (LLC) scaling roughly proportionally to the number of cores.
+
+However, there are a couple of ***problems*** with having one such large level cache (LLC), as follows:
+  * It is very slow
+  * As a single cache, it only has ***one*** "entry point" for entering the requested address and receiving the corresponding data (i.e., from main memory)
+    * Furthermore, this entry point will be located somewhere on the chip (comprised of a mesh or other advanced network topology) that may also become ***bottlenecking*** (i.e., not all links can achieve the same maximum per-link throughput), since these entry-point links will receive a disproportionate share of the traffic, even as the number of cores increases
+
+To resolve these particular problems, rather than having "one" such large level cache (LLC), instead a **distributed large level cache (LLC)** is used.
+
+### 6. Distributed Large Level Cache (LLC)
