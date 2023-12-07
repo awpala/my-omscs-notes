@@ -740,3 +740,36 @@ However, consider if while thread `0` is checking the status of `release`, when 
 Now, both threads proceed similarly as before with their respective operations, however, this time, since the counter `count` is "inaccurate," both threads will eventually end up in the `spin()`/waiting state. This condition is called a **deadlock**.
 
 ### 21. Simple Barrier Quiz and Answers
+
+<center>
+<img src="./assets/20-028A.png" width="550">
+</center>
+
+To better understand the problem with the simple barrier implementation, consider the same code from previously (cf. Section 20), as follows:
+
+```cpp
+lock(counter_lock);          // begin critical section
+if (count == 0) release = 0; // re(initialize) release flag to `0` (acquired)
+count++;                     // count the arrivals
+unlock(counter_lock);        // end critical section
+if (count == total) {
+  count = 0;                 // (re)initialize the counter to `0`
+  release = 1;               // (re)set release flag to `1` (released)
+} else {
+  spin(release == 1);        // wait for `release` to attain value `1` (released)
+}
+```
+
+Now, assume that on exit from the barrier by both threads (i.e., `0` and `1`), only thread `0` proceeds to do subsequent work, while thread `1` simply "terminates."
+
+In this case, is the simple barrier implementation effective/correct?
+  * `YES`
+
+***Explanation***:
+
+If the barrier is only used ***once*** (i.e., via corresponding critical-section code and `release` mechanism), then eventually when they both perform the "first passthrough" of the critical section, the system will reach a state whereby thread `0` waits on `spin()`, and then thread `1` resets count to `0` and `release` to `1`. Eventually, due to coherence, the wait will resolve, and thread `1` simply exits the barrier (and subsequently terminates), while thread `0` continues onto subsequent work.
+  * Alternatively, neither may end up waiting via `spin()` but rather simply both release instead, however, the net effect is the same (i.e., thread `1` terminates, and thread `0` proceeds onto subsequent work).
+
+Therefore, the ***incorrectness*** of the simple barrier implementation does not stem from this "first passthrough" scenario, but rather that this implementation gives rise to a barrier-based release mechanism which is ***not reusable*** (i.e., on subsequent entries by threads into the barrier).
+
+### 22. Reusable Barrier
