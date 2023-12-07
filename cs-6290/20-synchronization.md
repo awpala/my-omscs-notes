@@ -773,3 +773,42 @@ If the barrier is only used ***once*** (i.e., via corresponding critical-section
 Therefore, the ***incorrectness*** of the simple barrier implementation does not stem from this "first passthrough" scenario, but rather that this implementation gives rise to a barrier-based release mechanism which is ***not reusable*** (i.e., on subsequent entries by threads into the barrier).
 
 ### 22. Reusable Barrier
+
+<center>
+<img src="./assets/20-029.png" width="650">
+</center>
+
+So, then, how can such a **reusable barrier** be implemented? This can be done as follows:
+
+```cpp
+local_sense != local_sense;
+lock(counter_lock);
+count++;
+if (count == total) {
+  count = 0;
+  release = local_sense;
+}
+unlock(counter_lock);
+spin(release == local_sense);
+```
+
+The idea here is that the value for releasing the barrier (i.e., `release`) in general is ***not*** the same for all instances of the barrier itself (i.e., even in those instances for which `release` becomes `0`, all other instances release on `release` reaching `1`).
+
+Therefore, it is not actually necessary to ever *reinitialize* `release` to `0`, but rather it is simply "flipped" at any given time. Correspondingly, each thread has `local_sense`, which at any given time indicates "which" release to detect in order to exit from waiting.
+
+For example, consider two threads (numbered `0` and `1`), as in the figure shown above. Assume that `local_sense` is initialized to `0` (respectively in each thread, with each owning this independently as its own local variable), and then subsequently detects a value of `1` immediately prior to entry of either thread into the critical section.
+
+As the threads pass through the critical section, one thread will eventually detect the condition `count == total` and subsequently set `release = local_sense` (i.e., `1` in this case), which is the pending value for the particular barrier in question. At this point, the other thread has exited the critical section and is waiting (i.e., via `spin(release == local_sense)`). Here, the thread waits on the release condition (i.e., `local_sense` having value `1`).
+
+Consider the situation where the setting of `release` to `1` is not detected by the waiting thread (i.e., due to "delayed" detection prior to exiting `spin()`).
+  * In this case, the other thread proceeds onto the next iteration and re-enters the critical section. However, on this re-entry, it will invert its own local version of `local_sense` back to `0` and set this accordingly.
+  * Now, it will fall through the critical section and itself reach the waiting condition (i.e., `spin(release == local_sense)`), however, having set `release` to `0`, the other thread now detects this as the "release" condition (i.e., per its own `local_sense` having value `0` from previously), which in turn releases this thread for subsequent work (i.e., at this point, they are waiting on a "disparate" values of `release`).
+    * ***N.B.*** At this point, "globally" `release` still has a value of `1`, which is how it was set most recently.
+
+Generalizing this manner, the released thread will subsequently "invert" the value again, thereby releasing the currently waiting thread, and so on. Therefore, this inversion allows to reuse the barrier, without otherwise risking a deadlock condition occurring in the program during execution.
+
+## 23. Lesson Outro
+
+This lesson has demonstrated that synchronization operations (e.g., locks and barriers) are necessary in order to coordinate the activities among multiple threads. Furthermore, special atomic operations are necessary in order to implement locks efficiently.
+
+The next lesson will examine how synchronization can be perturbed when a processor is capable of reordering load and store operations, and consequently how to guard against this accordingly.

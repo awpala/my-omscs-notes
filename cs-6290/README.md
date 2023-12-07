@@ -23,6 +23,7 @@
 | [17](./17-fault-tolerance.md) | Fault Tolerance |
 | [18](./18-multi-processing.md) | Multi-Processing |
 | [19](./19-cache-coherence.md) | Cache Coherence |
+| [20](./20-synchronization.md) | Synchronization |
 
 ## Videos Reference
 
