@@ -238,4 +238,48 @@ Therefore, in order to prevent violation of sequential consistency in the latter
 
 ## 9-10. Introduction
 
-## 11. MSYNC Quiz and Answers
+<center>
+<img src="./assets/21-011.png" width="650">
+</center>
+
+As an alternative approach to "improving" sequential consistency (i.e., the "naturally expected" behavior by programmers) is to simply ***relax*** the constraint of consistency itself (i.e., invalidate the assumption of the programmer that the program itself *is* indeed sequentially consistent).
+
+In these corresponding **relaxed consistency** models, they typically differ/vary according to what types of ***orderings*** they enforce. In this regard, there are four distinct ***types*** of ordering, as follows:
+  * `WR A` → `WR B`
+  * `WR A` → `RD B`
+  * `RD A` → `WR B`
+  * `RD A` → `RD B`
+
+In ***sequential*** consistency, the implication is that ***all*** four types of orderings shown here are obeyed ***strictly*** at all times (otherwise, any incidental reordering requires corresponding mitigation/intervention accordingly).
+
+Conversely, in ***relaxed*** consistency models, some of these types of ordering need not be obeyed at all times.
+  * Typically, `RD A` → `RD B` (i.e., successive read operations) is the most commonly "relaxed" constraint in these types of models.
+
+So, then, how are ***correct*** programs written in such a ***relaxed*** system?
+
+#### `MSYNC`
+
+<center>
+<img src="./assets/21-012.png" width="650">
+</center>
+
+When relaxed consistency is used, it is permissible to reorder "normal" accesses. However, there are additionally ***special non-reorderable accesses** added to the system, which must be used explicitly by the programmer whenever instructions ordering in program orders is significant (i.e., required for an otherwise semantically correct program).
+
+An example of such a non-reorderable access is the x86 instruction `MSYNC` (as in the figure shown above).
+  * In normal execution, all accesses are reorderable (i.e., it is not otherwise fair to assume "in-order" behavior of the program insofar as consistency is concerned).
+  * Conversely, ***no*** reordering is permissible across an `MSYNC` instruction.
+
+For example, consider a series of memory accesses occurring in an executing program (e.g., `LW`, `SW`, `LW`, `SW`, etc., as in the figure shown above). On reaching the instruction `MSYNC`, the processor now ***guarantees*** that the corresponding upstream memory-access instructions will conclude prior to completing instruction `MSYNC`, which in turn will "bottleneck" subsequent execution until `MSYNC` itself completes execution (at which point, out-of-order instructions, including memory accesses, can commence execution as normally).
+
+So, then, what is the added value of `MSYNC`? In the aforementioned example program (cf. Section 4), this can now be executed correctly as follows:
+
+```c
+while (!flag);
+MSYNC;
+// use `data` here
+```
+
+Here, `MSYNC` ensures that condition `!flag` "truly" reaches value `0` before proceeding further in the program. Otherwise, subsequent use of `data` is still amenable to performance optimizations by the processor (e.g., instructions reordering)
+
+## 11. `MSYNC` Quiz and Answers
+
