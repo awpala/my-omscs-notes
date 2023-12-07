@@ -705,3 +705,38 @@ This simple implementation is ***not*** entirely correct, however. Consider the 
   * However, on subsequent arrivals to the barrier, a **deadlock** condition can result (as discussed in the next section).
 
 ### 20. Simple Barrier Implementation Does *Not* Work
+
+<center>
+<img src="./assets/20-026.png" width="650">
+</center>
+
+Recall (cf. Section 19) the simple barrier implementation as follows:
+
+```cpp
+lock(counter_lock);          // begin critical section
+if (count == 0) release = 0; // re(initialize) release flag to `0` (acquired)
+count++;                     // count the arrivals
+unlock(counter_lock);        // end critical section
+if (count == total) {
+  count = 0;                 // (re)initialize the counter to `0`
+  release = 1;               // (re)set release flag to `1` (released)
+} else {
+  spin(release == 1);        // wait for `release` to attain value `1` (released)
+}
+```
+
+Furthermore, consider two cores (numbered `0`/blue and `1`/magenta) running the same program simultaneously (as in the figure shown above).
+
+On arrival at the critical section, assume that core `0` arrives first for the sake of example. Thread `0` (corresponding to core `0`) passes through the critical section, and eventually waits at `spin()`.
+  * The analogous operation is `LW release` (yielding `0`) at this point. It continues to spin in this manner, checking the status of `release`.
+
+Subsequently, on arrival at the critical section, thread `1` (corresponding to core `1`), ideally it should pass through the critical section (setting `count` to `2` in the process), and then subsequently set `count` to `0` and `release` to `1` accordingly.
+  * The analogous operation is `SW release` (set to  `1`) at this point, which in turn causes thread `1` to exit from `spin()` (thereby exiting the barrier accordingly).
+
+However, consider if while thread `0` is checking the status of `release`, when the subsequent release by thread `1` occurs, there is a delay in this checking by thread `0` (e.g., an intermediate interrupt is suspended at this point, precluding a "sufficiently fast" exit from `spin()`).
+  * In this case, rather than exiting `spin()` (via corresponding detection of value `1` via `LW release`), instead thread `1` proceeds to re-enter the critical section (detecting `count == 0` at this point from its own preceding release) and subsequently resetting `release` to `0` (i.e., *not* released).
+  * Consequently, on subsequent check by thread `0` in `spin()`/waiting, it no longer sees a "released" system state.
+
+Now, both threads proceed similarly as before with their respective operations, however, this time, since the counter `count` is "inaccurate," both threads will eventually end up in the `spin()`/waiting state. This condition is called a **deadlock**.
+
+### 21. Simple Barrier Quiz and Answers
