@@ -172,3 +172,40 @@ To mitigate this issue, another approach is to distribute the data in a round-ro
   * This in turn facilitates efficient program execution, because the operating system is otherwise capable of mapping pages in such a manner so as to make these last level cache (LLC) accesses more local (e.g., placing the pages pertaining to a given stack in the same core's slice).
 
 ### 7. Distributed Last Level Cache (LLC) Quiz and Answers
+
+<center>
+<img src="./assets/22-015A.png" width="650">
+</center>
+
+Consider a system comprised of `16` cores, organized as a `4×4` mesh (as in the figure shown above).
+  * A single ***tile*** in this mesh is comprised of a core, level 1 (L1) and level 2 (L2) caches, and a slice of the level 3 (L3) cache
+
+Furthermore, the level 3 (L3) cache is characterized as follows:
+  * `8 MB` capacity
+  * `256 bytes` block size
+  * `16` way set-associative
+  * distributed among the slices in a round-robin manner with respect to its constituent slices (i.e., set `0` goes to slice `0`, set `1` goes to slice `1`, etc., with corresponding "wraparound")
+
+If the core in tile `0` issues a memory request `LW 0x1234567` (where `0x1234567`is the target address) which yields a cache miss in both level 1 (L2) and level (L2) caches, then to which level 3 (L3) tile will this request subsequently forward to?
+ * Tile `6`
+
+***Explanation***:
+
+Given a `256 bytes` block size, the least-significant `8` bits (i.e., `log_2(256) = 8`) indicate the block offset, whereas the remaining bits comprise the index. Furthermore, the next-least-significant bits in this index portion specify the tile.
+
+Therefore, since there are `16` tiles, the corresponding `16` least-significant bits (equivalent to a single hex digit) of the index portion identify the tile, i.e., `0x6`, or tile `6`.
+
+Diagramatically, this corresponds to the following:
+
+```
+        |          index bits            |
+                                           |offset |
+binary: 0000 0001 0010 0011 0100 0101 0111 1110 1111
+hex:    0    1    2    3    4    5    6    7    8
+```
+
+***N.B.*** In this case, it is not necessary to determine the index exactly, since the least-significant bits of the index region already identify the tile in question.
+
+## 5-7. Many-Cores Challenges: Part 3
+
+### 5. Introduction
