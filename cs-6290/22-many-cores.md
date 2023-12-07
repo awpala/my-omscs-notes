@@ -206,6 +206,22 @@ hex:    0    1    2    3    4    5    6    7    8
 
 ***N.B.*** In this case, it is not necessary to determine the index exactly, since the least-significant bits of the index region already identify the tile in question.
 
-## 5-7. Many-Cores Challenges: Part 3
+## 8-11. Many-Cores Challenges: Part 3
 
-### 5. Introduction
+### 8. Introduction
+
+<center>
+<img src="./assets/22-016.png" width="650">
+</center>
+
+Returning to the challenges present in many-cores processors (cf. Section 2), recall (cf. Section 3) that there are indeed solutions to managing the increased on-chip coherence traffic as the number of cores grows via corresponding scalable on-chip networks supported by directory coherence.
+
+Furthermore, recall (cf. Section 6) that there are also solutions to managing the increased off-chip traffic as the number of cores grows via a corresponding large, shared distributed last level cache (LLC).
+
+However, there is still another problem: The **coherence directory** required in order to manage the scalable on-chip network ***too large*** to fit on a chip.
+  * A traditional directory has ***one*** entry for ***each*** possible memory block.
+  * However, in practice, the memory can reach a size of many gigabytes, which would correspondingly require *billions* of such directory entries, well beyond the physical capacity of a chip.
+
+So, then, how to solve this problem? This is discussed in the next section.
+
+### 9. On-Chip Directory
