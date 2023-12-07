@@ -64,9 +64,79 @@ Consider now: Is it possible to perform these instructions in such a way to yiel
 
 In ***program order***, this outcome is ***not*** possible. This would require the loads in core `2` to occur after the second store in core `1`, however, this would necessarily require both loads to occur at this point, resulting in `R1 == 1` and `R2 == 1`.
 
+
+<center>
+<img src="./assets/21-003.png" width="650">
+</center>
+
 Conversely, in ***execution order***, this scenario ***can*** occur, if the loads in Core `2` "flank" the stores in Core `1` (as in the figure shown above), giving rise to an "anomalous" execution relative to (expected) program order. Furthermore, note that this does ***not*** violate coherence at all.
 
 However, this is a rather obscure edge case; do we ***really*** care about this ordering "problem"?
 
 ## 4. Consistency Matters Quiz and Answers
+
+<center>
+<img src="./assets/21-005A.png" width="650">
+</center>
+
+Consider a two-core processor with a coherent memory and out-of-order processing. Furthermore, its constituent operations are characterized as follows:
+  * Branches can be predicted correctly (i.e., verified taken vs. not taken on subsequent *actual* execution)
+  * Stores are performed ***strictly*** in program order (i.e., no reordering of these operations is performed)
+  * Loads can be ***reordered***
+
+Furthermore, the cores simultaneously perform the following programs:
+
+(Core `1`)
+```c
+while (!flag)
+  wait();
+print(data);
+```
+
+(Core `2`)
+```c
+data = 10;
+data = data + 5;
+flag = 1;
+```
+
+***N.B.*** For this system, initial values are `flag = 0` and `data = 0` (i.e., immediately prior to access/modification by the cores).
+
+Given this system and corresponding programs, what is/are the subsequent value(s) that can be printed by core `1`? (Select all that apply.)
+  * `0`
+    * `APPLIES`
+  * `5`
+    * `DOES NOT APPLY`
+  * `10`
+    * `APPLIES`
+  * `15`
+    * `APPLIES`
+  * Other
+    * `DOES NOT APPLY`
+
+***Explanation***:
+
+From the programmer's perspective, the expected behavior is such that while core `1` waits, core `2` performs the associated data operations, and then finally core `1` prints the net result. From this perspective, the expected output would therefore be `15`; per execution order, this is also indeed ***a*** possible execution path as well (e.g., if core `2` happens to execute its instructions prior to core `1` concluding its check of `flag`, for example).
+
+However, given the out-of-order execution capability of this system, other possible outputs can also result.
+
+Note that in the following section of core `1`'s program:
+
+```c
+while (!flag)
+  wait();
+```
+
+core `1` is waiting while `flag` has value `0`. Furthermore, during this time, core `1` is testing for `0` and branching based on this test; the processor in turn can easily predict this branching in such a manner whereby a "premature exit" of the `while` condition ***can*** occur, prior to actually checking the value of `flag`.
+
+Consequently, if such a "premature exit" occurs, then `data` may have the following values, depending on the particular circumstances of the run-time execution:
+  * `data` is read before core `2` commences execution, and consequently core `1` reads the value `0`. Furthermore, due to out-of-order processing, the updated value of `flag` set to `1` by core `2` is subsequently detected by core `1` (i.e., subsequently to exiting the `while` loop), thereby validating a "correct prediction" in core `1` accordingly.
+  * Generalizing this, a similar occurrence results if the "premature exit" in core `1` occurs subsequently to execution of statement `data = 10;` by core `2`, resulting in a "detected" value of `10` by core `1` at point of exit from the `while` loop (i.e., due to out-of-order accessing).
+  * Similarly, `data` can be detected by core `1` immediately following execution of statement `data = data + 5;` by core `2`, however, in this particular case, this simply yields the aforementioned "expected"/"in-program-order" result `15`.
+
+***N.B.*** Results `5` or "something else" cannot occur in this system, because the writes on core `2` (i.e., stores) will occur ***strictly*** in program order (e.g., `data = data + 5;` will not execute with value `0` for `data` on the right-hand side, as program ordering will enforce execution of statement `data = 10;` prior to this).
+
+Observe that despite using the `flag` to manage accesses, this mechanism was otherwise still "subverted" by out-of-order processing (and furthermore coherence did not manage to prevent this, either). Therefore, consistency ***is*** indeed required to resolve this issue, as discussed next.
+
+## 5. Why Do We Need Consistency?
 
