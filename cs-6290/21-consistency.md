@@ -140,3 +140,25 @@ Observe that despite using the `flag` to manage accesses, this mechanism was oth
 
 ## 5. Why Do We Need Consistency?
 
+<center>
+<img src="./assets/21-006.png" width="650">
+</center>
+
+So, then, why do we need consistency?
+  * Recall (cf. Section 4) that a mechanism beyond coherence is necessary to perform the equivalent of a "data is ready" flag, in order for the corresponding synchronization to work properly (i.e., in an out-of-order-processing, multi-core system)
+  * It is additionally necessary in **thread termination**
+
+With respect to thread termination, consider the following sequence:
+  * Thread `A` creates thread `B`
+  * Thread `B` performs work, then updates `data`
+  * Thread `A` waits until thread `B` exits
+    * This occurs via ***system call*** initiated by thread `A`, thereby notifying the system to "wait" for thread `B` to be "completed" accordingly
+  * Thread `B` terminates, with the operating system marking thread `B` as "completed"
+
+In this corresponding operating-system-managed coordination among the threads (i.e., via system calls), the constituent system calls (e.g., checks for exiting) might be branch-predicted, however, this may be "improperly synchronized" with respect to the actual run-time behavior of the thread(s) in question.
+
+Therefore, some ***additional ordering restrictions*** are necessary to resolve this, which extend beyond the capabilities of only coherence alone.
+
+## 6-8. Sequential Consistency
+
+### 6. Introduction
