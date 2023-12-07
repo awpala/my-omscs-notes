@@ -24,6 +24,7 @@
 | [18](./18-multi-processing.md) | Multi-Processing |
 | [19](./19-cache-coherence.md) | Cache Coherence |
 | [20](./20-synchronization.md) | Synchronization |
+| [21](./21-consistency.md) | Consistency |
 
 ## Videos Reference
 

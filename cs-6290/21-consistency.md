@@ -347,3 +347,27 @@ However, bear in mind that while ***debugging*** such programs, even if "data-ra
 ***N.B.*** Some processors provide support to switch between sequential consistency and more-relaxed consistency models (i.e., for improved performance), thereby allowing to switch to "sequential consistency mode" in order to improve debugging capabilities accordingly.
 
 ## 13. Consistency Models
+
+<center>
+<img src="./assets/21-016.png" width="350">
+</center>
+
+Finally, consider the existing **consistency models** which are available.
+
+Recall (cf. Section 6) that **sequential consistency** is the most strict model, which ensures correct program execution (but generally at the expense of performance).
+
+Additionally, there is a family of **relaxed consistency** models (cf. Section 9), allowing to violate one or more ordering rules, which can be further classified as follows (i.e., used and/or proposed models falling under this family):
+  * **weak** consistency
+  * **processor** consistency
+  * **release** consistency
+  * **lazy release** consistency
+  * **scope consistency**
+  * and others
+
+The ***common characteristic*** among these relaxed consistency models is that although they allow arbitrary reorderings (and/or some specific reorderings among particular data operations), ***all*** of them support synchronization operations which ensure that the intended ordering in the program is that which is actually executed when the program runs.
+
+## 14. Lesson Outro
+
+This lesson examined memory consistency, which defines what is allowed to occur when the processor cores reorder memory accesses in a multi-core system.
+  * Sequential consistency yields the expected program behavior, however, it can limit performance in doing so.
+  * Conversely, relaxed consistency models can improve performance, however, they consequently make it more difficult to reason about program behavior. 
