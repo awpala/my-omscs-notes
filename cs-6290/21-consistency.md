@@ -209,3 +209,33 @@ However, proceeding in this manner, with a multi-level parallelism of `1`, these
 Conversely, with a better-optimized multi-level parallelism, these cache misses are ideally parallelized, such that they are relatively "less blocking" to the overall execution of the program (and correspondingly reducing, or ideally eliminating, this added access-time overhead). This correspondingly better amortizes the cost penalty incurred by each sequential cache miss.
 
 ### 8. Better Implementation of Sequential Consistency
+
+<center>
+<img src="./assets/21-010.png" width="650">
+</center>
+
+Consider now a ***better*** implementation of sequential consistency (as in the figure shown above).
+
+In this system, a core ***is*** permitted to reorder load operations, however, because this can consequently lead to violations of sequential consistency, the system must also correspondingly ***detect*** scenarios accordingly whereby sequential consistency may be violated (and provide the corresponding ***resolution*** if such scenarios do occur during program execution).
+
+So, then, *how* exactly is this accomplished?
+
+Consider a program (as in the figure shown above), whereby load operation `LW A` occurs, which is subsequently followed by load operation `LW B`. These load operations must occur in program order in order to prevent violation of sequential consistency, however, to improve performance, it is desirable to execute them out-of-order otherwise (i.e., if there is no potential for a sequential consistency violation).
+
+Consider the **reorder buffer (ROB)** in the context of this program.
+  * The reorder buffer (ROB) maintains the instructions in program order (i.e., `LW B` is "known" to "strictly follow" `LW A`). Therefore, if the accesses occur in this order (denoted by green and blue in the figure shown above), then there is no potential violation of sequential consistency accordingly.
+
+Conversely, a violation of sequential consistency will occur if this "strict ordering" is not performed (i.e., if execution of `LW B` precedes execution of `LW A` during program execution).
+  * Note that this scenario is not ***strictly*** a violation of sequential consistency: If no core writes to `A` or `B` during the execution of these instructions, then the values of `A` and `B` will be the ***same*** as if the program were actually executed in program order.
+  * Conversely, if at least one write operation (e.g., `SW B`) occurs in the intervening time between these load operations, then a violation of sequential consistency has occurred (denoted by magenta in the figure shown above). The reason for this is because this will consequently update the value for `B` prior to completion of operation `LW A`.
+
+Therefore, in order to prevent violation of sequential consistency in the latter case, it is simply necessary to ***detect*** such intermediate write operations (i.e., `SW`s) accordingly.
+  * When read operations (i.e., `LW`s) are performed "ahead" of program order, then it is necessary to commence ***monitoring*** coherence traffic produced by other cores at this point.
+  * Consequently, if such a write operation (i.e., `SW`) is detected (denoted by red in the figure shown above), then any "upstream" read operations (i.e., `LW`s) prior to this point of write operation(s) must be "replayed" (and also fed back to and downstream instructions depending on its value) accordingly.
+    * ***N.B.*** Such an "upstream" read operation (e.g., `LW A`) *is* indeed "replayable" in this manner, because it is already present in the reorder buffer (ROB) accordingly, with the subsequent downstream load (i.e., `LW B`) having "not yet occurred" by this point. Correspondingly, the **commit point** (as denoted by red arrow in the figure shown above) is located "relatively upstream" to this, and can be simply "rolled back" accordingly as necessary. In the worst case, the downstream operation (i.e., `LW B`) can be simply "canceled" (denoted by red `X` in the figure shown above) and re-executed (along with its downstream-dependent instructions, denoted by red arrow in the figure shown above) accordingly.
+
+## 9-11. Relaxed Consistency
+
+## 9-10. Introduction
+
+## 11. MSYNC Quiz and Answers
