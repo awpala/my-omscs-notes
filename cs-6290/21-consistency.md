@@ -236,7 +236,7 @@ Therefore, in order to prevent violation of sequential consistency in the latter
 
 ## 9-11. Relaxed Consistency
 
-## 9-10. Introduction
+### 9. Introduction
 
 <center>
 <img src="./assets/21-011.png" width="650">
@@ -257,7 +257,7 @@ Conversely, in ***relaxed*** consistency models, some of these types of ordering
 
 So, then, how are ***correct*** programs written in such a ***relaxed*** system?
 
-#### `MSYNC`
+### 10. `MSYNC`
 
 <center>
 <img src="./assets/21-012.png" width="650">
@@ -281,5 +281,44 @@ MSYNC;
 
 Here, `MSYNC` ensures that condition `!flag` "truly" reaches value `0` before proceeding further in the program. Otherwise, subsequent use of `data` is still amenable to performance optimizations by the processor (e.g., instructions reordering)
 
-## 11. `MSYNC` Quiz and Answers
+### 11. `MSYNC` Quiz and Answers
 
+<center>
+<img src="./assets/21-014A.png" width="650">
+</center>
+
+Consider a processor which has a very relaxed consistency model, allowing all four types of reorderings.
+
+Furthermore, the following program runs on this processor:
+
+```mips
+Wait:
+  LL   R1, lock # I1
+  BNEZ R1, Wait # I2
+  SC   R2, lock # I3 - acquire `lock`
+  BEQZ R2, Wait # I4
+  LW var        # I5
+  INC           # I6 - increment `var`
+  SW var        # I7
+  SW 0, lock    # I8 - free `lock`
+```
+
+Among which instruction(s) is `MSYNC` necessary in order to enforce correct program execution? (Indicate all applicable instructions.)
+  * Between instructions `I4` and `I5`, and between instructions  `I7` and `I8`
+
+***Explanation***:
+
+While the processor allows all four types of reorderings, it only allows reorderings of accesses to ***different*** locations, because cache coherence and correct uni-processor behavior otherwise ensures that accesses to the ***same*** location are still performed in program order. Consequently, instructions `I1`, `I2`, and `I8` are already "correctly ordered by default" given these conditions/constraints.
+
+Conversely, locations `var` AND `lock` do require additional (i.e., explicit) attention, because they exist at ***different*** memory locations (and correspondingly ***can*** be reordered arbitrarily in this processor accordingly).
+  * Instruction `I5` (`LW var`) can be moved by the processor before instruction `I1` (`LL R1, lock`), i.e., pulled "outside" of the critical section and before the lock is even acquired. Therefore, to prevent this, `MSYNC` must be added immediately prior to instruction `I4` in order to prevent this from occurring.
+
+Another problem is that the store instructions (i.e., instructions `I7` and `I8`) can be reordered in this processor as well.
+  * If instructions `I7` and `I8` are reordered, then the lock can be released *prior* to updating `var`, thereby violating correctness of the program. Therefore, to prevent this, `MSYNC` must be added in between these two instructions in order to enforce correct/intended program ordering accordingly.
+
+***N.B.*** Enforcement of ordering via `MSYNC` with respect to instructions `I5` (`LW var`) and `I7` (`SW var`) is ***not*** necessary here, because they operate on the ***same*** memory location (i.e., `var`). Furthermore, instructions with respect to managing `lock` (i.e., instructions `I1`, `I2`, `I3`, `I4`, and `I8`) are similarly already "in program order by default" as given.
+
+As a general observation along these lines, a lock function is considered to be an "acquire" type of synchronization, which is followed by an `MSYNC` instruction. Similarly, an unlock function is considered to be a "release" type of synchronization, which is preceded by an `MSYNC` instruction.
+  * ***N.B.*** Conversely, in a "flag-based" types of synchronization (cf. Lesson 20), waiting for a flag is the analogous "acquire" counterpart, and then releasing the flag is the corresponding "release" accordingly. Furthermore, a barrier (cf. Lesson 20) is a more anomalous case whereby "acquire" and "release" are performed simultaneously in the same operation. In any case, `MSYNC` provides the appropriate "stopgap" functionality accordingly in these synchronization types as well.
+
+## 12. Data Races and Consistency
