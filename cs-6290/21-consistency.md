@@ -322,3 +322,28 @@ As a general observation along these lines, a lock function is considered to be 
   * ***N.B.*** Conversely, in a "flag-based" types of synchronization (cf. Lesson 20), waiting for a flag is the analogous "acquire" counterpart, and then releasing the flag is the corresponding "release" accordingly. Furthermore, a barrier (cf. Lesson 20) is a more anomalous case whereby "acquire" and "release" are performed simultaneously in the same operation. In any case, `MSYNC` provides the appropriate "stopgap" functionality accordingly in these synchronization types as well.
 
 ## 12. Data Races and Consistency
+
+<center>
+<img src="./assets/21-015.png" width="650">
+</center>
+
+There is a concept known as a **data race** which has an important role in considering how consistency can actually be relaxed.
+
+A data race occurs when there is a data dependency (i.e., `RD` → `WR`, `WR` → `RD`, or `WR` → `WR`) between memory accesses that are on ***different*** cores but ***not*** otherwise ordered by synchronization.
+  * Therefore, for a data race to occur in this manner, there must be either one processor reading while another writes to the same variable (i.e., `RD` → `WR`), the other way around (i.e., `WR` → `RD`), or both writing simultaneously (i.e., `WR` → `WR`). Furthermore, the accesses among these cores are not otherwise order-enforced via synchronization.
+
+For example, consider the example of a pair of operations `LW A` and `SW A` (as in the figure shown above). Since both orderings in this pair are possible during program execution, then a data race exists.
+
+Conversely, if each operation of this pair has a corresponding barrier (as in the figure shown above), then a data race will ***not*** occur, because the data dependency existing among these accesses (i.e., `A`) is ordered unambiguously with respect to these two operations, by virtue of the synchronization imposed by the barrier.
+
+As a corollary to this, there is an existing concept known as a **data-race-free program**, which is a program wherein no such data races will inherently occur.
+  * In such a "well-synchronized" program, any/all accesses to data are strictly correctly ordered by appropriate synchronization mechanisms (e.g., barrier, locks, flags, etc., as discussed in Lesson 20).
+  * A ***key property*** of these data-race-free programs is that they behave ***exactly*** as an equivalent sequentially consistent program, even when operating in any relaxed consistency model (i.e., running on such a corresponding processor).
+    * ***N.B.*** This naturally follows from the synchronization itself, which ensures proper ordering.
+
+However, bear in mind that while ***debugging*** such programs, even if "data-race-free" behavior is intended, this may not always be truly the case. If this synchronization is violated at any point, then essentially "anything can happen."
+  * Correspondingly, the behavior on such a ***weakly consistent system*** may be "weird" and otherwise very difficult to debug properly accordingly.
+
+***N.B.*** Some processors provide support to switch between sequential consistency and more-relaxed consistency models (i.e., for improved performance), thereby allowing to switch to "sequential consistency mode" in order to improve debugging capabilities accordingly.
+
+## 13. Consistency Models
