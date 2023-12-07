@@ -131,11 +131,44 @@ Furthermore, another issue introduced by adding more cores to the system is that
 
 In order to avoid saturating the off-chip available throughput, it is necessary to reduce the number of memory requests per core. This can be accomplished using a **last level cache (LLC)** (which in modern processors is typically a **level 3 [L3] cache**) which is ***shared*** (equally) among the cores, with the size of this last level cache (LLC) scaling roughly proportionally to the number of cores.
 
-However, there are a couple of ***problems*** with having one such large level cache (LLC), as follows:
+However, there are a couple of ***problems*** with having one such last level cache (LLC), as follows:
   * It is very slow
   * As a single cache, it only has ***one*** "entry point" for entering the requested address and receiving the corresponding data (i.e., from main memory)
     * Furthermore, this entry point will be located somewhere on the chip (comprised of a mesh or other advanced network topology) that may also become ***bottlenecking*** (i.e., not all links can achieve the same maximum per-link throughput), since these entry-point links will receive a disproportionate share of the traffic, even as the number of cores increases
 
-To resolve these particular problems, rather than having "one" such large level cache (LLC), instead a **distributed large level cache (LLC)** is used.
+To resolve these particular problems, rather than having "one" such last level cache (LLC), instead a **distributed last level cache (LLC)** is used.
 
-### 6. Distributed Large Level Cache (LLC)
+### 6. Distributed Last Level Cache (LLC)
+
+<center>
+<img src="./assets/22-012.png" width="650">
+</center>
+
+Logically, a **distributed last level cache (LLC)** is a "single" cache (in the sense that a data block will ***not*** be replicated in a manner akin to private, per-core caches).
+  * Therefore, a `4 MB` cache that is "distributed" in this manner effectively uses all of this cache memory, rather than replicating redundant data across the private caches (thereby reducing the effective capacity accordingly.)
+
+However, this distributed last level cache (LLC) is still "sliced up" (i.e., forming a "disjoint set"), such that each tile (i.e., core and associated local cache[s]) receives a fractional part of the overall cache capacity.
+
+Therefore, in such a mesh network (as in the figure shown above), each tile contains the core, local caches (i.e., level 1 [L2] and level 2 [L2] caches), and a "slice" of the last level cache (i.e., level [L3] cache).
+  * For example, if each such "slice" is `1 MB` in size, then the corresponding size of the distributed last level cache (LLC) is `N × 1 MB` (where here `N = 4`). Furthermore, note that this scales accordingly as the number of cores (i.e., `N`) increases.
+
+A ***key advantage*** here is that while the overall capacity increases proportionally to the cores, there is ***no*** longer a single entry point, but rather ***each*** slice of the last level cache (LLC) has its ***own*** entry point. This in turn ***distributes*** the traffic among the caches, thereby avoiding strain on any particular link.
+
+However, if a level 2 (L2) cache miss occurs in a particular core, how can it then be determined from which slice of the last level cache (LLC) to request the data?
+
+One simple approach to this is to simply spread the cache in a **round robin** manner among the slices, using a corresponding **cache index**.
+  * For example, given an eight-core processor with a level 3 (L3) cache having `1024` sets, the sets are distributed accordingly among the eight slices in question. Now, after the address is decomposed in order to access the cache, then given the appropriate set number and three least-significant bits of the slice, then the set in question can be located unambiguously.
+  * Furthermore, note that as the number of cores increases, then the number of sets in the cache will grow proportionally to this, correspondingly using additional bits to uniquely identify/index these cache sets accordingly.
+
+***N.B.*** If the data is accessed sequentially, then the sets are traversed in order in a given slice. However, given the distribution of the sets among the slices, this round-robin based "spreading" of the memory load is amenable to such a memory-access pattern.
+
+<center>
+<img src="./assets/22-013.png" width="650">
+</center>
+
+However, note that the spreading of the blocks in a round-robin manner across the chip may potentially disrupt ***locality***, because a given core is just as likely to access something in a core located at "opposite corner" of the chip as something in itself or in an adjacent core.
+
+To mitigate this issue, another approach is to distribute the data in a round-robin manner with respect to ***page number*** instead. This way, all of the blocks belonging to the same page generally end up in the ***same*** slice of the last level cache (LLC) accordingly.
+  * This in turn facilitates efficient program execution, because the operating system is otherwise capable of mapping pages in such a manner so as to make these last level cache (LLC) accesses more local (e.g., placing the pages pertaining to a given stack in the same core's slice).
+
+### 7. Distributed Last Level Cache (LLC) Quiz and Answers
