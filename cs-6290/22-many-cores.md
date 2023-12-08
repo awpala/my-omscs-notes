@@ -249,3 +249,16 @@ Therefore, a **partial directory** is used accordingly.
 However, even with such a partial directory, upon many such allocations, eventually the directory entries will be "exhausted"; so, then, how to resolve this issue?
 
 ### 10. On-Chip Directory Quiz and Answers
+
+<center>
+<img src="./assets/22-019A.png" width="650">
+</center>
+
+Given that the on-chip partial directory will eventually run out of entries, what is a possible resolution measure?
+  * Replace an existing entry (e.g., via least-recently used [LRU]replacement policy, cf. Lesson 12)
+
+***Explanation***:
+
+The resolution is exactly the same to that seen previously when dealing with a full cache (cf. Lesson 12): Simply use a corresponding replacement policy accordingly (e.g., least-recently used [LRU]).
+
+### 9. On-Chip Directory: Part 2
