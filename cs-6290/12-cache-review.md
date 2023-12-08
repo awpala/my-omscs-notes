@@ -747,9 +747,9 @@ The address breakdown will be as follows (as depicted in green in the figure sho
   * `3 bits` index bits region (to uniquely identify each cache line, via `8 = 2^3` or equivalently `log_2(8) = 3`)
   * The remaining bits constitute the tag region
 
-Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `8 = 3 + 5 bits`, or equivalently the two least-significant hex digits, as follows:
+Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `8 = 3 + 5 bits`, or equivalently the two least-significant hex digits (i.e., the least-significant byte), as follows:
 
-| Hex Address (`\|` delimits least-significant bytes) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Cache Line per Index Bits |
+| Hex Address (`\|` delimits least-significant byte) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Cache Line per Index Bits |
 |:--:|:--:|:--:|
 | `0x3F\|1F` | `... 000\|1 1111` | `0` |
 | `0x3F\|2F` | `... 001\|0 1111` | `1` |
