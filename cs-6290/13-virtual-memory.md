@@ -618,7 +618,7 @@ However, note that these are the operations *in the absence of virtual-to-physic
     * The speed of this operation depends on ***where*** exactly the page table is present
       * If the page table is inside the processor, then access is ***fast***
       * Otherwise, if the page table is in main memory (or disk), then access is ***slow***
-    * Furthermore, recall from previously in this section that a page table can be fairly large
+    * Furthermore, recall from previously in this lesson that a page table can be fairly large
       * For a multi-level page table, the page table may be on the order of `1 MB` which is relatively small, however, theoretically, in can be extremely large as well, and therefore in general it cannot be guaranteed that the page table for even *one* process will *always* fit in the processor (i.e., in general, the page table will likely be ***in memory***)
   * 5 - Compute the physical address
     * This is accomplished by combining the physical frame number (i.e., from the page table entry) with the page offset from the virtual address, which is a ***fast*** operation (i.e., simple addition operation)
