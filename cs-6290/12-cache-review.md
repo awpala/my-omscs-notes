@@ -656,7 +656,7 @@ When accessing the direct-mapped cache, it is only necessary to look in only ***
   * The cache is ***fast*** (i.e., low `Hit Time`) → if data is present there at the one location, then it is a cache hit, otherwise it is a cache miss
     * Conversely, looking in more than one place requires additional waiting/downtime in order to read out all of the additional locations, and then determine which one of them (if any) has the data, and so on
   * The cache is ***cheaper*** than more complex caches → it is only necessary to do *one* comparison on every access to the cache (i.e., only requires one type of comparator, one valid-bit checker, etc.)
-  * The cache is ***energy-efficient*** → only quires one type of comparison and one valid-bit check per access, which requires less energy expenditure per access compared to checking more than one
+  * The cache is ***energy-efficient*** → only requires one type of comparison and one valid-bit check per access, which requires less energy expenditure per access compared to checking more than one
 
 Conversely, the ***downsides*** of direct-mapped caches are related to the fact that the block ***must*** go into one location. To see why this is problematic, consider a processor accessing blocks `A` and `B` in direct succession (i.e., `A B A B ...` and so on), with both blocks `A` and `B` mapping to the ***same*** location in the cache.
   * When `A` is accessed, it is brought into the cache.
@@ -687,7 +687,7 @@ Consider a `16 KB` direct-mapped cache with `256-byte` blocks. Given this, which
 
 The key to solving these types of problems is to determine the breakdown of the address in question into its constituent offset, index, and tag regions.
 
-With a `256-byte` block size, this means that there are `8 bits` constituting the block offset, as depicted in the figure shown above. In hexadecimal notation, this corresponds to the two least-significant digits. These can be conveniently ignored, with additional focus then placed on the directly index bits.
+With a `256-byte` block size, this means that there are `8 bits` (i.e., `log_2(256) = log_2(2^8) = 8`) constituting the block offset, as depicted in the figure shown above. In hexadecimal notation, this corresponds to the two least-significant digits. These can be conveniently ignored, with additional focus then placed on the directly index bits.
 
 Conflicts occur where different blocks have the ***same*** index bits. To determine the number of bits in the index region, this can be determined via the number of blocks in the cache as per `16 KB / 256 bytes = 64 blocks`, and correspondingly `64 = 2^6` or equivalently `log_2(64) = 6` bits required to specify the index bits (as in the figure shown above).
 
