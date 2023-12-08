@@ -224,4 +224,28 @@ However, there is still another problem: The **coherence directory** required in
 
 So, then, how to solve this problem? This is discussed in the next section.
 
-### 9. On-Chip Directory
+### 9. On-Chip Directory: Part 1
+
+<center>
+<img src="./assets/22-017.png" width="650">
+</center>
+
+The directory must fit on the chip, otherwise maintaining coherence between the caches (which are very fast) will require searching through a directory in very slow memory, which essentially negates the purpose of having these fast caches in the first place.
+
+Some of the questions regarding this directory are relatively straightforward to answer, namely: Where should the home node (which contains the directory information regarding the cache block in question) be placed? → It is simply placed in the ***same*** tile that contains the corresponding distributed last-level cache (LLC) slice
+    * If the directory entry for this cache block indicates that none private caches contain the block, then the last level cache (LLC) is consequently used to locate that block; therefore, it is sensible to do so in the same node containing the directory in question, otherwise there would be a lot of (otherwise superfluous) traffic between the location of the directory and that of the last level cache (LLC) containing the block in question, so they naturally should co-exist in the same node.
+
+However, this does not address another fundamental question: How to manage the scaling issue of having a directory entry for ***every*** memory block?
+  * Recall (cf. Section 6) that the last level cache (LLC) slice only contains the cache-blocks data for those blocks which are actually present in the last level cache (LLC).
+  * However, without any other changes, the directory would need to contain *every* possible memory block that might ever be placed in that particular slice (but there are ***many*** such prospective memory blocks).
+
+To resolve this matter, a key ***insight*** is that the entries which are ***not*** present in the last level cache (LLC) (or otherwise not in any of the other caches on the chip) are also correspondingly ***not*** shared by any of the tiles, therefore it is unnecessary to maintain this information anywhere in the chip in the first place.
+
+Therefore, a **partial directory** is used accordingly.
+  * Rather than maintaining an entry for ***every*** memory block, instead the partial directory has a ***limited*** number of entries.
+  * Furthermore, entries are only allocated in this limited directory for those cache blocks which have at least ***one*** presence bit (cf. Lesson 19) set to value `1` (i.e., only those blocks which may be present in at least ***one*** of the private caches in that particular tile).
+    * Therefore, for a cache block which is known to be ***absent*** in both the level 1 (L1) and level (L2) caches, but rather the cache block is only present in either the last level cache (LLC) or in main memory, it is otherwise unnecessary to maintain a directory entry for such a cache block (i.e., implicitly, the corresponding "entry" for such a block would be the trivial case of all `0` presence-bit values).
+
+However, even with such a partial directory, upon many such allocations, eventually the directory entries will be "exhausted"; so, then, how to resolve this issue?
+
+### 10. On-Chip Directory Quiz and Answers
