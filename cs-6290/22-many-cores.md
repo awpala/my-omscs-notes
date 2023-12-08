@@ -439,3 +439,30 @@ However, in order to accomplish this, the operating system must be aware of the 
   * ***N.B.*** Most modern operating system (e.g., Windows, Linux, macOS, etc.) ***are*** indeed capable of determining this and consequently improving/maximizing utilization of these thread contexts accordingly during program execution.
 
 ## 18. Many-Cores Challenges: Part 6
+
+<center>
+<img src="./assets/22-029.png" width="650">
+</center>
+
+As an overall recap, returning to the challenges present in many-cores processors (cf. Section 2), recall (cf. Section 3) that there are indeed solutions to managing the increased on-chip coherence traffic as the number of cores grows via corresponding scalable on-chip networks supported by directory coherence.
+
+Furthermore, recall (cf. Section 6) that there are also solutions to managing the increased off-chip traffic as the number of cores grows via a corresponding large, shared distributed last level cache (LLC).
+
+Furthermore, recall (cf. Section 9) that there are also solutions to managing the exceedingly large coherence directory (resulting from the scalable on-chip network) as the number of cores grows via corresponding distributed partial directory.
+  * Recall (cf. Section 9) that the distributed partial directory does not maintain information for every possible block in memory, but rather the distributed partial directory only maintains information for a limited number of blocks (i.e., those having non-zero presence bits set) via corresponding replacement policy, and invalidates on-chip caches on such replacements.
+
+Furthermore, recall (cf. Section 15) that despite power budget constraints, if it's possible to use "turbo" frequency mode with respect to a single core (when parallelism is not otherwise available for the program in question, i.e., the program is exclusively single-threaded), then this will generally improve "optimal utilization" of this power budget (i.e., faster execution time), subject to physical limitations imposed by cooling requirements.
+
+Lastly, the corresponding ***confusion*** introduced to the operating system when dealing with such many-core processors can be mitigated, provided that the operating system(s) in question is/are hardware-aware with respect to the following:
+  * ***Multi-threading*** (wherein each core can execute several hardware threads apiece)
+  * ***multi-cores*** (which share caches)
+  * ***multi-chips*** (with each constituent chip itself being a multi-core processor)
+
+## 19. Lesson Outro
+
+This lesson has examined the characteristics of modern and (presumably) future many-cores processors.
+
+This concludes the third, and final, part of Prof. Prvulovic's course on high-performance computer architecture (CS 6290), which spanned the following topics:
+  * The internals of the modern out-of-order processor
+  * The memory hierarchy of this modern processor
+  * The intricacies of multi-core and multi-threaded execution on this modern processor

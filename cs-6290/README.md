@@ -25,6 +25,7 @@
 | [19](./19-cache-coherence.md) | Cache Coherence |
 | [20](./20-synchronization.md) | Synchronization |
 | [21](./21-consistency.md) | Consistency |
+| [22](./22-many-cores.md) | Many Cores |
 
 ## Videos Reference
 
