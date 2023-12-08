@@ -680,7 +680,9 @@ With cached page tables, the per-level access is reduced, and thus the overall c
 
 As this example demonstrates, virtual-to-physical address translation is still relatively expensive with cached page tables.
 
-## 22. Translation Look-Aside Buffer (TLB)
+## 22-26. Translation Look-Aside Buffer (TLB)
+
+### 22. Introduction
 
 <center>
 <img src="./assets/13-041.png" width="650">
@@ -715,7 +717,7 @@ However, what about if a ***TLB miss*** occurs (i.e., what if the translation is
   * 1 - Perform translation using a page table(s)
   * 2 - Place the resulting translation into the translation look-aside buffer (TLB) for subsequent use by the processor
 
-## 23. What If We Have a TLB Miss? (Quiz and Answers)
+### 23. What If We Have a TLB Miss? (Quiz and Answers)
 
 ***N.B.*** This section is presented as a "quiz," however, the subject matter herein is strictly "expositional" in nature and hence treated as a "lecture section" for purposes of these notes.
 
@@ -745,7 +747,7 @@ Because the latter hardware-based approach is faster, and because modern hardwar
 
 However, some embedded processors use software-based TLB mishandling, due to concern over the corresponding hardware cost to use the hardware-based approach. Furthermore, in these embedded processors, TLB misses occur less frequently in practice due to the comparatively simpler applications running on them.
 
-## 24. TLB Size Quiz and Answers
+### 24. TLB Size Quiz and Answers
 
 <center>
 <img src="./assets/13-047A.png" width="650">
@@ -774,7 +776,7 @@ Correspondingly, `< 64` entries seems like the most appropriate choice, however,
 Therefore, in this case, the translation look-aside buffer (TLB) must have up to `512` different entries in order to ensure a hit rate on par with the cache.
   * In reality, the number of entries required for a parity hit rate with the cache will be somewhere in this range, i.e., between `8` and `512` entries.
 
-## 25. TLB Organization
+### 25. TLB Organization
 
 Since a translation look-aside buffer (TLB) is inherently a cache-like structure, consider now how it is organized in terms of **cache-like properties**.
 
@@ -792,7 +794,7 @@ Additionally, with respect to ***size***, it is desirable for the translation lo
     * The first level, or **level 1 (L1) translation look-aside buffer (TLB)**, is fast, achieving a hit in a single cycle.
     * The second level, or **level 2 (L2) translation look-aside buffer (TLB)**, is activated if a TLB miss occurs in the L1 TLB, and correspondingly achieves a "corrective" hit on the order of several cycles. This in turn is still a considerably faster "correction" than using main memory to perform the corresponding translation. Furthermore, the L2 TLB is relatively large (on the order of several thousand entries), which in turn supports relatively high hit rates (albeit not within a single cycle).
 
-## 26. TLB Performance Quiz and Answers
+### 26. TLB Performance Quiz and Answers
 
 Having now seen how a translation look-aside buffer (TLB) works, consider a quiz on its performance.
 
