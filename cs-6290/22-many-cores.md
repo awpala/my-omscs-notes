@@ -274,7 +274,7 @@ Let `E` denote such an entry identified for replacement (i.e., to be replaced by
 To resolve this, for every presence bit that is set in entry `E`, a corresponding ***invalidation*** must be sent to all applicable caches (i.e., those for which presence bits are set to `1`). By the end of this, all of the presence bits will be set to `0` in entry `E`, at which point entry `E` can be safely ejected from the cache (along with the corresponding directory entry), thereby making room for placement of the new entry accordingly.
   * Observe that in this scenario, invalidation is not occurring with respect to coherence, but rather due to the limited capacity of the partial directory itself. Accordingly, this constitutes yet another distinct type of **cache miss**, one which is otherwise unrelated to either coherence, compulsory, capacity, or conflict (cf. Lesson 19). (This type of miss is not "named" per se, but it is a distinctly different type of cache miss nevertheless.)
 
-## 12-15. Many-Cores Challenges: Part 3
+## 12-15. Many-Cores Challenges: Part 4
 
 ### 12. Introduction
 
@@ -294,3 +294,17 @@ However, there is still another problem: The **power budget** available for the 
   * Consequently, the available frequency and voltage per core decreases accordingly. As a result, given a single-threaded program, it performance actually ***decreases*** with increasing cores (i.e., the equivalent per-core power budget scales down proportionally)!
 
 ### 13. Multi-Core Power and Performance
+
+<center>
+<img src="./assets/22-022.png" width="650">
+</center>
+
+First, consider a ***single*** core with a `100 W` total power budget for the entire chip.
+  * This power is defined as ${P_1} = c \times {V^2} \times {f_1}$ (where $c$ is a constant)
+  * Furthermore, the `100 W` power consumption occurs at a voltage level corresponding to a frequency ${f_1}$ of `3.8 GHz`
+
+Now, consider a system comprised of ***two*** cores, each splitting the equivalent `100 W` total power budget in half (i.e., `50 W` apiece per core).
+  * The corresponding per-core power budget is now ${P_2} = {\textstyle{1 \over 2}}{P_1}$, and therefore the voltage and frequency must both be reduced accordingly
+  * Furthermore, since voltage is proportional to frequency (i.e., $P \propto \underbrace {{V^2}}_{{{\left( {V \propto f} \right)}^2}} \times f \propto {f^3}$), this implies a corresponding operating frequency of ${f_2} = \sqrt[3]{{{\textstyle{1 \over 2}}}} \times {f_1} = 0.8 \times {f_1}$, or `3.0 GHz`, a noticeably slower frequency
+
+### 14. Performance vs. Number of Cores Quiz and Answers
