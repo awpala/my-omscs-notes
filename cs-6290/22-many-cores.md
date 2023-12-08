@@ -262,3 +262,18 @@ Given that the on-chip partial directory will eventually run out of entries, wha
 The resolution is exactly the same to that seen previously when dealing with a full cache (cf. Lesson 12): Simply use a corresponding replacement policy accordingly (e.g., least-recently used [LRU]).
 
 ### 9. On-Chip Directory: Part 2
+
+<center>
+<img src="./assets/22-020.png" width="650">
+</center>
+
+Therefore (cf. Section 8), when the partial directory runs out of directory entries, then the appropriate resolution measure is to simply select an entry for consequent replacement via corresponding replacement policy (cf. Lesson 12), e.g., least-recently used (LRU).
+
+Let `E` denote such an entry identified for replacement (i.e., to be replaced by a new entry). The new entry will be placed with a presence bit set to `1`, however, how should entry `E` (which may already have other presence bits set at this point) be correspondingly handled?
+
+To resolve this, for every presence bit that is set in entry `E`, a corresponding ***invalidation*** must be sent to all applicable caches (i.e., those for which presence bits are set to `1`). By the end of this, all of the presence bits will be set to `0` in entry `E`, at which point entry `E` can be safely ejected from the cache (along with the corresponding directory entry), thereby making room for placement of the new entry accordingly.
+  * Observe that in this scenario, invalidation is not occurring with respect to coherence, but rather due to the limited capacity of the partial directory itself. Accordingly, this constitutes yet another distinct type of **cache miss**, one which is otherwise unrelated to either coherence, compulsory, capacity, or conflict (cf. Lesson 19). (This type of miss is not "named" per se, but it is a distinctly different type of cache miss nevertheless.)
+
+## 12-15. Many-Cores Challenges: Part 3
+
+### 12. Introduction
