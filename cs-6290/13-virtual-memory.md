@@ -609,7 +609,7 @@ Therefore, to perform a load/store operation, the processor must perform the fol
   * 3 - Access the cache (and sometimes main memory, if there is a cache miss)
     * This is also a ***fast*** operation, with the ***exception*** of occasional cache misses
 
-However, note that these are the operations *in the absence of virtual-to-physical address translation*. Conversely, if additionally accounting for **virtual-to-physical address translation**, the corresponding ***operations*** are as follows:
+However, note that these are the operations *in the absence of virtual-to-physical address translation*. Conversely, if additionally accounting for **virtual-to-physical address translation**, then the corresponding ***operations*** are as follows:
   * 1 - Compute the virtual address
   * 2 - Compute the page number
   * 3 - Compute the physical address of the page table entry
