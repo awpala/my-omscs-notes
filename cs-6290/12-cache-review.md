@@ -589,7 +589,9 @@ Hit = (Tag == Block Number) & Valid Bit
 
 Therefore, by setting the `Valid Bit` to `0` initially, this ensures no `Hit`, as intended in this scenario. Furthermore, this eliminates the problem of initializing the data and the tag in the first place. Later, as the cache becomes populated with the main-memory data, the `Valid Bit` is correspondingly set to `1`.
 
-## 24. Types of Caches
+## 24-33. Types of Caches
+
+### 24. Introduction
 
 <center>
 <img src="./assets/12-047.png" width="650">
@@ -607,7 +609,7 @@ There are several ***types*** of caches when it comes to which blocks can be pla
 
 The subsequent several sections will examine these various types of caches in turn.
 
-## 25. Direct-Mapped Cache
+### 25. Direct-Mapped Cache
 
 Having had exposure to fully associative caches previously in this lesson, now let us consider the other "extreme", i.e., **direct-mapped caches**.
 
@@ -642,7 +644,7 @@ Examining the **address** itself more closely (as in the figure shown above):
 In this arrangement, an interesting question arises: Why does the tag region ***not*** include the full block number (i.e., extending into the index bits as well)? The reason for this is that the tag region needs to identify the cache line in the first place, and considering that the index bits must uniquely identify ***one*** location within the cache, then the tag region correspondingly does not otherwise need to (over-)specify the index bits, i.e., by examining a particular cache line, it has already been determined that the index bits must be the ones corresponding to that particular cache line. Therefore, the tag region simply needs to indicate which of the lines could be possible candidates, as from there, the index bits can identify unambiguously among those.
   * In other words, if the index bits were otherwise stored within the tag region, then ***all*** of the tags could be possibly placed into a given cache line (with all having equivalently the "same" index bits, which thereby would not necessitate additional storage of these bits if they are already effectively "known")
 
-## 26. Direct-Mapped Caches Pros and Cons
+### 26. Direct-Mapped Caches Pros and Cons
 
 <center>
 <img src="./assets/12-052.png" width="650">
@@ -663,7 +665,7 @@ Conversely, the ***downsides*** of direct-mapped caches are related to the fact 
 
 Therefore, the downside of a direct-mapped cache is this particular situation of **conflicts** arising among the cache lines, with particular blocks "fighting" over a single spot in the cache, despite the cache itself having plenty of other underutilized locations available otherwise. Correspondingly, such conflicts consequently ***increase*** the `Miss Rate` (thereby potentially offsetting the benefit of a fast `Hit Time`).
 
-## 27. Direct-Mapped Cache Quiz 1 and Answers
+### 27. Direct-Mapped Cache Quiz 1 and Answers
 
 Let us now check our knowledge of direct-mapped caches and how they handle conflicts.
 
@@ -718,7 +720,7 @@ Finally, examining `0x12341666`:
 
 These index bits ***do*** match, thereby mapping to the ***same*** place in the cache as `0x12345678` (but otherwise in a different block) and therefore causing a conflict accordingly.
 
-## 28. Direct-Mapped Cache Quiz 2 and Answers
+### 28. Direct-Mapped Cache Quiz 2 and Answers
 
 Now, consider an example of accessing direct-mapped caches.
 
@@ -767,7 +769,7 @@ Therefore, the final content of the cache is as follows:
 | `6` | (empty) |
 | `7` | (empty) |
 
-## 29. Set-Associative Caches
+### 29. Set-Associative Caches
 
 Now, consider **set-associative caches**.
 
@@ -780,7 +782,7 @@ A cache is said to be **N-way set-associative** when a particular block can resi
 Furthermore, *within* a set, there could be a number of lines that contain a block. In this particular case (as in the figure shown above), there is a **2-way set-associative** cache (i.e., `N = 2`), corresponding to the two possible candidate cache lines within a given set (the block can reside in either of these lines for a given set). Therefore, different blocks may be mapped to different sets, but within a particular set, the block will select among the two lines in that set.
   * ***N.B.*** Here, "2-way" associative is therefore referring to the two blocks within a given set, rather than referring to the number of sets (i.e., four total in this particular case, as per the figure shown above).
 
-## 30. Offset, Index, Tag for Set-Associative Caches
+### 30. Offset, Index, Tag for Set-Associative Caches
 
 Now, consider how to form the offset, index, and tag bit regions in the address for set-associative caches.
 
@@ -797,7 +799,7 @@ Given a two-way set-associative cache with four sets (as in the figure shown abo
 As with a direct-mapped cache, once a line has been placed in a given set (e.g., set `0`, as denoted by right-side green bracket in the figure shown above), it is determinate that everything that maps to this particular set will have the corresponding index bits set (e.g., `00`), so it is redundant/unnecessary to store this information in the tag itself; rather, within the set itself, it is only necessary to ensure that the content therein corresponds to the most-significant bits of the address (i.e., tag region), but not the index bits themselves.
   * ***N.B.*** Interestingly, a direct-mapped cache of the same size would have one additional index bit, thereby effectively reducing the tag region by one bit.
 
-## 31. 2-Way Set-Associative Quiz and Answers
+### 31. 2-Way Set-Associative Quiz and Answers
 
 <center>
 <img src="./assets/12-060A.png" width="650">
@@ -837,7 +839,7 @@ Now, consider the mapping of the sequential accesses into the cache, as per the 
 
 Therefore, with the 2-way set-associative cache, it is possible to place more than one block mapping to given location (i.e., set) within the cache, without otherwise yielding conflicts as a result. Indeed, this **conflicts reduction** is a key ***desirable property*** of an N-way set-associative cache. However, using this approach also complicates the tag-region checks, because now there are `N` corresponding locations for the processor to search within a given set before locating the data (or otherwise determining that a cache miss has occurred).
 
-## 32. Fully Associative Cache
+### 32. Fully Associative Cache
 
 Finally, now consider the **fully associative cache**.
 
@@ -850,7 +852,7 @@ Given an eight-entry cache (as in the figure shown above), a fully associative c
   * Correspondingly, there are ***no*** index bits, since the offset already uniquely specifies the cache line in question
   * The remaining most-significant bits consequently correspond to the **tag** region
 
-## 33. Direct-Mapped vs. Full Associative Caches
+### 33. Direct-Mapped vs. Full Associative Caches
 
 <center>
 <img src="./assets/12-062.png" width="650">
@@ -869,7 +871,9 @@ Correspondingly, for all of these caches, the address that the processor supplie
 
 Therefore, when attempting to determine which bits are the index bits, it is also necessary to determine the offset bits as well, in order to determine the corresponding specifications of these respective bits regions (i.e., among the least significant bits of a given address).
 
-## 34. Cache Replacement
+## 34-36. Cache Replacement
+
+### 34. Introduction
 
 Now that it is apparent how caches ***find*** the data when searching for it, consider what occurs when it is necessary to ***replace*** something from the cache to make room for new data (i.e., due to a cache miss).
 
@@ -893,7 +897,7 @@ Another replacement policy is **least recently used (LRU)**, whereby the block t
 As it turns out, **least recently used (LRU)** is indeed a very good policy. Accordingly, there are several policies which attempt to approximate it (since actually accomplishing "true" LRU is not easy to do in practice).
   * For example, one such policy is **not most recently used (NMRU)**, which tracks just those blocks which have been used most recently, and then selecting randomly from among the remaining blocks besides those (i.e., without otherwise tracking ***all*** of the blocks to definitively determine *the* most recently used blocks).
 
-## 35. Implementing Least Recently Used (LRU)
+### 35. Implementing Least Recently Used (LRU)
 
 So, then, how is the **least recently used (LRU)** cache replacement policy actually ***implemented***?
 
@@ -1061,7 +1065,7 @@ Furthermore, with respect to ***energy*** consumption, this adds an additional p
 
 Therefore, LRU approximations attempt to minimize the number of counters used, as well as perform fewer per-access updates (particularly on cache hits) in order to reduce energy consumption.
 
-## 36. Least Recently Used (LRU) Quiz
+### 36. Least Recently Used (LRU) Quiz
 
 <center>
 <img src="./assets/12-069A.png" width="650">
@@ -1148,7 +1152,9 @@ On subsequent access of `K` (resulting in a cache miss), `H` (the least recently
 
 This is the final state of the cache following the sequential accesses.
 
-## 37. Write Policy
+## 37-40. Write Policy
+
+### 37. Introduction
 
 <center>
 <img src="./assets/12-070.png" width="650">
@@ -1174,7 +1180,7 @@ The second component of the write policy concerns the question: When a write hit
 
 Furthermore, note that there is a relationship between the choices of **write-allocate** and **write-back** caches as the constituents of the collective write policy: Selecting write-back cache begets selection of a write-allocate cache, because minimizing writes to main memory (by correspondingly predominantly writing *only* to the cache via write-back) is particularly useful for **write misses** (in which case, it is desirable for future writes to occur in the cache via write-allocate).
 
-## 38. Write-Back Caches
+### 38. Write-Back Caches
 
 <center>
 <img src="./assets/12-071.png" width="650">
@@ -1195,7 +1201,7 @@ So, then, how can it be determined which of these two scenarios occurs in a writ
     * A dirty bit of `0` indicates that the block is "***clean***", i.e., the block was ***not*** written to since last being brought in from main memory.
     * A dirty bit of `1` indicates that the block is "***dirty***", i.e., the block ***was*** written to since last being brought in from memory, thereby necessitating a write-back to main memory on block replacement when the block in question is ejected from the cache.
 
-## 39. Write-Back Cache Example
+### 39. Write-Back Cache Example
 
 Consider an example of a write-back cache.
 
@@ -1334,7 +1340,7 @@ Finally, consider a subsequent access operation `RD F` (as in the figure shown a
 
 Furthermore, on replacement with `F`, because this is a read operation, on populating the cache with the data for `F`, the processor will also correspondingly set the dirty bit to `0`.
 
-## 40. Write-Back Cache Quiz and Answers
+### 40. Write-Back Cache Quiz and Answers
 
 <center>
 <img src="./assets/12-080Q.png" width="650">
