@@ -698,7 +698,7 @@ Therefore, for the target address `0x12345678`, the corresponding index bits are
 ... 0101 0110 ...
 ```
 
-By inspection, conflicts may arise with prospective conflicts having similar form `0x...56...` (i.e., `0x12345677` and `0x11115678`), however, to determine if an actual conflict occurs, it must also occur in a ***different*** block.
+By inspection, conflicts may arise with prospective addresses having similar form `0x...56...` (i.e., `0x12345677` and `0x11115678`), however, to determine if an actual conflict occurs, it must also occur in a ***different*** block.
   * In particular, address `0x12345677` does ***not*** conflict (despite having the same index bits), because they are in the ***same*** block (i.e., having the same block number via `0x123456...`), thereby mapping to the same block but otherwise not conflicting among blocks.
   * Conversely, `0x11115678` is in a ***different*** block which maps to the ***same*** index bits, so this does result in a conflict.
 
