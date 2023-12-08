@@ -412,3 +412,30 @@ A final issue to consider is the corresponding ***confusion*** introduced to the
   * ***multi-chips*** (with each constituent chip itself being a multi-core processor)
 
 ### 17. Simultaneous Multi-Threading (SMT) and/or Multi-Cores, and/or Multi-Chips, and/or etc.
+
+<center>
+<img src="./assets/22-028.png" width="650">
+</center>
+
+Consider a system which combines ***all*** three aforementioned (cf. Section 16) forms of parallelism; note that such devices ***do*** in fact exist "in practice" in the modern landscape.
+
+Such a representative device is characterized as follows:
+  * Dual-socket motherboard (containing two multi-core chips)
+  * `4` cores per chip
+  * Each core supports `2`-way simultaneous multi-threading (SMT)
+
+Insofar as both the ***programmer*** and the ***operating system*** are concerned, this device is characterized by effectively `2 × 4 × 2 = 16` available execution threads at any given time (i.e., `16` single-threaded programs, one multi-threaded program using up to all `16` threads, or some combination thereof). A relatively simple operating system treats all `16` of these threads (denoted by magenta in the figure shown above) as equivalent "cores" (denoted by teal boxes/squares in the figure shown above).
+
+However, this can give rise to a ***problem***. Consider the situation whereby `3` threads are currently available (denoted by green in the figure shown above).
+  * The operating system simply maps these `3` threads to equivalent "cores," being otherwise oblivious to the distribution of these threads among the two physical chips, as well as among each chips four constituent cores.
+  * Therefore, the corresponding assignment of these threads by the operating system may be suboptimal with respect to cache utilization and other such factor. In this particular case, a ***smarter*** policy would be to distribute the `3` threads among different chips, and on different cores within a given chip. This minimizes competition for resources (e.g., cache capacity).
+
+Therefore, in general, an "optimal" mapping would prioritize the following:
+  * Map one thread per chip (to maximize available total cache-capacity utilization), until all chips have been assigned
+  * Then map one thread per core within a given chip (to minimize coherence and traffic-related issues), until all cores have been assigned
+  * And only then commence mapping multiple threads per core, if necessary
+
+However, in order to accomplish this, the operating system must be aware of the constituent hardware accordingly.
+  * ***N.B.*** Most modern operating system (e.g., Windows, Linux, macOS, etc.) ***are*** indeed capable of determining this and consequently improving/maximizing utilization of these thread contexts accordingly during program execution.
+
+## 18. Many-Cores Challenges: Part 6
