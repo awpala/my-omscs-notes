@@ -195,7 +195,7 @@ Given a `256 bytes` block size, the least-significant `8` bits (i.e., `log_2(256
 
 Therefore, since there are `16` tiles, the corresponding `16` least-significant bits (equivalent to a single hex digit) of the index portion identify the tile, i.e., `0x6`, or tile `6`.
 
-Diagramatically, this corresponds to the following:
+Diagrammatically, this corresponds to the following:
 
 ```
         |          index bits            |
