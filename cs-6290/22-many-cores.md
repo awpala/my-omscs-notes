@@ -308,3 +308,55 @@ Now, consider a system comprised of ***two*** cores, each splitting the equivale
   * Furthermore, since voltage is proportional to frequency (i.e., $P \propto \underbrace {{V^2}}_{{{\left( {V \propto f} \right)}^2}} \times f \propto {f^3}$), this implies a corresponding operating frequency of ${f_2} = \sqrt[3]{{{\textstyle{1 \over 2}}}} \times {f_1} = 0.8 \times {f_1}$, or `3.0 GHz`, a noticeably slower frequency
 
 ### 14. Performance vs. Number of Cores Quiz and Answers
+
+<center>
+<img src="./assets/22-024A.png" width="650">
+</center>
+
+Consider the following distribution of an equivalent single-core execution time relative to the available parallelism (i.e., number of core) for program execution as follows:
+
+| Available parallelism | Percentage of equivalent single-core time |
+|:--:|:--:|
+| `1` | `20%` |
+| `2` | `30%` |
+| `3` | `40%` |
+| `4` | `10%` |
+
+(Here, for `20%` of the time, only one core can run; for `30%` of the time, two cores can run; and so on.)
+
+Furthermore, suppose the available chip has a total power consumption of `100 W`, which is sufficient to achieve a clock frequency of `5 GHz` if running only a ***single*** core, and the corresponding program execution time is `100 s`.
+
+What is the correspondingly achievable frequency and total execution time (accounting for the corresponding change in frequency) for the following:
+  * `2` cores?
+    * `4 GHz`, `75 s`
+  * `4` cores?
+    * `3.2 GHz`, `79.4 s`
+
+***Explanation***:
+
+With respect to frequency, in the case of `2` cores, each core consumes half of the `100 W` total power, or `50 W` per core. Therefore, the corresponding frequency scaling factor (cf. Section 13) is $\sqrt[3]{{{\textstyle{1 \over 2}}}} = 0.8$, or `0.8 × 5.0 GHz = 4.0 GHz`.
+
+With respect to frequency, in the case of `4` cores, each core consumes a quarter of the `100 W` total power, or `25 W` per core. Therefore, the corresponding frequency scaling factor (cf. Section 13) is $\sqrt[3]{{{\textstyle{1 \over 4}}}} = 0.63$, or `0.63 × 5.0 GHz = 3.2 GHz`.
+
+***N.B.*** Subsequent determination of the total execution time must account for ***both*** the change in frequency ***and*** the change in level of parallelism. As a reference point, `100%` of execution on the single-core configuration (i.e., parallelism of `1`) takes `100 s` to complete.
+
+With respect to total execution time, in the case of `2` cores:
+  * Parallelism is `[0.20 × 1] + [0.80 × (1/2)] = 0.6` if ignoring frequencies, or equivalently `0.60 × 100 s = 60 s`.
+    * ***N.B.*** Increased parallelism yields a corresponding ***fractional*** execution time.
+  * However, taking frequencies into account, this "unscaled" execution time must account for the corresponding slowdown of the frequency in the case of `2` cores, i.e.,  `60 s × (5.0 GHz / 4.0 GHz) = 75 s`.
+
+Similarly, with respect to total execution, in the case of `4` cores:
+  * Parallelism is `[0.20 × 1] + [0.30 × (1/2)] + [0.40 × (1/3)] + [0.10 × (1/4)] = 0.6` if ignoring frequencies, or equivalently `0.508 × 100 s = 50.8 s`.
+  * Additionally, taking frequencies into account, the corresponding total execution time is `50.8 s × (5.0 GHz / 3.2 GHz) = 79.4 s`.
+
+To summarize:
+
+| Configuration | Power per core | Frequency per core | Total program execution time |
+|:--:|:--:|:--:|:--:|
+| `1` core | `100 W` | `5.0 GHz` | `100 s` |
+| `2` cores | `50 W` | `4.0 GHz` | `75 s` |
+| `4` cores | `25 W` | `3.2 GHz` | `79.4 s` |
+
+Observe that the execution time of the `4` cores system is slower than that of the `2` cores system (which is the fastest among the three systems in question). Therefore, there is a corresponding balance/optimization in terms of trading off between clock frequency and parallelism.
+
+### 15. Boost the Frequency When No Parallelism is Available
