@@ -512,7 +512,6 @@ Therefore, the block offset is `00101` (i.e., the `5` least significant bits), a
 
 ## 21. Cache Tags
 
-
 With a better understanding of the block offset and the block number (cf. Sections 19 and 20), now consider **cache tags**, which are used to determine which blocks are actually ***present*** in the cache.
 
 <center>
