@@ -844,7 +844,7 @@ In summary:
 | Initial Iteration | `(4096 - 1)*256 = 1,048,320` | `256` | `0` | `256` |
 | Cumulative (Iterations 1-10) | `10*(4096 - 1)*256 = 10,483,200` | `10*256 = 2560` | `(10 - 1)*256 = 2304` | `256 + 9*0 = 256` |
 
-****N.B.*** With respect to the L2 TLB hits, in the initial iteration of array sweep-through, there are no hits because this is covered by the L1 TLB's hits (i.e., in this first iteration, the L2 TLB is simply populated), however, in the subsequent (i.e., `10 - 1 = 9`) iterations, the L2 TLB covers for the corresponding L1 TLB's per-iterative-sweep-through misses.
+  * ****N.B.*** With respect to the L2 TLB hits, in the initial iteration of array sweep-through, there are no hits because this is covered by the L1 TLB's hits (i.e., in this first iteration, the L2 TLB is simply populated), however, in the subsequent (i.e., `10 - 1 = 9`) iterations, the L2 TLB covers for the corresponding L1 TLB's per-iterative-sweep-through misses.
 
 ## 27. Lesson Outro
 
