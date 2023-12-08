@@ -575,7 +575,7 @@ Therefore, while cache `0` owns the lock, the other two caches do not correspond
 
 The system proceeds in this manner until cache `0` ultimately releases the lock, at which point there is a consequent invalidation and subsequent read by the other two cores in the system (which now compete for the lock). However, now, these "activity bursts" are confined strictly to these (relatively brief) "lock exchange" periods only. Otherwise, during periods when the lock is "busy," the other caches simply persistently use "normal" loads in the meantime, which is correspondingly much more energy-efficient.
 
-### 16. Test-and-Atomic-Op Quiz
+### 16. Test-and-Atomic-Op Quiz and Answers
 
 <center>
 <img src="./assets/20-021A.png" width="650">
