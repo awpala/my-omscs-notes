@@ -828,9 +828,9 @@ The address breakdown will be as follows (as depicted in magenta in the figure s
   * `2 bits` index bits region (to uniquely identify each set, via `4 = 2^2` or equivalently `log_2(4) = 2`)
   * The remaining bits constitute the tag region
 
-Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `7 = 2 + 5 bits`, or equivalently the two least-significant hex digits, as follows:
+Now, consider the mapping of the sequential accesses into the cache, as per the least-significant `7 = 2 + 5 bits`, or equivalently the two least-significant hex digits (i.e., the least-significant byte), as follows:
 
-| Hex Address (`\|` delimits least-significant bytes) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Set:Line per Index Bits (where Line is `0` or `1` for a given Set) |
+| Hex Address (`\|` delimits the least-significant byte) | Eight Least-Significant Bits (`\|` delimits offset vs. index bits) | Assigned Set:Line per Index Bits (where Line is `0` or `1` for a given Set) |
 |:--:|:--:|:--:|
 | `0xF3\|03` | `... 0\|00\|0 0011` | `0`:`0` |
 | `0xF5\|03` | `... 0\|00\|0 0011` | `0`:`1`, same set as `0xF303`, but placed in the other line within the set |
