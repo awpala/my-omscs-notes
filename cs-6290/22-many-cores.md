@@ -360,3 +360,35 @@ To summarize:
 Observe that the execution time of the `4` cores system is slower than that of the `2` cores system (which is the fastest among the three systems in question). Therefore, there is a corresponding balance/optimization in terms of trading off between clock frequency and parallelism.
 
 ### 15. Boost the Frequency When No Parallelism is Available
+
+Recall (cf. Section 14) that adding additional cores beyond a certain point may result in a ***slowdown*** if it is otherwise necessary to stay within a ***fixed*** power budget.
+
+<center>
+<img src="./assets/22-025.png" width="650">
+</center>
+
+However, this is only strictly true if neither the voltage nor the frequency can be adjusted, such that when there is no parallelism available, the frequency might otherwise be boosted for one or two active cores in order to attain the full power budget of the chip at any given time.
+
+In fact, modern processors do this, e.g., Intel's Core i7-4702MQ processor (debuted in Q2 2013), intended for laptops and mobile devices, which is characterized as follows:
+  * The specified design power consumption limit is `37 W`
+  * The processor chip is comprised of `4` cores, each operating at a "normal" clock frequency of `2.2 GHz`
+
+However, additionally, the processor has a "turbo" clock frequency of `3.2 GHz` when running on only ***one*** core, corresponding to a factor of `1.45×` the normal frequency, or equivalent to a total power consumption of `3×` relative to "normal." But why is this only `3×`, rather than `4×` (i.e., for a corresponding `4` cores processor)?
+
+The reason for this is that the overall chip power consumption is not the only relevant factor here. Additionally, given a relatively large chip with `4` constituent cores (as in the figure shown above), as one such "turbo-clocked" core proceeds to heat up, this heat will consequently spread into the adjacent cores. At an increased power factor of `3×`, the processor is still capable of distributing this heat evenly across the chip, however, beyond this, performance will degrade accordingly.
+
+<center>
+<img src="./assets/22-026.png" width="650">
+</center>
+
+Another representative example is Intel's Core i7-4771 processor (debuted in Q3 2013), intended for desktop computers, characterized as follows:
+  * The specified design power consumption limit is `84 W`
+  * The processor chip is comprised of `4` cores, each operating at a "normal" clock frequency of `3.5 GHz`
+  * The "turbo" clock frequency is `3.9 GHz`, corresponding to a factor of `1.11×` the normal frequency, or equivalent to a total power consumption of only `1.38×` relative to "normal"
+    * With this being a more "standard" processor, it has much better cooling (relative to a laptop processor), and is consequently able to operate at a much higher total power consumption level, however, this also implies a higher baseline operating temperature to begin with, so there is a smaller "temperature headroom" (i.e., staying within the operational limits of the chip) to work with in the first place.
+
+***N.B.*** This trend is fairly typical: Cores designed for relatively low-power devices have more flexibility with respect to "shifting around" (i.e., among cores) this total power budget accordingly, whereas operating closer to the physical limits reduces this "flexibility" accordingly.
+
+## 16-17. Many-Cores Challenges: Part 5
+
+### 16. Introduction
