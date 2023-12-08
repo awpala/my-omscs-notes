@@ -1209,7 +1209,7 @@ Consider an example of a write-back cache.
 <img src="./assets/12-072.png" width="550">
 </center>
 
-Consider a small four-entry direct-mapped cache (as in the figure shown above), comprised of the following **component**:
+Consider a small four-entry direct-mapped cache (as in the figure shown above), comprised of the following **components**:
   * **valid bit**
   * **tag** region
   * **dirty bit**
