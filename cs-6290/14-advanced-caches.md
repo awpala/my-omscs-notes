@@ -890,7 +890,7 @@ Conversely, if `pdist` is ***too large*** (e.g., as in the figure shown above), 
 
 Therefore, it is not necessarily easy to "guess" how far in advance to prefetch in this manner.
 
-Furthermore, if writing a program and modifying it to incorporate prefetching in this manner, it is possible that the optimal prefetching may vary across hardware generations as well (e.g., if the processor speed is improved, but not that of the memory itself, resulting ina processor which performs more iterations per-unit time with the same memory latency, thereby necessitating an increase in `pdist` accordingly). Consequently, it may additionally be difficult to optimize `pdist` itself in this manner "programmatically," as it is also dictated by the hardware itself.
+Furthermore, if writing a program and modifying it to incorporate prefetching in this manner, it is possible that the optimal prefetching may vary across hardware generations as well (e.g., if the processor speed is improved, but not that of the memory itself, resulting in a processor which performs more iterations per-unit time with the same memory latency, thereby necessitating an increase in `pdist` accordingly). Consequently, it may additionally be difficult to optimize `pdist` itself in this manner "programmatically," as it is also dictated by the hardware itself.
 
 ### 25. Prefetch Instructions Quiz and Answers
 
