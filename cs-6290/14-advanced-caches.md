@@ -880,13 +880,13 @@ One of the pertinent questions for this transformation is as follows: What value
 <img src="./assets/14-065.png" width="650">
 </center>
 
-If `pdist` is ***too small*** (e.g., only `1`, as in the figure shown above), then relative to the the access operation (i.e., `a[i]`), the prefetch occurs in the a "nearby" upstream iteration (e.g., the previous iteration, in the case of `pdist == 1`), and consequently the prefetch's memory latency will "spillover" into the cache access itself, thereby still incurring (a portion) of the latency itself (albeit slightly lower with this "head start," relative to commencing the memory access immediately following the access operation itself). Correspondingly, the prefetch in this case occurs ***"too late"*** relative to the access operation itself.
+If `pdist` is ***too small*** (e.g., only `1`, as in the figure shown above), then relative to the access operation (i.e., `a[i]`), the prefetch occurs in the a "nearby" upstream iteration (e.g., the previous iteration, in the case of `pdist == 1`), and consequently the prefetch's memory latency will "spillover" into the cache access itself, thereby still incurring (a portion) of the latency itself (albeit slightly lower with this "head start," relative to commencing the memory access immediately following the access operation itself). Correspondingly, the prefetch in this case occurs ***"too late"*** relative to the access operation itself.
 
 <center>
 <img src="./assets/14-066.png" width="650">
 </center>
 
-Conversely, if `pdist` is ***too large*** (e.g., as in the figure shown above), then relative to the the access operation (i.e., `a[i]`), the prefetch occurs in the a "distant" upstream iteration, and consequently the prefetch's memory latency will not "spillover" into the cache access itself, but rather it will populate the cache "prematurely" relative to when the data is actually useful to the operation itself. Furthermore, since subsequent access operations occur, it is likely that this prefetched data will be ejected during this time, before it can be effectively used by the target operation itself. Correspondingly, the prefetch in this case occurs ***"too early"*** relative to the access operation itself.
+Conversely, if `pdist` is ***too large*** (e.g., as in the figure shown above), then relative to the access operation (i.e., `a[i]`), the prefetch occurs in the a "distant" upstream iteration, and consequently the prefetch's memory latency will not "spillover" into the cache access itself, but rather it will populate the cache "prematurely" relative to when the data is actually useful to the operation itself. Furthermore, since subsequent access operations occur, it is likely that this prefetched data will be ejected during this time, before it can be effectively used by the target operation itself. Correspondingly, the prefetch in this case occurs ***"too early"*** relative to the access operation itself.
 
 Therefore, it is not necessarily easy to "guess" how far in advance to prefetch in this manner.
 

@@ -663,7 +663,7 @@ Furthermore, to solve the aforementioned deadlock situation, the thread--immedia
 <img src="./assets/P02L04-047.png" width="400">
 </center>
 
-If the mask indicates the the interrupt is disabled, then the interrupt will remain in a pending status until a later time.
+If the mask indicates the interrupt is disabled, then the interrupt will remain in a pending status until a later time.
 
 Once the lock is freed (i.e., via corresponding call to `unlock()`), the thread will then reset the appropriate bit field in the mask, thereby enabling the execution of the handler code by the operating system; at this point, it is permissible for the handler to execute the critical-section code, because the thread no longer holds the mutex (i.e., the aforementioned deadlock is now avoided).
 

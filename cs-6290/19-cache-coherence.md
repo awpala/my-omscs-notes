@@ -858,7 +858,7 @@ In order to resolve this issue, a ***non-modified (non-M)*** version of the cach
   * Eventually writing the block to main memory (thereby bypassing excessive main memory writes)
 
 To designate such a cache, it is necessary to determine which of the cache blocks in the shared (S) state holding the copy of the data is responsible for these duties; this is handled via additional state **owned (O)** (i.e., owner of this cache block).
-  * The owned (O) state resembles that of the shared (S) state, except that whenever there is a request for the cache-block data, the cache block in the owned (O) state is responsible for fulfilling this request. Furthermore, if the the cache block in the owned (O) state replaces the cache block from the cache, then it subsequently writes the cache-block data to main memory.
+  * The owned (O) state resembles that of the shared (S) state, except that whenever there is a request for the cache-block data, the cache block in the owned (O) state is responsible for fulfilling this request. Furthermore, if the cache block in the owned (O) state replaces the cache block from the cache, then it subsequently writes the cache-block data to main memory.
 
 ### 21. MOSI (Modified-Owned-Shared-Invalid) Coherence
 

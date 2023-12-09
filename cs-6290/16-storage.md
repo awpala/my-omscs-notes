@@ -47,7 +47,7 @@ Consider **magnetic disks** (generally called **hard disks** presently), as in t
 <img src="./assets/16-003.png" width="300">
 </center>
 
-A magnetic disk (as in the the figure shown above) has a **spindle** to which **platters** are attached. These platters are attached to the ***same*** spindle (rotated by a motor), thereby rotating at a ***uniform*** speed accordingly.
+A magnetic disk (as in the figure shown above) has a **spindle** to which **platters** are attached. These platters are attached to the ***same*** spindle (rotated by a motor), thereby rotating at a ***uniform*** speed accordingly.
 
 <center>
 <img src="./assets/16-004.png" width="350">
