@@ -1274,7 +1274,7 @@ Global Hit Rate = 1 - Global Miss Rate
 ```
 Global Miss Rate = (# misses in this cache) / (# all memory references)
 ```
-* ***N.B.*** Here, "all" memory references includes all memory references performed by the processor in it entirety, ***not*** just those which reach its cache.
+* ***N.B.*** Here, "all" memory references includes all memory references performed by the processor in its entirety, ***not*** just those which reach its cache.
 
 ```
 Local Hit Rate = (# hits) / (# accesses to this particular cache)
