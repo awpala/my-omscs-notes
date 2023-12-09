@@ -1360,7 +1360,7 @@ Conversely, rather than subsequently accessing block `C`, instead block `A` is f
 <img src="./assets/14-109.png" width="375">
 </center>
 
-Now, on subsequent access of block `C` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). Furthermore, `A` is ejected from L1, and both caches' least-recently-used counters are updated accordingly. At this point, the inclusion property still holds.
+Now, on subsequent access of block `C` (as in the figure shown above), both caches initially miss (i.e., compulsory misses) and fetch from memory accordingly (i.e., the L2 cache performs the main-memory-access operation, and then propagates the value up to the L1 cache). Furthermore, `B` is ejected from L1, and both caches' least-recently-used counters are updated accordingly. At this point, the inclusion property still holds.
 
 <center>
 <img src="./assets/14-110.png" width="375">
