@@ -1170,7 +1170,7 @@ At this point, the directory for cache block `Y` detects that caches `1` and `2`
 
 Accordingly, the directory for cache block `Y` sends an invalidation request to caches `1` and `2` (denoted by green arrows in the figure shown above). Consequently, these two respective caches transition to the invalid (I) state accordingly with respect to cache block `Y`. Furthermore, they respond with acknowledgements of these invalidations back to the directory for cache block `Y` accordingly (denoted by magenta arrows in the figure shown above).
 
-On receipt of the acknowledgements, the directory sets the corresponding presence bits to `1` for caches `1` and `2` accordingly.
+On receipt of the acknowledgements, the directory sets the corresponding presence bits to `0` for caches `1` and `2` accordingly.
 
 Now that there are no more "sharers" for cache block `Y`, the data is correspondingly sent to the writer (i.e., cache `3`).
   * The presence bit is set to bit value `1` for cache `3` in the directory for cache block `Y`, and the dirty bit is also set to bit value `1` (indicating that the block may be dirty on subsequent write).
