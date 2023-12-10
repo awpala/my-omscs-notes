@@ -457,8 +457,8 @@ Furthermore, the program running on this two-core system is comprised of the fol
 |:--:|:--:|:--:|
 | `1` | `WR A` | (N/A) |
 | `2` | (N/A) | `RD A` |
-| `3` through `2001` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
-| `2002` | `REPLACE A` | `REPLACE A` |
+| `3` through `2000` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
+| `2001` | `REPLACE A` | `REPLACE A` |
 
 Upon conclusion of this program, what are the following resulting counts with respect to shared memory block `A`?
 
@@ -477,11 +477,11 @@ Upon conclusion of this program, what are the following resulting counts with re
 In the case of ***no optimization***:
   * Sequence `1` (i.e., `WR A`) uses the bus, as well as writes-through to main memory
   * Sequence `2` uses the bus (i.e., `RD A`), however, it does not write-through to main memory (it is a read miss only)
-  * Generalizing in this manner, in the subsequent `999` write/read pairs (i.e., sequences `3` through `2001`), each core `0` write operation (i.e., `WR A`) will add an additional `999` writes-through to main memory and an additional `999` uses of the bus, however, the core `1` read operations (i.e., `RD A`) will neither use the bus nor write to main memory, as these subsequent read operations will ***not*** be cache misses
-  * On subsequent replacement of `A` in the respective caches (i.e., sequence `2002`), the state is already up-to-date (i.e., relative to main memory)
+  * Generalizing in this manner, in the subsequent `999` write/read pairs (i.e., sequences `3` through `2000`), each core `0` write operation (i.e., `WR A`) will add an additional `999` writes-through to main memory and an additional `999` uses of the bus, however, the core `1` read operations (i.e., `RD A`) will neither use the bus nor write to main memory, as these subsequent read operations will ***not*** be cache misses
+  * On subsequent replacement of `A` in the respective caches (i.e., sequence `2001`), the state is already up-to-date (i.e., relative to main memory)
 
 In the case of only ***dirty bit optimization***:
-  * The write operations on core `0` (i.e., ` WR A`) will be localized to core `0`'s own cache, with only a ***single*** write to main memory on replacement of the cache block (i.e., sequence `2002`)
+  * The write operations on core `0` (i.e., ` WR A`) will be localized to core `0`'s own cache, with only a ***single*** write to main memory on replacement of the cache block (i.e., sequence `2001`)
   * With respect to the uses, all `1000` write operations on core `0` (i.e., `WR A`) will be broadcasted on the bus, however, only the initial read operation on core `1` (i.e., `RD A`) requires reading from the bus (with the subsequent `999` occurring as read hits). Furthermore, the replacement of the cache block for `A` in core `0` incurs an additional use of the bus to read from main memory.
 
 Therefore, overall, there is one additional bus use in the dirty bit optimization, however, this reduces writes dramatically (i.e., down from `1000` to `1`).
