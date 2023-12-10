@@ -1271,7 +1271,7 @@ Which of the following sequences of operations yield false-sharing misses? (Sele
 
 In program 1:
   * Sequences `S1` and `S2` result in a compulsory miss (`X` is not present in block `1` of either cache `C0` or `C1`).
-  * Sequence `S3` is also a compulsory miss (`D` is not present in block `0` of cache `C2`).
+  * Sequence `S3` is also a compulsory miss (`A` is not present in block `0` of cache `C2`).
   * Sequence `S4` is also a compulsory miss (`B` is not present in block `0` of cache `C3`)
 
 Therefore, ***no*** false-sharing coherence misses occur in program 1. In fact, there are no coherence misses at all in this program.
