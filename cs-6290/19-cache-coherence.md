@@ -1037,7 +1037,7 @@ To better contextualize directory-based coherence, first consider the key ***dis
 Therefore, in order to resolve this bottleneck, a **non-broadcast network** is needed to manage the requests. However, this begs the following questions:
   * How are these requests observed (i.e., those which require such observation)?
     * For example, if a given cache's block is in the shared (S) state, it *must* observe write requests for other caches for consequent transition to the invalid (I) state (i.e., to avoid incoherence). 
-  * How are requests orders to the ***same*** cache block?
+  * How are requests ordered to the ***same*** cache block?
     * For example, how to manage write requests originating from different cores, if the request can be made on different parts of the network?
 
 The corresponding structure which handles these requests is called a **directory**, as discussed in the next section.
