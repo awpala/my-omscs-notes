@@ -693,7 +693,7 @@ If a cache block is in the ***modified (M)*** state while another cache is obser
   * This correspondingly occurs when ***snooping*** the read operation on the bus.
   * Furthermore, an obligatory ***write-back*** of the cache block occurs, in order to transition the cache block to the shared (S) state accordingly.
     * ***N.B.*** The shared (S) state disallows a write-back originating from the shared (S) state (since it only permits read operations).
-    * This in turn requires a delay of the data that would otherwise be sent to the read requester, until the write-back operation concludes. This delay can be accomplished by one of two ways:
+    * This in turn requires a ***delay*** of the data that would otherwise be sent to the read requester, until the write-back operation concludes. This delay can be accomplished by one of two ways:
       * 1 - Cancel the request, write-back, move to shared (S) state, and then repeat the request (i.e., fetch the data from main memory).
       * 2 - On observation of a read request on the bus, suppress the memory response and simply feed the data to the processor during the transition into the shared (S) state.
 
