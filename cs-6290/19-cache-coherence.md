@@ -717,7 +717,7 @@ If a cache block is in the ***shared (S)*** state while a local write operation 
 
 Lastly, if a cache block is in the ***invalid (I)*** state, any snooping (i.e., of either read or write operations) will not change the state of the cache block.
 
-***N.B.*** With respect to invalidation:
+***N.B.*** With respect to ***invalidation***:
   * While in the ***shared (S)*** state, it does not matter whether a write request or invalidation is snooped on the bus, as in either case, this will simply result in a transition to the ***invalid (I)*** state.
   * Furthermore, while in the ***modified (M)*** state, a write operation will be observed when a write request is snooped on the bus, rather than an invalidation. This is because a cache block in the modified (M) state effectively implies that all other caches are in the invalid (I) state with respect to this cache block; correspondingly, if any other cache attempts to write, this will necessitate broadcasting a write request onto the bus accordingly (rather than simply broadcasting an invalidation).
 
