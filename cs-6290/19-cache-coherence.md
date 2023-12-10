@@ -679,7 +679,7 @@ Since MSI is an invalidation-based protocol, in the ***modified (M)*** state, th
 ***N.B.*** While the valid bit and dirty bit tracking here is relatively trivial, subsequent coherence protocols (discussed later in this lesson) will involve additional states, and corresponding bits to track appropriately.
 
 In the ***invalid (I)*** state, this is equivalent to the valid bit being set to `0` (i.e., effectively, the cache block is absent).
-  * On ***local write*** operation, the cache block is moved from the invalid (I) state to the modified (M) state. This requires a corresponding write request is broadcasted onto the bus (i.e., a ***write miss*** has occurred).
+  * On ***local write*** operation, the cache block is moved from the invalid (I) state to the modified (M) state. This requires a corresponding write request to be broadcasted onto the bus (i.e., a ***write miss*** has occurred).
 
 If a cache block is in the ***modified (M)*** state while another cache is observed to have broadcasted a write operation onto the bus, then this will move the cache block to the ***invalid (I)*** state.
   * This correspondingly occurs when ***snooping*** the write operation on the bus.
