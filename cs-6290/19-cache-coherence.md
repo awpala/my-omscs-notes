@@ -929,7 +929,7 @@ Correspondingly, note the state transitions among the various protocols in the f
   * ****N.B.*** The MOSI protocol yields the same state transitions as the MSI protocol, because the owned (O) state is not particularly advantageous in this sequence. However, the owned (O) state can later prevent superfluous main memory accesses subsequently to the write operation (i.e., `WR A`) if other cores commence reading the data.
   * *****N.B.*** On read, in both the MESI and MOESI protocols, it is detected that the reading of the cache block is exclusively performed by the cache, thereby transitioning to the exclusive (E) state accordingly (i.e., rather than to the shared [S] state). Furthermore, on subsequent write, since this access is now exclusive, there is no need to broadcast to other caches, but rather write-through can be performed ***locally*** instead (however, there is a corresponding transition to the modified [M] state, because the block is now dirty). This effectively creates a sequence of state transitions which is analogous to a uni-processor equivalent (i.e., one which does not otherwise share the data).
 
-Observe that while the MSI and MOSI protocols incur ***two*** bus accesses, MESI and MOESI only incur ***one*** bus access on read.
+Observe that while the MSI and MOSI protocols incur ***two*** bus accesses (i.e., read miss incurred, followed by broadcast invalidation), MESI and MOESI only incur ***one*** bus access (i.e., read miss incurred) on read.
 
 ### 24. MOESI (Modified-Owned-Exclusive-Shared-Invalid) Quiz and Answers
 
