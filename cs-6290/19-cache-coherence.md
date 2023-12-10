@@ -1100,7 +1100,7 @@ This begs the question: Why does this work better than a bus? The reason is that
 <img src="./assets/19-075.png" width="650">
 </center>
 
-Conversely, if cache `1` attempts a write request (i.e., `WREQB`) operation `WR B` temporally closely to the read operation of cache `0` (as in the figure shown above), then the **directory controller** arbitrates the ordering of these requests (in this case, processing the read request from cache `0` first accordingly).
+Conversely, if cache `1` attempts a write request (i.e., `WREQB`) operation `WR B` temporally closely to the read operation of cache `0` (as in the figure shown above), then the **directory controller** arbitrates the ordering of these requests (i.e., in this case, processing the read request from cache `0` *first* accordingly).
 
 <center>
 <img src="./assets/19-076.png" width="650">
