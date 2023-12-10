@@ -684,7 +684,7 @@ In the ***invalid (I)*** state, this is equivalent to the valid bit being set to
 If a cache block is in the ***modified (M)*** state while another cache is observed to have broadcasted a write operation onto the bus, then this will move the cache block to the ***invalid (I)*** state.
   * This correspondingly occurs when ***snooping*** the write operation on the bus.
   * Furthermore, an obligatory ***write-back*** of the cache block occurs, in order to transition the cache block to the invalid (I) state accordingly.
-    * This in turn requires a delay of the data that would otherwise be sent to the write request, until the write-back operation concludes. This delay can be accomplished by one of two ways:
+    * This in turn requires a ***delay*** of the data that would otherwise be sent to the write request, until the write-back operation concludes. This delay can be accomplished by one of two ways:
       * 1 - Cancel the request, write-back, move to invalid (I) state, and then repeat the request (i.e., fetch the data from main memory).
       * 2 - On observation of a write request on the bus, suppress the memory response and simply feed the data to the processor.
     * In either case, before moving from modified (M) state to invalid (I) state, it is imperative to write-back the data to main memory and to ensure that the write request (if it is a write miss) fetches the ***new*** data (i.e., rather than the stale data from main memory).
