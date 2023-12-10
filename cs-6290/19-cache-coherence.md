@@ -1156,7 +1156,7 @@ On receipt of the data, cache `2` transitions to the shared (S) state.
 
 Meanwhile, the operation `WR X` arrives at the directory for cache block `X`. Since this is a write request, an invalidation is sent from cache `1` to the directory for cache block `X`, which in turn forwards the write request to cache `0`.
 
-Cache `0` responds with the data due to the write request, correspondingly transitioning itself to the invalid (I) state accordingly. Correspondingly, the dirty bit is set to bit value `0` in the directory for cache block `X`, and furthermore the presence bit is set to bit value `1` for the cache `1` entry in the directory for cache block `X`. Furthermore, cache `1` received the data and transitions to the modified (M) state with respect to cache block `X`.
+Cache `0` responds with the data due to the write request, correspondingly transitioning itself to the invalid (I) state accordingly. Correspondingly, the dirty bit remains set to bit value `1` in the directory for cache block `X` (i.e., due to write operation), and furthermore the presence bit is set to bit value `1` for the cache `1` entry in the directory for cache block `X`. Furthermore, cache `1` received the data and transitions to the modified (M) state with respect to cache block `X`.
 
 ***N.B.*** Observe that `WR X` and `RD Y` proceed largely independently of each other (aside from slight network delays). Therefore, provided that the network is reliable and robust (i.e., containing many different paths among these caches and directories), these requests effectively do not "compete" with each other.
 
