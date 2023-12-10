@@ -538,7 +538,7 @@ Next, the right core performs another write operation on shared location `A` (i.
 <img src="./assets/19-048.png" width="650">
 </center>
 
-Next, the right core performs another write operation on shared location `A` (i.e., `WR A ← 3`, as in the figure shown above). Since the previous write operation invalidated the local copy of the data in the left cache, the write cache can simply perform this write operation "locally" with respect to `A` accordingly, without otherwise requiring broadcasting.
+Next, the right core performs another write operation on shared location `A` (i.e., `WR A ← 3`, as in the figure shown above). Since the previous write operation invalidated the local copy of the data in the left cache, the right cache can simply perform this write operation "locally" with respect to `A` accordingly, without otherwise requiring broadcasting.
 
 Therefore, in such a scenario where the cores alternatively perform successive write operations on a shared memory location, only the ***first*** such write operation must be broadcasted when following the write-invalidate protocol, as subsequent write operations are localized accordingly. Conversely, in the write-update protocol, each such successive write operation requires a corresponding broadcast in order to update the other cache(s) accordingly.
 
