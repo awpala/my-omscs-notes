@@ -343,7 +343,7 @@ With respect to frequency, in the case of `4` cores, each core consumes a quarte
 With respect to total execution time, in the case of `2` cores:
   * Parallelism is `[0.20 × 1] + [0.80 × (1/2)] = 0.6` if ignoring frequencies, or equivalently `0.60 × 100 s = 60 s`.
     * ***N.B.*** Increased parallelism yields a corresponding ***fractional*** execution time.
-  * However, taking frequencies into account, this "unscaled" execution time must account for the corresponding slowdown of the frequency in the case of `2` cores, i.e.,  `60 s × (5.0 GHz / 4.0 GHz) = 75 s`.
+  * However, taking frequencies into account, this "unscaled" execution time must account for the corresponding slowdown of the frequency in the case of `2` cores, i.e., `60 s × (5.0 GHz / 4.0 GHz) = 75 s`.
 
 Similarly, with respect to total execution, in the case of `4` cores:
   * Parallelism is `[0.20 × 1] + [0.30 × (1/2)] + [0.40 × (1/3)] + [0.10 × (1/4)] = 0.6` if ignoring frequencies, or equivalently `0.508 × 100 s = 50.8 s`.
