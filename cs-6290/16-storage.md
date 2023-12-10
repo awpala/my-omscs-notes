@@ -195,7 +195,7 @@ However, as a consequence of this portability, optical disks must be **standardi
 
 Magnetic tapes can have large capacities and are typically replaceable (i.e., swapped in/out with a like-for-like tape roll attachment into the tape machine).
 
-The access of magnetic tapes is fundamentally **sequential**, meaning that seeking operations are performed along the length of the tap itself until the target data is located.
+The access of magnetic tapes is fundamentally **sequential**, meaning that seeking operations are performed along the length of the tape itself until the target data is located.
   * Therefore, tapes are ***advantageous*** for backups, restoring backups, etc., which typically involve writing data sequentially for long time periods, or otherwise reading data sequentially for a long time in a similar manner.
   * Conversely, magnetic tapes are ***not*** well suited for virtual memory (and related) due to this limitation (i.e., sequential rather than random-access).
 
