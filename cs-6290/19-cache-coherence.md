@@ -709,7 +709,7 @@ If a cache block is in the ***shared (S)*** state while another cache is observe
 ***N.B.*** Snooping a read operation on the bus while in the shared (S) state does not require any additional actions, as the shared (S) state is not otherwise impacted by other "sharers" among the caches, if all such "sharers" are simply reading the data. Furthermore, local reads in the shared (S) state are also localized to the cache block accordingly as well.
 
 If a cache block is in the ***shared (S)*** state while a local write operation occurs, then this will move the cache block to the ***modified (M)*** state.
-  * This correspondingly broadcasts an invalidation onto the bus.
+  * This correspondingly broadcasts an ***invalidation*** onto the bus.
 
 ***N.B.*** The situation is slightly different when moving the invalid (I) state to the modified (M) state on local write vs. moving from the shared (S) state to the modified (M) state on local write.
   * When starting from the invalid (I) state, the write request is broadcasted on the bus in order to retrieve the cache block for writing to it.
