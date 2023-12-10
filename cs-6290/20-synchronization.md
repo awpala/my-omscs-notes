@@ -532,7 +532,7 @@ Therefore, this is a very ***heavily power-consumptive*** process, as each such 
 <img src="./assets/20-019.png" width="650">
 </center>
 
-Recall (cf. Section 14) that performing atomic read and atomic write operations on the lock repeatedly (even while waiting for the lock) is inefficient with respect to power consumption, and correspondingly even have a deleterious effect on the operation of the thread currently performing useful work (i.e., inside of the critical section).
+Recall (cf. Section 14) that performing atomic read and atomic write operations on the lock repeatedly (even while waiting for the lock) is inefficient with respect to power consumption, and correspondingly can even have a deleterious effect on the operation of the thread currently performing useful work (i.e., inside of the critical section).
 
 In order to reduce this inefficiency, a **test-and-atomic-op lock** approach can be used accordingly. A representative example of this can be implemented as follows:
 
