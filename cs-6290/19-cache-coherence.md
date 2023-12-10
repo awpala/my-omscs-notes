@@ -1146,7 +1146,7 @@ Since neither directory contains the requested block, the cache states are updat
 <img src="./assets/19-079.png" width="650">
 </center>
 
-On arrival of the transmission of operation `RD Y` from cache `2` (as in the figure shown above), simultaneously as cache `1` is still being accessed via operation `WR X`.
+On arrival of the transmission of operation `RD Y` from cache `2` (as in the figure shown above), simultaneously cache `1` is still being accessed via operation `WR X`.
 
 Since `RD Y` yields a cache miss, it is sent to the corresponding directory for cache block `Y`. Since the directory for cache block `Y` indicates a presence bit of value `1` for cache `1` (as well as indicating that it may be dirty, per dirty bit value `1`), the request is consequently forwarded to cache `1` as a read request accordingly.
 
