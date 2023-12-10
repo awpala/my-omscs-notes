@@ -574,7 +574,7 @@ Furthermore, the program running on this two-core system is comprised of the fol
 |:--:|:--:|:--:|
 | `1` | `WR A` | (N/A) |
 | `2` | (N/A) | `RD A` |
-| `3` through `2001` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
+| `3` through `2000` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
 
 Upon conclusion of this program, what are the following resulting counts of bus uses with respect to shared memory block `A` in the following configurations:
   * Write-update protocol with shared bit and dirty bit optimizations?
@@ -586,7 +586,7 @@ Upon conclusion of this program, what are the following resulting counts of bus 
 
 In the optimized write-update protocol, as before (cf. Section 11), there is a broadcast onto the bus on each write operation in core `0` (i.e.,`WR A`), as well as a single bus access on initial read operation in core `1` (i.e., `RD A`) (however, subsequent read operations in core `1` are read hits).
 
-Conversely, in the optimized write-invalidate protocol, the initial write operation in core `0` (i.e., `WR A` via sequence `1`) is a miss, resulting in a bus operation to retrieve the (only) copy of this data from main memory. The subsequent read operation in core `1` (i.e., `RD A` via sequence `2`) yields a miss, which necessitates a read of this data from core `0` via broadcast. Furthermore, on subsequent read/write pairs across the cores with respect to shared location `A` (i.e., sequences `3` through `2001`), the write from core `0` broadcasts an invalidation, and the subsequent read requires a bus access to update the data in core `1`. Therefore, each read/write pair (i.e., `1000` total) will yield two bus uses per pair accordingly.
+Conversely, in the optimized write-invalidate protocol, the initial write operation in core `0` (i.e., `WR A` via sequence `1`) is a miss, resulting in a bus operation to retrieve the (only) copy of this data from main memory. The subsequent read operation in core `1` (i.e., `RD A` via sequence `2`) yields a miss, which necessitates a read of this data from core `0` via broadcast. Furthermore, on subsequent read/write pairs across the cores with respect to shared location `A` (i.e., sequences `3` through `2000`), the write from core `0` broadcasts an invalidation, and the subsequent read requires a bus access to update the data in core `1`. Therefore, each read/write pair (i.e., `1000` total) will yield two bus uses per pair accordingly.
 
 ***N.B.*** With respect to bus usage, write-update is generally more efficient than write-invalidate in the access pattern of one core producing the data continuously while the other core consumes the data continuously. 
   * The write-update protocol involves simply updating the data on write from the writer/producer, while the read can be performed locally with respect to the reader/consumer cache.
