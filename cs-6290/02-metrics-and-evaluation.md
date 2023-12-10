@@ -339,7 +339,7 @@ What is the total execution time of the program on this processor?
 <img src="./assets/02-025.png" width="650">
 </center>
 
-**Amdahl's Law** considers the resulting system speedup when only *part* of the program (i.e. only *some* of the constituent instructions) is changed. In this situation, the **overall speedup** is as follows:
+**Amdahl's Law** considers the resulting system speedup when only *part* of the program (i.e., only *some* of the constituent instructions) is changed. In this situation, the **overall speedup** is as follows:
 ```
 speedup = 1/[(1 - Frac_ENH) + (FRAC_ENH/speedup_ENH)]
 ```
