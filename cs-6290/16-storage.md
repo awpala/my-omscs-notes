@@ -25,7 +25,7 @@ In addition to performance, ***reliability*** is another critical concern.
   * If the processor fails, then the system is temporarily "out of commission" until the processor can be replaced. However, on restoration of the processor, it is expected that the system will reboot and consequently return to its "normal" state.
   * Conversely, if the storage (i.e., disk) fails, then this is a ***catastrophic loss*** with respect to programs, data, settings, etc. Therefore, reliability is an even more critical concern with respect to storage than with respect to most other components of the computer system in this particular regard.
 
-Lastly, the types of storage that can be used in practice are actually quite ***diverse***,e.g.,:
+Lastly, the types of storage that can be used in practice are actually quite ***diverse***, e.g.,:
   * magnetic disks (traditional hard drives)
   * optical disks (compact discs [CDs], digital video discs [DVDs], etc.)
   * tape (i.e., for backup)
