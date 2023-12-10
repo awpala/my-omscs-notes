@@ -177,7 +177,7 @@ Of course, there is no such "magic." Instead, the correspondingly available ***r
     * This approach is fairly ***expensive*** and complicated to implement (i.e., tens of instructions), however.
   * Use special ***atomic*** read and write instructions
 
-### 7. Atomic Instruction Quiz and Answer
+### 7. Atomic Instruction Quiz and Answers
 
 <center>
 <img src="./assets/20-009A.png" width="650">
