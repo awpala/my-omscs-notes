@@ -889,7 +889,7 @@ Now, the ***owned (O)*** state effectively ***combines*** the properties of the 
 <img src="./assets/19-064.png" width="650">
 </center>
 
-Recall (cf. Section 20) that the ***owned (O)*** state can be use to avoid inefficiency in the MSI (modified-shared-invalid) protocol pertaining to superfluous main memory access. However, there is ***another*** inefficiency which is common to ***both*** the MSI (modified-shared-invalid) and MOSI (modified-owned-shared-invalid) protocols, pertaining to **thread-private data** (i.e., data which is only exclusively accessed by a ***single*** thread).
+Recall (cf. Section 21) that the ***owned (O)*** state can be use to avoid inefficiency in the MSI (modified-shared-invalid) protocol pertaining to superfluous main memory access. However, there is ***another*** inefficiency which is common to ***both*** the MSI (modified-shared-invalid) and MOSI (modified-owned-shared-invalid) protocols, pertaining to **thread-private data** (i.e., data which is only exclusively accessed by a ***single*** thread).
 
 The following are characterized by thread-private data:
   * All of the run-time data in a single-threaded program
