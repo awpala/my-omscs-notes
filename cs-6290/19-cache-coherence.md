@@ -113,7 +113,7 @@ Consider a coherent system comprised of two cores. These two cores simultaneousl
 (core `1`)
 ```c
 A = 1;
-while (A == 1):
+while (A == 1);
 A = 1;
 print("Done 1!");
 ```
