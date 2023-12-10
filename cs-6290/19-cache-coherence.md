@@ -786,7 +786,7 @@ After cache `C1` performs operation `WRITE X` (i.e., sequence `S3`), it broadcas
 <img src="./assets/19-061A.png" width="650">
 </center>
 
-Consider the same (cf. Section 17) system comprised of two cores, each with private caches, which follow the MSI (modified-shared-invalid) coherence protocol.
+Consider the same (cf. Section 18) system comprised of two cores, each with private caches, which follow the MSI (modified-shared-invalid) coherence protocol.
 
 Initially, cache block `X` is only present in main memory, but not in either private cache.
 
