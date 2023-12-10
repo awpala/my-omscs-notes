@@ -178,7 +178,7 @@ In general, there are several such bitline-wordlines intersections (as in the fi
 Generally, bitlines are very long. Recall (cf. Sections 3-5) that the memory cell is either:
   * 1 - A relatively weak static random access memory (SRAM) (in which case it slowly pulls the bitline one way or the other)
     * Given a weak cell, it is undesirable to wait for the particular memory cell to raise the entire bitline one way or the other (i.e., between values `0` and `1`).
-  * 2 - A dynamic random access memory (DRM) (in which case it discharges a relatively small capacitor into this relatively long bitline)
+  * 2 - A dynamic random access memory (DRAM) (in which case it discharges a relatively small capacitor into this relatively long bitline)
     * Discharging a small capacitor into a long bitline causes a change in the voltage on the bitline, however, this change is relatively small (i.e., negligibly so relative to a "full level" switch from/to `0` or `1`).
 
 For these reasons, the bitlines are typically connected to a device called a **sense amplifier** (as in the figure shown above). The purpose of the sense amplifier is to sense ***small*** changes on the bitline and then to consequently amplify these changes, which in turn facilitates the raising or lowering of the memory cell's bitline-wise voltage.
