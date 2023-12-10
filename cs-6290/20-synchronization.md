@@ -556,9 +556,7 @@ In the original version, "bare" `EXCH R1, lock_var` yields persistent invalidati
 
 Conversely, in the improved version, "normal" load operations are used while the lock (i.e., `lock_var`) is busy. Once it is observed that the lock is free (i.e., `lock_var == 0`), then (and only then) there is a subsequent attempt to acquire the lock using `EXCH` (but ***not*** via "normal" store operation, as an atomic operation is necessary to acquire the exclusively lock at this point).
 
-With this corresponding update, consider the sequence as before (cf. Section 14):
-
-The following sequence is performed involving atomic operation `EXCH`:
+With this corresponding update, the following sequence is performed involving atomic operation `EXCH` (cf. similar sequence from previously in Section 14):
 
 | Sequence | Cache `0` | Cache `1` | Cache `2` |
 |:--:|:--:|:--:|:--:|
