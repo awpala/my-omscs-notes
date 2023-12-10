@@ -547,7 +547,7 @@ Therefore, in such a scenario where the cores alternatively perform successive w
 </center>
 
 Furthermore, as with write-invalidate (cf. Section 10), an analogous optimization occurs when writing ***simultaneously*** on both cores with respect to two ***different*** shared locations (as in the figure shown above).
-  * The left cache can perform localized reads and writes with respect to shared location `B`, and similarly the right cache can perform localized reads and writes with respect to shared location `C`, with neither caches performing necessary broadcasts.
+  * The left cache can perform localized reads and writes with respect to shared location `B`, and similarly the right cache can perform localized reads and writes with respect to shared location `C`, with neither caches performing (otherwise unnecessary) broadcasts.
   * In this manner, cache blocks which are isolated to a given core will be "localized," similarly to that which occurs when following the write-invalidate protocol.
 
 Therefore:
