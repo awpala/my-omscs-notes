@@ -977,7 +977,7 @@ After cache `C1` performs operation `WRITE X` (i.e., sequence `S4`), because it 
 <img src="./assets/19-069A.png" width="650">
 </center>
 
-Consider the same (cf. Section 25) system comprised of three cores, each with private caches.
+Consider the same (cf. Section 24) system comprised of three cores, each with private caches.
 
 Initially, cache block `A` is only present in main memory, but not in either private cache. Correspondingly, all caches are initialized to the invalid (I) state accordingly.
 
