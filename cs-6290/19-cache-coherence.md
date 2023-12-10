@@ -896,7 +896,7 @@ The following are characterized by thread-private data:
   * The thread-specific stacks of a multi-threaded (i.e., parallel) program
 
 The corresponding inefficiency in thread-private data arises when ***reading*** the data in a given thread, and then subsequently ***writing*** data to this thread (which otherwise uses this data ***exclusively***).
-  * In both MSI and MOSI protocols, the corresponding sequence of the cache's states transitions is as follows: invalid (I) → read miss → shared (S) → broadcast invalidation (in order to write) → modified (M)
+  * In both MSI and MOSI protocols, the corresponding sequence of the cache's states transitions is as follows: invalid (I) → read miss → shared (S) → broadcast ***invalidation*** (in order to write) → modified (M)
     * This is performed for ***every*** block of cache data (i.e., in ***each*** thread)
   * Conversely, in an equivalent uni-processor, the analogous "state transitions" (i.e., bit values via valid/`V` and dirty/`D` bits) are as follows: `V = 0` → read miss → `V = 1` → cache hit on write → `D = 1`
     * ***N.B.*** This does not incur the additional "invalidation" step, which adds additional bus overhead (which in turn is comparatively much slower than a cache hit).
