@@ -154,7 +154,7 @@ This gives rise to an apparent ***paradox***: A critical section is needed in or
 <img src="./assets/20-007.png" width="650">
 </center>
 
-Per the apparent "paradox" identified in the previous section (cf. Section 6), some sort of "magic locK" modification is necessary, as follows:
+Per the apparent "paradox" identified in the previous section (cf. Section 5), some sort of "magic locK" modification is necessary, as follows:
 
 ```cpp
 void lock(mutex_type &lock_var) {
