@@ -482,7 +482,7 @@ In the case of ***no optimization***:
 
 In the case of only ***dirty bit optimization***:
   * The write operations on core `0` (i.e., ` WR A`) will be localized to core `0`'s own cache, with only a ***single*** write to main memory on replacement of the cache block (i.e., sequence `2001`)
-  * With respect to the uses, all `1000` write operations on core `0` (i.e., `WR A`) will be broadcasted on the bus, however, only the initial read operation on core `1` (i.e., `RD A`) requires reading from the bus (with the subsequent `999` occurring as read hits). Furthermore, the replacement of the cache block for `A` in core `0` incurs an additional use of the bus to read from main memory.
+  * With respect to bus uses, all `1000` write operations on core `0` (i.e., `WR A`) will be broadcasted on the bus, however, only the initial read operation on core `1` (i.e., `RD A`) requires reading from the bus (with the subsequent `999` occurring as read hits). Furthermore, the replacement of the cache block for `A` in core `0` incurs an additional use of the bus to read from main memory.
 
 Therefore, overall, there is one additional bus use in the dirty bit optimization, however, this reduces writes dramatically (i.e., down from `1000` to `1`).
 
