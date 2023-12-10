@@ -607,7 +607,7 @@ Consider the same system from the previous section (cf. Section 13), however, th
 | `3` through `1000` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
 | `1001` | (N/A) | `RD A` |
 | `1002` | (N/A) | `WR A` |
-| `1003` through `2000` | repeat sequences `1` and `2` | repeat sequences `1` and `2` |
+| `1003` through `2000` | repeat sequences `1001` and `1002` | repeat sequences `1001` and `1002` |
 
 Upon conclusion of this program, what are the following resulting counts of bus uses with respect to shared memory block `A` in the following configurations:
   * Write-update protocol with shared bit and dirty bit optimizations?
