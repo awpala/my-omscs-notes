@@ -514,7 +514,7 @@ Initially, the left core performs a read operation on shared location `A` (i.e.,
 </center>
 
 Next, the right core performs a write operation on shared location `A` (i.e., `WR A ← 1`, as in the figure shown above). This results in a cache miss with respect to the right cache, and consequent broadcast to the bus. However, it is not necessary to write-through to memory with this value (i.e., `1`), but rather the left core snoops the value on broadcast with respect to shared location `A`. Furthermore, in following the write-invalidate protocol, rather than updating the value in the cache block of the left cache, the left cache simply sets the valid bit to `0` for this block, thereby rendering it ***invalidated*** accordingly (i.e., subsequent read attempt will yield a cache miss).
-  * ***N.B.*** On each such write-and-broadcast operation, the right cache will have a shared bit value of `0`, because up to this point, all other copies of the value (i.e., in the left cache) will be invalidated in such a manner. Therefore, in general, a write operation will render the writing cache as being in the non-shared (i.e., shared bit value of `0`) accordingly.
+  * ***N.B.*** On each such write-and-broadcast operation, the right cache will have a shared bit value of `0`, because up to this point, all other copies of the value (i.e., in the left cache) will be invalidated in such a manner. Therefore, in general, a write operation will render the writing cache as being in the non-shared state (i.e., shared bit value of `0`) accordingly.
 
 <center>
 <img src="./assets/19-046.png" width="650">
