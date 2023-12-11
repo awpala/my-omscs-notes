@@ -196,17 +196,17 @@ This "simple implementation" works ***well*** with respect to ***program correct
 To better understand the drawbacks of the "simple implementation" of sequential consistency (cf. Section 6), consider the following question.
   * ***N.B.*** Recall (cf. Section 6) that the "simple implementation" consists of issuing the next access from a given core ***strictly after*** all prior accesses (i.e., across all cores) have been completed.
 
-Given a system comprised of multiple, out-of-order-executing cores, what is the multi-level parallelism achieved with respect to each core?
+Given a system comprised of multiple, out-of-order-executing cores, what is the memory-level parallelism achieved with respect to each core?
   * `1`
 
 ***Explanation***:
 
-Recall (cf. Lesson 14) that multi-level parallelism involves a load operation (i.e., `LW`) generating a cache miss and consequent request to main memory. Subsequently, the processor continues to encounter otherwise independent instructions, and on encountering another load operation (which is also a cache miss), also sends a consequent request to main memory, with the former request hopefully having been serviced/resolved by main memory by the point of the latter cache miss.
+Recall (cf. Lesson 14) that memory-level parallelism involves a load operation (i.e., `LW`) generating a cache miss and consequent request to main memory. Subsequently, the processor continues to encounter otherwise independent instructions, and on encountering another load operation (which is also a cache miss), also sends a consequent request to main memory, with the former request hopefully having been serviced/resolved by main memory by the point of the latter cache miss.
   * ***N.B.*** This strict ordering of load operations is necessary in the "simple implementation" of sequential consistency.
 
-However, proceeding in this manner, with a multi-level parallelism of `1`, these successive cache misses (occurring intermediately within the flow of other instructions' execution) effectively yield a net execution of the equivalent program flow without the cache misses, and the corresponding access-time overhead added to this.
+However, proceeding in this manner, with a memory-level parallelism of `1`, these successive cache misses (occurring intermediately within the flow of other instructions' execution) effectively yield a net execution of the equivalent program flow without the cache misses, and the corresponding access-time overhead added to this.
 
-Conversely, with a better-optimized multi-level parallelism, these cache misses are ideally parallelized, such that they are relatively "less blocking" to the overall execution of the program (and correspondingly reducing, or ideally eliminating, this added access-time overhead). This correspondingly better amortizes the cost penalty incurred by each sequential cache miss.
+Conversely, with a better-optimized memory-level parallelism, these cache misses are ideally parallelized, such that they are relatively "less blocking" to the overall execution of the program (and correspondingly reducing, or ideally eliminating, this added access-time overhead). This correspondingly better amortizes the cost penalty incurred by each sequential cache miss.
 
 ### 8. Better Implementation of Sequential Consistency
 
