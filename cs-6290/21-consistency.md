@@ -242,7 +242,7 @@ Therefore, in order to prevent violation of sequential consistency in the latter
 <img src="./assets/21-011.png" width="650">
 </center>
 
-As an alternative approach to "improving" sequential consistency (i.e., the "naturally expected" behavior by programmers) is to simply ***relax*** the constraint of consistency itself (i.e., invalidate the assumption of the programmer that the program itself *is* indeed sequentially consistent).
+An alternative approach to "improving" sequential consistency (i.e., the "naturally expected" behavior by programmers) is to simply ***relax*** the constraint of consistency itself (i.e., invalidate the assumption of the programmer that the program itself *is* indeed sequentially consistent).
 
 In these corresponding **relaxed consistency** models, they typically differ/vary according to what types of ***orderings*** they enforce. In this regard, there are four distinct ***types*** of ordering, as follows:
   * `WR A` → `WR B`
