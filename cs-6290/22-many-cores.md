@@ -186,7 +186,7 @@ Furthermore, the level 3 (L3) cache is characterized as follows:
   * `16` way set-associative
   * distributed among the slices in a round-robin manner with respect to its constituent slices (i.e., set `0` goes to slice `0`, set `1` goes to slice `1`, etc., with corresponding "wraparound")
 
-If the core in tile `0` issues a memory request `LW 0x1234567` (where `0x1234567`is the target address) which yields a cache miss in both level 1 (L2) and level (L2) caches, then to which level 3 (L3) tile will this request subsequently forward to?
+If the core in tile `0` issues a memory request `LW 0x1234567` (where `0x1234567` is the target address) which yields a cache miss in both level 1 (L2) and level (L2) caches, then to which level 3 (L3) tile will this request subsequently forward to?
  * Tile `6`
 
 ***Explanation***:
