@@ -289,9 +289,8 @@ Furthermore, recall (cf. Section 6) that there are also solutions to managing th
 Furthermore, recall (cf. Section 9) that there are also solutions to managing the exceedingly large coherence directory (resulting from the scalable on-chip network) as the number of cores grows via corresponding distributed partial directory.
   * Recall (cf. Section 9) that the distributed partial directory does not maintain information for every possible block in memory, but rather the distributed partial directory only maintains information for a limited number of blocks (i.e., those having non-zero presence bits set) via corresponding replacement policy, and invalidates on-chip caches on such replacements.
 
-
 However, there is still another problem: The **power budget** available for the overall chip (e.g., `100 W` total) must be split among the cores, but as the number of cores increases, the corresponding power budget per core decreases.
-  * Consequently, the available frequency and voltage per core decreases accordingly. As a result, given a single-threaded program, it performance actually ***decreases*** with increasing cores (i.e., the equivalent per-core power budget scales down proportionally)!
+  * Consequently, the available frequency and voltage per core decreases accordingly. As a result, given a single-threaded program, its performance actually ***decreases*** with increasing cores (i.e., the equivalent per-core power budget scales down proportionally)!
 
 ### 13. Multi-Core Power and Performance
 
