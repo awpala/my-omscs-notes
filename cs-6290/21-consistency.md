@@ -263,7 +263,7 @@ So, then, how are ***correct*** programs written in such a ***relaxed*** system?
 <img src="./assets/21-012.png" width="650">
 </center>
 
-When relaxed consistency is used, it is permissible to reorder "normal" accesses. However, there are additionally ***special non-reorderable accesses** added to the system, which must be used explicitly by the programmer whenever instructions ordering in program orders is significant (i.e., required for an otherwise semantically correct program).
+When relaxed consistency is used, it is permissible to reorder "normal" accesses. However, there are additionally ***special non-reorderable accesses*** added to the system, which must be used explicitly by the programmer whenever instructions ordering in program orders is significant (i.e., required for an otherwise semantically correct program).
 
 An example of such a non-reorderable access is the x86 instruction `MSYNC` (as in the figure shown above).
   * In normal execution, all accesses are reorderable (i.e., it is not otherwise fair to assume "in-order" behavior of the program insofar as consistency is concerned).
