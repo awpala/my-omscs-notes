@@ -319,7 +319,7 @@ Another problem is that the store instructions (i.e., instructions `I7` and `I8`
 ***N.B.*** Enforcement of ordering via `MSYNC` with respect to instructions `I5` (`LW var`) and `I7` (`SW var`) is ***not*** necessary here, because they operate on the ***same*** memory location (i.e., `var`). Furthermore, instructions with respect to managing `lock` (i.e., instructions `I1`, `I2`, `I3`, `I4`, and `I8`) are similarly already "in program order by default" as given.
 
 As a general observation along these lines, a lock function is considered to be an "acquire" type of synchronization, which is followed by an `MSYNC` instruction. Similarly, an unlock function is considered to be a "release" type of synchronization, which is preceded by an `MSYNC` instruction.
-  * ***N.B.*** Conversely, in a "flag-based" types of synchronization (cf. Lesson 20), waiting for a flag is the analogous "acquire" counterpart, and then releasing the flag is the corresponding "release" accordingly. Furthermore, a barrier (cf. Lesson 20) is a more anomalous case whereby "acquire" and "release" are performed simultaneously in the same operation. In any case, `MSYNC` provides the appropriate "stopgap" functionality accordingly in these synchronization types as well.
+  * ***N.B.*** Conversely, in "flag-based" types of synchronization (cf. Lesson 20), waiting for a flag is the analogous "acquire" counterpart, and then releasing the flag is the corresponding "release" accordingly. Furthermore, a barrier (cf. Lesson 20) is a more anomalous case whereby "acquire" and "release" are performed simultaneously in the same operation. In any case, `MSYNC` provides the appropriate "stopgap" functionality accordingly in these synchronization types as well.
 
 ## 12. Data Races and Consistency
 
