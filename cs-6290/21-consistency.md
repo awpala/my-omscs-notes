@@ -310,7 +310,7 @@ Among which instruction(s) is `MSYNC` necessary in order to enforce correct prog
 
 While the processor allows all four types of reorderings, it only allows reorderings of accesses to ***different*** locations, because cache coherence and correct uni-processor behavior otherwise ensures that accesses to the ***same*** location are still performed in program order. Consequently, instructions `I1`, `I2`, and `I8` are already "correctly ordered by default" given these conditions/constraints.
 
-Conversely, locations `var` AND `lock` do require additional (i.e., explicit) attention, because they exist at ***different*** memory locations (and correspondingly ***can*** be reordered arbitrarily in this processor accordingly).
+Conversely, locations `var` and `lock` do require additional (i.e., explicit) attention, because they exist at ***different*** memory locations (and correspondingly ***can*** be reordered arbitrarily in this processor accordingly).
   * Instruction `I5` (`LW var`) can be moved by the processor before instruction `I1` (`LL R1, lock`), i.e., pulled "outside" of the critical section and before the lock is even acquired. Therefore, to prevent this, `MSYNC` must be added immediately prior to instruction `I4` in order to prevent this from occurring.
 
 Another problem is that the store instructions (i.e., instructions `I7` and `I8`) can be reordered in this processor as well.
