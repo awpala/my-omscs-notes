@@ -261,7 +261,7 @@ Given that the on-chip partial directory will eventually run out of entries, wha
 
 The resolution is exactly the same to that seen previously when dealing with a full cache (cf. Lesson 12): Simply use a corresponding replacement policy accordingly (e.g., least-recently used [LRU]).
 
-### 9. On-Chip Directory: Part 2
+### 11. On-Chip Directory: Part 2
 
 <center>
 <img src="./assets/22-020.png" width="650">
