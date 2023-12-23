@@ -137,7 +137,7 @@ $$
 Q\left( {n;Z,L} \right) \ge \underbrace {\left\lceil {{n \over L}} \right\rceil }_{{\rm{transfers}}} = \Omega \left( {{n \over L}} \right)
 $$
 
-***N.B.*** The ceiling (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil $) accounts for the fact that if $n$ is not a multiple of $L$, then a partial-transfer cost must be incurred nevertheless.
+***N.B.*** The ceiling (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil$) accounts for the fact that if $n$ is not a multiple of $L$, then a partial-transfer cost must be incurred nevertheless.
 
 Observe that there is ***no*** dependence by $Q$ on $Z$ (the size of the fast memory). Since it is only necessary to access each element *once*, the size of the fast memory is irrelevant (i.e., the data is ***not*** reused either way).
   * ***N.B.*** In general, not reusing data is ***undesirable***.
@@ -168,3 +168,44 @@ Two-level memories are very ubiquitous. Identify which of the following combinat
 Indeed, all of these are valid slow-fast memory pairings.
 
 ## 4. Alignment Quiz and Answers
+
+<center>
+<img src="./assets/01-021Q.png" width="650">
+</center>
+
+Suppose the elements of an array are summed (as in the figure shown above), without any additional information regarding the array-data alignment with respect to transfer size $L$. In the ***worst case***, how many transfers are required in order to read the entire array?
+  * ***N.B.*** Provide the answer ***exactly***, not asymptotically. Furthermore, if necessary, use floors and/or ceilings.
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-022A.png" width="650">
+</center>
+
+In the worst case, the total number of transfers is given as follows:
+
+$$
+Q\left( {n;Z,L} \right) \le \left\lceil {{n \over L}} \right\rceil  + 1
+$$
+
+<center>
+<img src="./assets/01-023A.png" width="350">
+</center>
+
+To understand this more concretely, consider the example of $n = 4$ and $L = 2$ (as in the figure shown above). There are two pertinent cases for this example.
+
+<center>
+<img src="./assets/01-024A.png" width="350">
+</center>
+
+In the first case (as in the figure shown above), the array is ***aligned*** on an $L$-word boundary, thereby requiring ***exactly*** $\left\lceil {{\textstyle{n \over L}}} \right\rceil$ transferred.
+
+<center>
+<img src="./assets/01-025A.png" width="350">
+</center>
+
+Conversely, in the second case (as in the figure shown above), the array is ***not aligned***, and therefore an ***additional*** transfer is required (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil + 1$).
+
+***N.B.*** The purpose of this exercise is simply for awareness of this word-alignment issue; in practice, for purposes of this course, this will be generally regarded as a "minor" detail (which is particularly negligible in the case of $n \gg L$).
+
+## 5. Minimum Transfers to Sort Quiz and Answers
