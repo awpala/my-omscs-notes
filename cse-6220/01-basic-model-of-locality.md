@@ -96,14 +96,10 @@ Therefore, when designing an algorithm for this model, **data alignment** is a k
 
 ### Costs for the First, Basic Model
 
-<center>
-<img src="./assets/01-014.png" width="650">
-</center>
-
 Therefore, this first, basic model implies two major **costs** when designing algorithms.
 
 <center>
-<img src="./assets/01-015.png" width="650">
+<img src="./assets/01-014.png" width="650">
 </center>
 
 The first cost entails how many **operations** are required by the algorithm, i.e., what is the **computational work** (denoted $W(n)$) performed by the processor.
