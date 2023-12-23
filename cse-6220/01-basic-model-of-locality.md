@@ -143,3 +143,28 @@ Observe that there is ***no*** dependence by $Q$ on $Z$ (the size of the fast me
   * ***N.B.*** In general, not reusing data is ***undesirable***.
 
 ## 3. Two-Level Memories Quiz and Answers
+
+<center>
+<img src="./assets/01-019Q.png" width="650">
+</center>
+
+Two-level memories are very ubiquitous. Identify which of the following combinations are valid slow-fast memory pairings. (Select all that apply.)
+
+| Slow Memory | Fast Memory |
+|:--:|:--:|
+| hard disk | main memory |
+| L1 cache | CPU registers |
+| tape storage | hard disk |
+| remote server RAM | local server RAM |
+| the Internet | your brain |
+| (other) | (other) |
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-020A.png" width="650">
+</center>
+
+Indeed, all of these are valid slow-fast memory pairings.
+
+## 4. Alignment Quiz and Answers
