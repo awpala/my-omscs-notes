@@ -209,3 +209,48 @@ Conversely, in the second case (as in the figure shown above), the array is ***n
 ***N.B.*** The purpose of this exercise is simply for awareness of this word-alignment issue; in practice, for purposes of this course, this will be generally regarded as a "minor" detail (which is particularly negligible in the case of $n \gg L$).
 
 ## 5. Minimum Transfers to Sort Quiz and Answers
+
+<center>
+<img src="./assets/01-026Q.png" width="650">
+</center>
+
+Consider the sorting of an array of $n$ words (as in the figure shown above), using a comparison-based algorithm running on a sequential machine with a two-level memory hierarchy.
+  * ***N.B.*** Recall from an introductory algorithms course that such a comparison-based sort requires at least $n\log n$ such comparisons (i.e., $W\left( n \right) = \Omega \left( {n\log n} \right)$)
+
+What is an asymptotic ***lower bound*** on the number of slow-fast memory transfers (i.e., on $Q(n;Z,L)$)?
+  * ***N.B.*** It is ***not*** necessary for this lower bound to be tight; a trivial bound is sufficient, provided it is reasonably precise. Furthermore, use floor and/or ceiling as/if necessary.
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-027A.png" width="650">
+</center>
+
+In this case, the trivial lower-bound solution simply reading the array, i.e.,:
+
+$$
+Q\left( {n;Z,L} \right) = \Omega \left( {\left\lceil {{n \over L}} \right\rceil } \right)
+$$
+
+or
+
+$$
+Q\left( {n;Z,L} \right) = \Omega \left( {{n \over L}} \right)
+$$
+
+Here, $n$ indicates that it is necessary to access each word at least *once*. Furthermore, a division by $L$ implies the best-case scenario of reading each element sequentially one block at a time. Lastly, the ceiling accounts for the possibility that $L$ does not divide $n$ (however, its omissions here is sufficiently "loose"/"imprecise").
+
+<center>
+<img src="./assets/01-028A.png" width="650">
+</center>
+
+Additionally, note the following alternative lower bound:
+
+$$
+Q\left( {n;Z,L} \right) = \Omega \left( {{{{\textstyle{n \over L}}\log {\textstyle{n \over L}}} \over {\log {\textstyle{Z \over L}}}}} \right)
+$$
+
+This will be discussed later in the course.
+
+## 6. Minimum Transfers to Multiply Matrices Quiz and Answers
+
