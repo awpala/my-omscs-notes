@@ -226,7 +226,7 @@ What is an asymptotic ***lower bound*** on the number of slow-fast memory transf
 <img src="./assets/01-027A.png" width="650">
 </center>
 
-In this case, the trivial lower-bound solution simply reading the array, i.e.,:
+In this case, the trivial lower-bound solution is simply reading the array, i.e.,:
 
 $$
 Q\left( {n;Z,L} \right) = \Omega \left( {\left\lceil {{n \over L}} \right\rceil } \right)
@@ -254,3 +254,44 @@ This will be discussed later in the course.
 
 ## 6. Minimum Transfers to Multiply Matrices Quiz and Answers
 
+<center>
+<img src="./assets/01-029Q.png" width="650">
+</center>
+
+Consider a matrix-matrix multiplication performed on a machine with a two-level memory hierarchy (as in the figure shown above). Furthermore, assume that the constituent matrices $A$ and $B$ are $n \times n$ square matrices.
+
+Ignoring the possibility of a Strassen (or faster) algorithm, then the work of the matrix multiplication is as follows:
+
+$$
+W\left( n \right) = O\left( {{n^3}} \right)
+$$
+
+In this case, what is the minimum number of transfers (i.e., $Q\left( {n;Z,L} \right)$)? (Provide an asymptotic lower bound, which is sufficiently/reasonably "tight.")
+
+***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-030A.png" width="650">
+</center>
+
+In this case, the trivial lower-bound solution is:
+
+$$
+Q\left( {n;Z,L} \right) = \Omega \left( {{{{n^2}} \over L}} \right)
+$$
+
+Here, $n^2$ counts the number of matrix elements, and dividing by $L$ converts $n^2$ into some number of transfers.
+
+<center>
+<img src="./assets/01-031A.png" width="650">
+</center>
+
+Additionally, a *tighter* lower bound can be specified as follows:
+
+$$
+Q\left( {n;Z,L} \right) = \Omega \left( {{{{n^3}} \over {L\sqrt Z }}} \right)
+$$
+
+This will be discussed later in the course.
+
+## 7. I/O Example: Reduction
