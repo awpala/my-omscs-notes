@@ -650,3 +650,44 @@ If this ratio is ***large***, then ***more*** operations are being performed per
 Therefore, both goals are cooperative, and are reminiscent of work and span (as discussed later in this course).
 
 ## 10. Which Is Better? Quiz and Answers
+
+<center>
+<img src="./assets/01-065Q.png" width="650">
+</center>
+
+Consider two algorithms characterized as follows:
+
+| Algorithm | Work | Number of transfers |
+|:--:|:--:|:--:|
+| 1 | ${W_1}\left( n \right) = \theta \left( n \right)$ | ${Q_1}\left( {n;Z,L} \right) = \theta \left( {{n \over L}} \right)$ |
+| 2 | ${W_2}\left( n \right) = \theta \left( {n\log n} \right)$ | ${Q_2}\left( {n;Z,L} \right) = \theta \left( {{n \over {L\log Z}}} \right)$ |
+
+Which of these two algorithms is better? (Select the correct option, and justify your choice.)
+  * Algorithm 1
+  * Algorithm 2
+  * Both
+  * Indeterminate
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-066A.png" width="650">
+</center>
+
+There is ***insufficient information*** to make this determination definitively.
+
+<center>
+<img src="./assets/01-067A.png" width="650">
+</center>
+
+Recall (cf. Section 9) that the ***goals*** of a given algorithm are low work and high intensity. The corresponding intensities for these algorithms are as follows:
+
+| Algorithm | Work | Number of transfers | Intensity |
+|:--:|:--:|:--:|:--:|
+| 1 | ${W_1}\left( n \right) = \theta \left( n \right)$ | ${Q_1}\left( {n;Z,L} \right) = \theta \left( {{n \over L}} \right)$ | ${I_1} = {{{W_1}} \over {L{Q_1}}} = \theta \left( 1 \right)$ |
+| 2 | ${W_2}\left( n \right) = \theta \left( {n\log n} \right)$ | ${Q_2}\left( {n;Z,L} \right) = \theta \left( {{n \over {L\log Z}}} \right)$ | ${I_2} = {{{W_2}} \over {L{Q_2}}} = \theta \left( {\log n \cdot \log Z} \right)$ |
+
+In this case, Algorithm 1 performs less asymptotic work $W$, however, the intensity $I$ of Algorithm 2 grows asymptotically with $n$ and with $Z$ (whereas that of Algorithm 1 is constant). Therefore, there is ambiguity with respect to which of the two algorithm "better" optimizes across ***both*** goals.
+
+## 11. Intensity, Balance, and Time
+
