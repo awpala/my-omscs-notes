@@ -295,3 +295,143 @@ $$
 This will be discussed later in the course.
 
 ## 7. I/O Example: Reduction
+
+<center>
+<img src="./assets/01-032.png" width="650">
+</center>
+
+Recall (cf. Section 2) that in the reduction example, the work is linear, i.e.,:
+
+$$
+W\left( n \right) = O\left( n \right)
+$$
+
+Furthermore, the lower bound on the number of transfers is:
+
+$$
+Q\left( {n;Z,L} \right) = \Omega \left( {{n \over L}} \right)
+$$
+
+### Sequential Algorithm
+
+Now, consider analysis of a concrete ***algorithm*** in order to determine whether or not such a lower bound can be achieved. The algorithm in question is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+s \leftarrow 0\\
+{\rm{for\ }}i \leftarrow 0{\rm{\ to \ }}n - 1{\rm{\ do}}\\
+\ \ s \leftarrow s + X[i]
+\end{array}
+}
+$$
+
+This algorithm is consistent with the conventional sequential RAM model (i.e., one ***without*** the fast memory). The accumulator $s$ maintains the value, and each array element is iterated over and summed accordingly.
+
+### Algorithm for the Two-Level Memory Model
+
+A ***modification*** of this procedure is necessary in order to consider the ***movement*** of data between the slow and fast memories.
+
+<center>
+<img src="./assets/01-033.png" width="650">
+</center>
+
+With respect to $s$, it can be assumed that it is initialized locally (as in the figure shown above), in the fast memory, as denoted by keyword $\rm{local}$. This is fundamentally the same as any other temporary scalar or local variable in a typical imperative programming language.
+  * ***N.B.*** This distinction is made in the pseudocode here for clarify, however, typically this is not a detail "of particular interest."
+
+<center>
+<img src="./assets/01-035.png" width="650">
+</center>
+
+With respect to the array $X$, ***assume*** that $n \gg Z$.
+
+<center>
+<img src="./assets/01-036.png" width="650">
+</center>
+
+Furthermore, also with respect to the array $X$, ***assume*** that it is aligned on an $L$-word boundary.
+
+<center>
+<img src="./assets/01-037.png" width="650">
+</center>
+
+Given these assumptions, the explicit slow-fast transfer operations yield the following modified pseudocode:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{local\ }}s \leftarrow 0\\
+{\rm{for\ }}i \leftarrow 0{\rm{\ to \ }}n - 1{\rm{\ by \ }}L{\rm{\ do}}\\
+\ \ \ \ {\rm{local\ }}\widehat L \leftarrow \min \left( {n,i + L - 1} \right)\\
+\ \ \ \ {\rm{local\ }}y\left[ {0:\widehat L - 1} \right] \leftarrow X\left[ {i:\left( {i + \widehat L - 1} \right)} \right]\\
+\ \ \ \ {\rm{for\ }}di \leftarrow 0{\rm{\ to\ }}\widehat L - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ s \leftarrow s + y[di]
+\end{array}
+}
+$$
+
+<center>
+<img src="./assets/01-038.png" width="650">
+</center>
+
+In the outer loop, as in the original algorithm, there is iteration over the array's elements, however, it does so by steps of $L$-sized blocks per iteration.
+
+<center>
+<img src="./assets/01-039.png" width="650">
+</center>
+
+The computation $\widehat L$ determines whether the block that starts at position $i$ is of length $L$, or otherwise smaller than this.
+  * ***N.B.*** This is a relatively "fine" detail, which will otherwise be generally ignored subsequently in the course.
+
+<center>
+<img src="./assets/01-040.png" width="650">
+</center>
+
+The assignment to $y$ is an ***explicit*** load or read operation, from slow memory to fast memory. Such a request occurs with respect to at most $L$ words, corresponding to ***one*** block transfer.
+
+<center>
+<img src="./assets/01-041.png" width="650">
+</center>
+
+Since $y$ and $s$ are both ***local*** to the fast memory, the ***processor*** itself can execute the innermost loop.
+
+<center>
+<img src="./assets/01-042.png" width="650">
+</center>
+
+So, then, what is the work and number of transfer steps for this modified algorithm?
+
+The work is the same as in the conventional algorithm using the RAM model, i.e.,:
+
+$$
+W\left( n \right) = \Theta \left( n \right)
+$$
+
+And the number of transfer steps is:
+
+$$
+Q\left( {n;Z,L} \right) = \Theta \left( {\left\lceil {{n \over L}} \right\rceil } \right)
+$$
+
+This follows naturally from the structure of the modified algorithm/pseudocode itself.
+
+<center>
+<img src="./assets/01-043.png" width="650">
+</center>
+
+Indeed, these results agree with the lower bounds of the sequential RAM model.
+
+### Additional Remarks
+
+<center>
+<img src="./assets/01-044.png" width="650">
+</center>
+
+Note the following ***remarks*** with respect to the aforementioned analysis:
+  * Much of the detail was provided ***meticulously***; in general, subsequent analysis will use appropriate ***simplifications*** as necessary and as warranted
+  * ***Caches*** do indeed exist (and are otherwise generally managed "automatically" by the hardware), however, despite their utility in these scenarios, eventually, we will see that caches are ***not*** sufficient to guarantee ***high performance in general***
+    * For this reason, locality is ***explicitly*** described in this lesson accordingly.
+
+***N.B.*** Course CS 6290 (High Performance Computer Architecture) further describes caches in detail.
+
+## 8. Matrix-Vector Multiply Quiz and Answers
