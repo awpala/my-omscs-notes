@@ -843,7 +843,7 @@ $$
 $y_0$ is the maximum possible value of $R_{\max}$.
   * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
 
-Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that an algorithm which is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$).
+Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that if an algorithm is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$).
 
 As the critical point $I = \underbrace B_{{x_0}}$ suggests, a good algorithm design target is to achieve an intensity of $B$ or greater.
 
@@ -852,3 +852,126 @@ Additionally, consider the following relevant ***terminology*** (as denoted in t
   * An algorithm which performs at $I < \underbrace B_{{x_0}}$ is called **memory-bound**
 
 ## 13. Intensity of Conventional Matrix Multiply Quiz and Answers
+
+Estimating the intensity of an algorithm can indicate whether additional effort is required/warranted to find a more suitable alternative.
+
+<center>
+<img src="./assets/01-079Q.png" width="650">
+</center>
+
+Consider again (cf. Section 6) non-Strassen matrix multiplication (as in the figure shown above). Furthermore, assume a conventional "nested" multiplication algorithm is performed, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+\rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] +  = A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]
+\end{array}
+}
+$$
+
+Now, suppose that this algorithm is run on a machine with a two-level memory hierarchy of size $Z$ (as in the figure shown above).
+
+<center>
+<img src="./assets/01-080Q.png" width="650">
+</center>
+
+Furthermore, consider the following simplifying ***assumptions***:
+  * The transfer size is exactly one word (i.e., $L = 1$)
+    * This obviates alignment-related concerns
+  * $Z = 2n + O\left( 1 \right)$, i.e., $Z$ is large enough to hold two vectors (each of size $n$) along with some additional constant storage space
+
+Now, consider a ***transformation*** of this nested-loops algorithm into a more ***I/O-aware*** version, as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+\rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ {\rm{// read\ }}A\left[ {i,:} \right]\\
+\ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ {\rm{// read\ }}C\left[ {i,j} \right]{\rm{\ and\ }}B\left[ {:,j} \right]\\
+\ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] +  = A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]\\
+\ \ \ \ \ \ \ \ {\rm{// store\ }}C\left[ {i,j} \right]
+\end{array}
+}
+$$
+
+The additional "comments" (delimited by ${\rm{// }} \ldots$) indicate suggestions for where to load and store portions of matrices $A$, $B$, and $C$.
+  * ***N.B.*** Observe that these load and store operations respect the assumption that $Z$ is sufficiently large to hold two vectors (each of size $n$) and some additional constant storage space.
+
+<center>
+<img src="./assets/01-081Q.png" width="650">
+</center>
+
+Given this algorithm, what is its asymptotic intensity? (Express this as $I\left( {n;Z} \right) = \theta \left( {???} \right)$.)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-082A.png" width="650">
+</center>
+
+The asymptotic intensity for this algorithm is simply the following:
+
+$$
+I\left( {n;Z} \right) = \theta \left( 1 \right)
+$$
+
+<center>
+<img src="./assets/01-083A.png" width="650">
+</center>
+
+First, note that the algorithm performs the following ***work***:
+
+$$
+W\left( n \right) = \theta \left( {{n^3}} \right)
+$$
+
+Next, consider the ***transfers***.
+
+<center>
+<img src="./assets/01-084A.png" width="650">
+</center>
+
+Considering the reads of matrix $A$, this yields the following transfers:
+
+$$Q
+\left( {n;Z} \right) = {n^2}
+$$
+
+This corresponds to a read of vector $A\left[ {i,:} \right]$ (of length $n$ elements) for $n$ repetitions/iterations.
+
+<center>
+<img src="./assets/01-085A.png" width="650">
+</center>
+
+Next, considering the additional reads of matrix $C$, this yields the following transfers:
+
+$$
+Q\left( {n;Z} \right) = n^2 + 2n^2 = 3n^2
+$$
+
+With respect to matrix $C$, there is a read and a write operation of one element each, repeated a total of $n^2$ times.
+
+<center>
+<img src="./assets/01-086A.png" width="650">
+</center>
+
+Lastly, considering the additional reads of matrix $B$, this yields the following transfers:
+
+$$
+Q\left( {n;Z} \right) = 3n^2 + n^3
+$$
+
+The algorithm reads $n$ elements of $B$ for $n^2$ total iterations. Correspondingly, this read of $B$ ***dominates*** the overall transfer cost ($Q\left( {n;Z} \right)$).
+
+Therefore, since the intensity is the ratio or operations ($W$) to transfers ($Q$), the intensity in this case is simply constant overall (i.e., $\theta \left( 1 \right)$).
+
+An ***interesting question*** as a follow up to this is: Is ***better*** performance than this achievable?
+  * Intuition would indeed suggest so, particularly considering that there are $n^3$ total operations, but only $n^2$ total data. This suggests that there is a potential factor $n$ of available "reuse" among this disparity. (This is discussed further in the next quiz section.)
+
+## 14. Intensity of Conventional Matrix Multiply (Revisited) Quiz and Answers
+
