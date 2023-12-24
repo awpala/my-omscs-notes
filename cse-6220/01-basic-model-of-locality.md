@@ -803,3 +803,52 @@ $$
 This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$), where in general higher values are ***better***.
 
 ## 12. Roofline Plots Quiz and Answers
+
+<center>
+<img src="./assets/01-077Q.png" width="650">
+</center>
+
+Recall some basic facts about the von Neumann architecture. Assuming ***perfect overlap*** of computation and data movement, you can estimate the ***maximum*** normalized performance as follows (cf. Section 11):
+
+$$
+{R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{I \over B}} \right)
+$$
+
+In performance analysis, one way to visualize the relationship among these parameters is via a so called **roofline plot** (as in the figure shown above), whose general form resembles a "roof" of a house.
+  * The plot of of $R_{\max}$ vs. $I$.
+  * Furthermore, here it is assumed that $W$ (work in the actual program) and $W_ *$ (equivalent work in the ideal serial RAM model) are both constant (e.g., as in the case of many algorithms or many implementations all performing the same amount of work, but varying in their communication), however, in general this is not always/necessarily true.
+
+***N.B.*** A roofline plot is typically plotted on log-log axes, however, for simplicity, this example uses a simple linear plot.
+
+Plotting $R_{\max }$ in this manner yields the general form as in the figure shown above. The ***interesting features*** of the plot are the value of the **plateau** and the location of the **inflection point** (i.e., $\left( {{x_0},{y_0}} \right)$).
+
+What are the values of $x_0$ and $y_0$? (Express these in terms of the parameters $I$, $B$, $W$, and $W_*$.)
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/01-078A.png" width="650">
+</center>
+
+The values of the inflection point "coordinates" are as follows:
+
+$$
+{x_0} = B
+$$
+
+$$
+{y_0} = {{{W_ *}} \over W}
+$$
+
+$y_0$ is the maximum possible value of $R_{\max}$.
+  * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
+
+Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that an algorithm which is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$).
+
+As the critical point $I = \underbrace B_{{x_0}}$ suggests, a good algorithm design target is to achieve an intensity of $B$ or greater.
+
+Additionally, consider the following relevant ***terminology*** (as denoted in the plot in the figure shown above):
+  * An algorithm which performs at $I > \underbrace B_{{x_0}}$ is called **compute-bound**
+  * An algorithm which performs at $I < \underbrace B_{{x_0}}$ is called **memory-bound**
+
+## 13. Intensity of Conventional Matrix Multiply Quiz and Answers
