@@ -599,3 +599,54 @@ As a final remark, suppose that the fast memory is a ***fully associative cache*
   * ***N.B.*** This is left as an additional exercise for the student/reader.
 
 ## 9. Algorithm Design Goals
+
+<center>
+<img src="./assets/01-061.png" width="650">
+</center>
+
+An ***important question*** regarding the two-level memory model is: What are the ***design goals***? That is, with respect to the complexity measures for work ($W\left( n \right)$) and transfers ($Q \left( {n;Z,L} \right)$), what makes an algorithm "good"?
+
+The goals to achieve this is actually rather ***simple***.
+
+### First Goal
+
+<center>
+<img src="./assets/01-062.png" width="650">
+</center>
+
+The ***first goal*** is **work optimality**, i.e., the two-level algorithm should perform the ***same*** asymptotic work as the equivalent sequential RAM algorithm, or equivalently:
+
+$$
+W\left( n \right) = \theta \left( {{W_ * }\left( n \right)} \right)
+$$
+
+where ${W_ * }\left( n \right)$ denotes the work of the best/optimal sequential RAM algorithm (i.e., without the corresponding memory hierarchy).
+
+***N.B.*** This statement is equivalent to what would be described with respect to parallel algorithms, i.e., do not "explode" the asymptotic work.
+
+### Second Goal
+
+<center>
+<img src="./assets/01-063.png" width="650">
+</center>
+
+The ***second goal*** is to achieve **high computational intensity**. More formally, this entails maximizing the following quantity, $I$:
+
+$$
+I\left( {n;Z,L} \right) \equiv {{W\left( n \right)} \over {L \cdot Q\left( {n;Z,L} \right)}}
+$$
+
+Here, the **computational intensity** (or simply **intensity**) $I$ is simply the ratio of the work to the words transferred.
+
+Intensity $I$ has units of `operations/word`. In other words, "operations per word" measures the level of ***data reuse*** in the algorithm.
+
+If this ratio is ***large***, then ***more*** operations are being performed per word transferred to fast memory.
+  * This is generally ***desirable***, however, it is ***not*** desirable to maximize this at the ***expense*** of performing sub-optimal work (i.e., per the previous/first goal).
+
+<center>
+<img src="./assets/01-064.png" width="650">
+</center>
+
+Therefore, both goals are cooperative, and are reminiscent of work and span (as discussed later in this course).
+
+## 10. Which Is Better? Quiz and Answers
