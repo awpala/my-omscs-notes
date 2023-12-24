@@ -691,3 +691,115 @@ In this case, Algorithm 1 performs less asymptotic work $W$, however, the intens
 
 ## 11. Intensity, Balance, and Time
 
+Now, consider the ***relationship*** between work, transfers, and execution time.
+
+### Minimum Time to Execute the Program
+
+<center>
+<img src="./assets/01-068.png" width="650">
+</center>
+
+Suppose that the processor requires $\tau$ time units to perform an operation (i.e., units of `time/operation`). The corresponding time to perform **compute operations** ($T_{{\rm{comp}}}$) is therefore:
+
+$$
+{T_{{\rm{comp}}}} = \tau W
+$$
+
+Next, let $\alpha$ be the **amortized time** to move one word of data between the slow and fast memories, where $\alpha$ has units of `time/word`. The corresponding time to execute $Q$ **transfers** ($T_{{\rm{mem}}}$) is therefore:
+
+$$
+{T_{{\rm{mem}}}} = \alpha LQ
+$$
+
+Now, assume that there is ***perfect overlap*** between the data transfers and the computation. In this case, the **minimum time** to execute the program ($T$) is therefore:
+
+$$
+T \ge \max \left( {{T_{{\rm{comp}}}},{T_{{\rm{mem}}}}} \right)
+$$
+
+<center>
+<img src="./assets/01-069.png" width="650">
+</center>
+
+Refactoring of this expression gives the following:
+
+$$
+T \geq \tau W \cdot \max\left(1, \frac{\frac{\alpha}{\tau}}{{\frac{W}{LQ}}}\right)
+$$
+
+This refactoring shows the execution relative to the **ideal computation time**, $\tau W$. This is "ideal" in the sense that it assumes a zero-cost data movement.
+
+<center>
+<img src="./assets/01-070.png" width="650">
+</center>
+
+However, relative to this ideal computation time, there is a necessary ***penalty*** incurred. The factor $\max \left(  \cdots  \right)$ is the **communication penalty** (or **transfer penalty**), which is the cost incurred when moving the data.
+
+<center>
+<img src="./assets/01-071.png" width="650">
+</center>
+
+The communication penalty does indeed have some structure.
+
+In the second argument of $\max \left(  \cdots  \right)$, the denominator factor ${\textstyle{W \over {LQ}}}$ is the algorithm's **computational intensity** (cf. Section 9), having units of `operations/word`.
+
+<center>
+<img src="./assets/01-072.png" width="650">
+</center>
+
+Furthermore, in the second argument of $\max \left(  \cdots  \right)$, the numerator factor ${\textstyle{\alpha  \over \tau }}$ is the time per word divided by the time per operation, having units of `operations/word` (similarly to the computational intensity). This is a ratio of parameters which depends *only* on the machine. In the literature, this is sometimes referred to as the **machine balance** (or **machine balance point**).
+  * This ratio essentially quantifies how many operations can be executing in the time required to move a word of data.
+
+<center>
+<img src="./assets/01-073.png" width="650">
+</center>
+
+Since machine balance is a "named" parameter, it can be defined accordingly as $B$.
+
+With this definition of terms, the minimum possible execution time with respect to the machine balance and the algorithm's computational intensity can be therefore expressed as:
+
+$$
+T \ge \tau W \cdot \max \left( {1,{B \over I}} \right)
+$$
+
+### Maximum Time to Execute the Program
+
+<center>
+<img src="./assets/01-074.png" width="650">
+</center>
+
+Furthermore, for the sake of completeness, the **maximum time** to execute the program ($T$)  can be similarly estimated as:
+
+$$
+T \le \tau W\left( {1 + {B \over I}} \right)
+$$
+
+This gives rise to a sum (rather than a maximum) because if there is ***no*** overlap with data movements, then it is necessary to incur the cost for ***both*** computation ***and*** data movement, occurring successively as temporally distinct operations.
+
+### Measures of Performance
+
+<center>
+<img src="./assets/01-075.png" width="650">
+</center>
+
+In addition to analyzing the execution time, it is also common to analyze ***measures of performance***. Let such a measure of **normalized performance** ($R$) be defined as follows:
+
+$$
+R \equiv {{\tau {W_ * }} \over T}
+$$
+
+The numerator $\tau {W_ * }$ is the best time in the pure sequential RAM model.
+
+<center>
+<img src="./assets/01-076.png" width="650">
+</center>
+
+Furthermore, dividing by $T$ yields the following:
+
+$$
+\underbrace {{{\tau {W_ * }} \over T}}_{ \equiv R} \le {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
+$$
+
+This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$), where in general higher values are ***better***.
+
+## 12. Roofline Plots Quiz and Answers
