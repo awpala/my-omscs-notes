@@ -362,9 +362,9 @@ $$
 \begin{array}{l}
 {\rm{local\ }}s \leftarrow 0\\
 {\rm{for\ }}i \leftarrow 0{\rm{\ to \ }}n - 1{\rm{\ by \ }}L{\rm{\ do}}\\
-\ \ \ \ {\rm{local\ }}\widehat L \leftarrow \min \left( {n,i + L - 1} \right)\\
-\ \ \ \ {\rm{local\ }}y\left[ {0:\widehat L - 1} \right] \leftarrow X\left[ {i:\left( {i + \widehat L - 1} \right)} \right]\\
-\ \ \ \ {\rm{for\ }}di \leftarrow 0{\rm{\ to\ }}\widehat L - 1{\rm{\ do}}\\
+\ \ \ \ {\rm{local\ }}\hat L \leftarrow \min \left( {n,i + L - 1} \right)\\
+\ \ \ \ {\rm{local\ }}y\left[ {0:\hat L - 1} \right] \leftarrow X\left[ {i:\left( {i + \hat L - 1} \right)} \right]\\
+\ \ \ \ {\rm{for\ }}di \leftarrow 0{\rm{\ to\ }}\hat L - 1{\rm{\ do}}\\
 \ \ \ \ \ \ \ \ s \leftarrow s + y[di]
 \end{array}
 }
@@ -380,7 +380,7 @@ In the outer loop, as in the original algorithm, there is iteration over the arr
 <img src="./assets/01-039.png" width="650">
 </center>
 
-The computation $\widehat L$ determines whether the block that starts at position $i$ is of length $L$, or otherwise smaller than this.
+The computation $\hat L$ determines whether the block that starts at position $i$ is of length $L$, or otherwise smaller than this.
   * ***N.B.*** This is a relatively "fine" detail, which will otherwise be generally ignored subsequently in the course.
 
 <center>
@@ -724,7 +724,7 @@ $$
 Refactoring of this expression gives the following:
 
 $$
-T \geq \tau W \cdot \max\left(1, \frac{\frac{\alpha}{\tau}}{{\frac{W}{LQ}}}\right)
+T \geq \tau W \cdot \max\left(1, \frac{\alpha / \tau}{W / (LQ)}\right)
 $$
 
 This refactoring shows the execution relative to the **ideal computation time**, $\tau W$. This is "ideal" in the sense that it assumes a zero-cost data movement.
@@ -741,13 +741,13 @@ However, relative to this ideal computation time, there is a necessary ***penalt
 
 The communication penalty does indeed have some structure.
 
-In the second argument of $\max \left(  \cdots  \right)$, the denominator factor ${\textstyle{W \over {LQ}}}$ is the algorithm's **computational intensity** (cf. Section 9), having units of `operations/word`.
+In the second argument of $\max \left(  \cdots  \right)$, the denominator factor $W / (LQ)$ is the algorithm's **computational intensity** (cf. Section 9), having units of `operations/word`.
 
 <center>
 <img src="./assets/01-072.png" width="650">
 </center>
 
-Furthermore, in the second argument of $\max \left(  \cdots  \right)$, the numerator factor ${\textstyle{\alpha  \over \tau }}$ is the time per word divided by the time per operation, having units of `operations/word` (similarly to the computational intensity). This is a ratio of parameters which depends *only* on the machine. In the literature, this is sometimes referred to as the **machine balance** (or **machine balance point**).
+Furthermore, in the second argument of $\max \left(  \cdots  \right)$, the numerator factor $\alpha / \tau$ is the time per word divided by the time per operation, having units of `operations/word` (similarly to the computational intensity). This is a ratio of parameters which depends *only* on the machine. In the literature, this is sometimes referred to as the **machine balance** (or **machine balance point**).
   * This ratio essentially quantifies how many operations can be executing in the time required to move a word of data.
 
 <center>
@@ -975,3 +975,136 @@ An ***interesting question*** as a follow up to this is: Is ***better*** perform
 
 ## 14. Intensity of Conventional Matrix Multiply (Revisited) Quiz and Answers
 
+<center>
+<img src="./assets/01-087Q.png" width="650">
+</center>
+
+Consider again (cf. Section 13) the conventional matrix multiplication algorithm. Suppose now that the computation is performed in a block-by-block manner (as in the figure shown above), whereby the constituent matrices $A$, $B$, and $C$ are conceptually "divided" into smaller "blocks" of size $b \times b$. The corresponding ***algorithm*** to accomplish this can be defined as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+\rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ {\rm{let\ }}\hat C \equiv b \times b{\rm{\ block\ at\ }}C\left[ {i,j} \right]\\
+\ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\rm{let\ }}\hat A \equiv b \times b{\rm{\ block\ at\ }}A\left[ {i,k} \right]\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\rm{let\ }}\hat B \equiv b \times b{\rm{\ block\ at\ }}B\left[ {k,j} \right]\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \hat C \leftarrow \hat C + \hat A \cdot \hat B\\
+\ \ \ \ \ \ \ \ C\left[ {i,j} \right]{\rm{\ block}} \leftarrow \hat C
+\end{array}
+}
+$$
+
+<center>
+<img src="./assets/01-088Q.png" width="650">
+</center>
+
+The algorithm iterates over blocks of $C$ (as in the figure shown above).
+
+<center>
+<img src="./assets/01-089Q.png" width="650">
+</center>
+
+The algorithm then reads blocks of $A$ and $B$ (as in the figure shown above).
+
+<center>
+<img src="./assets/01-090Q.png" width="650">
+</center>
+
+Given the blocks of $A$ and $B$ (i.e., $\hat A$ and $\hat B$, respectively), the algorithm then multiplies them (as in the figure shown above).
+
+<center>
+<img src="./assets/01-091Q.png" width="650">
+</center>
+
+Finally, the algorithm stores the corresponding product block (i.e., $\hat C$) (as in the figure shown above).
+
+<center>
+<img src="./assets/01-092Q.png" width="650">
+</center>
+
+All of these read and write operations with respect to the blocks are essentially slow-fast memory ***transfers***. Therefore, count these transfers (i.e., $Q$) accordingly, and then express the corresponding asymptotic intensity for this "blocked"-matrix multiplication algorithm (i.e., $I\left( {n;Z} \right) = \theta \left( {???} \right)$). (Express this in terms of $n$, $b$, and/or $Z$ accordingly.)
+
+Furthermore, note the following simplifying ***assumptions*** for this analysis:
+  * $L = 1$
+  * $b | n$
+  * $n | Z$
+  * $Z = 3{b^2} + O\left( 1 \right)$
+    * Since it is necessary for blocks of $A$, $B$, and $C$ to fit into fast memory in order to multiply and store them, the fast memory size ($Z$) correspondingly assumes sufficient storage space for this, as well as additional constant storage space.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-093A.png" width="650">
+</center>
+
+There are two possible ways to express the asymptotic intensity for this algorithm, as follows:
+
+$$
+I\left( {n;Z} \right) = \theta \left( b \right)
+$$
+
+$$
+I\left( {n;Z} \right) = \theta \left( {\sqrt z } \right)
+$$
+
+***N.B.*** Both of these are equivalent per assumption $Z = 3{b^2} + O\left( 1 \right)$.
+
+<center>
+<img src="./assets/01-094A.png" width="650">
+</center>
+
+As before (cf. Section 13), the work for this algorithm is as follows:
+
+$$
+W\left( n \right) = \theta \left( {{n^3}} \right)
+$$
+
+Additionally, consider the transfer operations.
+  * Each read or write operation with respect to a given block involves the transfer of a block of size $b \times b$ (or equivalently $b^2$).
+  * Furthermore, each nested loop performs $n/b$ iterations.
+
+From these two observations, the total number of ***read operations*** can be determined as follows.
+
+<center>
+<img src="./assets/01-095A.png" width="650">
+</center>
+
+With respect to the $C$ blocks (i.e., $\hat C$), this yields the following number of read operations:
+
+$$
+{b^2} \times {n \over b} \times {n \over b} = {n^2}
+$$
+
+Here, each block read involves $b^2$ words, repeated ${\left( {n/b} \right)^2}$ times.
+
+The same applies to the corresponding ***write operations*** with respect to the $C$ blocks (i.e., $\hat C$).
+
+<center>
+<img src="./assets/01-096A.png" width="650">
+</center>
+
+With respect to both the $A$ and $B$ blocks (i.e., $\hat A$ and $\hat B$, respectively), this yields the following number of read operations apiece for $A$ and $B$:
+
+$$
+{b^2} \times {\left( {{n \over b}} \right)^3} = {{{n^3}} \over b}
+$$
+
+Here, $b^2$ reads are nested in $(n/b)^3$ iterations.
+
+<center>
+<img src="./assets/01-097A.png" width="650">
+</center>
+
+Therefore, the total number of transfers is dominated by the term $n^3/b$, i.e.,:
+
+$$
+Q\left( {n;Z} \right) = \theta \left( {{{{n^3}} \over b}} \right)
+$$
+
+Furthermore, the corresponding computational intensity for the algorithm is therefore the ratio of $W$ to $Q$, i.e., $\theta \left( b \right)$ (or equivalently $\theta \left( \sqrt{Z} \right)$, by assumption of the size of $b$ in relation to the fast-memory size, $Z$).
+
+Recall (cf. Section 13) that the conventional algorithm for matrix multiplication has a computational intensity of $\theta \left( 1 \right)$ (constant), therefore, "blocking" in this manner yields comparatively much better performance accordingly.
+
+## 15. Informing the Architecture Quiz and Answers
