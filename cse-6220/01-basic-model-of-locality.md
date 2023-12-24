@@ -159,7 +159,7 @@ Two-level memories are very ubiquitous. Identify which of the following combinat
 | the Internet | your brain |
 | (other) | (other) |
 
-***Answer and Explanation***:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/01-020A.png" width="650">
@@ -176,7 +176,7 @@ Indeed, all of these are valid slow-fast memory pairings.
 Suppose the elements of an array are summed (as in the figure shown above), without any additional information regarding the array-data alignment with respect to transfer size $L$. In the ***worst case***, how many transfers are required in order to read the entire array?
   * ***N.B.*** Provide the answer ***exactly***, not asymptotically. Furthermore, if necessary, use floors and/or ceilings.
 
-***Answer and Explanation***:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/01-022A.png" width="650">
@@ -220,7 +220,7 @@ Consider the sorting of an array of $n$ words (as in the figure shown above), us
 What is an asymptotic ***lower bound*** on the number of slow-fast memory transfers (i.e., on $Q(n;Z,L)$)?
   * ***N.B.*** It is ***not*** necessary for this lower bound to be tight; a trivial bound is sufficient, provided it is reasonably precise. Furthermore, use floor and/or ceiling as/if necessary.
 
-***Answer and Explanation***:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/01-027A.png" width="650">
@@ -268,7 +268,7 @@ $$
 
 In this case, what is the minimum number of transfers (i.e., $Q\left( {n;Z,L} \right)$)? (Provide an asymptotic lower bound, which is sufficiently/reasonably "tight.")
 
-***Answer and Explanation***:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/01-030A.png" width="650">
@@ -435,3 +435,167 @@ Note the following ***remarks*** with respect to the aforementioned analysis:
 ***N.B.*** Course CS 6290 (High Performance Computer Architecture) further describes caches in detail.
 
 ## 8. Matrix-Vector Multiply Quiz and Answers
+
+<center>
+<img src="./assets/01-045Q.png" width="450">
+</center>
+
+Consider the multiplication of a ***dense*** $n \times n$ matrix by a vector $x$. Recall (cf. Section 6) that the work (ignoring any structure in matrix $A$) is proportional to $n^2$, i.e.,:
+
+$$
+W\left( n \right) = O\left( {{n^2}} \right)
+$$
+
+<center>
+<img src="./assets/01-046Q.png" width="450">
+</center>
+
+Now, suppose that the matrix is stored in **column-major order** (as in the figure shown above), whereby the elements are laid out in memory column-wise, i.e., elements have consecutive addresses within a given column, and then "wraparound" to the adjacent column, and so on.
+
+<center>
+<img src="./assets/01-047Q.png" width="450">
+</center>
+
+In other words, viewing matrix $A$ as a one-dimensional array, element $a_{ij}$ is ***indexed*** as:
+
+$$
+{a_{ij}} \leftrightarrow A\left[ {i + j \cdot n} \right]
+$$
+
+Now, consider two algorithms to compute the matrix-vector product.
+
+<center>
+<img src="./assets/01-048Q.png" width="650">
+</center>
+
+**Algorithm 1** indexes rows by $i$ and columns by $j$, as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{for\ }}i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ {\rm{for\ }}j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ y\left[ i \right] += A[i,j] \cdot x[j]
+\end{array}
+}
+$$
+
+Here, the outer loop iterates over rows, and the inner loop iterates over columns.
+
+<center>
+<img src="./assets/01-049Q.png" width="650">
+</center>
+
+**Algorithm 2** indexes rows by $i$ and columns by $j$ (i.e., the opposite of Algorithm 1), as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{for\ }}j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ {\rm{for\ }}i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
+\ \ \ \ \ \ \ \ y\left[ i \right] += A[i,j] \cdot x[j]
+\end{array}
+}
+$$
+
+Here, the outer loop iterates over columns, and the inner loop iterates over rows.
+
+<center>
+<img src="./assets/01-050Q.png" width="650">
+</center>
+
+In the basic RAM model, both algorithms are identical. Conversely, in the I/O model, which of these performs ***fewer*** transfers?
+
+To assist with answering this question, consider the following additional simplifying ***assumptions***:
+  * The fast memory is sufficiently large to hold two vectors and any additional/extra $L$-sized blocks, i.e., $Z = 2n + O\left( L \right)$
+  * $L$ divides $n$ (i.e., $L|n$)
+  * All arrays and the matrix (i.e., $x$, $y$, and $A$) are aligned on $L$-word boundaries
+
+***N.B.*** The last two assumptions avoid the data-alignment issues encountered previously in this lesson, thereby allowing to ignore floors and ceilings accordingly.
+
+As an additional ***hint***, from these simplifying assumptions, it is also valid to assume that the algorithm ***preloads*** $x$ and $y$ to fast memory at the very beginning, and then stores $y$ back to slow memory at the very end. This in turn implies that the number of transfers will be at least ${3n} \over L$, i.e.,:
+
+$$
+Q\left( {n;Z,L} \right) = {{3n} \over L} + ???
+$$
+
+This begs the question: How many ***total*** transfers will occur?
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-051A.png" width="650">
+</center>
+
+**Algorithm 2** requires ***fewer*** transfers.
+
+<center>
+<img src="./assets/01-052A.png" width="650">
+</center>
+
+In Algorithm 1, the outer loop iterates over rows (as in the figure shown above).
+
+<center>
+<img src="./assets/01-053A.png" width="650">
+</center>
+
+Within row $i$, it loops over columns $j$, starting at $0$ (as in the figure shown above). Accessing an element $x$ of row $0$ causes a block of $L - 1$ additional elements from the column to be loaded into fast memory, a direct consequence of the column-major layout.
+  * ***N.B.*** In the figure shown above, this shows a representative fast-memory access pattern (as shaded in teal), however, it may not be this specific block in general.
+
+<center>
+<img src="./assets/01-054A.png" width="650">
+</center>
+
+In the subsequent iteration, a completely ***different*** block of elements must be loaded (as in the figure shown above).
+  * ***N.B.*** Recall that the fast memory is assumed to only have sufficient space for two vectors plus an additional "extra," however, eventually the previous block (i.e., from iteration $0$) must be displaced.
+
+<center>
+<img src="./assets/01-055A.png" width="650">
+</center>
+
+Therefore, traversing this column-major matrix row-wise in this manner incurs block transfers for ***each*** row. Consequently, this yields the following total number of transfers (via $n^2$ required to read $A$):
+
+$$
+Q\left( {n;Z,L} \right) = {{3n} \over L} + {n^2}
+$$
+
+<center>
+<img src="./assets/01-056A.png" width="650">
+</center>
+
+Conversely, in Algorithm 2, the outer loop iterates over columns (as in the figure shown above).
+
+<center>
+<img src="./assets/01-057A.png" width="650">
+</center>
+
+The inner loop traverses within a given column (as in the figure shown above).
+
+<center>
+<img src="./assets/01-058A.png" width="650">
+</center>
+
+In this case (i.e., Algorithm 2), the traversal order ***matches*** the storage format, i.e., this access pattern more optimally ***amortizes*** the cost of loading the blocks.
+
+<center>
+<img src="./assets/01-059A.png" width="650">
+</center>
+
+Consequently, this yields the following total number of transfers:
+
+$$
+Q\left( {n;Z,L} \right) = {{3n} \over L} + {{{n^2}} \over L}
+$$
+
+Therefore, for large values of $n$, it is expected that Algorithm 1 will perform $L$ more transfers in general, thereby implying a faster operation by Algorithm 2 accordingly (i.e., $L$ times faster than Algorithm 1).
+
+The ***important*** point here is that in the sequential RAM model, these algorithms appear "identically" to each other, whereas in the simple two-level model with block transfers, they are distinctly ***different***.
+
+<center>
+<img src="./assets/01-060A.png" width="650">
+</center>
+
+As a final remark, suppose that the fast memory is a ***fully associative cache*** with capacity $Z$ words and a line size $L$ (also in words). In this case, would caches *alone* assist Algorithm 1 to match the performance of Algorithm 2 (i.e., with respect to reducing the number of transfers)?
+  * ***N.B.*** This is left as an additional exercise for the student/reader.
+
+## 9. Algorithm Design Goals
