@@ -5,6 +5,7 @@
 | Lesson | Topic |
 |:--:|:--:|
 | [0](./00-introduction.md) | Introduction |
+| [1](./01-basic-model-of-locality.md) | Basic Model of Locality |
 
 ## Videos Reference
 

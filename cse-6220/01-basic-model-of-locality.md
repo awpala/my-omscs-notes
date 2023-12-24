@@ -1108,3 +1108,61 @@ Furthermore, the corresponding computational intensity for the algorithm is ther
 Recall (cf. Section 13) that the conventional algorithm for matrix multiplication has a computational intensity of $\theta \left( 1 \right)$ (constant), therefore, "blocking" in this manner yields comparatively much better performance accordingly.
 
 ## 15. Informing the Architecture Quiz and Answers
+
+One particular application of the analysis demonstrated thus far in this lesson is to inform the ***design*** of computer architectures.
+
+<center>
+<img src="./assets/01-098Q.png" width="650">
+</center>
+
+Consider a simple example, whereby a new machine is being devised for improving ***deep learning*** computations.
+  * ***N.B.*** Deep learning entails neural networks, a subset of machine learning.
+
+Suppose that an existing machine is very efficient at performing matrix multiplications on matrices of a particular problem size.
+
+Now, suppose that in the next-generation machine, the machine balance ***doubles***.
+  * ***N.B.*** Recall (cf. Section 11) that the machine balance is defined as $\alpha / \tau$, where $\alpha$ is the time to transfer from slow memory to fast memory, and $\tau$ is the time to perform an operation by the processor once the data is localized to the fast memory.
+
+With a doubled machine balance, it is now necessary to perform ***twice*** as many operations locally on the processor in the same/equivalent time that it takes to move the data from slow memory to fast memory, in order to yield equivalent performance to the original machine.
+
+Therefore, with a doubled machine balance, what is the corresponding ***factor*** of increase in the fast-memory size ($Z$) in order to compensate for this?
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-099A.png" width="650">
+</center>
+
+This requires a corresponding increase in the fast-memory size by a factor of $4$.
+
+Recall (cf. Section 12) the following definition:
+
+$$
+{R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{I \over B}} \right)
+$$
+
+Here, the machine balance $B$ is accounted for via the communication penalty.
+
+Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$) is $\theta \left( \sqrt{Z} \right)$, i.e.,:
+
+$$
+{R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
+$$
+
+Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty (i.e., $\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'}_{{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z}_{{{\left( {2\sqrt Z } \right)}^2}}$, where $Z'$ is the new fast-memory size).
+
+***N.B.*** An increase in machine balance $B$ over time is indeed a realistic observation. (Consult external sources, class forum discussion, etc. for why this is so.)
+
+## 16. Conclusion
+
+The two-level model may seem relatively "contrived" compared to real memory hierarchies (i.e., as discussed in other courses, encountered in "real world" experience, etc.). So, then, why bother with it?
+  * The two-level model does in fact capture the most important ***performance effects** of real memories, namely **capacity** and **transfer size**.
+  * More recently, there has been a lot of research on **locality-sensitive algorithms** based on this two-level model, therefore, it is necessary to understand the two-level model in order to devise sensible ways to extend it accordingly.
+
+In order to exploit a memory hierarchy algorithmically, the main ***technique*** described in this lesson for this purpose is to organize the data access in such a manner which ***increases*** data reuse accordingly.
+
+The other important pair of ***concepts*** discussed in this lesson were those of **computational intensity** and **machine balance**. A general ***rule of thumb*** based on these two concepts is the following:
+
+> In order for an algorithm to scale well to future memory hierarchies, the intensity of the algorithm $I$ must at least match (and more preferably exceed) the machine balance point $B$.
+
+***N.B.*** This idea will be explored further in subsequent lessons of this course.
