@@ -35,7 +35,7 @@ Roughly speaking, this rate of throughput doubles approximately every 2 years.
 
 Given this information, how fast will a comparable processor be in 10 years (i.e., 2025)? (Express the answer in units of `Gop/s`.)
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-002A.png" width="650">
@@ -52,3 +52,86 @@ In 10 years, there will be `5` doublings, implying a performance speedup of $2^5
 ***N.B.*** Even in 2015, there are specialized processors capable of achieving on the order of trillions of operations per second. Nevertheless, the purpose of this exercise is to give an intuitive feel for peak performance and the corresponding rate of growth that exponential trends bring.
 
 ## 3. Speed Limits Quiz and Answers
+
+This quiz further explores the notion of a computational "speed limit."
+
+<center>
+<img src="./assets/02-004Q.png" width="350">
+</center>
+
+Consider a two-dimensional mesh of physical processors (as in the figure shown above). Imagine that such a many-core processor fits on a physical die of size $\ell  \times \ell$.
+
+<center>
+<img src="./assets/02-005Q.png" width="350">
+</center>
+
+Within the mesh, every interior point is connected to its eight nearest neighbors. Correspondingly, this means that each processing unit can communicate along diagonal routes (as in the figure shown above).
+
+Now, consider a ***single operation*** on this mesh, defined as follows.
+
+<center>
+<img src="./assets/02-006Q.png" width="450">
+</center>
+
+The operation begins at the processing unit located at the center (as in the figure shown above).
+
+<center>
+<img src="./assets/02-007Q.png" width="450">
+</center>
+
+The operation subsequently travels as a signal to a unit at one of the corners (as in the figure shown above).
+
+<center>
+<img src="./assets/02-008Q.png" width="450">
+</center>
+
+The operation then reverses its path, making its way back to the center (as in the figure shown above).
+
+<center>
+<img src="./assets/02-009Q.png" width="450">
+</center>
+
+Finally, the operation returns back to the center (as in the figure shown above).
+
+<center>
+<img src="./assets/02-010Q.png" width="650">
+</center>
+
+Now, consider performing 3 trillion such operations per second (i.e., `3 Top/s`) in a ***sequential*** manner.
+  * ***N.B.*** Recall (cf. Section 2) that `1 Top/s` is equivalent to $10^{12}$ operations per second.
+
+If the signal travels at the speed of light, what is the maximum physical dimension of this mesh (i.e., $\ell$)? (Provide the answer in units of microns [$\mu m$], where 1 micron is $10^{-6}$ m. Round the answer to 1 significant figure.)
+
+***N.B.*** The speed of light is approximately $3 \times 10^{8}$ `m/s`.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/02-011A.png" width="650">
+</center>
+
+The maximum physical dimension of the mesh is $\ell \leq 70\ \mu \rm{m}$.
+
+<center>
+<img src="./assets/02-012A.png" width="650">
+</center>
+
+The path length of a single round trip is $2 \times [(\ell \sqrt{2})/2] = \ell \sqrt{2}$.
+
+<center>
+<img src="./assets/02-013A.png" width="650">
+</center>
+
+Performing 3 trillion of these round trips per second therefore implies the following:
+
+$$
+3 \times {10^{12}}{\rm{\ }}{\textstyle{{{\rm{op}}} \over {\rm{s}}}} = {\textstyle{{1{\rm{\ op}}} \over {1{\rm{\ round\ trip}}}}} \times {\textstyle{{1{\rm{\ round\ trip}}} \over {\ell \sqrt 2 }}} \times \underbrace {\left( {3 \times {{10}^8}{\rm{ }}{\textstyle{{\rm{m}} \over {\rm{s}}}}} \right)}_{{\rm{speed\ of\ light}}} \Rightarrow \ell  = 70{\rm{\ \mu m}}
+$$
+
+<center>
+<img src="./assets/02-014A.png" width="650">
+</center>
+
+$70 \mu m$ is approximately equivalent to the width of a human hair. Therefore, the implication of this exercise is that in order to hit this computational speed target (i.e., the speed of light), assuming that the information propagates at this speed, then the corresponding processor must be ***incredibly*** small to achieve this.
+
+## 4. Space Limits Quiz and Answers
