@@ -213,3 +213,43 @@ $$
 What is the doubling time of $B$? (Express the answer in years, rounded to 2 significant figures.)
 
 ### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/02-021A.png" width="650">
+</center>
+
+The doubling time of $B$ is approximately `5.5 years`.
+
+Given time $t$ (having units of `years`), the relationships $R(t)$ and $\beta (t)$ are as follows:
+
+$$
+R(t) \propto {2^{t/1.9}}
+$$
+
+$$
+\beta (t) \propto {2^{t/2.9}}
+$$
+
+From this, $B(t)$ follows directly via:
+
+$$
+B(t) \equiv {{R(t)} \over {\beta (t)}} \propto {2^{t\left( {{\textstyle{1 \over {1.19}}} - {\textstyle{1 \over {2.9}}}} \right)}} \approx {2^{t/5.5}}
+$$
+
+<center>
+<img src="./assets/02-022A.png" width="650">
+</center>
+
+Consider a comparison of two mobile graphical processor units (GPUs), as in the figure shown above, launched between 2008 and 2015 (a span of approximately 6.75 years), suggesting a machine balance point factor change of ${2^{(6.75)/5.5}} \approx 2.34$.
+
+Furthermore, the $\beta$ (designated as "bandwidth" parameters in the figure shown above) and $R$ (designated as "processing power" parameters in the figure shown above) are given as:
+
+| GPU | Launch Date | $\beta$ (`GB/s`) | $R$ (`GFlops`) |
+|:--:|:--:|:--:|:--:|
+| GeForce 8200M | June 2008 | 17.056 (DDR3) | 19.2 |
+| GeForce 920M | March 2015 | 14.4 (DDR3) | 441 |
+
+Consider: Are these data consistent with the predicted rate of change in the machine balance point (i.e., $B$)?
+  * ***N.B.*** This is left as an exercise to the reader/student.
+
+## 6. Balance Principles
