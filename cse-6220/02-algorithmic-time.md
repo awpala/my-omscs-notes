@@ -132,6 +132,42 @@ $$
 <img src="./assets/02-014A.png" width="650">
 </center>
 
-$70 \mu m$ is approximately equivalent to the width of a human hair. Therefore, the implication of this exercise is that in order to hit this computational speed target (i.e., the speed of light), assuming that the information propagates at this speed, then the corresponding processor must be ***incredibly*** small to achieve this.
+$70\ \rm{\mu m}$ is approximately equivalent to the width of a human hair. Therefore, the implication of this exercise is that in order to hit this computational speed target (i.e., the speed of light), assuming that the information propagates at this speed, then the corresponding processor must be ***incredibly*** small to achieve this.
 
 ## 4. Space Limits Quiz and Answers
+
+<center>
+<img src="./assets/02-015Q.png" width="650">
+</center>
+
+Consider a memory chip whose area is equivalent to the cross-sectional area of a human hair, or approximately $4900 \rm{\ \mu m}^2$.
+
+Now, suppose it is desired to store `1 TB` of data on such a memory chip.
+  * ***N.B.*** $1\ \rm{TB} = 10^{12} \rm{\ bytes}$.
+
+What is the ***physical area*** of a ***single bit*** (***not*** a byte) on such a chip? (Express the answer in units of $\rm{\ \mu m}^2/\rm{bit}$.)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/02-016A.png" width="650">
+</center>
+
+The corresponding size of a single bit given the target capacity of `1 TB` is $6.125 \times 10^{-10}\rm{\ \mu m}^2/\rm{bit}$.
+
+<center>
+<img src="./assets/02-017A.png" width="650">
+</center>
+
+This result derives from the following:
+
+$$
+{\textstyle{{4900\;\mu {{\rm{m}}^{\rm{2}}}} \over {{{10}^{12}}\;{\rm{bytes}}}}} \times {\textstyle{{1\;{\rm{byte}}} \over {8\;{\rm{bits}}}}} = 6.125 \times {10^{ - 10}}\;\mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}
+$$
+
+Considering such a single bit (as in the figure shown above), and assuming it is a square per-bit area, this corresponds to a side length of $\sqrt {6.125 \times {{10}^{ - 10}}\;\mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}}  \approx 2.5 \times {10^{ - 11}}\;\mu {\rm{m/bit}}$, or approximately $\textstyle{1 \over 4}Å$ (angstrom) per side, which is on the order of an atomic radius.
+  * ***N.B.*** A single ***classical bit*** (as opposed to a ***quantum bit***) is effectively physically constrained by this single-atom size.
+
+Therefore, the implication of this exercise is that at a certain point of size reduction, there will be a limit to how much such "squeezing" (i.e., into a volume of physical space) can be achieved, beyond which only additional ***locality*** will provide incremental performance improvements with respect to speed.
+
+## 5. Balance in Time Quiz and Answers
