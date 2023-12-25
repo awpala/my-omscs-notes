@@ -171,3 +171,45 @@ Considering such a single bit (as in the figure shown above), and assuming it is
 Therefore, the implication of this exercise is that at a certain point of size reduction, there will be a limit to how much such "squeezing" (i.e., into a volume of physical space) can be achieved, beyond which only additional ***locality*** will provide incremental performance improvements with respect to speed.
 
 ## 5. Balance in Time Quiz and Answers
+
+Another important trend in computing systems is the ***growing gap*** between the **compute speed** and the **communication speed**.
+
+<center>
+<img src="./assets/02-018Q.png" width="650">
+</center>
+
+Recall (cf. Lesson 1) the basic von Neumann architecture (as in the figure shown above), comprised of a **processor** and a local **fast memory**, which in turn is connected to a large but **slow memory**.
+
+The processor can perform $R$ operations per second; it turns out that this rate is related to the **transistor density** (i.e., the number of transistors that can fit in a given area of physical space).
+
+The "classic plot" for the trend of transistor density over time is as in the figure shown above.
+  * Over the preceding 40 years or so, the transistor density has approximately doubled every `1.9 years`, with a corresponding increase by a factor of approximately $10^{6}×$ over the last 40 years.
+
+***N.B.*** Generally speaking, as transistors decrease in size, this increases their density (for the same area), and correspondingly the signaling time between the transistors also decreases accordingly (thereby allowing faster computation time). Therefore, the plot implies that as transistor density increases, $R$ (i.e., the number of operations performed per unit time) increases proportionally accordingly.
+
+<center>
+<img src="./assets/02-019Q.png" width="650">
+</center>
+
+The other notable feature of the von Neumann computing system is the slow-fast memory transfer cost (cf. Lesson 1) (as in the figure shown above).
+
+If the rate of data movement back and forth between the slow and fast memories is denoted by $\beta$ (having units of `words/time`), then similarly to $R$, $\beta$ also has a natural historical growth rate (as in the figure shown above).
+
+There is a standard benchmark called the **stream**, which measures this growth rate.
+  * $\beta$ has doubled approximately every `2.9 years`.
+
+<center>
+<img src="./assets/02-020Q.png" width="650">
+</center>
+
+Recall (cf. Lesson 1) that the **machine balance point** (denoted by $B$, having units of `operations/word`) is defined as follows:
+
+$$
+B\equiv {R \over \beta }
+$$
+
+***N.B.*** In this context, $B$ essentially defines the peak compute throughput divided by the peak memory bandwidth.
+
+What is the doubling time of $B$? (Express the answer in years, rounded to 2 significant figures.)
+
+### ***Answer and Explanation***:
