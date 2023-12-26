@@ -253,3 +253,164 @@ Consider: Are these data consistent with the predicted rate of change in the mac
   * ***N.B.*** This is left as an exercise to the reader/student.
 
 ## 6. Balance Principles
+
+<center>
+<img src="./assets/02-023.png" width="450">
+</center>
+
+For a sequential processor with slow and fast memories, recall (cf. Lesson 1) the basic concept of a **machine balance point**, defined as:
+
+$$
+B \equiv {R \over \beta }
+$$
+
+where $R$ is the peak processing rate, and $\beta$ is the peak memory bandwidth.
+
+<center>
+<img src="./assets/02-024.png" width="650">
+</center>
+
+Furthermore, recall (cf. Section 5) the historical growth trends for $R$ and $\beta$ (as in the figure shown above). Observe that the rate of improvement in computation (doubling every `1.9 years`) far outstrips the rate of improvement in communication (doubling every `2.9 years`), with this gap doubling approximately once every `5.5 years`.
+
+So, then, what is the implications of this "growing gap" with respect to algorithms design? This suggests that it might be beneficial to ***trade off*** more computation for less communication.
+
+### The Directed Acyclic Graph (DAG) Model of Computation
+
+Consider a further exploration of this assertion of an inherent "trade-off" via the **directed acyclic graph (DAG) model** of computation.
+  * ***N.B.*** This model is discussed in more detail later in the course.
+
+<center>
+<img src="./assets/02-025.png" width="650">
+</center>
+
+In the DAG model of computation (as in the figure shown above), a computation is characterized by two ***components***, as follows:
+  * The **work** $W = W(n)$, the total number of operations
+  * The **span** $D = D(n)$ (having units of `operations`), which is the **critical path length**
+
+Consider an augmentation of the representation in the figure shown above, in order to reason about slow-fast memory communication. In particular, recall (cf. Lesson 1) that, at least in principle, the number of **slow-fast memory transfers** $Q$ can be counted, i.e.,:
+
+$$
+Q = Q\left( {n;Z,L} \right) \le W
+$$
+
+where, in general, $Q$ is a function of the problem size ($n$), the fast-memory size ($Z$), and the transaction size ($L$).
+
+Furthermore, note that by convention it is assumed that $W$ includes the count of $Q$.
+  * For example, if $Q = 3$ and $W = 10$, then that means that there are $10 - 3 = 7$ operations that are non-memory transactions.
+
+<center>
+<img src="./assets/02-026.png" width="650">
+</center>
+
+Furthermore, consider a modification of the machine under consideration (as in the figure shown above).
+  * As before, there is a large **slow memory**, as well as a small/finite-capacity **fast memory** of size $Z$ words
+  * When the data moves between the slow and fast memories, it does so in transactions of size $L$ ***consecutive*** words
+  * Additionally, let the processor have $P$ processing cores, with each core capable of executing $R_0$ operations per unit time (i.e., units of `operations/time`)
+
+Let us model the operation of memory by analogy to the manner in which cores work.
+  * Each transaction initiates a ***data transfer*** across the $L$ wires in parallel.
+  * The time required for a word to travel across a wire in this manner is $\beta_0$ (having units of `words/time`), where $\beta_0$ is essentially the analog of $R_0$ in this cost model.
+
+Note that $W$, $D$, and $Q$ count the number of operations in a manner which ***ignores*** these costs $R_0$ and $\beta_0$. In other words, $W$, $D$, and $Q$ are typically computed in a manner which ***assumes*** "unit" cost operations.
+
+However, in a high-performance context, let us now consider translating these unit costs into ***real costs***, in order to determine the implications of this with respect to the overall system.
+
+### Determining Real Costs via the Directed Acyclic Graph (DAG) Model of Computation
+
+Conceptually, non-unit costs can be accounted for by transforming a unit cost to a directed acyclic graph (DAG).
+
+<center>
+<img src="./assets/02-027.png" width="650">
+</center>
+
+For example, consider some ***vertex*** in the unit-cost directed acyclic graph (DAG), as in the figure shown above.
+
+Suppose that this vertex is one of the compute operations, in which case the cost to execute it is ${\textstyle{1 \over {{R_0}}}}$ time units.
+
+<center>
+<img src="./assets/02-028.png" width="650">
+</center>
+
+Therefore, this single-unit-cost vertex with a ***sequence*** of ${\textstyle{1 \over {{R_0}}}}$ unit-cost vertices (as in the figure shown above).
+
+<center>
+<img src="./assets/02-029.png" width="650">
+</center>
+
+Now, what if a vertex in the directed acyclic graph (DAG) instead represents a ***memory transaction*** (as in the figure shown above)? In this case, consider a modeling of the corresponding transactions as follows.
+
+<center>
+<img src="./assets/02-030.png" width="650">
+</center>
+
+Firstly, there is a ***latency cost*** which is the same as the latency cost for the compute operations (as in the figure shown above). In this case, the memory transactions are equivalently constituted by ${\textstyle{1 \over {{R_0}}}}$ unit-cost vertices.
+  * ***N.B.*** After all, a memory transaction is simply another type of instruction. Therefore, it should roughly share the ***same*** instruction processing cost as any other comparable instruction accordingly.
+
+<center>
+<img src="./assets/02-031.png" width="650">
+</center>
+
+Next, it is also reasonable to suggest that the words of the memory transaction can be "in-flight" ***concurrently*** with compute operations (as in the figure shown above). With respect to the directed acyclic graph (DAG), this constitutes an additional set $L/\beta_0$ fully concurrent vertices.
+  * ***N.B.*** Inserting these vertices as concurrent vertices means that they should ***not*** increase the critical path length. Nevertheless, by placing them in as explicit vertices, it is still necessary to incur their cost accordingly. Indeed, most real memory systems behave in this manner (i.e., usually there is a separate **memory controller** or **network processor** onto which communication can be ***offloaded***).
+
+So, then, what is the ***best case*** execution time for this directed acyclic graph (DAG)?
+
+<center>
+<img src="./assets/02-032.png" width="650">
+</center>
+
+To start, the usual work and span laws apply (as discussed later in this course), scaled by the processor speed accordingly (as in the figure shown above), i.e.,:
+
+$$
+{T_P} \ge \max \left( {{D \over {{R_0}}},{W \over {P{R_0}}},{{QL} \over {{\beta _0}}}} \right)
+$$
+
+Here, there is an additional cost ${\textstyle{{QL} \over {{\beta _0}}}}$ due to the communication (i.e., for each transaction, it is necessary to incur the additional cost of the concurrent vertices).
+
+<center>
+<img src="./assets/02-033.png" width="650">
+</center>
+
+If the algorithm is sufficiently well-designed, then the critical path is ***short*** (as in the figure shown above), i.e., the following ***assumption*** holds:
+
+$$
+{W \over {P}} \gg D 
+$$
+
+In this case, when is $T_P$ minimized? This occurs under the following condition:
+
+$$
+{W \over {P{R_0}}} = {{QL} \over {{\beta _0}}}
+$$
+
+Recalling (cf. Section 5) the historical growth rate trends, from these trends, in order to benefit from transistor scaling, then necessarily the compute time $W/(PR_0)$ must dominate the communication time $(QL)/\beta_0$.
+
+<center>
+<img src="./assets/02-034.png" width="650">
+</center>
+
+This idea of the compute time dominating the communication time can be thought of as the notion of the ***"balance principle"***, defined as:
+
+$$
+{W \over {P{R_0}}} \geq {{QL} \over {{\beta _0}}}
+$$
+
+That is, the ***collective goal*** (whether designing algorithms or designing systems) is to make it as easy as possible to achieve ***balance***, which in turn provides the best possibility of scaling into the distant future.
+
+<center>
+<img src="./assets/02-035.png" width="650">
+</center>
+
+Starting from the balance principle, consider a further examination (as in the figure shown above). Algebraic rearrangement yields the following:
+
+$$
+{W \over {Q}} \geq {{R_0} \over {{\beta _0}}} {PL}
+$$
+
+From the algorithmic perspective, the ***goal*** is to make $W/Q$ as large as possible, knowing that $(R_0/\beta_0)PL$ is subject to inevitable scaling trends that cause it to grow over time.
+
+Conversely, from the system perspective, the goal is to minimize $(R_0/\beta_0)PL$ in order to facilitate development of efficient algorithms.
+
+Now, consider some additional exercises to further analyze the implications of the balance principle (as derived here from the directed acyclic graph [DAG] model for computation), as discussed in the subsequent sections of this lesson.
+
+## 7. Double, Double Toil and Trouble Quiz and Answers
