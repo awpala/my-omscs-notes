@@ -162,10 +162,10 @@ The corresponding size of a single bit given the target capacity of `1 TB` is $6
 This result derives from the following:
 
 $$
-{\textstyle{{4900\;\mu {{\rm{m}}^{\rm{2}}}} \over {{{10}^{12}}\;{\rm{bytes}}}}} \times {\textstyle{{1\;{\rm{byte}}} \over {8\;{\rm{bits}}}}} = 6.125 \times {10^{ - 10}}\;\mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}
+{\textstyle{{4900\ \mu {{\rm{m}}^{\rm{2}}}} \over {{{10}^{12}}\ {\rm{bytes}}}}} \times {\textstyle{{1\ {\rm{byte}}} \over {8\ {\rm{bits}}}}} = 6.125 \times {10^{ - 10}}\ \mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}
 $$
 
-Considering such a single bit (as in the figure shown above), and assuming it is a square per-bit area, this corresponds to a side length of $\sqrt {6.125 \times {{10}^{ - 10}}\;\mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}}  \approx 2.5 \times {10^{ - 11}}\;\mu {\rm{m/bit}}$, or approximately $\textstyle{1 \over 4}Å$ (angstrom) per side, which is on the order of an atomic radius.
+Considering such a single bit (as in the figure shown above), and assuming it is a square per-bit area, this corresponds to a side length of $\sqrt {6.125 \times {{10}^{ - 10}}\ \mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}}  \approx 2.5 \times {10^{ - 11}}\ \mu {\rm{m/bit}}$, or approximately $\textstyle{1 \over 4}Å$ (angstrom) per side, which is on the order of an atomic radius.
   * ***N.B.*** A single ***classical bit*** (as opposed to a ***quantum bit***) is effectively physically constrained by this single-atom size.
 
 Therefore, the implication of this exercise is that at a certain point of size reduction, there will be a limit to how much such "squeezing" (i.e., into a volume of physical space) can be achieved, beyond which only additional ***locality*** will provide incremental performance improvements with respect to speed.
@@ -414,3 +414,8 @@ Conversely, from the system perspective, the goal is to minimize $(R_0/\beta_0)P
 Now, consider some additional exercises to further analyze the implications of the balance principle (as derived here from the directed acyclic graph [DAG] model for computation), as discussed in the subsequent sections of this lesson.
 
 ## 7. Double, Double Toil and Trouble Quiz and Answers
+
+<center>
+<img src="./assets/02-036Q.png" width="650">
+</center>
+
