@@ -215,9 +215,9 @@ Conversely, in the second case (as in the figure shown above), the array is ***n
 </center>
 
 Consider the sorting of an array of $n$ words (as in the figure shown above), using a comparison-based algorithm running on a sequential machine with a two-level memory hierarchy.
-  * ***N.B.*** Recall from an introductory algorithms course that such a comparison-based sort requires at least $n\log n$ such comparisons (i.e., $W\left( n \right) = \Omega \left( {n\log n} \right)$)
+  * ***N.B.*** Recall from an introductory algorithms course that such a comparison-based sort requires at least $n\log n$ such comparisons (i.e., $W\left( n \right) = \Omega \left( {n\log n} \right)$ )
 
-What is an asymptotic ***lower bound*** on the number of slow-fast memory transfers (i.e., on $Q(n;Z,L)$)?
+What is an asymptotic ***lower bound*** on the number of slow-fast memory transfers (i.e., on $Q(n;Z,L)$ )?
   * ***N.B.*** It is ***not*** necessary for this lower bound to be tight; a trivial bound is sufficient, provided it is reasonably precise. Furthermore, use floor and/or ceiling as/if necessary.
 
 ### ***Answer and Explanation***:
