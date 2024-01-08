@@ -266,7 +266,7 @@ $$
 W\left( n \right) = O\left( {{n^3}} \right)
 $$
 
-In this case, what is the minimum number of transfers (i.e., $Q\left( {n;Z,L} \right)$)? (Provide an asymptotic lower bound, which is sufficiently/reasonably "tight.")
+In this case, what is the minimum number of transfers (i.e., $Q\left( {n;Z,L} \right)$ )? (Provide an asymptotic lower bound, which is sufficiently/reasonably "tight.")
 
 ### ***Answer and Explanation***:
 
