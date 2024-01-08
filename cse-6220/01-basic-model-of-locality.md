@@ -321,7 +321,7 @@ $$
 \begin{array}{l}
 s \leftarrow 0\\
 {\rm{for\ }}i \leftarrow 0{\rm{\ to \ }}n - 1{\rm{\ do}}\\
-\ \ s \leftarrow s + X[i]
+\ \ \ \ s \leftarrow s + X[i]
 \end{array}
 }
 $$
