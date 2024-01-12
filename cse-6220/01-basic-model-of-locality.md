@@ -811,7 +811,7 @@ This indicates that the best possible value of the normalized performance is inv
 Recall some basic facts about the von Neumann architecture. Assuming ***perfect overlap*** of computation and data movement, you can estimate the ***maximum*** normalized performance as follows (cf. Section 11):
 
 $$
-{R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{I \over B}} \right)
+{R_{\max}} = {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 In performance analysis, one way to visualize the relationship among these parameters is via a so called **roofline plot** (as in the figure shown above), whose general form resembles a "roof" of a house.
@@ -837,7 +837,7 @@ $$
 $$
 
 $$
-{y_0} = {{{W_ *}} \over W}
+{y_0} = {{{W_ * }} \over W}
 $$
 
 $y_0$ is the maximum possible value of $R_{\max}$ .
@@ -1138,7 +1138,7 @@ This requires a corresponding increase in the fast-memory size by a factor of $4
 Recall (cf. Section 12) the following definition:
 
 $$
-{R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{I \over B}} \right)
+{R_{\max}} = {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 Here, the machine balance $B$ is accounted for via the communication penalty.
@@ -1146,7 +1146,7 @@ Here, the machine balance $B$ is accounted for via the communication penalty.
 Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$ ) is $\theta \left( \sqrt{Z} \right)$ , i.e.,:
 
 $$
-{R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
+{R_{\max}} = {{{W_ * }} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
 $$
 
 Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty, i.e.,:
