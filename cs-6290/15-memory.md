@@ -69,7 +69,7 @@ The **wordline** controls a transistor (as in the figure shown above), which in 
 </center>
 
 Therefore, to access the corresponding **memory cell** (as in the figure shown above), the wordline is activated to correspondingly open the transistor, thereby connecting the memory cell to the bitline. Consequently:
-  * To ***write*** data to the memory cell, the bitline is set to the appropriate value (e.g., $b$), which in turn is stored in the memory cell
+  * To ***write*** data to the memory cell, the bitline is set to the appropriate value (e.g., $b$ ), which in turn is stored in the memory cell
   * To ***read*** data from the memory cell, the bitline is "released," and consequently the memory cell "emits" its data value which in turn is "detected" by the bitline
 
 In static random access memory (SRAM), the memory cell itself consists of two complementary ***inverters***, with each inverter in turn composed of two constituent transistors (which are necessary to create an inverting gate).
@@ -85,9 +85,9 @@ In static random access memory (SRAM), the memory cell itself consists of two co
 <img src="./assets/15-006.png" width="300">
 </center>
 
-To further enhance this "reinforcement" effect, typically two such transistors are connected to the ***same*** memory cell (as in the figure shown above), with their bitline-connected terminals connected to respective bitlines having complementary bit values (i.e., $b$ and $\bar b$).
+To further enhance this "reinforcement" effect, typically two such transistors are connected to the ***same*** memory cell (as in the figure shown above), with their bitline-connected terminals connected to respective bitlines having complementary bit values (i.e., $b$ and $\bar b$ ).
   * For example, with a bitline signals of $b = 1$ and complement $\bar b = 0$, this further "overwhelms"/"coerces" the memory cell into having a value ***written*** to it.
-  * Similarly, if connecting both bitlines for ***reading***, the corresponding complementary pair will be read out to the respective bitlines (i.e., $b$ and $\bar b$). Furthermore, the difference between the bitlines can be examined to more quickly detect the target data value being read from the memory cell accordingly.
+  * Similarly, if connecting both bitlines for ***reading***, the corresponding complementary pair will be read out to the respective bitlines (i.e., $b$ and $\bar b$ ). Furthermore, the difference between the bitlines can be examined to more quickly detect the target data value being read from the memory cell accordingly.
 
 To reiterate, by virtue of the ***weak*** constituent transistors of the inverters, connection of the bitlines will generally dictate the behavior of the inverters, and correspondingly examination of the ***difference*** between the (complementary) bitlines (i.e., in particular, in which "direction" this difference moves towards) is sufficient for reliable reading and writing operations with respect to a given memory cell (i.e., as opposed to having to examine ***each*** individual bitline's crossing across a threshold).
   * By initializing the bitlines near the midpoint between `1` and `0`, on activation of the wordline, this in turn initiates the action of the memory cell to "push"/"pull" against the bitlines to quickly converge towards a stable, detectable "difference" between the bitlines accordingly.

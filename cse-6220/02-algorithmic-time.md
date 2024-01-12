@@ -100,7 +100,7 @@ Finally, the operation returns back to the center (as in the figure shown above)
 Now, consider performing 3 trillion such operations per second (i.e., `3 Top/s`) in a ***sequential*** manner.
   * ***N.B.*** Recall (cf. Section 2) that `1 Top/s` is equivalent to $10^{12}$ operations per second.
 
-If the signal travels at the speed of light, what is the maximum physical dimension of this mesh (i.e., $\ell$)? (Provide the answer in units of microns [$\mu m$], where 1 micron is $10^{-6}$ m. Round the answer to 1 significant figure.)
+If the signal travels at the speed of light, what is the maximum physical dimension of this mesh (i.e., $\ell$ )? (Provide the answer in units of microns [$\mu m$], where 1 micron is $10^{-6}$ m. Round the answer to 1 significant figure.)
 
 ***N.B.*** The speed of light is approximately $3 \times 10^{8}$ `m/s`.
 
@@ -249,7 +249,7 @@ Furthermore, the $\beta$ (designated as "bandwidth" parameters in the figure sho
 | GeForce 8200M | June 2008 | 17.056 (DDR3) | 19.2 |
 | GeForce 920M | March 2015 | 14.4 (DDR3) | 441 |
 
-Consider: Are these data consistent with the predicted rate of change in the machine balance point (i.e., $B$)?
+Consider: Are these data consistent with the predicted rate of change in the machine balance point (i.e., $B$ )?
   * ***N.B.*** This is left as an exercise to the reader/student.
 
 ## 6. Balance Principles
@@ -293,7 +293,7 @@ $$
 Q = Q\left( {n;Z,L} \right) \le W
 $$
 
-where, in general, $Q$ is a function of the problem size ($n$), the fast-memory size ($Z$), and the transaction size ($L$).
+where, in general, $Q$ is a function of the problem size ($n$ ), the fast-memory size ($Z$ ), and the transaction size ($L$ ).
 
 Furthermore, note that by convention it is assumed that $W$ includes the count of $Q$.
   * For example, if $Q = 3$ and $W = 10$, then that means that there are $10 - 3 = 7$ operations that are non-memory transactions.

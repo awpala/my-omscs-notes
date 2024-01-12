@@ -304,7 +304,7 @@ First, consider a ***single*** core with a `100 W` total power budget for the en
 
 Now, consider a system comprised of ***two*** cores, each splitting the equivalent `100 W` total power budget in half (i.e., `50 W` apiece per core).
   * The corresponding per-core power budget is now ${P_2} = {\textstyle{1 \over 2}}{P_1}$, and therefore the voltage and frequency must both be reduced accordingly
-  * Furthermore, since voltage is proportional to frequency (i.e., $P \propto \underbrace {{V^2}}_{{{\left( {V \propto f} \right)}^2}} \times f \propto {f^3}$), this implies a corresponding operating frequency of ${f_2} = \sqrt[3]{{{\textstyle{1 \over 2}}}} \times {f_1} = 0.8 \times {f_1}$, or `3.0 GHz`, a noticeably slower frequency
+  * Furthermore, since voltage is proportional to frequency (i.e., $P \propto \underbrace {{V^2}}_{{{\left( {V \propto f} \right)}^2}} \times f \propto {f^3}$ ), this implies a corresponding operating frequency of ${f_2} = \sqrt[3]{{{\textstyle{1 \over 2}}}} \times {f_1} = 0.8 \times {f_1}$, or `3.0 GHz`, a noticeably slower frequency
 
 ### 14. Performance vs. Number of Cores Quiz and Answers
 

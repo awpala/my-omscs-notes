@@ -102,7 +102,7 @@ Therefore, this first, basic model implies two major **costs** when designing al
 <img src="./assets/01-014.png" width="650">
 </center>
 
-The first cost entails how many **operations** are required by the algorithm, i.e., what is the **computational work** (denoted $W(n)$) performed by the processor.
+The first cost entails how many **operations** are required by the algorithm, i.e., what is the **computational work** (denoted $W(n)$ ) performed by the processor.
   * ***N.B.*** Just like there is the concept of "work" in the **work-span model** (discussed later in this course) for a parallel machine, the corresponding concept of "work" in this input/output (I/O) model will generally depend on the input size, $n$.
 
 <center>
@@ -110,7 +110,7 @@ The first cost entails how many **operations** are required by the algorithm, i.
 </center>
 
 The second cost entails how many **block transfers** are required by the algorithm (denoted by $Q(n;Z,L)$, and referred to as the algorithm's **input/output (I/O) complexity**).
-  * The number of transfers depends on ***both*** the size of the fast memory ($Z$) ***and*** the block transfer size ($L$).
+  * The number of transfers depends on ***both*** the size of the fast memory ($Z$ ) ***and*** the block transfer size ($L$ ).
 
 ### Example: Reduction
 
@@ -137,7 +137,7 @@ $$
 Q\left( {n;Z,L} \right) \ge \underbrace {\left\lceil {{n \over L}} \right\rceil }_{{\rm{transfers}}} = \Omega \left( {{n \over L}} \right)
 $$
 
-***N.B.*** The ceiling (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil$) accounts for the fact that if $n$ is not a multiple of $L$, then a partial-transfer cost must be incurred nevertheless.
+***N.B.*** The ceiling (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil$ ) accounts for the fact that if $n$ is not a multiple of $L$, then a partial-transfer cost must be incurred nevertheless.
 
 Observe that there is ***no*** dependence by $Q$ on $Z$ (the size of the fast memory). Since it is only necessary to access each element *once*, the size of the fast memory is irrelevant (i.e., the data is ***not*** reused either way).
   * ***N.B.*** In general, not reusing data is ***undesirable***.
@@ -204,9 +204,9 @@ In the first case (as in the figure shown above), the array is ***aligned*** on 
 <img src="./assets/01-025A.png" width="350">
 </center>
 
-Conversely, in the second case (as in the figure shown above), the array is ***not aligned***, and therefore an ***additional*** transfer is required (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil + 1$).
+Conversely, in the second case (as in the figure shown above), the array is ***not aligned***, and therefore an ***additional*** transfer is required (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil + 1$ ).
 
-***N.B.*** The purpose of this exercise is simply for awareness of this word-alignment issue; in practice, for purposes of this course, this will be generally regarded as a "minor" detail (which is particularly negligible in the case of $n \gg L$).
+***N.B.*** The purpose of this exercise is simply for awareness of this word-alignment issue; in practice, for purposes of this course, this will be generally regarded as a "minor" detail (which is particularly negligible in the case of $n \gg L$ ).
 
 ## 5. Minimum Transfers to Sort Quiz and Answers
 
@@ -440,7 +440,7 @@ Note the following ***remarks*** with respect to the aforementioned analysis:
 <img src="./assets/01-045Q.png" width="450">
 </center>
 
-Consider the multiplication of a ***dense*** $n \times n$ matrix by a vector $x$. Recall (cf. Section 6) that the work (ignoring any structure in matrix $A$) is proportional to $n^2$, i.e.,:
+Consider the multiplication of a ***dense*** $n \times n$ matrix by a vector $x$. Recall (cf. Section 6) that the work (ignoring any structure in matrix $A$ ) is proportional to $n^2$, i.e.,:
 
 $$
 W\left( n \right) = O\left( {{n^2}} \right)
@@ -508,8 +508,8 @@ In the basic RAM model, both algorithms are identical. Conversely, in the I/O mo
 
 To assist with answering this question, consider the following additional simplifying ***assumptions***:
   * The fast memory is sufficiently large to hold two vectors and any additional/extra $L$-sized blocks, i.e., $Z = 2n + O\left( L \right)$
-  * $L$ divides $n$ (i.e., $L|n$)
-  * All arrays and the matrix (i.e., $x$, $y$, and $A$) are aligned on $L$-word boundaries
+  * $L$ divides $n$ (i.e., $L|n$ )
+  * All arrays and the matrix (i.e., $x$, $y$, and $A$ ) are aligned on $L$-word boundaries
 
 ***N.B.*** The last two assumptions avoid the data-alignment issues encountered previously in this lesson, thereby allowing to ignore floors and ceilings accordingly.
 
@@ -547,13 +547,13 @@ Within row $i$, it loops over columns $j$, starting at $0$ (as in the figure sho
 </center>
 
 In the subsequent iteration, a completely ***different*** block of elements must be loaded (as in the figure shown above).
-  * ***N.B.*** Recall that the fast memory is assumed to only have sufficient space for two vectors plus an additional "extra," however, eventually the previous block (i.e., from iteration $0$) must be displaced.
+  * ***N.B.*** Recall that the fast memory is assumed to only have sufficient space for two vectors plus an additional "extra," however, eventually the previous block (i.e., from iteration $0$ ) must be displaced.
 
 <center>
 <img src="./assets/01-055A.png" width="650">
 </center>
 
-Therefore, traversing this column-major matrix row-wise in this manner incurs block transfers for ***each*** row. Consequently, this yields the following total number of transfers (via $n^2$ required to read $A$):
+Therefore, traversing this column-major matrix row-wise in this manner incurs block transfers for ***each*** row. Consequently, this yields the following total number of transfers (via $n^2$ required to read $A$ ):
 
 $$
 Q\left( {n;Z,L} \right) = {{3n} \over L} + {n^2}
@@ -604,7 +604,7 @@ As a final remark, suppose that the fast memory is a ***fully associative cache*
 <img src="./assets/01-061.png" width="650">
 </center>
 
-An ***important question*** regarding the two-level memory model is: What are the ***design goals***? That is, with respect to the complexity measures for work ($W\left( n \right)$) and transfers ($Q \left( {n;Z,L} \right)$), what makes an algorithm "good"?
+An ***important question*** regarding the two-level memory model is: What are the ***design goals***? That is, with respect to the complexity measures for work ($W\left( n \right)$ ) and transfers ($Q \left( {n;Z,L} \right)$ ), what makes an algorithm "good"?
 
 The goals to achieve this is actually rather ***simple***.
 
@@ -699,19 +699,19 @@ Now, consider the ***relationship*** between work, transfers, and execution time
 <img src="./assets/01-068.png" width="650">
 </center>
 
-Suppose that the processor requires $\tau$ time units to perform an operation (i.e., units of `time/operation`). The corresponding time to perform **compute operations** ($T_{{\rm{comp}}}$) is therefore:
+Suppose that the processor requires $\tau$ time units to perform an operation (i.e., units of `time/operation`). The corresponding time to perform **compute operations** ($T_{{\rm{comp}}}$ ) is therefore:
 
 $$
 {T_{{\rm{comp}}}} = \tau W
 $$
 
-Next, let $\alpha$ be the **amortized time** to move one word of data between the slow and fast memories, where $\alpha$ has units of `time/word`. The corresponding time to execute $Q$ **transfers** ($T_{{\rm{mem}}}$) is therefore:
+Next, let $\alpha$ be the **amortized time** to move one word of data between the slow and fast memories, where $\alpha$ has units of `time/word`. The corresponding time to execute $Q$ **transfers** ($T_{{\rm{mem}}}$ ) is therefore:
 
 $$
 {T_{{\rm{mem}}}} = \alpha LQ
 $$
 
-Now, assume that there is ***perfect overlap*** between the data transfers and the computation. In this case, the **minimum time** to execute the program ($T$) is therefore:
+Now, assume that there is ***perfect overlap*** between the data transfers and the computation. In this case, the **minimum time** to execute the program ($T$ ) is therefore:
 
 $$
 T \ge \max \left( {{T_{{\rm{comp}}}},{T_{{\rm{mem}}}}} \right)
@@ -768,7 +768,7 @@ $$
 <img src="./assets/01-074.png" width="650">
 </center>
 
-Furthermore, for the sake of completeness, the **maximum time** to execute the program ($T$)  can be similarly estimated as:
+Furthermore, for the sake of completeness, the **maximum time** to execute the program ($T$ )  can be similarly estimated as:
 
 $$
 T \le \tau W\left( {1 + {B \over I}} \right)
@@ -782,7 +782,7 @@ This gives rise to a sum (rather than a maximum) because if there is ***no*** ov
 <img src="./assets/01-075.png" width="650">
 </center>
 
-In addition to analyzing the execution time, it is also common to analyze ***measures of performance***. Let such a measure of **normalized performance** ($R$) be defined as follows:
+In addition to analyzing the execution time, it is also common to analyze ***measures of performance***. Let such a measure of **normalized performance** ($R$ ) be defined as follows:
 
 $$
 R \equiv {{\tau {W_ * }} \over T}
@@ -800,7 +800,7 @@ $$
 \underbrace {{{\tau {W_ * }} \over T}}_{ \equiv R} \le {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
-This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$), where in general higher values are ***better***.
+This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$ ), where in general higher values are ***better***.
 
 ## 12. Roofline Plots Quiz and Answers
 
@@ -820,7 +820,7 @@ In performance analysis, one way to visualize the relationship among these param
 
 ***N.B.*** A roofline plot is typically plotted on log-log axes, however, for simplicity, this example uses a simple linear plot.
 
-Plotting $R_{\max }$ in this manner yields the general form as in the figure shown above. The ***interesting features*** of the plot are the value of the **plateau** and the location of the **inflection point** (i.e., $\left( {{x_0},{y_0}} \right)$).
+Plotting $R_{\max }$ in this manner yields the general form as in the figure shown above. The ***interesting features*** of the plot are the value of the **plateau** and the location of the **inflection point** (i.e., $\left( {{x_0},{y_0}} \right)$ ).
 
 What are the values of $x_0$ and $y_0$? (Express these in terms of the parameters $I$, $B$, $W$, and $W_*$.)
 
@@ -843,7 +843,7 @@ $$
 $y_0$ is the maximum possible value of $R_{\max}$.
   * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
 
-Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that if an algorithm is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$).
+Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that if an algorithm is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$ ), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$ ).
 
 As the critical point $I = \underbrace B_{{x_0}}$ suggests, a good algorithm design target is to achieve an intensity of $B$ or greater.
 
@@ -879,9 +879,9 @@ Now, suppose that this algorithm is run on a machine with a two-level memory hie
 </center>
 
 Furthermore, consider the following simplifying ***assumptions***:
-  * The transfer size is exactly one word (i.e., $L = 1$)
+  * The transfer size is exactly one word (i.e., $L = 1$ )
     * This obviates alignment-related concerns
-  * $Z = 2n + O\left( 1 \right)$, i.e., $Z$ is large enough to hold two vectors (each of size $n$) along with some additional constant storage space
+  * $Z = 2n + O\left( 1 \right)$, i.e., $Z$ is large enough to hold two vectors (each of size $n$ ) along with some additional constant storage space
 
 Now, consider a ***transformation*** of this nested-loops algorithm into a more ***I/O-aware*** version, as follows:
 
@@ -899,8 +899,8 @@ $$
 }
 $$
 
-The additional "comments" (delimited by ${\rm{// }} \ldots$) indicate suggestions for where to load and store portions of matrices $A$, $B$, and $C$.
-  * ***N.B.*** Observe that these load and store operations respect the assumption that $Z$ is sufficiently large to hold two vectors (each of size $n$) and some additional constant storage space.
+The additional "comments" (delimited by ${\rm{// }} \ldots$ ) indicate suggestions for where to load and store portions of matrices $A$, $B$, and $C$.
+  * ***N.B.*** Observe that these load and store operations respect the assumption that $Z$ is sufficiently large to hold two vectors (each of size $n$ ) and some additional constant storage space.
 
 <center>
 <img src="./assets/01-081Q.png" width="650">
@@ -966,9 +966,9 @@ $$
 Q\left( {n;Z} \right) = 3n^2 + n^3
 $$
 
-The algorithm reads $n$ elements of $B$ for $n^2$ total iterations. Correspondingly, this read of $B$ ***dominates*** the overall transfer cost ($Q\left( {n;Z} \right)$).
+The algorithm reads $n$ elements of $B$ for $n^2$ total iterations. Correspondingly, this read of $B$ ***dominates*** the overall transfer cost ($Q\left( {n;Z} \right)$ ).
 
-Therefore, since the intensity is the ratio or operations ($W$) to transfers ($Q$), the intensity in this case is simply constant overall (i.e., $\theta \left( 1 \right)$).
+Therefore, since the intensity is the ratio or operations ($W$ ) to transfers ($Q$ ), the intensity in this case is simply constant overall (i.e., $\theta \left( 1 \right)$ ).
 
 An ***interesting question*** as a follow up to this is: Is ***better*** performance than this achievable?
   * Intuition would indeed suggest so, particularly considering that there are $n^3$ total operations, but only $n^2$ total data. This suggests that there is a potential factor $n$ of available "reuse" among this disparity. (This is discussed further in the next quiz section.)
@@ -1018,20 +1018,20 @@ Given the blocks of $A$ and $B$ (i.e., $\hat A$ and $\hat B$, respectively), the
 <img src="./assets/01-091Q.png" width="650">
 </center>
 
-Finally, the algorithm stores the corresponding product block (i.e., $\hat C$) (as in the figure shown above).
+Finally, the algorithm stores the corresponding product block (i.e., $\hat C$ ) (as in the figure shown above).
 
 <center>
 <img src="./assets/01-092Q.png" width="650">
 </center>
 
-All of these read and write operations with respect to the blocks are essentially slow-fast memory ***transfers***. Therefore, count these transfers (i.e., $Q$) accordingly, and then express the corresponding asymptotic intensity for this "blocked"-matrix multiplication algorithm (i.e., $I\left( {n;Z} \right) = \theta \left( {???} \right)$). (Express this in terms of $n$, $b$, and/or $Z$ accordingly.)
+All of these read and write operations with respect to the blocks are essentially slow-fast memory ***transfers***. Therefore, count these transfers (i.e., $Q$ ) accordingly, and then express the corresponding asymptotic intensity for this "blocked"-matrix multiplication algorithm (i.e., $I\left( {n;Z} \right) = \theta \left( {???} \right)$ ). (Express this in terms of $n$, $b$, and/or $Z$ accordingly.)
 
 Furthermore, note the following simplifying ***assumptions*** for this analysis:
   * $L = 1$
   * $b | n$
   * $n | Z$
   * $Z = 3{b^2} + O\left( 1 \right)$
-    * Since it is necessary for blocks of $A$, $B$, and $C$ to fit into fast memory in order to multiply and store them, the fast memory size ($Z$) correspondingly assumes sufficient storage space for this, as well as additional constant storage space.
+    * Since it is necessary for blocks of $A$, $B$, and $C$ to fit into fast memory in order to multiply and store them, the fast memory size ($Z$ ) correspondingly assumes sufficient storage space for this, as well as additional constant storage space.
 
 ### ***Answer and Explanation***:
 
@@ -1062,7 +1062,7 @@ W\left( n \right) = \theta \left( {{n^3}} \right)
 $$
 
 Additionally, consider the transfer operations.
-  * Each read or write operation with respect to a given block involves the transfer of a block of size $b \times b$ (or equivalently $b^2$).
+  * Each read or write operation with respect to a given block involves the transfer of a block of size $b \times b$ (or equivalently $b^2$ ).
   * Furthermore, each nested loop performs $n/b$ iterations.
 
 From these two observations, the total number of ***read operations*** can be determined as follows.
@@ -1071,7 +1071,7 @@ From these two observations, the total number of ***read operations*** can be de
 <img src="./assets/01-095A.png" width="650">
 </center>
 
-With respect to the $C$ blocks (i.e., $\hat C$), this yields the following number of read operations:
+With respect to the $C$ blocks (i.e., $\hat C$ ), this yields the following number of read operations:
 
 $$
 {b^2} \times {n \over b} \times {n \over b} = {n^2}
@@ -1079,7 +1079,7 @@ $$
 
 Here, each block read involves $b^2$ words, repeated ${\left( {n/b} \right)^2}$ times.
 
-The same applies to the corresponding ***write operations*** with respect to the $C$ blocks (i.e., $\hat C$).
+The same applies to the corresponding ***write operations*** with respect to the $C$ blocks (i.e., $\hat C$ ).
 
 <center>
 <img src="./assets/01-096A.png" width="650">
@@ -1103,7 +1103,7 @@ $$
 Q\left( {n;Z} \right) = \theta \left( {{{{n^3}} \over b}} \right)
 $$
 
-Furthermore, the corresponding computational intensity for the algorithm is therefore the ratio of $W$ to $Q$, i.e., $\theta \left( b \right)$ (or equivalently $\theta \left( \sqrt{Z} \right)$, by assumption of the size of $b$ in relation to the fast-memory size, $Z$).
+Furthermore, the corresponding computational intensity for the algorithm is therefore the ratio of $W$ to $Q$, i.e., $\theta \left( b \right)$ (or equivalently $\theta \left( \sqrt{Z} \right)$, by assumption of the size of $b$ in relation to the fast-memory size, $Z$ ).
 
 Recall (cf. Section 13) that the conventional algorithm for matrix multiplication has a computational intensity of $\theta \left( 1 \right)$ (constant), therefore, "blocking" in this manner yields comparatively much better performance accordingly.
 
@@ -1125,7 +1125,7 @@ Now, suppose that in the next-generation machine, the machine balance ***doubles
 
 With a doubled machine balance, it is now necessary to perform ***twice*** as many operations locally on the processor in the same/equivalent time that it takes to move the data from slow memory to fast memory, in order to yield equivalent performance to the original machine.
 
-Therefore, with a doubled machine balance, what is the corresponding ***factor*** of increase in the fast-memory size ($Z$) in order to compensate for this?
+Therefore, with a doubled machine balance, what is the corresponding ***factor*** of increase in the fast-memory size ($Z$ ) in order to compensate for this?
 
 ### ***Answer and Explanation***:
 
@@ -1143,13 +1143,13 @@ $$
 
 Here, the machine balance $B$ is accounted for via the communication penalty.
 
-Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$) is $\theta \left( \sqrt{Z} \right)$, i.e.,:
+Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$ ) is $\theta \left( \sqrt{Z} \right)$, i.e.,:
 
 $$
 {R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
 $$
 
-Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty (i.e., $\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'}_{{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z}_{{{\left( {2\sqrt Z } \right)}^2}}$, where $Z'$ is the new fast-memory size).
+Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty (i.e., $\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'}_{{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z}_{{{\left( {2\sqrt Z } \right)}^2}}$, where $Z'$ is the new fast-memory size).
 
 ***N.B.*** An increase in machine balance $B$ over time is indeed a realistic observation. (Consult external sources, class forum discussion, etc. for why this is so.)
 
