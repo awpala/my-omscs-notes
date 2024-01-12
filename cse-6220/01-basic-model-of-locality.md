@@ -46,7 +46,7 @@ Lastly, between the slow main memory and the processor, there is also a **fast m
 <img src="./assets/01-006.png" width="650">
 </center>
 
-Let the size of this fast memory be denoted by $Z$, having measurement units of `words`.
+Let the size of this fast memory be denoted by $Z$ , having measurement units of `words`.
 
 <center>
 <img src="./assets/01-007.png" width="650">
@@ -103,13 +103,13 @@ Therefore, this first, basic model implies two major **costs** when designing al
 </center>
 
 The first cost entails how many **operations** are required by the algorithm, i.e., what is the **computational work** (denoted $W(n)$ ) performed by the processor.
-  * ***N.B.*** Just like there is the concept of "work" in the **work-span model** (discussed later in this course) for a parallel machine, the corresponding concept of "work" in this input/output (I/O) model will generally depend on the input size, $n$.
+  * ***N.B.*** Just like there is the concept of "work" in the **work-span model** (discussed later in this course) for a parallel machine, the corresponding concept of "work" in this input/output (I/O) model will generally depend on the input size, $n$ .
 
 <center>
 <img src="./assets/01-016.png" width="650">
 </center>
 
-The second cost entails how many **block transfers** are required by the algorithm (denoted by $Q(n;Z,L)$, and referred to as the algorithm's **input/output (I/O) complexity**).
+The second cost entails how many **block transfers** are required by the algorithm (denoted by $Q(n;Z,L)$ , and referred to as the algorithm's **input/output (I/O) complexity**).
   * The number of transfers depends on ***both*** the size of the fast memory ($Z$ ) ***and*** the block transfer size ($L$ ).
 
 ### Example: Reduction
@@ -137,7 +137,7 @@ $$
 Q\left( {n;Z,L} \right) \ge \underbrace {\left\lceil {{n \over L}} \right\rceil }_{{\rm{transfers}}} = \Omega \left( {{n \over L}} \right)
 $$
 
-***N.B.*** The ceiling (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil$ ) accounts for the fact that if $n$ is not a multiple of $L$, then a partial-transfer cost must be incurred nevertheless.
+***N.B.*** The ceiling (i.e., $\left\lceil {{\textstyle{n \over L}}} \right\rceil$ ) accounts for the fact that if $n$ is not a multiple of $L$ , then a partial-transfer cost must be incurred nevertheless.
 
 Observe that there is ***no*** dependence by $Q$ on $Z$ (the size of the fast memory). Since it is only necessary to access each element *once*, the size of the fast memory is irrelevant (i.e., the data is ***not*** reused either way).
   * ***N.B.*** In general, not reusing data is ***undesirable***.
@@ -173,7 +173,7 @@ Indeed, all of these are valid slow-fast memory pairings.
 <img src="./assets/01-021Q.png" width="650">
 </center>
 
-Suppose the elements of an array are summed (as in the figure shown above), without any additional information regarding the array-data alignment with respect to transfer size $L$. In the ***worst case***, how many transfers are required in order to read the entire array?
+Suppose the elements of an array are summed (as in the figure shown above), without any additional information regarding the array-data alignment with respect to transfer size $L$ . In the ***worst case***, how many transfers are required in order to read the entire array?
   * ***N.B.*** Provide the answer ***exactly***, not asymptotically. Furthermore, if necessary, use floors and/or ceilings.
 
 ### ***Answer and Explanation***:
@@ -336,20 +336,20 @@ A ***modification*** of this procedure is necessary in order to consider the ***
 <img src="./assets/01-033.png" width="650">
 </center>
 
-With respect to $s$, it can be assumed that it is initialized locally (as in the figure shown above), in the fast memory, as denoted by keyword $\rm{local}$. This is fundamentally the same as any other temporary scalar or local variable in a typical imperative programming language.
+With respect to $s$ , it can be assumed that it is initialized locally (as in the figure shown above), in the fast memory, as denoted by keyword $\rm{local}$ . This is fundamentally the same as any other temporary scalar or local variable in a typical imperative programming language.
   * ***N.B.*** This distinction is made in the pseudocode here for clarify, however, typically this is not a detail "of particular interest."
 
 <center>
 <img src="./assets/01-035.png" width="650">
 </center>
 
-With respect to the array $X$, ***assume*** that $n \gg Z$.
+With respect to the array $X$ , ***assume*** that $n \gg Z$ .
 
 <center>
 <img src="./assets/01-036.png" width="650">
 </center>
 
-Furthermore, also with respect to the array $X$, ***assume*** that it is aligned on an $L$-word boundary.
+Furthermore, also with respect to the array $X$ , ***assume*** that it is aligned on an $L$-word boundary.
 
 <center>
 <img src="./assets/01-037.png" width="650">
@@ -380,7 +380,7 @@ In the outer loop, as in the original algorithm, there is iteration over the arr
 <img src="./assets/01-039.png" width="650">
 </center>
 
-The computation $\hat L$ determines whether the block that starts at position $i$ is of length $L$, or otherwise smaller than this.
+The computation $\hat L$ determines whether the block that starts at position $i$ is of length $L$ , or otherwise smaller than this.
   * ***N.B.*** This is a relatively "fine" detail, which will otherwise be generally ignored subsequently in the course.
 
 <center>
@@ -440,7 +440,7 @@ Note the following ***remarks*** with respect to the aforementioned analysis:
 <img src="./assets/01-045Q.png" width="450">
 </center>
 
-Consider the multiplication of a ***dense*** $n \times n$ matrix by a vector $x$. Recall (cf. Section 6) that the work (ignoring any structure in matrix $A$ ) is proportional to $n^2$, i.e.,:
+Consider the multiplication of a ***dense*** $n \times n$ matrix by a vector $x$ . Recall (cf. Section 6) that the work (ignoring any structure in matrix $A$ ) is proportional to $n^2$ , i.e.,:
 
 $$
 W\left( n \right) = O\left( {{n^2}} \right)
@@ -468,7 +468,7 @@ Now, consider two algorithms to compute the matrix-vector product.
 <img src="./assets/01-048Q.png" width="650">
 </center>
 
-**Algorithm 1** indexes rows by $i$ and columns by $j$, as follows:
+**Algorithm 1** indexes rows by $i$ and columns by $j$ , as follows:
 
 $$
 \boxed{
@@ -509,11 +509,11 @@ In the basic RAM model, both algorithms are identical. Conversely, in the I/O mo
 To assist with answering this question, consider the following additional simplifying ***assumptions***:
   * The fast memory is sufficiently large to hold two vectors and any additional/extra $L$-sized blocks, i.e., $Z = 2n + O\left( L \right)$
   * $L$ divides $n$ (i.e., $L|n$ )
-  * All arrays and the matrix (i.e., $x$, $y$, and $A$ ) are aligned on $L$-word boundaries
+  * All arrays and the matrix (i.e., $x$ , $y$ , and $A$ ) are aligned on $L$-word boundaries
 
 ***N.B.*** The last two assumptions avoid the data-alignment issues encountered previously in this lesson, thereby allowing to ignore floors and ceilings accordingly.
 
-As an additional ***hint***, from these simplifying assumptions, it is also valid to assume that the algorithm ***preloads*** $x$ and $y$ to fast memory at the very beginning, and then stores $y$ back to slow memory at the very end. This in turn implies that the number of transfers will be at least ${3n} \over L$, i.e.,:
+As an additional ***hint***, from these simplifying assumptions, it is also valid to assume that the algorithm ***preloads*** $x$ and $y$ to fast memory at the very beginning, and then stores $y$ back to slow memory at the very end. This in turn implies that the number of transfers will be at least ${3n} \over L$ , i.e.,:
 
 $$
 Q\left( {n;Z,L} \right) = {{3n} \over L} + ???
@@ -539,7 +539,7 @@ In Algorithm 1, the outer loop iterates over rows (as in the figure shown above)
 <img src="./assets/01-053A.png" width="650">
 </center>
 
-Within row $i$, it loops over columns $j$, starting at $0$ (as in the figure shown above). Accessing an element $x$ of row $0$ causes a block of $L - 1$ additional elements from the column to be loaded into fast memory, a direct consequence of the column-major layout.
+Within row $i$ , it loops over columns $j$ , starting at $0$ (as in the figure shown above). Accessing an element $x$ of row $0$ causes a block of $L - 1$ additional elements from the column to be loaded into fast memory, a direct consequence of the column-major layout.
   * ***N.B.*** In the figure shown above, this shows a representative fast-memory access pattern (as shaded in teal), however, it may not be this specific block in general.
 
 <center>
@@ -587,7 +587,7 @@ $$
 Q\left( {n;Z,L} \right) = {{3n} \over L} + {{{n^2}} \over L}
 $$
 
-Therefore, for large values of $n$, it is expected that Algorithm 1 will perform $L$ more transfers in general, thereby implying a faster operation by Algorithm 2 accordingly (i.e., $L$ times faster than Algorithm 1).
+Therefore, for large values of $n$ , it is expected that Algorithm 1 will perform $L$ more transfers in general, thereby implying a faster operation by Algorithm 2 accordingly (i.e., $L$ times faster than Algorithm 1).
 
 The ***important*** point here is that in the sequential RAM model, these algorithms appear "identically" to each other, whereas in the simple two-level model with block transfers, they are distinctly ***different***.
 
@@ -687,7 +687,7 @@ Recall (cf. Section 9) that the ***goals*** of a given algorithm are low work an
 | 1 | ${W_1}\left( n \right) = \theta \left( n \right)$ | ${Q_1}\left( {n;Z,L} \right) = \theta \left( {{n \over L}} \right)$ | ${I_1} = {{{W_1}} \over {L{Q_1}}} = \theta \left( 1 \right)$ |
 | 2 | ${W_2}\left( n \right) = \theta \left( {n\log n} \right)$ | ${Q_2}\left( {n;Z,L} \right) = \theta \left( {{n \over {L\log Z}}} \right)$ | ${I_2} = {{{W_2}} \over {L{Q_2}}} = \theta \left( {\log n \cdot \log Z} \right)$ |
 
-In this case, Algorithm 1 performs less asymptotic work $W$, however, the intensity $I$ of Algorithm 2 grows asymptotically with $n$ and with $Z$ (whereas that of Algorithm 1 is constant). Therefore, there is ambiguity with respect to which of the two algorithm "better" optimizes across ***both*** goals.
+In this case, Algorithm 1 performs less asymptotic work $W$ , however, the intensity $I$ of Algorithm 2 grows asymptotically with $n$ and with $Z$ (whereas that of Algorithm 1 is constant). Therefore, there is ambiguity with respect to which of the two algorithm "better" optimizes across ***both*** goals.
 
 ## 11. Intensity, Balance, and Time
 
@@ -727,7 +727,7 @@ $$
 T \geq \tau W \cdot \max\left(1, \frac{\alpha / \tau}{W / (LQ)}\right)
 $$
 
-This refactoring shows the execution relative to the **ideal computation time**, $\tau W$. This is "ideal" in the sense that it assumes a zero-cost data movement.
+This refactoring shows the execution relative to the **ideal computation time**, $\tau W$ . This is "ideal" in the sense that it assumes a zero-cost data movement.
 
 <center>
 <img src="./assets/01-070.png" width="650">
@@ -741,20 +741,20 @@ However, relative to this ideal computation time, there is a necessary ***penalt
 
 The communication penalty does indeed have some structure.
 
-In the second argument of $\max \left(  \cdots  \right)$, the denominator factor $W / (LQ)$ is the algorithm's **computational intensity** (cf. Section 9), having units of `operations/word`.
+In the second argument of $\max \left(  \cdots  \right)$ , the denominator factor $W / (LQ)$ is the algorithm's **computational intensity** (cf. Section 9), having units of `operations/word`.
 
 <center>
 <img src="./assets/01-072.png" width="650">
 </center>
 
-Furthermore, in the second argument of $\max \left(  \cdots  \right)$, the numerator factor $\alpha / \tau$ is the time per word divided by the time per operation, having units of `operations/word` (similarly to the computational intensity). This is a ratio of parameters which depends *only* on the machine. In the literature, this is sometimes referred to as the **machine balance** (or **machine balance point**).
+Furthermore, in the second argument of $\max \left(  \cdots  \right)$ , the numerator factor $\alpha / \tau$ is the time per word divided by the time per operation, having units of `operations/word` (similarly to the computational intensity). This is a ratio of parameters which depends *only* on the machine. In the literature, this is sometimes referred to as the **machine balance** (or **machine balance point**).
   * This ratio essentially quantifies how many operations can be executing in the time required to move a word of data.
 
 <center>
 <img src="./assets/01-073.png" width="650">
 </center>
 
-Since machine balance is a "named" parameter, it can be defined accordingly as $B$.
+Since machine balance is a "named" parameter, it can be defined accordingly as $B$ .
 
 With this definition of terms, the minimum possible execution time with respect to the machine balance and the algorithm's computational intensity can be therefore expressed as:
 
@@ -815,14 +815,14 @@ $$
 $$
 
 In performance analysis, one way to visualize the relationship among these parameters is via a so called **roofline plot** (as in the figure shown above), whose general form resembles a "roof" of a house.
-  * The plot of of $R_{\max}$ vs. $I$.
+  * The plot of of $R_{\max}$ vs. $I$ .
   * Furthermore, here it is assumed that $W$ (work in the actual program) and $W_ *$ (equivalent work in the ideal serial RAM model) are both constant (e.g., as in the case of many algorithms or many implementations all performing the same amount of work, but varying in their communication), however, in general this is not always/necessarily true.
 
 ***N.B.*** A roofline plot is typically plotted on log-log axes, however, for simplicity, this example uses a simple linear plot.
 
 Plotting $R_{\max }$ in this manner yields the general form as in the figure shown above. The ***interesting features*** of the plot are the value of the **plateau** and the location of the **inflection point** (i.e., $\left( {{x_0},{y_0}} \right)$ ).
 
-What are the values of $x_0$ and $y_0$? (Express these in terms of the parameters $I$, $B$, $W$, and $W_*$.)
+What are the values of $x_0$ and $y_0$? (Express these in terms of the parameters $I$ , $B$ , $W$ , and $W_*$ .)
 
 ### Answer and Explanation:
 
@@ -840,7 +840,7 @@ $$
 {y_0} = {{{W_ *}} \over W}
 $$
 
-$y_0$ is the maximum possible value of $R_{\max}$.
+$y_0$ is the maximum possible value of $R_{\max}$ .
   * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
 
 Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that if an algorithm is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$ ), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$ ).
@@ -881,7 +881,7 @@ Now, suppose that this algorithm is run on a machine with a two-level memory hie
 Furthermore, consider the following simplifying ***assumptions***:
   * The transfer size is exactly one word (i.e., $L = 1$ )
     * This obviates alignment-related concerns
-  * $Z = 2n + O\left( 1 \right)$, i.e., $Z$ is large enough to hold two vectors (each of size $n$ ) along with some additional constant storage space
+  * $Z = 2n + O\left( 1 \right)$ , i.e., $Z$ is large enough to hold two vectors (each of size $n$ ) along with some additional constant storage space
 
 Now, consider a ***transformation*** of this nested-loops algorithm into a more ***I/O-aware*** version, as follows:
 
@@ -899,14 +899,14 @@ $$
 }
 $$
 
-The additional "comments" (delimited by ${\rm{// }} \ldots$ ) indicate suggestions for where to load and store portions of matrices $A$, $B$, and $C$.
+The additional "comments" (delimited by ${\rm{// }} \ldots$ ) indicate suggestions for where to load and store portions of matrices $A$ , $B$ , and $C$ .
   * ***N.B.*** Observe that these load and store operations respect the assumption that $Z$ is sufficiently large to hold two vectors (each of size $n$ ) and some additional constant storage space.
 
 <center>
 <img src="./assets/01-081Q.png" width="650">
 </center>
 
-Given this algorithm, what is its asymptotic intensity? (Express this as $I\left( {n;Z} \right) = \theta \left( {???} \right)$.)
+Given this algorithm, what is its asymptotic intensity? (Express this as $I\left( {n;Z} \right) = \theta \left( {???} \right)$ .)
 
 ### ***Answer and Explanation***:
 
@@ -936,7 +936,7 @@ Next, consider the ***transfers***.
 <img src="./assets/01-084A.png" width="650">
 </center>
 
-Considering the reads of matrix $A$, this yields the following transfers:
+Considering the reads of matrix $A$ , this yields the following transfers:
 
 $$Q
 \left( {n;Z} \right) = {n^2}
@@ -948,19 +948,19 @@ This corresponds to a read of vector $A\left[ {i,:} \right]$ (of length $n$ elem
 <img src="./assets/01-085A.png" width="650">
 </center>
 
-Next, considering the additional reads of matrix $C$, this yields the following transfers:
+Next, considering the additional reads of matrix $C$ , this yields the following transfers:
 
 $$
 Q\left( {n;Z} \right) = n^2 + 2n^2 = 3n^2
 $$
 
-With respect to matrix $C$, there is a read and a write operation of one element each, repeated a total of $n^2$ times.
+With respect to matrix $C$ , there is a read and a write operation of one element each, repeated a total of $n^2$ times.
 
 <center>
 <img src="./assets/01-086A.png" width="650">
 </center>
 
-Lastly, considering the additional reads of matrix $B$, this yields the following transfers:
+Lastly, considering the additional reads of matrix $B$ , this yields the following transfers:
 
 $$
 Q\left( {n;Z} \right) = 3n^2 + n^3
@@ -979,7 +979,7 @@ An ***interesting question*** as a follow up to this is: Is ***better*** perform
 <img src="./assets/01-087Q.png" width="650">
 </center>
 
-Consider again (cf. Section 13) the conventional matrix multiplication algorithm. Suppose now that the computation is performed in a block-by-block manner (as in the figure shown above), whereby the constituent matrices $A$, $B$, and $C$ are conceptually "divided" into smaller "blocks" of size $b \times b$. The corresponding ***algorithm*** to accomplish this can be defined as follows:
+Consider again (cf. Section 13) the conventional matrix multiplication algorithm. Suppose now that the computation is performed in a block-by-block manner (as in the figure shown above), whereby the constituent matrices $A$ , $B$ , and $C$ are conceptually "divided" into smaller "blocks" of size $b \times b$ . The corresponding ***algorithm*** to accomplish this can be defined as follows:
 
 $$
 \boxed{
@@ -1012,7 +1012,7 @@ The algorithm then reads blocks of $A$ and $B$ (as in the figure shown above).
 <img src="./assets/01-090Q.png" width="650">
 </center>
 
-Given the blocks of $A$ and $B$ (i.e., $\hat A$ and $\hat B$, respectively), the algorithm then multiplies them (as in the figure shown above).
+Given the blocks of $A$ and $B$ (i.e., $\hat A$ and $\hat B$ , respectively), the algorithm then multiplies them (as in the figure shown above).
 
 <center>
 <img src="./assets/01-091Q.png" width="650">
@@ -1024,14 +1024,14 @@ Finally, the algorithm stores the corresponding product block (i.e., $\hat C$ ) 
 <img src="./assets/01-092Q.png" width="650">
 </center>
 
-All of these read and write operations with respect to the blocks are essentially slow-fast memory ***transfers***. Therefore, count these transfers (i.e., $Q$ ) accordingly, and then express the corresponding asymptotic intensity for this "blocked"-matrix multiplication algorithm (i.e., $I\left( {n;Z} \right) = \theta \left( {???} \right)$ ). (Express this in terms of $n$, $b$, and/or $Z$ accordingly.)
+All of these read and write operations with respect to the blocks are essentially slow-fast memory ***transfers***. Therefore, count these transfers (i.e., $Q$ ) accordingly, and then express the corresponding asymptotic intensity for this "blocked"-matrix multiplication algorithm (i.e., $I\left( {n;Z} \right) = \theta \left( {???} \right)$ ). (Express this in terms of $n$ , $b$ , and/or $Z$ accordingly.)
 
 Furthermore, note the following simplifying ***assumptions*** for this analysis:
   * $L = 1$
   * $b | n$
   * $n | Z$
   * $Z = 3{b^2} + O\left( 1 \right)$
-    * Since it is necessary for blocks of $A$, $B$, and $C$ to fit into fast memory in order to multiply and store them, the fast memory size ($Z$ ) correspondingly assumes sufficient storage space for this, as well as additional constant storage space.
+    * Since it is necessary for blocks of $A$ , $B$ , and $C$ to fit into fast memory in order to multiply and store them, the fast memory size ($Z$ ) correspondingly assumes sufficient storage space for this, as well as additional constant storage space.
 
 ### ***Answer and Explanation***:
 
@@ -1049,7 +1049,7 @@ $$
 I\left( {n;Z} \right) = \theta \left( {\sqrt z } \right)
 $$
 
-***N.B.*** Both of these are equivalent per assumption $Z = 3{b^2} + O\left( 1 \right)$.
+***N.B.*** Both of these are equivalent per assumption $Z = 3{b^2} + O\left( 1 \right)$ .
 
 <center>
 <img src="./assets/01-094A.png" width="650">
@@ -1085,7 +1085,7 @@ The same applies to the corresponding ***write operations*** with respect to the
 <img src="./assets/01-096A.png" width="650">
 </center>
 
-With respect to both the $A$ and $B$ blocks (i.e., $\hat A$ and $\hat B$, respectively), this yields the following number of read operations apiece for $A$ and $B$:
+With respect to both the $A$ and $B$ blocks (i.e., $\hat A$ and $\hat B$ , respectively), this yields the following number of read operations apiece for $A$ and $B$:
 
 $$
 {b^2} \times {\left( {{n \over b}} \right)^3} = {{{n^3}} \over b}
@@ -1097,13 +1097,13 @@ Here, $b^2$ reads are nested in $(n/b)^3$ iterations.
 <img src="./assets/01-097A.png" width="650">
 </center>
 
-Therefore, the total number of transfers is dominated by the term $n^3/b$, i.e.,:
+Therefore, the total number of transfers is dominated by the term $n^3/b$ , i.e.,:
 
 $$
 Q\left( {n;Z} \right) = \theta \left( {{{{n^3}} \over b}} \right)
 $$
 
-Furthermore, the corresponding computational intensity for the algorithm is therefore the ratio of $W$ to $Q$, i.e., $\theta \left( b \right)$ (or equivalently $\theta \left( \sqrt{Z} \right)$, by assumption of the size of $b$ in relation to the fast-memory size, $Z$ ).
+Furthermore, the corresponding computational intensity for the algorithm is therefore the ratio of $W$ to $Q$ , i.e., $\theta \left( b \right)$ (or equivalently $\theta \left( \sqrt{Z} \right)$ , by assumption of the size of $b$ in relation to the fast-memory size, $Z$ ).
 
 Recall (cf. Section 13) that the conventional algorithm for matrix multiplication has a computational intensity of $\theta \left( 1 \right)$ (constant), therefore, "blocking" in this manner yields comparatively much better performance accordingly.
 
@@ -1121,7 +1121,7 @@ Consider a simple example, whereby a new machine is being devised for improving 
 Suppose that an existing machine is very efficient at performing matrix multiplications on matrices of a particular problem size.
 
 Now, suppose that in the next-generation machine, the machine balance ***doubles***.
-  * ***N.B.*** Recall (cf. Section 11) that the machine balance is defined as $\alpha / \tau$, where $\alpha$ is the time to transfer from slow memory to fast memory, and $\tau$ is the time to perform an operation by the processor once the data is localized to the fast memory.
+  * ***N.B.*** Recall (cf. Section 11) that the machine balance is defined as $\alpha / \tau$ , where $\alpha$ is the time to transfer from slow memory to fast memory, and $\tau$ is the time to perform an operation by the processor once the data is localized to the fast memory.
 
 With a doubled machine balance, it is now necessary to perform ***twice*** as many operations locally on the processor in the same/equivalent time that it takes to move the data from slow memory to fast memory, in order to yield equivalent performance to the original machine.
 
@@ -1133,7 +1133,7 @@ Therefore, with a doubled machine balance, what is the corresponding ***factor**
 <img src="./assets/01-099A.png" width="650">
 </center>
 
-This requires a corresponding increase in the fast-memory size by a factor of $4$.
+This requires a corresponding increase in the fast-memory size by a factor of $4$ .
 
 Recall (cf. Section 12) the following definition:
 
@@ -1143,13 +1143,13 @@ $$
 
 Here, the machine balance $B$ is accounted for via the communication penalty.
 
-Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$ ) is $\theta \left( \sqrt{Z} \right)$, i.e.,:
+Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$ ) is $\theta \left( \sqrt{Z} \right)$ , i.e.,:
 
 $$
 {R_{\max}} = {{{W_ *}} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
 $$
 
-Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty (i.e., $\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'}_{{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z}_{{{\left( {2\sqrt Z } \right)}^2}}$, where $Z'$ is the new fast-memory size).
+Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty (i.e., $\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'}_{{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z}_{{{\left( {2\sqrt Z } \right)}^2}}$ , where $Z'$ is the new fast-memory size).
 
 ***N.B.*** An increase in machine balance $B$ over time is indeed a realistic observation. (Consult external sources, class forum discussion, etc. for why this is so.)
 
@@ -1163,6 +1163,6 @@ In order to exploit a memory hierarchy algorithmically, the main ***technique***
 
 The other important pair of ***concepts*** discussed in this lesson were those of **computational intensity** and **machine balance**. A general ***rule of thumb*** based on these two concepts is the following:
 
-> In order for an algorithm to scale well to future memory hierarchies, the intensity of the algorithm $I$ must at least match (and more preferably exceed) the machine balance point $B$.
+> In order for an algorithm to scale well to future memory hierarchies, the intensity of the algorithm $I$ must at least match (and more preferably exceed) the machine balance point $B$ .
 
 ***N.B.*** This idea will be explored further in subsequent lessons of this course.

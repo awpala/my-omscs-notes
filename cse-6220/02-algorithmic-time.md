@@ -47,7 +47,7 @@ In 2025, an equivalent processor will perform `3200 Gop/s` (or equivalently `3.2
 <img src="./assets/02-003A.png" width="650">
 </center>
 
-In 10 years, there will be `5` doublings, implying a performance speedup of $2^5 = 32$. Therefore, relative to a 2015 processor, a 2025 processor will run at $100 \times 32 = 3200$ `Gop/s` (or equivalently `3.2 Top/s`).
+In 10 years, there will be `5` doublings, implying a performance speedup of $2^5 = 32$ . Therefore, relative to a 2015 processor, a 2025 processor will run at $100 \times 32 = 3200$ `Gop/s` (or equivalently `3.2 Top/s`).
 
 ***N.B.*** Even in 2015, there are specialized processors capable of achieving on the order of trillions of operations per second. Nevertheless, the purpose of this exercise is to give an intuitive feel for peak performance and the corresponding rate of growth that exponential trends bring.
 
@@ -59,7 +59,7 @@ This quiz further explores the notion of a computational "speed limit."
 <img src="./assets/02-004Q.png" width="350">
 </center>
 
-Consider a two-dimensional mesh of physical processors (as in the figure shown above). Imagine that such a many-core processor fits on a physical die of size $\ell  \times \ell$.
+Consider a two-dimensional mesh of physical processors (as in the figure shown above). Imagine that such a many-core processor fits on a physical die of size $\ell  \times \ell$ .
 
 <center>
 <img src="./assets/02-005Q.png" width="350">
@@ -110,13 +110,13 @@ If the signal travels at the speed of light, what is the maximum physical dimens
 <img src="./assets/02-011A.png" width="650">
 </center>
 
-The maximum physical dimension of the mesh is $\ell \leq 70\ \mu \rm{m}$.
+The maximum physical dimension of the mesh is $\ell \leq 70\ \mu \rm{m}$ .
 
 <center>
 <img src="./assets/02-012A.png" width="650">
 </center>
 
-The path length of a single round trip is $2 \times [(\ell \sqrt{2})/2] = \ell \sqrt{2}$.
+The path length of a single round trip is $2 \times [(\ell \sqrt{2})/2] = \ell \sqrt{2}$ .
 
 <center>
 <img src="./assets/02-013A.png" width="650">
@@ -140,12 +140,12 @@ $70\ \rm{\mu m}$ is approximately equivalent to the width of a human hair. There
 <img src="./assets/02-015Q.png" width="650">
 </center>
 
-Consider a memory chip whose area is equivalent to the cross-sectional area of a human hair, or approximately $4900 \rm{\ \mu m}^2$.
+Consider a memory chip whose area is equivalent to the cross-sectional area of a human hair, or approximately $4900 \rm{\ \mu m}^2$ .
 
 Now, suppose it is desired to store `1 TB` of data on such a memory chip.
-  * ***N.B.*** $1\ \rm{TB} = 10^{12} \rm{\ bytes}$.
+  * ***N.B.*** $1\ \rm{TB} = 10^{12} \rm{\ bytes}$ .
 
-What is the ***physical area*** of a ***single bit*** (***not*** a byte) on such a chip? (Express the answer in units of $\rm{\ \mu m}^2/\rm{bit}$.)
+What is the ***physical area*** of a ***single bit*** (***not*** a byte) on such a chip? (Express the answer in units of $\rm{\ \mu m}^2/\rm{bit}$ .)
 
 ### ***Answer and Explanation***:
 
@@ -153,7 +153,7 @@ What is the ***physical area*** of a ***single bit*** (***not*** a byte) on such
 <img src="./assets/02-016A.png" width="650">
 </center>
 
-The corresponding size of a single bit given the target capacity of `1 TB` is $6.125 \times 10^{-10}\rm{\ \mu m}^2/\rm{bit}$.
+The corresponding size of a single bit given the target capacity of `1 TB` is $6.125 \times 10^{-10}\rm{\ \mu m}^2/\rm{bit}$ .
 
 <center>
 <img src="./assets/02-017A.png" width="650">
@@ -165,7 +165,7 @@ $$
 {\textstyle{{4900\ \mu {{\rm{m}}^{\rm{2}}}} \over {{{10}^{12}}\ {\rm{bytes}}}}} \times {\textstyle{{1\ {\rm{byte}}} \over {8\ {\rm{bits}}}}} = 6.125 \times {10^{ - 10}}\ \mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}
 $$
 
-Considering such a single bit (as in the figure shown above), and assuming it is a square per-bit area, this corresponds to a side length of $\sqrt {6.125 \times {{10}^{ - 10}}\ \mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}}  \approx 2.5 \times {10^{ - 11}}\ \mu {\rm{m/bit}}$, or approximately $\textstyle{1 \over 4}\rm{Å}$ (angstrom) per side, which is on the order of an atomic radius.
+Considering such a single bit (as in the figure shown above), and assuming it is a square per-bit area, this corresponds to a side length of $\sqrt {6.125 \times {{10}^{ - 10}}\ \mu {{\rm{m}}^{\rm{2}}}{\rm{/bit}}}  \approx 2.5 \times {10^{ - 11}}\ \mu {\rm{m/bit}}$ , or approximately $\textstyle{1 \over 4}\rm{Å}$ (angstrom) per side, which is on the order of an atomic radius.
   * ***N.B.*** A single ***classical bit*** (as opposed to a ***quantum bit***) is effectively physically constrained by this single-atom size.
 
 Therefore, the implication of this exercise is that at a certain point of size reduction, there will be a limit to how much such "squeezing" (i.e., into a volume of physical space) can be achieved, beyond which only additional ***locality*** will provide incremental performance improvements with respect to speed.
@@ -193,7 +193,7 @@ The "classic plot" for the trend of transistor density over time is as in the fi
 
 The other notable feature of the von Neumann computing system is the slow-fast memory transfer cost (cf. Lesson 1) (as in the figure shown above).
 
-If the rate of data movement back and forth between the slow and fast memories is denoted by $\beta$ (having units of `words/time`), then similarly to $R$, $\beta$ also has a natural historical growth rate (as in the figure shown above).
+If the rate of data movement back and forth between the slow and fast memories is denoted by $\beta$ (having units of `words/time`), then similarly to $R$ , $\beta$ also has a natural historical growth rate (as in the figure shown above).
 
 There is a standard benchmark called the **stream**, which measures this growth rate.
   * $\beta$ has doubled approximately every `2.9 years`.
@@ -202,7 +202,7 @@ There is a standard benchmark called the **stream**, which measures this growth 
 <img src="./assets/02-020Q.png" width="650">
 </center>
 
-Recall (cf. Lesson 1) that the **machine balance point** (denoted by $B$, having units of `operations/word`) is defined as follows:
+Recall (cf. Lesson 1) that the **machine balance point** (denoted by $B$ , having units of `operations/word`) is defined as follows:
 
 $$
 B\equiv {R \over \beta }
@@ -240,7 +240,7 @@ $$
 <img src="./assets/02-022A.png" width="650">
 </center>
 
-Consider a comparison of two mobile graphical processor units (GPUs), as in the figure shown above, launched between 2008 and 2015 (a span of approximately 6.75 years), suggesting a machine balance point factor change of ${2^{(6.75)/5.5}} \approx 2.34$.
+Consider a comparison of two mobile graphical processor units (GPUs), as in the figure shown above, launched between 2008 and 2015 (a span of approximately 6.75 years), suggesting a machine balance point factor change of ${2^{(6.75)/5.5}} \approx 2.34$ .
 
 Furthermore, the $\beta$ (designated as "bandwidth" parameters in the figure shown above) and $R$ (designated as "processing power" parameters in the figure shown above) are given as:
 
@@ -284,7 +284,7 @@ Consider a further exploration of this assertion of an inherent "trade-off" via 
 </center>
 
 In the DAG model of computation (as in the figure shown above), a computation is characterized by two ***components***, as follows:
-  * The **work** $W = W(n)$, the total number of operations
+  * The **work** $W = W(n)$ , the total number of operations
   * The **span** $D = D(n)$ (having units of `operations`), which is the **critical path length**
 
 Consider an augmentation of the representation in the figure shown above, in order to reason about slow-fast memory communication. In particular, recall (cf. Lesson 1) that, at least in principle, the number of **slow-fast memory transfers** $Q$ can be counted, i.e.,:
@@ -295,8 +295,8 @@ $$
 
 where, in general, $Q$ is a function of the problem size ($n$ ), the fast-memory size ($Z$ ), and the transaction size ($L$ ).
 
-Furthermore, note that by convention it is assumed that $W$ includes the count of $Q$.
-  * For example, if $Q = 3$ and $W = 10$, then that means that there are $10 - 3 = 7$ operations that are non-memory transactions.
+Furthermore, note that by convention it is assumed that $W$ includes the count of $Q$ .
+  * For example, if $Q = 3$ and $W = 10$ , then that means that there are $10 - 3 = 7$ operations that are non-memory transactions.
 
 <center>
 <img src="./assets/02-026.png" width="650">
@@ -311,7 +311,7 @@ Let us model the operation of memory by analogy to the manner in which cores wor
   * Each transaction initiates a ***data transfer*** across the $L$ wires in parallel.
   * The time required for a word to travel across a wire in this manner is $\beta_0$ (having units of `words/time`), where $\beta_0$ is essentially the analog of $R_0$ in this cost model.
 
-Note that $W$, $D$, and $Q$ count the number of operations in a manner which ***ignores*** these costs $R_0$ and $\beta_0$. In other words, $W$, $D$, and $Q$ are typically computed in a manner which ***assumes*** "unit" cost operations.
+Note that $W$ , $D$ , and $Q$ count the number of operations in a manner which ***ignores*** these costs $R_0$ and $\beta_0$ . In other words, $W$ , $D$ , and $Q$ are typically computed in a manner which ***assumes*** "unit" cost operations.
 
 However, in a high-performance context, let us now consider translating these unit costs into ***real costs***, in order to determine the implications of this with respect to the overall system.
 
@@ -383,7 +383,7 @@ $$
 {W \over {P{R_0}}} = {{QL} \over {{\beta _0}}}
 $$
 
-Recalling (cf. Section 5) the historical growth rate trends, from these trends, in order to benefit from transistor scaling, then necessarily the compute time $W/(PR_0)$ must dominate the communication time $(QL)/\beta_0$.
+Recalling (cf. Section 5) the historical growth rate trends, from these trends, in order to benefit from transistor scaling, then necessarily the compute time $W/(PR_0)$ must dominate the communication time $(QL)/\beta_0$ .
 
 <center>
 <img src="./assets/02-034.png" width="650">

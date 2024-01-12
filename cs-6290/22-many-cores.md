@@ -303,8 +303,8 @@ First, consider a ***single*** core with a `100 W` total power budget for the en
   * Furthermore, the `100 W` power consumption occurs at a voltage level corresponding to a frequency ${f_1}$ of `3.8 GHz`
 
 Now, consider a system comprised of ***two*** cores, each splitting the equivalent `100 W` total power budget in half (i.e., `50 W` apiece per core).
-  * The corresponding per-core power budget is now ${P_2} = {\textstyle{1 \over 2}}{P_1}$, and therefore the voltage and frequency must both be reduced accordingly
-  * Furthermore, since voltage is proportional to frequency (i.e., $P \propto \underbrace {{V^2}}_{{{\left( {V \propto f} \right)}^2}} \times f \propto {f^3}$ ), this implies a corresponding operating frequency of ${f_2} = \sqrt[3]{{{\textstyle{1 \over 2}}}} \times {f_1} = 0.8 \times {f_1}$, or `3.0 GHz`, a noticeably slower frequency
+  * The corresponding per-core power budget is now ${P_2} = {\textstyle{1 \over 2}}{P_1}$ , and therefore the voltage and frequency must both be reduced accordingly
+  * Furthermore, since voltage is proportional to frequency (i.e., $P \propto \underbrace {{V^2}}_{{{\left( {V \propto f} \right)}^2}} \times f \propto {f^3}$ ), this implies a corresponding operating frequency of ${f_2} = \sqrt[3]{{{\textstyle{1 \over 2}}}} \times {f_1} = 0.8 \times {f_1}$ , or `3.0 GHz`, a noticeably slower frequency
 
 ### 14. Performance vs. Number of Cores Quiz and Answers
 
@@ -333,9 +333,9 @@ What is the correspondingly achievable frequency and total execution time (accou
 
 ***Explanation***:
 
-With respect to frequency, in the case of `2` cores, each core consumes half of the `100 W` total power, or `50 W` per core. Therefore, the corresponding frequency scaling factor (cf. Section 13) is $\sqrt[3]{{{\textstyle{1 \over 2}}}} = 0.8$, or `0.8 × 5.0 GHz = 4.0 GHz`.
+With respect to frequency, in the case of `2` cores, each core consumes half of the `100 W` total power, or `50 W` per core. Therefore, the corresponding frequency scaling factor (cf. Section 13) is $\sqrt[3]{{{\textstyle{1 \over 2}}}} = 0.8$ , or `0.8 × 5.0 GHz = 4.0 GHz`.
 
-With respect to frequency, in the case of `4` cores, each core consumes a quarter of the `100 W` total power, or `25 W` per core. Therefore, the corresponding frequency scaling factor (cf. Section 13) is $\sqrt[3]{{{\textstyle{1 \over 4}}}} = 0.63$, or `0.63 × 5.0 GHz = 3.2 GHz`.
+With respect to frequency, in the case of `4` cores, each core consumes a quarter of the `100 W` total power, or `25 W` per core. Therefore, the corresponding frequency scaling factor (cf. Section 13) is $\sqrt[3]{{{\textstyle{1 \over 4}}}} = 0.63$ , or `0.63 × 5.0 GHz = 3.2 GHz`.
 
 ***N.B.*** Subsequent determination of the total execution time must account for ***both*** the change in frequency ***and*** the change in level of parallelism. As a reference point, `100%` of execution on the single-core configuration (i.e., parallelism of `1`) takes `100 s` to complete.
 

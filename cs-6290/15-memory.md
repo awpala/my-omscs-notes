@@ -86,7 +86,7 @@ In static random access memory (SRAM), the memory cell itself consists of two co
 </center>
 
 To further enhance this "reinforcement" effect, typically two such transistors are connected to the ***same*** memory cell (as in the figure shown above), with their bitline-connected terminals connected to respective bitlines having complementary bit values (i.e., $b$ and $\bar b$ ).
-  * For example, with a bitline signals of $b = 1$ and complement $\bar b = 0$, this further "overwhelms"/"coerces" the memory cell into having a value ***written*** to it.
+  * For example, with a bitline signals of $b = 1$ and complement $\bar b = 0$ , this further "overwhelms"/"coerces" the memory cell into having a value ***written*** to it.
   * Similarly, if connecting both bitlines for ***reading***, the corresponding complementary pair will be read out to the respective bitlines (i.e., $b$ and $\bar b$ ). Furthermore, the difference between the bitlines can be examined to more quickly detect the target data value being read from the memory cell accordingly.
 
 To reiterate, by virtue of the ***weak*** constituent transistors of the inverters, connection of the bitlines will generally dictate the behavior of the inverters, and correspondingly examination of the ***difference*** between the (complementary) bitlines (i.e., in particular, in which "direction" this difference moves towards) is sufficient for reliable reading and writing operations with respect to a given memory cell (i.e., as opposed to having to examine ***each*** individual bitline's crossing across a threshold).

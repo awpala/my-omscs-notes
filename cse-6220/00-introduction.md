@@ -50,7 +50,7 @@ When analyzing the cost of a serial RAM algorithm, it is ***assumed*** that all 
 <img src="./assets/00-002.png" width="350">
 </center>
 
-From this starting point, a **big O analysis** is performed with respect to the input size $n$.
+From this starting point, a **big O analysis** is performed with respect to the input size $n$ .
 
 So, then, what are the ***alternatives*** to the serial RAM model?
 
@@ -78,7 +78,7 @@ Furthermore, since all of the processors see the ***same*** memory, they can coo
 <img src="./assets/00-006.png" width="350">
 </center>
 
-In the PRAM models, the ***algorithmic analysis*** involves big O as before, however, there is additionally an attempt to reduce the total cost by up to a factor of $P$, the number of processors.
+In the PRAM models, the ***algorithmic analysis*** involves big O as before, however, there is additionally an attempt to reduce the total cost by up to a factor of $P$ , the number of processors.
 
 A PRAM model is arguably the simplest one available for a shared-user multi-core machine with **uniform memory access (UMA)** (which will be discussed later in this course).
 
