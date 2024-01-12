@@ -617,10 +617,10 @@ The goals to achieve this is actually rather ***simple***.
 The ***first goal*** is **work optimality**, i.e., the two-level algorithm should perform the ***same*** asymptotic work as the equivalent sequential RAM algorithm, or equivalently:
 
 $$
-W\left( n \right) = \theta \left( {{W_ * }\left( n \right)} \right)
+W\left( n \right) = \theta \left( {{W_* }\left( n \right)} \right)
 $$
 
-where ${W_ * }\left( n \right)$ denotes the work of the best/optimal sequential RAM algorithm (i.e., without the corresponding memory hierarchy).
+where ${W_* }\left( n \right)$ denotes the work of the best/optimal sequential RAM algorithm (i.e., without the corresponding memory hierarchy).
 
 ***N.B.*** This statement is equivalent to what would be described with respect to parallel algorithms, i.e., do not "explode" the asymptotic work.
 
@@ -785,10 +785,10 @@ This gives rise to a sum (rather than a maximum) because if there is ***no*** ov
 In addition to analyzing the execution time, it is also common to analyze ***measures of performance***. Let such a measure of **normalized performance** ($R$ ) be defined as follows:
 
 $$
-R \equiv {{\tau {W_ * }} \over T}
+R \equiv {{\tau {W_* }} \over T}
 $$
 
-The numerator $\tau {W_ * }$ is the best time in the pure sequential RAM model.
+The numerator $\tau {W_* }$ is the best time in the pure sequential RAM model.
 
 <center>
 <img src="./assets/01-076.png" width="650">
@@ -797,7 +797,7 @@ The numerator $\tau {W_ * }$ is the best time in the pure sequential RAM model.
 Furthermore, dividing by $T$ yields the following:
 
 $$
-\underbrace {{{\tau {W_ * }} \over T}}_{ \equiv R} \le {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
+\underbrace {{{\tau {W_* }} \over T}}_{ \equiv R} \le {{{W_* }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$ ), where in general higher values are ***better***.
@@ -811,12 +811,12 @@ This indicates that the best possible value of the normalized performance is inv
 Recall some basic facts about the von Neumann architecture. Assuming ***perfect overlap*** of computation and data movement, you can estimate the ***maximum*** normalized performance as follows (cf. Section 11):
 
 $$
-{R_{\max}} = {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
+{R_{\max}} = {{{W_* }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 In performance analysis, one way to visualize the relationship among these parameters is via a so called **roofline plot** (as in the figure shown above), whose general form resembles a "roof" of a house.
   * The plot of of $R_{\max}$ vs. $I$ .
-  * Furthermore, here it is assumed that $W$ (work in the actual program) and $W_ *$ (equivalent work in the ideal serial RAM model) are both constant (e.g., as in the case of many algorithms or many implementations all performing the same amount of work, but varying in their communication), however, in general this is not always/necessarily true.
+  * Furthermore, here it is assumed that $W$ (work in the actual program) and $W_*$ (equivalent work in the ideal serial RAM model) are both constant (e.g., as in the case of many algorithms or many implementations all performing the same amount of work, but varying in their communication), however, in general this is not always/necessarily true.
 
 ***N.B.*** A roofline plot is typically plotted on log-log axes, however, for simplicity, this example uses a simple linear plot.
 
@@ -837,11 +837,11 @@ $$
 $$
 
 $$
-{y_0} = {{{W_ * }} \over W}
+{y_0} = {{{W_* }} \over W}
 $$
 
 $y_0$ is the maximum possible value of $R_{\max}$ .
-  * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
+  * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_* }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
 
 Furthermore, note that the ratio ${{W_*}} \over W$ also suggests that if an algorithm is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_*$ ), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_*$ ).
 
@@ -1138,7 +1138,7 @@ This requires a corresponding increase in the fast-memory size by a factor of $4
 Recall (cf. Section 12) the following definition:
 
 $$
-{R_{\max}} = {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
+{R_{\max}} = {{{W_* }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 Here, the machine balance $B$ is accounted for via the communication penalty.
@@ -1146,7 +1146,7 @@ Here, the machine balance $B$ is accounted for via the communication penalty.
 Furthermore, recall (cf. Section 14) that the intensity $I$ for "blocked" matrix multiplication with respect to fast-memory size ($Z$ ) is $\theta \left( \sqrt{Z} \right)$ , i.e.,:
 
 $$
-{R_{\max}} = {{{W_ * }} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
+{R_{\max}} = {{{W_* }} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
 $$
 
 Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty, i.e.,:
