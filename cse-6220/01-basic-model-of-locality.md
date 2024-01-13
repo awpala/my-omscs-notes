@@ -797,7 +797,7 @@ The numerator $\tau {W_ * }$ is the best time in the pure sequential RAM model.
 Furthermore, dividing by $T$ yields the following:
 
 $$
-\underbrace {{{\tau {W_ * }} \over T}}_{ \equiv R} \le {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
+\underbrace {{{\tau {W_ ٭ }} \over T}}_{ \equiv R} \le {{{W_ ٭ }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$ ), where in general higher values are ***better***.
