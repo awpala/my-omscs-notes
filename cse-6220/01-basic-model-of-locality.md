@@ -1149,13 +1149,8 @@ $$
 {R_{\max}} = {{{W_* }} \over W} \cdot \min \left( {1,{\sqrt{Z} \over B}} \right)
 $$
 
-Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty, i.e.,:
-
-$$
-\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'} _ {{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z} _ {{{\left( {2\sqrt Z } \right)}^2}}
-$$
-
-where $Z'$ is the new fast-memory size.
+Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty, i.e., $
+\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'} _ {{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z} _ {{{\left( {2\sqrt Z } \right)}^2}}$ , where $Z'$ is the new fast-memory size.
 
 ***N.B.*** An increase in machine balance $B$ over time is indeed a realistic observation. (Consult external sources, class forum discussion, etc. for why this is so.)
 
