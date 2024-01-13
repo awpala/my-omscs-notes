@@ -1152,7 +1152,7 @@ $$
 Therefore, all else equal, if machine balance $B$ doubles (i.e., $2B$ ), then $\sqrt{Z}$ must double to compensate accordingly for the communication penalty, i.e.,:
 
 $$
-\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'}_{{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z}_{{{\left( {2\sqrt Z } \right)}^2}}
+\sqrt {Z'}  = 2\sqrt Z  \Rightarrow \underbrace {Z'} _ {{{\left( {\sqrt {Z'} } \right)}^2}} = \underbrace {4Z} _ {{{\left( {2\sqrt Z } \right)}^2}}
 $$
 
 where $Z'$ is the new fast-memory size.
