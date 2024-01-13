@@ -841,7 +841,7 @@ $$
 $$
 
 $y_0$ is the maximum possible value of $R_{\max}$ .
-  * ***N.B.*** Take $\mathop {\lim }\limits_ {I \to \infty } \underbrace {\left\{ {{{{W _ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_ {{R_{\max }}}$ to see this more convincingly.
+  * ***N.B.*** Take $\mathop {\lim }\limits_{I \to \infty } \underbrace {\left\{ {{{{W_*}} \over W} \cdot \min \left( {1,{I \over B}} \right)} \right\}}_{{R_{\max }}}$ to see this more convincingly.
 
 Furthermore, note that the ratio ${{W_ * }} \over W$ also suggests that if an algorithm is designed in a sub-optimal manner (i.e., the work is not optimal with respect to $W_ * $ ), then a corresponding ***penalty*** is incurred (i.e., reduced maximum performance relative to $W_ * $ ).
 
