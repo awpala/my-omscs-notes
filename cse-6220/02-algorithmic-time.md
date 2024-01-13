@@ -100,7 +100,7 @@ Finally, the operation returns back to the center (as in the figure shown above)
 Now, consider performing 3 trillion such operations per second (i.e., `3 Top/s`) in a ***sequential*** manner.
   * ***N.B.*** Recall (cf. Section 2) that `1 Top/s` is equivalent to $10^{12}$ operations per second.
 
-If the signal travels at the speed of light, what is the maximum physical dimension of this mesh (i.e., $\ell$ )? (Provide the answer in units of microns [$\mu m$], where 1 micron is $10^{-6}$ m. Round the answer to 1 significant figure.)
+If the signal travels at the speed of light, what is the maximum physical dimension of this mesh (i.e., $\ell$ )? (Provide the answer in units of microns [$\mu m$ ], where 1 micron is $10^{-6}$ m. Round the answer to 1 significant figure.)
 
 ***N.B.*** The speed of light is approximately $3 \times 10^{8}$ `m/s`.
 
