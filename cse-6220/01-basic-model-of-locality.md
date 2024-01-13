@@ -785,10 +785,10 @@ This gives rise to a sum (rather than a maximum) because if there is ***no*** ov
 In addition to analyzing the execution time, it is also common to analyze ***measures of performance***. Let such a measure of **normalized performance** ($R$ ) be defined as follows:
 
 $$
-R \equiv {{\tau {W_* }} \over T}
+R \equiv {{\tau {W_ * }} \over T}
 $$
 
-The numerator $\tau {W_* }$ is the best time in the pure sequential RAM model.
+The numerator $\tau {W_ * }$ is the best time in the pure sequential RAM model.
 
 <center>
 <img src="./assets/01-076.png" width="650">
@@ -797,7 +797,7 @@ The numerator $\tau {W_* }$ is the best time in the pure sequential RAM model.
 Furthermore, dividing by $T$ yields the following:
 
 $$
-\underbrace {{{\tau {W_* }} \over T}}_{ \equiv R} \le {{{W_* }} \over W} \cdot \min \left( {1,{I \over B}} \right)
+\underbrace {{{\tau {W_ * }} \over T}}_{ \equiv R} \le {{{W_ * }} \over W} \cdot \min \left( {1,{I \over B}} \right)
 $$
 
 This indicates that the best possible value of the normalized performance is inversely proportional to time ($T$ ), where in general higher values are ***better***.
