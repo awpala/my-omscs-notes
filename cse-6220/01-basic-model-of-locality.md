@@ -867,7 +867,7 @@ $$
 \rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
 \ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
 \ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] +  = A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]
+\ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] += A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]
 \end{array}
 }
 $$
