@@ -1046,7 +1046,7 @@ I\left( {n;Z} \right) = \theta \left( b \right)
 $$
 
 $$
-I\left( {n;Z} \right) = \theta \left( {\sqrt z } \right)
+I\left( {n;Z} \right) = \theta \left( {\sqrt Z } \right)
 $$
 
 ***N.B.*** Both of these are equivalent per assumption $Z = 3{b^2} + O\left( 1 \right)$ .
