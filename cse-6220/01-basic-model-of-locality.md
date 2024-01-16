@@ -815,7 +815,7 @@ $$
 $$
 
 In performance analysis, one way to visualize the relationship among these parameters is via a so called **roofline plot** (as in the figure shown above), whose general form resembles a "roof" of a house.
-  * The plot of of $R_{\max}$ vs. $I$ .
+  * The plot is of $R_{\max}$ vs. $I$ .
   * Furthermore, here it is assumed that $W$ (work in the actual program) and $W_*$ (equivalent work in the ideal serial RAM model) are both constant (e.g., as in the case of many algorithms or many implementations all performing the same amount of work, but varying in their communication), however, in general this is not always/necessarily true.
 
 ***N.B.*** A roofline plot is typically plotted on log-log axes, however, for simplicity, this example uses a simple linear plot.
