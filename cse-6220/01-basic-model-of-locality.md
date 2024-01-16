@@ -894,7 +894,7 @@ $$
 \ \ \ \ \ \ \ \ {\rm{// read\ }}C\left[ {i,j} \right]{\rm{\ and\ }}B\left[ {:,j} \right]\\
 \ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
 \ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] +  = A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]\\
-\ \ \ \ \ \ \ \ {\rm{// store\ }}C\left[ {i,j} \right]
+\ \ \ \ \ \ \ \ \ \ \ \ {\rm{// store\ }}C\left[ {i,j} \right]
 \end{array}
 }
 $$
