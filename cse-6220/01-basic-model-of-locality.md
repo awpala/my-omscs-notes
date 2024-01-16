@@ -889,12 +889,12 @@ $$
 \boxed{
 \begin{array}{l}
 \rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ {\rm{// read\ }}A\left[ {i,:} \right]\\
+\ \ \ \ {\rm{//\ read\ }}A\left[ {i,:} \right]\\
 \ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ {\rm{// read\ }}C\left[ {i,j} \right]{\rm{\ and\ }}B\left[ {:,j} \right]\\
+\ \ \ \ \ \ \ \ {\rm{//\ read\ }}C\left[ {i,j} \right]{\rm{\ and\ }}B\left[ {:,j} \right]\\
 \ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
 \ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] +  = A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]\\
-\ \ \ \ \ \ \ \ \ \ \ \ {\rm{// store\ }}C\left[ {i,j} \right]
+\ \ \ \ \ \ \ \ \ \ \ \ {\rm{//\ store\ }}C\left[ {i,j} \right]
 \end{array}
 }
 $$
