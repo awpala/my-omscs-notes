@@ -419,3 +419,87 @@ Now, consider some additional exercises to further analyze the implications of t
 <img src="./assets/02-036Q.png" width="650">
 </center>
 
+To further examine the principle of balance, consider a multi-core von Neumann system (as in the figure shown above).
+
+One version of the system has parameters which are perfectly tuned for sorting very large arrays.
+
+A new version of the system is subsequently proposed, wherein the quantity of cores is *doubled*. Given this, can you adjust the other parameters of the system in order to maintain balance?
+  * To accomplish this, note the following relevant important ***fact***: For comparison-based sorting, the best-case ratio of comparisons (i.e., $W$ , the relevant compute operations in this scenario) to memory transfers (i.e., $Q$ ) is ${W \over Q} \propto L\log {Z \over L}$ .
+
+The available adjustments are as follows (select all that apply):
+  * halve the bandwidth ($\beta_0$ ) and double the peak ($R_0$ )
+  * square the fast memory size ($Z$ ) and square the transaction size ($L$ )
+  * double the fast memory size ($Z$ )
+  * double the bandwidth ($\beta_0$ )
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-037A.png" width="650">
+</center>
+
+Of the four available options, the following two are most conducive to maintaining balance in a doubled-core version of the original system:
+  * square the fast memory size ($Z$ ) and square the transaction size ($L$ )
+  * double the bandwidth ($\beta_0$ )
+
+Consider each proposed adjustment in turn, as follows.
+
+<center>
+<img src="./assets/02-038A.png" width="250">
+</center>
+
+First, recall the balance principle (cf. Section 6):
+
+$$
+{W \over {Q}} \geq {{R_0} \over {{\beta _0}}} {PL}
+$$
+
+
+<center>
+<img src="./assets/02-039A.png" width="250">
+</center>
+
+If the original system were *perfect*, then the ratio $W/Q$ could be examined directly in this manner, i.e.,:
+
+$$
+\bcancel{L} \log {Z \over L} \approx {{{R_0}} \over {{\beta _0}}}P \bcancel{L}  \Rightarrow \log {Z \over L} \approx {{{R_0}} \over {{\beta _0}}}P
+$$
+
+<center>
+<img src="./assets/02-040A.png" width="650">
+</center>
+
+Now suppose that the cores are doubled (i.e., substituting $2P$ for $P$ ). Let us now consider the four proposed adjustments in turn.
+
+<center>
+<img src="./assets/02-041A.png" width="650">
+</center>
+
+Given ${{R'}_0} = 2{R_0}$ and ${{\beta '}_0} = 2{\beta _0}$ (where in general $'$ denotes the doubled-cores version), this yields ${{{R'_0} \over {{\beta '}_0}}} = {2 \over {1 / 2}} = 4$ , which further imbalances the system.
+
+<center>
+<img src="./assets/02-042A.png" width="650">
+</center>
+
+Given $Z' = Z^2$ and ${L'} = L^2$ , this yields $\log \left( {{{Z'} \over {L'}}} \right) = \log \left( {{{{Z^2}} \over {{L^2}}}} \right) = \log {\left( {{Z \over L}} \right)^2} = 2\log \left( {{Z \over L}} \right)$, which maintains balance in the system (i.e., factor $2$ cancels with that of $2P$ on the right-hand side).
+  * ***N.B.*** This is a very ***expensive*** way to maintain balance. This suggests going from, for example, a `1 MB` cache in one generation to a `1 TB` cache in another.
+
+<center>
+<img src="./assets/02-043A.png" width="650">
+</center>
+
+Given $Z' = 2Z$ , this yields $\log \left( {{{Z'} \over L}} \right) = \log \left( {{{2Z} \over L}} \right) = \log \left( {{2 \over L}} \right) + \log \left( {{Z \over L}} \right)$ , this does not yield sufficient compensation to maintain balance (i.e., the additive term $\log \left( {{2 \over L}} \right)$ will not match $2P$ here).
+
+<center>
+<img src="./assets/02-044A.png" width="650">
+</center>
+
+Given $\beta' = 2\beta$ , this yields ${{{R_0}} \over {{{\beta '}_0}}}\left( {2P} \right) = {{{R_0}} \over {\bcancel{2} {\beta _0}}}\left( {\bcancel{2}P} \right)$ , which maintains balance in the system.
+  * ***N.B.*** Whether this is practical, recall the exponential trends (cf. Section 6). Increasing transistor density yields the ability to increase on-chip resources (e.g., number of cores, size of the fast memory, speed, etc.), however, historical trends suggest that bandwidth $\beta_0$ does ***not*** grow as fast as the product $R_0 P$ over time.
+
+So, then, are there any additional available options? One additional possibility would be ${{R'}_0} = {1 \over 2}{R_0}$ .
+  * ***N.B.*** The resulting effect of this is left as an exercise.
+
+As this example demonstrates, for a computation such as comparison-based sorting, it appears that there are some fundamental ***limits*** which preclude building a balanced system. Indeed, this is a current "research frontier."
+
+## 8. Power Limits
