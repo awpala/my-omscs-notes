@@ -554,3 +554,93 @@ $$
 > "Essentially all models are wrong, but some are useful."
 
 ## 9. The Power Dynamic Equation
+
+<center>
+<img src="./assets/02-048.png" width="650">
+</center>
+
+Recall (cf. Section 8) that in computing, **power** is comprised of two parts, constant power and dynamic power.
+
+Now, consider some of the fundamentals of circuits which drive dynamic power.
+
+<center>
+<img src="./assets/02-049.png" width="650">
+</center>
+
+Given a **logic gate** (as in the figure shown above), it consumes a certain amount of physical energy (as depicted by the beverage glass in the figure shown above).
+
+<center>
+<img src="./assets/02-050.png" width="650">
+</center>
+
+Now, suppose that an input to the gate is changed (as in the figure shown above). Consequently, the energy dissipates.
+
+<center>
+<img src="./assets/02-051.png" width="650">
+</center>
+
+After the energy dissipates from the gate, it must subsequently restored/"refilled" (as in the figure shown above). However, when the circuit switches, there will be some energy ***lost*** during this process.
+
+<center>
+<img src="./assets/02-052.png" width="650">
+</center>
+
+Consequently, this energy loss must be additionally "restored" (as in the figure shown above).
+
+Let us know consider the following:
+  * How much energy must be "restored" in this manner?
+  * How frequently does this "switching" occur?
+
+<center>
+<img src="./assets/02-053.png" width="650">
+</center>
+
+In order to compute the dynamic power, consider how much energy is consumed by the gate during a state change. This can be expressed as follows:
+
+$$
+\rm{Energy\ per\ gate} = CV^2
+$$
+
+where:
+  * $C$ is the **capacitance** (a function of the material properties and the geometry of the logic gate)
+  * $V$ is the **supply voltage** (a part of the circuit design)
+    * ***N.B.*** The supply voltage $V$ can be tuned for some circuits over a defined range.
+
+Furthermore, observe the *square* relationship to $V$ (i.e., $V^2$ ). For present purposes, it is not important to understand *why* this relationship exists, but rather it is important to note that this relationship $CV^2$ ***quantifies*** the energy itself.
+
+<center>
+<img src="./assets/02-054.png" width="650">
+</center>
+
+<center>
+<img src="./assets/02-055.png" width="650">
+</center>
+
+The frequency of switching is influenced by two ***factors***:
+  * **clock rate**, or **frequency** ($f$ ) → determines the ***maximum*** number of times that the circuit can switch (i.e., change states) per unit time
+    * ***N.B.*** The logic gate does not necessarily switch on *every* cycle, but rather the particular computation in question dictates the particular switching frequency (i.e., cycles per unit time).
+  * **activity factor** ($a$ ) → the number of switching operations per cycle
+    * ***N.B.*** Given the typical operation of a clock, the maximum value for $a$ is normalized to $1$ (i.e., full operation), and otherwise depends on the particular computation in question.
+
+<center>
+<img src="./assets/02-056.png" width="650">
+</center>
+
+Taken together, the aforementioned parameters can be used to compute/express the dynamic power as follows (sometimes called the **dynamic power equation** accordingly):
+
+$$
+\Delta P = \underbrace {C{V^2}}_{\left[ {{\textstyle{{{\rm{energy}}} \over {{\rm{gate}}}}}} \right]} \times \underbrace f_{\left[ {{\textstyle{{{\rm{cycles}}} \over {{\rm{time}}}}}} \right]} \times \underbrace a_{\left[ {{\textstyle{{{\rm{switches}}} \over {{\rm{cycle}}}}}} \right]}
+$$
+
+Furthermore, note the relationship between $f$ (clock rate) and $V$ (supply volutage) as follows:
+
+$$
+f \propto V
+$$
+
+This proportionality must be ***maintained*** (i.e., decrease of one requires decrease of the other, and similarly increase of one requires increase of the other).
+  * ***N.B.*** Briefly, the reason for this is that it is necessary in order to maintain the stability and reliability of the circuit itself (in particular, in the presence of environmental noise).
+
+The implications of the dynamic power equation on performance are explored next in a quiz section.
+
+## 10. Power Motivates Parallelism Quiz and Answers
