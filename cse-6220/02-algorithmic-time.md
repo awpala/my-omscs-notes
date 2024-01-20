@@ -503,3 +503,54 @@ So, then, are there any additional available options? One additional possibility
 As this example demonstrates, for a computation such as comparison-based sorting, it appears that there are some fundamental ***limits*** which preclude building a balanced system. Indeed, this is a current "research frontier."
 
 ## 8. Power Limits
+
+Today, one of the major ***physical constraints*** on computing platforms is **power**.
+  * ***N.B.*** This may be familiar already from a previously taken computer architecture course, or equivalent. Nevertheless, this section will explore this concept in the present context of high-performance computing.
+
+<center>
+<img src="./assets/02-045.png" width="650">
+</center>
+
+In the figure shown above, there is a well known plot created in 2001 by Pat Gelsinger, then at Intel. The plot tracks power per unit area (i.e., **power density**) across several generations of Intel's microprocessors, tracked up until the year 2001 (the year of the corresponding talk at the ISSCC conference), with further extrapolation into the "future" (2010).
+
+Fundamentally, **power** is defined as follows:
+
+$$
+{\rm{Power}} \equiv {{{\rm{Energy\ consumed}}} \over {{\rm{Time}}}}
+$$
+
+having SI units of `Joules/sec`, equivalently defined as a `Watt` (`W`).
+
+Previously, up until the early 2000s, sequential computers were manufactured to run progressively faster in such a manner by increasing the ***clock rate***. However, at that point, Gelsinger's prediction was that the required amount of power per unit area would increase exponentially in order to maintain this trend.
+
+However, in reality, this potential issue was subsequently circumvented by ceasing to increase the clock rate, and instead proceeding onto ***multi-core*** chip design.
+
+<center>
+<img src="./assets/02-046.png" width="650">
+</center>
+
+To understand the transition to multi-core processors, consider more closely the power consumed by a computer program (as in the figure shown above).
+  * ***N.B.*** The data in the plot in the figure shown above is derived directly from that collected by one of Prof. Vuduc's previous graduate students.
+
+The plot demonstrates power consumption at various sampled time intervals during program execution. Observe that there is fluctuation in these readings, corresponding presumably to the varied power behavior of the program throughout execution.
+
+<center>
+<img src="./assets/02-047.png" width="650">
+</center>
+
+At any given point in time, a computing system's power consumption is comprised of two ***parts*** (as in the figure shown above): 
+  * **constant power** ($P_0$ ) → this is the baseline amount of power consumed by the computing system, independently of the application(s) itself (as denoted by dotted yellow line in the figure shown above)
+    * ***N.B.*** "constant power" in this context may also be called **static power** or **idle power** elsewhere. For purposes of this course, "constant power" will be a generally encompassing term for these related concepts.
+  * **dynamic power** ($\Delta P$ ) → this is the variable/fluctuating power consumed by the application as it runs (as denoted by red arrows in the figure shown above)
+
+Therefore, the **total power** ($P$ ) can be defined as:
+
+$$
+P = P_0 + \Delta P
+$$
+
+***N.B.*** Real circuits can be much more complex than this relatively simple model suggests, however, that is not a point of concern for purposes of present discussion. As G.E.P. Box states:
+
+> "Essentially all models are wrong, but some are useful."
+
+## 9. The Power Dynamic Equation
