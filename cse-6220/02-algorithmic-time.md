@@ -644,3 +644,45 @@ This proportionality must be ***maintained*** (i.e., decrease of one requires de
 The implications of the dynamic power equation on performance are explored next in a quiz section.
 
 ## 10. Power Motivates Parallelism Quiz and Answers
+
+<center>
+<img src="./assets/02-057Q.png" width="650">
+</center>
+
+Consider two chip designs as follows:
+
+| Design | Clock frequency (`GHz`) | Dynamic power (`W`) | Program execution time |
+|:--:|:--:|:--:|:--:|
+| 1 | $f_1 = 4$ | $\Delta P_1 = 64$ | $T_1$ |
+| 2 | $f_2 = 1$ | $\Delta P_2 = ?$ | $T_2 = ?$ |
+
+Here, $T_1$ is the time required for a given program to run on Design 1.
+
+What is the corresponding dynamic power (expressed in `W`) and program execution time (expressed in terms of $T_1$ ) for Design 2?
+  * ***N.B.*** As needed, assume that all other factors between the two designs are otherwise ***equal***.
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-058A.png" width="650">
+</center>
+
+The corresponding performance characteristics for Design 2 are as follows:
+
+| Design | Clock frequency (`GHz`) | Dynamic power (`W`) | Program execution time |
+|:--:|:--:|:--:|:--:|
+| 1 | $f_1 = 4$ | $\Delta P_1 = 64$ | $T_1$ |
+| 2 | $f_2 = 1$ | $\Delta P_2 = 1$ | $T_2 = 4T_1$ |
+
+With respect to the program execution time, by inspection, given a one-fourth slower clock frequency (i.e., ${f_2} = {1 \over 4}{f_1}$ ), then correspondingly the *same* program (all else equal) requires $4T_1$ total time for execution, $T_2$ .
+
+Furthermore, With respect to the clock frequency (i.e., $f_2$ ), via the dynamic power equation (cf. Section 9):
+
+$$
+\Delta P = CV{}^2af \Rightarrow \underbrace {Ca}_{{\rm{constant}}} = {{\Delta {P_1}} \over {V_1^2{f_1}}} = {{\Delta {P_2}} \over {V_2^2{f_2}}} \Rightarrow \Delta {P_2} = {{V_2^2{f_2}} \over {V_1^2{f_1}}}\Delta {P_1}\underbrace  \Rightarrow _{V \propto f}\Delta {P_2} = {{f_2^3} \over {f_1^3}}\Delta {P_1} = {1 \over {64}}\Delta {P_2}
+$$
+
+These results suggest the "typical argument" made for transitioning to parallel (i.e., multi-core) processors, in favor of additionally increasing the clock frequency.
+  * ***N.B.*** Suppose there *were* sufficient parallelism to utilize multiple cores, thereby allowing to create a multi-core processors comprised of four cores of Design 2. In this case, the program execution time would be equivalent to Design 1 (i.e., ${{T'}_2} = {T_1}$ ), however, the corresponding power consumption would be much lower (i.e., only $\Delta {{P'}_2} = 4\Delta {P_2}$ , or `4 W` total for the entire processor).
+
+## 11. Power Knobs
