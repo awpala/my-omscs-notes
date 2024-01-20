@@ -679,10 +679,58 @@ With respect to the program execution time, by inspection, given a one-fourth sl
 Furthermore, With respect to the clock frequency (i.e., $f_2$ ), via the dynamic power equation (cf. Section 9):
 
 $$
-\Delta P = CV{}^2af \Rightarrow \underbrace {Ca}_{{\rm{constant}}} = {{\Delta {P_1}} \over {V_1^2{f_1}}} = {{\Delta {P_2}} \over {V_2^2{f_2}}} \Rightarrow \Delta {P_2} = {{V_2^2{f_2}} \over {V_1^2{f_1}}}\Delta {P_1}\underbrace  \Rightarrow _{V \propto f}\Delta {P_2} = {{f_2^3} \over {f_1^3}}\Delta {P_1} = {1 \over {64}}\Delta {P_2}
+\Delta P = CV{}^2af \Rightarrow \underbrace {Ca}_{{\rm{constant}}} = {{\Delta {P_1}} \over {V_1^2{f_1}}} = {{\Delta {P_2}} \over {V_2^2{f_2}}} \Rightarrow \Delta {P_2} = {{V_2^2{f_2}} \over {V_1^2{f_1}}}\Delta {P_1}\underbrace  \Rightarrow _{{{\left( {V \propto f} \right)}^2}}\Delta {P_2} = {{f_2^3} \over {f_1^3}}\Delta {P_1} = {1 \over {64}}\Delta {P_2}
 $$
 
 These results suggest the "typical argument" made for transitioning to parallel (i.e., multi-core) processors, in favor of additionally increasing the clock frequency.
   * ***N.B.*** Suppose there *were* sufficient parallelism to utilize multiple cores, thereby allowing to create a multi-core processors comprised of four cores of Design 2. In this case, the program execution time would be equivalent to Design 1 (i.e., ${{T'}_2} = {T_1}$ ), however, the corresponding power consumption would be much lower (i.e., only $\Delta {{P'}_2} = 4\Delta {P_2}$ , or `4 W` total for the entire processor).
 
 ## 11. Power Knobs
+
+***N.B.*** This quiz is more of a "pseudo-quiz," which is not *directly* testing course-related knowledge, but rather encourages making an "educated guess," in order to promote learning.
+
+<center>
+<img src="./assets/02-059Q.png" width="650">
+</center>
+
+Recall (cf. Section 9) the dynamic power equation (as in the figure shown above). Consider the constituent factors as controllable "power knobs" for this purpose, i.e.,:
+  * $C$ (capacitance)
+  * $V$ (supply voltage)
+  * $f$ (clock frequency)
+  * $a$ (activity factor)
+    * ***N.B.*** Recall (cf. Section 9) that $a$ is the frequency of state changes relative to elapsed cycles, normalized to a maximum value of $1$ (i.e., $100\%$ of cycles).
+
+Which of these "knobs" might be within the control of algorithms and software?
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-060A.png" width="650">
+</center>
+
+The capacitance $C$ does not apply here, because it is a geometric and electrical property of the materials used to manufacture the processor chip, which is not typically under the purview of software and/or algorithmic control.
+
+<center>
+<img src="./assets/02-061A.png" width="650">
+</center>
+
+With respect to the supply voltage $V$ and clock frequency $f$ (which are related via $V \propto f$ , recall Section 9), many modern operating systems provide a corresponding feature called **dynamic voltage and frequency scaling** (**DVFS**), which allows to set either/both of these parameters.
+  * ***N.B.*** DVFS is typically a feature of the hardware, however, but certain hardware processors and operating systems offer this as well via software-level control (e.g., `cpufreq` in Linux).
+
+<center>
+<img src="./assets/02-062A.png" width="650">
+</center>
+
+With respect to the activity factor $a$ , given that there are inherently large chunks of "processing" in the system which may not be immediately "needed" at a given point in time, then at a software level, it may be conceivable to simply "turn off" those chunks.
+
+<center>
+<img src="./assets/02-063A.png" width="650">
+</center>
+
+For example, suppose a ***reduction*** (cf. Lesson 1) is being performed (as in the figure shown above).
+  * Algorithmically, most of this operation entails ***streaming*** input data. Correspondingly, there is no reason to cache this data; therefore, if the hardware provides the ability to disable caching, then that would be advisable to use in this scenario.
+
+***N.B.*** Traditionally, the topic of the dynamic power equation is in the scope of hardware and low-level software. Nevertheless, it is discussed here briefly, as per Hillis' opening question for this lesson.
+
+## 12. Power-less to Choose
+
