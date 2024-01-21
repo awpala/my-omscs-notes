@@ -108,4 +108,85 @@ $$
 
 As a closing remark, note that these relative speedups are only "notional"; conversely, when performing algorithm analysis, it more typically done in an "asymptotic" sense (i.e., ignoring hidden constants). The purpose here is to build intuition about how performance changes as these "improving factors" are incorporated into the corresponding algorithm(s) in question.
 
-## 3. External Memory Mergesort
+## 3. External Memory Merge Sort
+
+<center>
+<img src="./assets/03-006.png" width="450">
+</center>
+
+Consider the problem of sorting $n$ elements in a two-level memory hierarchy (as in the figure shown above).
+
+Initially, assume that the processor is ***sequential***.
+
+Now, consider a natural scheme based on the merge sort idea.
+
+### Merge Sort Phase 1
+
+<center>
+<img src="./assets/03-007.png" width="650">
+</center>
+
+Start by logically dividing the input into chunks of size proportional to (but no greater than) $Z$ (as in the figure shown above), such that a single such chunk fits into fast memory--i.e., $n\over{f \cdot Z}$ chunks, where $f \in [0,1)$ .
+
+<center>
+<img src="./assets/03-008.png" width="650">
+</center>
+
+Next, read one such chunk of input from slow memory into fast memory (as in the figure shown above).
+
+<center>
+<img src="./assets/03-009.png" width="650">
+</center>
+
+After reading the chunk into fast memory, ***sort*** this chunk (as in the figure shown above).
+  * ***N.B.*** Such a "sorted output" sitting in fast memory will be referred to as a ***sorted run***, or simply ***run*** for short. Furthermore, the mnemonic of a left-to-right arrow (as in the figure shown above) indicates that the chunk in question is sorted in this manner.
+
+<center>
+<img src="./assets/03-010.png" width="650">
+</center>
+
+Since the run is now sorted, it is written back into slow memory (as in the figure shown above).
+
+<center>
+<img src="./assets/03-011.png" width="650">
+</center>
+
+The aforementioned process is repeated on each input chunk of size $f \cdot Z$ (as in the figure shown above), until all $n\over{f \cdot Z}$ chunks are sorted runs.
+
+<center>
+<img src="./assets/03-012.png" width="650">
+</center>
+
+The aforementioned process is referred to as **Phase 1** of the procedure, summarized as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{partition\ input\ into\ }}{n \over {f \cdot Z}}{\rm{\ chunks}}\\
+{\rm{foreach\ chunk\ }}i \leftarrow 1{\rm{\ to\ }}{n \over {f \cdot Z}}{\rm{\ do}}\\
+\ \ \ \ {\rm{read\ chunk\ }}i\\
+\ \ \ \ {{\rm{sort\ chunk\ }} i {\rm{\ into\ a\ (sorted)\ run}}}\\
+\ \ \ \ {\rm{write\ run\ }}i
+\end{array}
+}
+$$
+
+### Merge Sort Phase 2
+
+<center>
+<img src="./assets/03-013.png" width="650">
+</center>
+
+Following the merge sort idea, in **Phase 2**, all of the sorted runs rae merged into a single, final sorted run, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{merge\ the\ }}{n \over {f \cdot Z}}{\rm{\ runs\ into\ a\ single\ run}}}
+\end{array}
+}
+$$
+
+Before discussing Phase 2 further, let us first consider Phase 1 (partitioned sorting) in more detail (as discussed next via quiz section).
+
+## 4. Partioned Sorting Step Analysis Quiz and Answers

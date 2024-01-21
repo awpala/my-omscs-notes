@@ -1,5 +1,7 @@
 # Algorithmic Time: Energy and Power
 
+***N.B.*** This lesson is "optional" per the course staff.
+
 ## 1. Introduction
 
 At the Massachusetts Institute of Technology (MIT) in the early 1980s, Danny Hillis attempted to build a new supercomputer, called a **connection machine**, characterized by lights blinking according to where communication was occurring within the system.
