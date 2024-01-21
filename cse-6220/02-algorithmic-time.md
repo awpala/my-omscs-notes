@@ -855,3 +855,36 @@ $$
   * ***N.B.*** Here, ${{{T_B}} \over {{T_C}}} \propto {{{f_C}} \over {{f_B}}}$ is assumed, because System B and System C are the same except for their differing clock frequencies (i.e., execution time is inversely proportional to frequency, assuming that all other non-local compute costs can be neglected).
 
 ## 14. Algorithmic Energy Quiz and Answers
+
+Now, consider a more direct relationship between time, energy, and power as a function of the algorithm itself.
+
+<center>
+<img src="./assets/02-071Q.png" width="650">
+</center>
+
+With respect to time and energy, the high level difference between these is as follows:
+  * **Time** can be reduced or hidden via ***overlap*** (e.g., parallelism)
+  * **Energy** incurs a cost for ***every*** operation
+
+The simplest model for parallelism is the **work-span** (or **multi-threaded directed acyclic graph (DAG)** model), as discussed later in the course. In this model, there are several abstract algorithmic costs under consideration, as follows:
+  * Work, $W(n)$
+  * Span, $D(n)$
+  * Average available parallelism. $W/D$
+  * Execution time $T_P$ (given peak processors), as bounded by $\max \left( {D,{W \over P}} \right) \le {T_P} \le D + {{W - D} \over P}$
+  * (Self-)speedup, $S_P = {T_1 \over{T_P}}$
+    * ***N.B.*** This definition of speedup is "relaxed," in the sense that it is self-referential (where, rather than the equivalent best sequential-time, instead $T_1$ here represents the time of the parallel algorithm when running on a single processor). Otherwise, if the algorithm is work-optimal, then self-speedup and "conventional" speedup (i.e., relative to the best sequential case) approach parity/equivalence asymptotically.
+
+So, then, of these five metrics, which is the ***best*** to use for quantifying energy? (Select only *one*.)
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-072A.png" width="650">
+</center>
+
+Given these options, work ($W(n)$ ) best quantifies the energy usage.
+
+Since, by definition, energy entails an expenditure of energy for ***every*** operation, this is indeed congruent with what work represents (i.e., a count of ***every*** operation in the algorithms). Therefore, work is the appropriate analogy for measurement of asymptotic energy.
+  * ***N.B.*** This gives rise to an insightful ***implication***: At an algorithmic level, if energy is of primary concern, and supposing that the energy per operation is bounded by some constant, then finding work-optimal algorithms is essential to achieve this objective.
+
+## 15. Algorithmic Dynamic Power Quiz and Answers
