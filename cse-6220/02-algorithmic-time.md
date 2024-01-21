@@ -553,7 +553,7 @@ $$
 
 > "Essentially all models are wrong, but some are useful."
 
-## 9. The Power Dynamic Equation
+## 9. The Dynamic Power Equation
 
 <center>
 <img src="./assets/02-048.png" width="650">
@@ -937,3 +937,82 @@ Therefore, with respect to ***energy optimality***, there underlies this fundame
   * By corollary, high speed requires less time, which implies more power usage.
 
 ## 16. Parallelism and Dynamic Voltage and Frequency Scaling (DVFS) Quiz and Answers
+
+Consider the following: Can algorithmic parallelism be used to increase speed without otherwise increasing power?
+
+<center>
+<img src="./assets/02-075Q.png" width="650">
+</center>
+
+For the sake of argument, consider an algorithm in the work-span model (as in the figure shown above).
+  * ***N.B.*** The work-span model is discussed in more detail later in the course.
+
+Suppose that Brent's theorem holds, provided that the algorithm runs at some base clock frequency on a parallel random access memory (PRAM) machine with $P$ cores.
+
+Furthermore, suppose that the clock is slowed down by a factor of $\sigma$ with respect to the base frequency $f$ , for example, given $f = 1\ \rm{GHz}$ and $\sigma = 2$ :
+
+$$
+\hat f = {f \over \sigma } = 500{\rm{\ MHz}}
+$$
+
+<center>
+<img src="./assets/02-076Q.png" width="650">
+</center>
+
+A frequency change also implies a decrease in the power per core (i.e., in order to maintain constant power for the overall system, i.e., $P_0 = 0$ ). Per the dynamic power equation (cf. Section 9), this implies the following definition:
+
+$$
+\hat P \equiv {\sigma ^3}P
+$$
+
+***N.B.*** Here, the factor $\sigma^3$ represents the increase in processing cores while maintaining constant overall system power (subject to the constraint of constant power $P_0 = 0$ ).
+
+In this scenario, what is the best value of $\sigma$ to use? (Answer symbolically in terms of $W$, $D$, $P$, and other constants.)
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-077A.png" width="650">
+</center>
+
+The optimal value of $\sigma$ is as follows:
+
+$$
+{\sigma _ * } = {\left( {2{{W - D} \over {PD}}} \right)^{1/3}}
+$$
+
+<center>
+<img src="./assets/02-078A.png" width="650">
+</center>
+
+
+To derive this particular result, first consider Brent's theorem, which gives the following:
+
+$$
+{{\hat T}_P} \le \underbrace {\sigma \left( {D + {{W - D} \over {{\sigma ^3}P}}} \right)}_{ \equiv g\left( \sigma  \right)}
+$$
+
+This defines an upper bound on time (i.e., ${\hat T}_P$ ), given that there is a slowdown on a per-core basis (factor $\sigma$ ) but more cores are used to compensate for this (factor ${\sigma ^3}P$ ).
+
+Furthermore, defining the right-hand side as $g(\sigma)$ , this can be minimized as follows:
+
+$$
+{{dg} \over {d\sigma }} = D - 2\left( {{{W - D} \over {{\sigma ^3}P}}} \right)\underbrace  \Rightarrow _{{\sigma _ * } \equiv {{dg} \over {d\sigma }} = 0}0 = D - 2\left( {{{W - D} \over {{\sigma _ * }^3P}}} \right) \Rightarrow {\sigma _ * } = {\left( {2{{W - D} \over {PD}}} \right)^{1/3}}
+$$
+
+***N.B.*** For a more comprehensive argument, verify that ${{{d^2}g} \over {d{\sigma ^2}}} > 0$ in order to ensure that $\sigma_*$ is indeed a minimizer.
+
+A more interesting question is this: Can a ***speedup*** be achieved in this manner?
+  * The answer to this depends on the value of $P$ itself, however, in certain cases this *can* indeed occur. (This is left as an exercise to the reader.)
+
+## 17. Conclusion
+
+It is now evident that even simple models of computers (including those that ignore the memory hierarchy, parallelism, and communication) have nevertheless been extremely productive, yielding a vast array of applications without "comprehensive regard" for the physical realities of the underlying machines.
+
+However, if indeed the fast approach of the end of Moore's law is imminent, thereby yielding new performance bottlenecks (e.g., limits on power and energy), then this again begs the basic questions posed by Danny Hills originally in the 1980s, e.g.,:
+  * How to make the most of the machines which are available?
+  * Is there a role for physical reality in the design of algorithms and software?
+  * How can all of this be considered while still maintaining productivity of developers?
+
+These types of questions are indeed at the frontier of current high-performance computing research, which include some "whackier" ideas such as quantum computing and biological computing, representing some of the more recent "extremes" of physical computation.
+  * ***N.B.*** These topics are beyond the scope of this course, but are mentioned here for further consideration.
