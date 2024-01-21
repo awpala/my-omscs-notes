@@ -775,3 +775,83 @@ This is also readily evident in the phase plot (as in the figure shown above), w
 
 ## 13. Exploiting Dynamic Voltage and Frequency Scaling (DVFS) Quiz and Answers
 
+<center>
+<img src="./assets/02-066Q.png" width="350">
+</center>
+
+Consider the following two systems:
+
+| Characteristic | System A | System B | Comparison |
+|:--:|:--:|:--:|:--:|
+| Energy use | $E_A$ | $E_B$ | $E_B = 2E_A$ |
+| Execution time (same computation) | $T_A$ | $T_B$ | $T_B = {1 \over{3}} T_A$ |
+
+Suppose that dynamic voltage and frequency scaling (DVFS) (cf. Section 11) is used to rescale System B, such that its average power usage is the ***same*** as that of System A. Consequently, will System B still be faster than System A?
+  * ***N.B.*** For purposes of this quiz, ignore the effects of constant power ($P_0$ ), but rather only consider dynamic power ($\Delta P$ ).
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-067A.png" width="650">
+</center>
+
+Indeed, System B is still faster than System A, subject to the constraint of equal average power usage. Intuitively, System B is three times faster than System A, but at only a cost of twice the energy usage.
+
+Now, consider a further quantitative analysis of this conclusion.
+
+<center>
+<img src="./assets/02-068A.png" width="650">
+</center>
+
+As given, System B uses six times as much power as System A, i.e.,:
+
+$$
+{{{P_B}} \over {{P_A}}} = {{{E_B}/{T_B}} \over {{E_A}/{T_A}}} = {{{E_B}} \over {{E_A}}} \cdot {{{T_B}} \over {{T_A}}} = 6
+$$
+
+
+<center>
+<img src="./assets/02-069A.png" width="650">
+</center>
+
+With respect to DVFS, the key relationship that it allows to control is that of $\Delta P \propto f^3$ . Correspondingly this gives rise to the following definitions (where $k$ is a system-dependent constant):
+
+$$
+{P_A} \equiv {k_A}f_A^3
+$$
+
+$$
+{P_B} \equiv {k_B}f_B^3
+$$
+
+Furthermore, the rescaled version of System B (i.e., subscript $_C$ ) is similarly defined as follows:
+
+$$
+{P_C} \equiv {k_B}f_C^3
+$$
+
+  * ***N.B.*** $k_B$ is constant with respect to $f$ .
+
+Given these definitions, the power relationships are therefore as follows:
+
+$$
+{{{P_B}} \over {{P_A}}} = {{{k_B}f_B^3} \over {{k_A}f_A^3}} = 6 \Rightarrow {{{f_B}} \over {{f_A}}} = {\left( {{{{k_A}} \over {{k_B}}}} \right)^{1/3}}{6^{1/3}}
+$$
+
+$$
+{{{P_C}} \over {{P_A}}} = {{{k_B}f_C^3} \over {{k_A}f_A^3}} = 1 \Rightarrow {{{f_C}} \over {{f_A}}} = {\left( {{{{k_A}} \over {{k_B}}}} \right)^{1/3}}{1^{1/3}} = {\left( {{{{k_A}} \over {{k_B}}}} \right)^{1/3}}
+$$
+
+<center>
+<img src="./assets/02-070A.png" width="650">
+</center>
+
+Therefore, the execution times are related as follows:
+
+$$
+{{{T_A}} \over {{T_C}}} = {{{T_A}} \over \bcancel{T_B}} \cdot {\bcancel{T_B} \over {{T_C}}}\underbrace  \Rightarrow _{{{{T_B}} \over {{T_C}}} \propto {{{f_C}} \over {{f_B}}}}{{{T_A}} \over {{T_C}}} = {{{T_A}} \over {{T_B}}} \cdot \underbrace {{{{f_C}} \over {{f_B}}}}_{{T_B}/{T_C}} = \underbrace {{{{T_A}} \over {{T_B}}}}_3\underbrace { \cdot {{{f_C}} \over \bcancel{f_A}} \cdot {\bcancel{f_A} \over {{f_B}}}}_{1 \cdot {1 \over {{6^{1/3}}}}} = {\left( {{9 \over 2}} \right)^{1/3}} \approx 1.65 > 1
+$$
+
+  * ***N.B.*** Here, ${{{T_B}} \over {{T_C}}} \propto {{{f_C}} \over {{f_B}}}$ is assumed, because System B and System C are the same except for their differing clock frequencies (i.e., execution time is inversely proportional to frequency, assuming that all other non-local compute costs can be neglected).
+
+## 14. Algorithmic Energy Quiz and Answers
