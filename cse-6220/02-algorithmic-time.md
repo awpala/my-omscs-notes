@@ -632,7 +632,7 @@ $$
 \Delta P = \underbrace {C{V^2}}_{\left[ {{\textstyle{{{\rm{energy}}} \over {{\rm{gate}}}}}} \right]} \times \underbrace f_{\left[ {{\textstyle{{{\rm{cycles}}} \over {{\rm{time}}}}}} \right]} \times \underbrace a_{\left[ {{\textstyle{{{\rm{switches}}} \over {{\rm{cycle}}}}}} \right]}
 $$
 
-Furthermore, note the relationship between $f$ (clock rate) and $V$ (supply volutage) as follows:
+Furthermore, note the relationship between $f$ (clock rate) and $V$ (supply voltage) as follows:
 
 $$
 f \propto V

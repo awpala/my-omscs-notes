@@ -6,6 +6,7 @@
 |:--:|:--:|
 | [0](./00-introduction.md) | Introduction |
 | [1](./01-basic-model-of-locality.md) | Basic Model of Locality |
+| [2](./02-algorithmic-time.md) | Algorithmic Time: Energy and Power |
 
 ## Videos Reference
 
