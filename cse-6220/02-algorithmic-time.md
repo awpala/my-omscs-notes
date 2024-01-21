@@ -888,3 +888,52 @@ Since, by definition, energy entails an expenditure of energy for ***every*** op
   * ***N.B.*** This gives rise to an insightful ***implication***: At an algorithmic level, if energy is of primary concern, and supposing that the energy per operation is bounded by some constant, then finding work-optimal algorithms is essential to achieve this objective.
 
 ## 15. Algorithmic Dynamic Power Quiz and Answers
+
+<center>
+<img src="./assets/02-073Q.png" width="650">
+</center>
+
+Recall (cf. Section 14) the algorithmic metrics of the work-span model (also called the multi-threaded directed acyclic graph [DAG] model) as follows:
+  * Work, $W(n)$
+  * Span, $D(n)$
+  * Average available parallelism. $W/D$
+  * Execution time $T_P$ (given peak processors), as bounded by $\max \left( {D,{W \over P}} \right) \le {T_P} \le D + {{W - D} \over P}$
+  * (Self-)speedup, $S_P = {T_1 \over{T_P}}$
+
+Of these five metrics, which is the ***best*** to use for quantifying dynamic power? (Select only *one*.)
+  * ***N.B.*** Ignore constant power ($P_0$ ), and assume ***constant*** energy per operation.
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-074A.png" width="650">
+</center>
+
+Given these options, (self-)speedup ($S_P$ ) best quantifies the dynamic power.
+
+Recall (cf. Section 8) the definition of power as follows:
+
+$$
+{\rm{Power}} \equiv {{{\rm{Energy\ consumed}}} \over {{\rm{Time}}}}
+$$
+
+In this context, energy is roughly equivalent to algorithmic work, which in turn is proportional to the execution time, i.e.,:
+
+$$
+E \propto W \propto T_1
+$$
+
+Correspondingly, per definition of (self-)speedup:
+
+$$
+S_P = {T_1 \over{T_P}} \propto {W \over{T_P}} \propto {E \over{T_P}}
+$$
+
+More intuitively, if it is necessary to run on low power, then the primary options to achieve this objective are either/both of the following:
+  * Utilize very little energy
+  * Operate very slowly
+
+Therefore, with respect to ***energy optimality***, there underlies this fundamental "tension" between speed and power.
+  * By corollary, high speed requires less time, which implies more power usage.
+
+## 16. Parallelism and Dynamic Voltage and Frequency Scaling (DVFS) Quiz and Answers
