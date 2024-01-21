@@ -732,5 +732,46 @@ For example, suppose a ***reduction*** (cf. Lesson 1) is being performed (as in 
 
 ***N.B.*** Traditionally, the topic of the dynamic power equation is in the scope of hardware and low-level software. Nevertheless, it is discussed here briefly, as per Hillis' opening question for this lesson.
 
-## 12. Power-less to Choose
+## 12. Power-less to Choose Quiz and Answers
+
+<center>
+<img src="./assets/02-064Q.png" width="650">
+</center>
+
+Consider the following two systems:
+
+| Characteristic | System A | System B | Comparison |
+|:--:|:--:|:--:|:--:|
+| Energy use | $E_A$ | $E_B$ | $E_A < E_B$ |
+| Execution time (same computation) | $T_A$ | $T_B$ | $T_A > T_B$ |
+
+The relationship between $E$ and $T$ is plotted as a **phase diagram** in the figure shown above.
+
+Which system has a *lower* average power usage? (Select either one or both, or neither if there is insufficient information provided to make this determination.)
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/02-065A.png" width="650">
+</center>
+
+On average, System A uses less power.
+
+Note that the average power usage is defined simply as follows:
+
+$$
+P = {E \over T} = E \cdot {1 \over T}
+$$
+
+Correspondingly, as given, the two systems compare as follows:
+
+$$
+{E_A} \cdot {1 \over {{T_A}}} < {E_B} \cdot {1 \over {{T_B}}} \Rightarrow {P_A} < {P_B}
+$$
+
+  * ***N.B.*** ${T_A} > {T_B} \Rightarrow {1 \over {{T_A}}} < {1 \over {{T_B}}}$ , assuming ${T_A} > 0$ and ${T_B} > 0$ .
+
+This is also readily evident in the phase plot (as in the figure shown above), whereby the slope of System A is "narrower" than that of System B.
+
+## 13. Exploiting Dynamic Voltage and Frequency Scaling (DVFS) Quiz and Answers
 
