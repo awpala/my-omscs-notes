@@ -387,7 +387,7 @@ $$
 <img src="./assets/03-028.png" width="650">
 </center>
 
-Note that the aforementioned is for merging only ***one*** pair $A and $B$ ; returning to the original tree (as in the figure shown above), at each level, the number of pairs can be counted accordingly, i.e., the pairs merged at a given level $k$ is $n \over{2^{k} \cdot s}$  . Furthermore, the total number of levels is $\log_2 {n \over{s}}$.
+Note that the aforementioned is for merging only ***one*** pair $A$ and $B$ ; returning to the original tree (as in the figure shown above), at each level, the number of pairs can be counted accordingly, i.e., the pairs merged at level $k$ is $n \over{2^{k} \cdot s}$  . Furthermore, the total number of levels is $\log_2 {n \over{s}}$.
 
 <center>
 <img src="./assets/03-029.png" width="650">
@@ -395,12 +395,84 @@ Note that the aforementioned is for merging only ***one*** pair $A and $B$ ; ret
 
 Therefore, combining across all levels yields the following:
 
-| Measurement | Size |
+| Measurement | Total size |
 |:--:|:--:|
-| Transfers | ${{{2^{\bcancel{k} + 1}} \cdot \bcancel{s}} \over L} \times {n \over \bcancel{{2^k} \cdot s}} \times {\log _2}{n \over s} = 2{n \over L}{\log _2}{n \over s}$ |
-| Comparisons | $\Theta (\bcancel{{2^k} \cdot s}) \times {n \over {\bcancel{{2^k} \cdot s}}} \times {\log _2}{n \over s} = \Theta (n{\log _2}{n \over s})$ |
+| Transfers | ${{{2^{\bcancel{k} + 1}} \cdot \bcancel{s}} \over L} \times \underbrace {{n \over {\bcancel{{2^k} \cdot s}}} \times {\log_2}{n \over s}}_{{\rm{total\ pairs}}} = 2{n \over L}{\log_2}{n \over s}$ |
+| Comparisons | $\Theta (\bcancel{{2^k} \cdot s}) \times \underbrace {{n \over {\bcancel{{2^k} \cdot s}}} \times {\log_2}{n \over s}}_{{\rm{total\ pairs}}} = \Theta (n{\log_2}{n \over s})$ |
 
 This begs the question: Is this performance *good* or *bad*?
 
-## 6. External Memory Merge Sort with a 2-Way Merge Step Quiz and Answers
+## 6. External Memory Merge Sort with a Two-Way Merge Step Quiz and Answers
 
+<center>
+<img src="./assets/03-030Q.png" width="650">
+</center>
+
+Recall (cf. Section 3) the overall template for a merge sort on a two-level-memory-hierarchy machine, abbreviated as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{Phase\ 1:}}\\
+\ \ \ \ {\rm{partition\ input\ into\ }}\Theta \left( {{n \over Z}} \right){\rm{ chunks}}\\
+\ \ \ \ {\rm{sort\ each\ chunk,\ producing\ }}\Theta \left( {{n \over Z}} \right){\rm{\ runs\ of\ size\ }}Z{\rm{\ each}}\\
+{\rm{Phase\ 2:}}\\
+\ \ \ \ {\rm{merge\ all\ runs}}
+\end{array}
+}
+$$
+
+Here, Phase 1 produces several sorted chunks (or runs). The goal of Phase 2 is then to merge all of these runs.
+
+<center>
+<img src="./assets/03-031Q.png" width="650">
+</center>
+
+Now, suppose that Phase 2 is implemented using the two-way merge scheme, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{Phase\ 1:}}\\
+\ \ \ \ {\rm{partition\ input\ into\ }}\Theta \left( {{n \over Z}} \right){\rm{ chunks}}\\
+\ \ \ \ {\rm{sort\ each\ chunk,\ producing\ }}\Theta \left( {{n \over Z}} \right){\rm{\ runs\ of\ size\ }}Z{\rm{\ each}}\\
+{\rm{Phase\ 2:}}\\
+\ \ \ \ {\rm{merge\ all\ runs\ using\ two-way\ merge}}
+\end{array}
+}
+$$
+
+With this modification, what is the corresponding overall asymptotic cost of the entire merge sort with respect to comparisons and transfers? (Express this symbolically in terms of $n$ , $Z$ , and $L$ .)
+  * ***N.B.*** The usual assumptions also hold here as before (i.e., quantities divide evenly, use convenient powers of $2$ , etc.)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-032A.png" width="650">
+</center>
+
+Phases 1 and 2 were analyzed previously (cf. Sections 4 and 5), summarized as follows:
+
+| Phase | Comparisons | Transfers |
+|:--:|:--:|:--:|
+| $1$ | $O(n \log_2 Z)$ | $O({n\over{L}})$ |
+| $2$ | $O(n \log_2 {n\over{Z}})$ | $O({n\over{L}}{\log_2 {n\over{Z}}})$ |
+
+Combining these gives the following:
+
+| Operation | Asymptotic cost |
+|:--:|:--:|
+| Comparisons | $\underbrace {O(n{\log_2}Z)}_{{\rm{Phase 1}}} + \underbrace {O\left( n{\log_2 {n \over Z}} \right)}_{{\rm{Phase 2}}} = O\left(\bcancel{n \log_2 Z} + n \log_2 n - \bcancel{n \log_2 Z} \right) = O(n\log_2n)$ |
+| Transfers | $\underbrace {O\left( {{n \over L}} \right)}_{{\rm{Phase 1}}} + \underbrace {O\left( {{n \over L}{\log_2 n \over Z}} \right)}_{{\rm{Phase 2}}} = O\left( {{n \over L}\left( {1 + {\log_2 n \over Z}} \right)} \right)\underbrace  \approx _{1 \ll {\log_2 n \over Z}{\rm{\ as\ }}n \to \infty }O\left( {{n \over L}{\log_2 n \over Z}} \right)$ |
+
+As these results suggest, merge sort is optimal with respect to comparisons (relative to any other comparison-based algorithm). Furthermore, with respect to memory transfers, Phase 2 dominates the total asymptotic cost.
+
+As it turns out, the known lower bound for the transfer operations is as follows:
+
+$$
+{n\over{L}}log_{Z\over{L}}{n\over{L}}
+$$
+
+***N.B.*** Demonstration of this is left as an exercise to the reader.
+
+## 7. What Is Wrong with Two-Way Merging? Quiz and Answers
