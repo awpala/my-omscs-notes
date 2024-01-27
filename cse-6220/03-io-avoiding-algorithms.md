@@ -668,3 +668,64 @@ $$
 Before considering the ***full*** $k$-way merge tree, consider some additional information with respect to this ***single*** $k$-way merge (as discussed in the following section).
 
 ## 9. Cost of Multi-Way Merge Quiz and Answers
+
+<center>
+<img src="./assets/03-053Q.png" width="650">
+</center>
+
+Recall (cf. Section 8) the merge tree for a multi-way merge, comprised of $n$ input elements (as in the figure shown above). At the very start (at the top of the tree), the input is divided into $k \cdot s$ sorted runs. Furthermore, suppose that each such run is comprised of $Z$ items (i.e., $\Theta (Z)$ ), perhaps some constant fraction of this (it would probably be some constant fraction of $Z$ less than $1$ , to allow to perform the initial sorting step in order to produce the runs themselves).
+
+<center>
+<img src="./assets/03-054Q.png" width="650">
+</center>
+
+Now, suppose that $k$-way merging are performed. The total number of comparisons, as it turns out, is $n \log n$ , which matches the expected performance for any comparison-based sort.
+
+<center>
+<img src="./assets/03-055Q.png" width="650">
+</center>
+
+So, then, what is the total number of asymptotic memory transfers?
+  * Assume that $k = \Theta({Z\over{L}}) < {Z\over{L}}$ (thereby ensuring the ability to perform a $k$-way merge in fast memory).
+
+***N.B.*** As an additional hint, note that the maximum number of levels $\ell$ in the merge tree is constrained to $\ell  = \Theta \left( {{\log_{Z \over L}}{n \over L}} \right)$ .
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-056A.png" width="650">
+</center>
+
+The total number of asymptotic memory transfers is:
+
+$$
+O\left( {{n \over L}{{\log }_{{Z \over L}}}{n \over L}} \right)
+$$
+
+<center>
+<img src="./assets/03-057A.png" width="650">
+</center>
+
+Consider a given run produced at some level $i$ in the merge tree (as in the figure shown above).
+
+At the previous level $i - 1$ , each run contains $k^{i-1}s$ items (that is assuming that at the very top of the merge tree, each run had $s$ items).
+
+The corresponding size of the output run is therefore $k^{i}s$ items.
+
+Now, recall (cf. Section 8) that the number of memory transfers required to produce just this ***one*** run at level $i$ is $\Theta \left( {k^{i}s}\over{L} \right)$ (i.e., proportional to the size of the run $k^{i}s$ ). Furthermore, at level $i$ , there are ${n}\over{k^{i}s}$ such runs (i.e., the length of an input divided by the length of any given run).
+
+Therefore, at level $i$ , the total number of transfers is as follows:
+
+$$
+\Theta \left( {{\bcancel{{k^i}s} \over L}} \right) \times {n \over \bcancel{{k^i}s}} = \Theta \left( {{n \over L}} \right)
+$$
+
+***N.B.*** Observe that this quantity is independent of the level $i$ itself.
+
+Furthermore, given the number (cf. given "hint" from previously in this section), this yields a total number of asymptotic memory transfers of:
+
+$$
+\Theta \left( {{n \over L}} \right) \times \underbrace {\Theta \left( {{{\log }_{{Z \over L}}}{n \over L}} \right)}_\ell  = \Theta \left( {{n \over L}{{\log }_{{Z \over L}}}{n \over L}} \right)
+$$
+
+## 10. A Lower Bound on External Memory Sorting
