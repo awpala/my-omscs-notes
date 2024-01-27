@@ -462,8 +462,8 @@ Combining these gives the following:
 
 | Operation | Asymptotic cost |
 |:--:|:--:|
-| Comparisons | $\underbrace {O(n{\log_2}Z)}_{{\rm{Phase 1}}} + \underbrace {O\left( n{\log_2 {n \over Z}} \right)}_{{\rm{Phase 2}}} = O\left(\bcancel{n \log_2 Z} + n \log_2 n - \bcancel{n \log_2 Z} \right) = O(n\log_2n)$ |
-| Transfers | $\underbrace {O\left( {{n \over L}} \right)}_{{\rm{Phase 1}}} + \underbrace {O\left( {{n \over L}{\log_2 n \over Z}} \right)}_{{\rm{Phase 2}}} = O\left( {{n \over L}\left( {1 + {\log_2 n \over Z}} \right)} \right)\underbrace  \approx _{1 \ll {\log_2 n \over Z}{\rm{\ as\ }}n \to \infty }O\left( {{n \over L}{\log_2 n \over Z}} \right)$ |
+| Comparisons | $\underbrace {O(n{\log_2}Z)}_{{\rm{Phase\ 1}}} + \underbrace {O\left( n{\log_2 {n \over Z}} \right)}_{{\rm{Phase\ 2}}} = O\left(\bcancel{n \log_2 Z} + n \log_2 n - \bcancel{n \log_2 Z} \right) = O(n\log_2n)$ |
+| Transfers | $\underbrace {O\left( {{n \over L}} \right)}_{{\rm{Phase\ 1}}} + \underbrace {O\left( {{n \over L}{\log_2 n \over Z}} \right)}_{{\rm{Phase\ 2}}} = O\left( {{n \over L}\left( {1 + {\log_2 n \over Z}} \right)} \right)\underbrace  \approx _{1 \ll {\log_2 n \over Z}{\rm{\ as\ }}n \to \infty }O\left( {{n \over L}{\log_2 n \over Z}} \right)$ |
 
 As these results suggest, merge sort is optimal with respect to comparisons (relative to any other comparison-based algorithm). Furthermore, with respect to memory transfers, Phase 2 dominates the total asymptotic cost.
 
@@ -476,3 +476,41 @@ $$
 ***N.B.*** Demonstration of this is left as an exercise to the reader.
 
 ## 7. What Is Wrong with Two-Way Merging? Quiz and Answers
+
+<center>
+<img src="./assets/03-033Q.png" width="650">
+</center>
+
+Performing a merge sort with two-way merging is relatively performant with respect to the number of slow-fast memory transfers, which recall (cf. Section 6) is as follows:
+
+$$
+Q(n;Z,L) = O\left( {{n \over L}{{\log }_2}{n \over Z}} \right) = O\left( {{n \over L}\left[ {{{\log }_2}{{(n/L)} \over {(Z/L)}}} \right]} \right) = O\left( {{n \over L}\left[ {{{\log }_2}{n \over L} - {{\log }_2}{Z \over L}} \right]} \right)
+$$
+
+However, this is still not optimal with respect to the known lower bound, as follows:
+
+$$
+Q(n;Z,L) = \Omega \left( {{n \over L}{{\log }_{{Z \over L}}}{n \over L}} \right) = \Omega \left( {{n \over L} \cdot {{{{\log }_2}{n \over L}} \over {{{\log }_2}{Z \over L}}}} \right)
+$$
+
+Combining, the resulting net difference (i.e., sub-optimal margin) is therefore:
+
+$$
+O\left( {{{\log }_2}{Z \over L} \cdot \left[ {{\mathop{\rm l}\nolimits}  - {{{{\log }_2}{Z \over L}} \over {{{\log }_2}{n \over L}}}} \right]} \right)
+$$
+
+This factor of $\log_2 {Z \over{L}}$ is actually fairly substantial; for typical adjacent levels of the memory hierarchy on a real machine (e.g., disk and main memory, or main memory and the last-level cache), this can correspond to a factor of roughly $10$ to $100$ .
+
+So, then, why does two-way merge sort ***not*** achieve this lower bound?
+  * ***N.B.*** This question is posed here in an "open-ended" manner.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-034A.png" width="650">
+</center>
+
+Two-way merge sort ***under-utilizes*** the fast-memory capacity, $Z$ .
+  * Note that the merging procedure only works on pairs of arrays at a time, and it only requires ***one*** block of size $L$ of fast memory per pair. Therefore, merging in this manner is very sensitive to $L$ , but it is not at all sensitive to $Z$ .
+
+## 8. Multi-Way Merging
