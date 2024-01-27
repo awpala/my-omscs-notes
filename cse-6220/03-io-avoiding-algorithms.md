@@ -729,3 +729,104 @@ $$
 $$
 
 ## 10. A Lower Bound on External Memory Sorting
+
+<center>
+<img src="./assets/03-058.png" width="650">
+</center>
+
+Recall (cf. Section 9) that a merge sort based on multi-way merging has a memory-transfer complexity as follows:
+
+$$
+Q(n;Z,L) = \Theta \left( {{n \over L}{{\log }_{{Z \over L}}}{n \over L}} \right)
+$$
+
+As it turns out, this is the optimal asymptotic performance possible for a comparison-based sort. This section will explore why this is the case.
+
+<center>
+<img src="./assets/03-059.png" width="650">
+</center>
+
+Consider $n$ input items (for simplicity, assume that each is unique/distinct). Initially, none of the input have been observed; therefore, there are $n!$ possible orderings of this data.
+
+Of these $n!$ orderings, the goal of sorting is to find a ***specific*** sorting for which all items are in a specified (e.g., ascending) order.
+
+<center>
+<img src="./assets/03-060.png" width="650">
+</center>
+
+From this point of view, the following discussion is a sketch of one way to determine a lower bound.
+
+### Determining a Lower Bound
+
+<center>
+<img src="./assets/03-061.png" width="650">
+</center>
+
+Suppose that some data is read from slow memory (as in the figure shown above). From this data, a fact is learned which reduces the number of possible ordering.
+
+<center>
+<img src="./assets/03-062.png" width="650">
+</center>
+
+To express this more precisely, suppose that there have been $t-1$ transfers. Let $K(t-1)$ denote the number of possible orderings that remain.
+  * ***N.B.*** Recall that initially there are $K(0) \equiv n!$ such orderings.
+
+<center>
+<img src="./assets/03-063.png" width="650">
+</center>
+
+Now, suppose that after performing $t-1$ such reads, another read of block size $L$ from slow memory to fast memory is performed. If these items have not yet been observed, then there are $L!$ ways in which these items can be ordered.
+
+<center>
+<img src="./assets/03-064.png" width="650">
+</center>
+
+If there are any other items in fast memory already, suppose that there relative ordering is already known. Given this, how many ways can you order up to $Z-L$ old items, plus the $L$ new items? The number of ways to order these items in fast memory is at most $\le {Z \choose {L}} L!$ . This is the factor by which the number of possible orderings might *decrease*.
+
+<center>
+<img src="./assets/03-065.png" width="650">
+</center>
+
+<center>
+<img src="./assets/03-066.png" width="450">
+</center>
+
+Subsequently, after $t$ reads are performed, the lower bound on possible orderings is as follows:
+
+$$
+K(t) \ge {{K(t - 1)} \over {{Z \choose {L}}L!}} = {{n!} \over {{{\left[ {{Z \choose {L}}L!} \right]}^t}}}
+$$
+
+***N.B.*** This count is more conservative than necessary, as the factor $L!$ assumes that the order of the $L$ read items is unknown (however, if the $L$ items have been read before, then this will not strictly be the case).
+
+<center>
+<img src="./assets/03-067.png" width="650">
+</center>
+
+<center>
+<img src="./assets/03-068.png" width="650">
+</center>
+
+It is only possible to perform $\le {n\over{L}}$ reads of items that never been read together before. This in turn allows refinement of the estimate of the lower bound on $K(t)$ as follows:
+
+$$
+K(t) \ge {{n!} \over {{{Z \choose {L}}^t} \cdot {{\left( {L!} \right)}^t}}}
+$$
+
+This begs the question: When does the right-hand-side expression become equal to $1$ (i.e., when does only ***one*** ordering remain)?
+
+<center>
+<img src="./assets/03-069.png" width="650">
+</center>
+
+The smallest value of $t$ for which this equality holds is the lower bound on the number of transfers; this critical value is as follows:
+
+$$
+t \ge {n\over{L}}\log_{Z\over{L}}{n\over{L}}
+$$
+
+To obtain this result, it is necessary to use two common ***approximation identities*** (along with corresponding algebra), given as follows:
+  * (a) **Stirling's approximation** states that $\log(x!) \approx x \log x$
+  * (b) $\log {a\choose b} \approx b \log {a\over b}$
+
+## 11. How Many Transfers in Binary Search Quiz and Answers
