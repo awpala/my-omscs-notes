@@ -108,6 +108,10 @@ $$
 
 As a closing remark, note that these relative speedups are only "notional"; conversely, when performing algorithm analysis, it more typically done in an "asymptotic" sense (i.e., ignoring hidden constants). The purpose here is to build intuition about how performance changes as these "improving factors" are incorporated into the corresponding algorithm(s) in question.
 
+### Instructor's Note
+
+The answer for (E) should be $0.481$ and the answer for (F) should be $0.0573$ (i.e., indicated ***incorrectly*** in the slides/discussion above, per original version's corresponding errata).
+
 ## 3. External Memory Merge Sort
 
 <center>
@@ -177,7 +181,7 @@ $$
 <img src="./assets/03-013.png" width="650">
 </center>
 
-Following the merge sort idea, in **Phase 2**, all of the sorted runs rae merged into a single, final sorted run, i.e.,:
+Following the merge sort idea, in **Phase 2**, all of the sorted runs are merged into a single, final sorted run, i.e.,:
 
 $$
 \boxed{
@@ -189,4 +193,64 @@ $$
 
 Before discussing Phase 2 further, let us first consider Phase 1 (partitioned sorting) in more detail (as discussed next via quiz section).
 
-## 4. Partioned Sorting Step Analysis Quiz and Answers
+## 4. Partitioned Sorting Step Analysis Quiz and Answers
+
+<center>
+<img src="./assets/03-014Q.png" width="650">
+</center>
+
+Recall Phase 1 of the external-memory merge sort scheme (cf. Section 3), as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{partition\ input\ into\ }}{n \over {f \cdot Z}}{\rm{\ chunks}}\\
+{\rm{foreach\ chunk\ }}i \leftarrow 1{\rm{\ to\ }}{n \over {f \cdot Z}}{\rm{\ do}}\\
+\ \ \ \ {\rm{read\ chunk\ }}i\\
+\ \ \ \ {{\rm{sort\ chunk\ }} i {\rm{\ into\ a\ (sorted)\ run}}}\\
+\ \ \ \ {\rm{write\ run\ }}i
+\end{array}
+}
+$$
+
+In this quiz, count the number of asymptotic slow-fast transfers and the number of comparisons incurred at each step (as designated with "boxes" $O(\cdots)$ in the figure shown above), as aggregated over all iterations. Express the results in terms of $n , $Z$ , $L$ , and other numeric constant (but ignoring $f$ , which is simply a "corrective" constant to ensure that the size of the input buffers fit properly into the fast memory, along with any necessary "working space").
+  * Furthermore, express the answer with respect to ***totals*** taken overall $n\over{Z}$ iterations.
+  * Also, assume that everything divides "everything else" (i.e., $L|(f \cdot Z)$ and $(f \cdot Z)|L$ ), and assume that any local sort is an ***optimal*** comparison-based sort
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-015A.png" width="650">
+</center>
+
+The iteration-wise counts are as follows:
+
+| Instruction | Asymptotic count | Count type
+|:--|:--:|:--:|
+| ${\rm{read\ chunk\ }}i$ | $O(n/L)$ | transfers |
+| ${{\rm{sort\ chunk\ }} i {\rm{\ into\ a\ (sorted)\ run}}}$ | $O(n \log Z)$ | comparisons |
+| ${\rm{write\ run\ }}i$ | $O(n/L)$ | transfers |
+
+<center>
+<img src="./assets/03-016A.png" width="650">
+</center>
+
+With respect to the transfers (as in the figure shown above), the read and write operations involve around $Z/L$ transfers each, repeated for all iterations, i.e.,:
+
+$$
+\underbrace {\left( {{\bcancel{f \cdot Z} \over L}} \right)}_{{\rm{transfers\ per\ operation}}} \times \underbrace {\left( {{n \over \bcancel{f \cdot Z}}} \right)}_{{\rm{total\ operations}}} = O\left( {{n \over L}} \right)
+$$
+
+<center>
+<img src="./assets/03-017A.png" width="650">
+</center>
+
+Furthermore, with respect to the comparisons (as in the figure shown above), an optimal comparison-based sort incurs around $Z \log Z$ comparisons, repeated for all iterations, i.e.,:
+
+$$
+\underbrace {\left( {\bcancel{f \cdot Z} \log \left( {f \cdot Z} \right)} \right)}_{{\rm{comparisons\ per\ operation}}} \times \underbrace {\left( {{n \over \bcancel{f \cdot Z}}} \right)}_{{\rm{total\ operations}}} = O\left( {n\log \left( {f \cdot Z} \right)} \right)
+$$
+
+Observe that, in general, this algorithmic scheme is yielding behavior which is proportional to $n/L$ transactions, i.e., there *is* indeed utilization on a per-transaction basis.
+
+## 5. Two-Way External Memory Merging
