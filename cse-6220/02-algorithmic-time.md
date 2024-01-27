@@ -555,6 +555,12 @@ $$
 
 > "Essentially all models are wrong, but some are useful."
 
+### Instructor's Notes
+
+[Heat is Wasted Energy...just ask some butter](https://youtu.be/pOQFYYRuIYE)
+
+[Is Your Phone Hot Enough to Melt Butter?](https://www.huffingtonpost.co.uk/2012/06/06/qualcomm-snapdragon-s4-pr_n_1573723.html)
+
 ## 9. The Dynamic Power Equation
 
 <center>

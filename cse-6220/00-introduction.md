@@ -30,6 +30,15 @@ This particular course is focused on ***computer science*** in this context of "
 
 ***N.B.*** This course will not discuss quantum computing, however, this is an intriguing starting point in order to foment interest in the topic, particularly beyond the scope of the limits of not only conventional computing systems, but also what lies beyond.
 
+### Instructor's Notes
+
+Prof. Vuduc thanks the following colleagues:
+  * For the animation of slippage of porous media: [Prof. Chloe Arson (GT Civil Engineering)](https://arson.ce.gatech.edu/)
+  * For the simulation of short polymers in a viscous fluid: [Prof. Polo Chau (GT CSE)](https://www.cc.gatech.edu/~echow/)
+  * For Graph Exploration: [Prof. Polo Chau (GT CSE)](https://poloclub.gatech.edu/)
+  * For the Cosmology Simulation: [Prof. John Wise (GT Physics)](https://cosmo.gatech.edu/)
+  * For allowing use of his Ion Trap Lab for filming: [Prof. Ken Brown (now at Duke)](https://brownlab.pratt.duke.edu/)
+
 ## 5. Topics
 
 ### Introduction
