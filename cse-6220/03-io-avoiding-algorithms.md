@@ -254,3 +254,153 @@ $$
 Observe that, in general, this algorithmic scheme is yielding behavior which is proportional to $n/L$ transactions, i.e., there *is* indeed utilization on a per-transaction basis.
 
 ## 5. Two-Way External Memory Merging
+
+<center>
+<img src="./assets/03-018.png" width="650">
+</center>
+
+Suppose there are $m$ sorted runs present in slow memory, where each run is of size $s$ items (as in the figure shown above).
+  * Here, the total number of items is defined as $n \equiv m \cdot s$ .
+
+The corresponding goal, then, is to ***merge*** all of these sorted runs into a ***single*** sorted run, thereby completing the merge sort algorithm.
+
+<center>
+<img src="./assets/03-019.png" width="650">
+</center>
+
+An easy scheme, based on the classical merge sort idea, is to merge pairs of runs successively, until a single, final run results (as in the figure shown above).
+
+Observe the trend with respect to each successive level (for $k$ total levels):
+
+| Level | Run size |
+|:--:|:--:|
+| $0$ | $s$ |
+| $1$ | $2 \cdot s$ |
+| $\vdots$ | $\vdots$ |
+| $k-1$ | $2^{k-1} \cdot s$ |
+| $k$ | $2^{k} \cdot s$ |
+
+Let us now examine these steps in further detail.
+
+<center>
+<img src="./assets/03-020.png" width="650">
+</center>
+
+First, consider a pair of runs, each of size $2^{k-1} \cdot s$ items, denoted by A and B (as in the figure shown above). Initially, A and B both reside in slow memory.
+
+The goal is to produce a merged run C (i.e., $C \leftarrow {\rm{merge}}(A,B)$ ), which will hold $2^{k} \cdot s$ items, as held in corresponding output buffer C.
+
+In order to execute this merge, three buffers are maintained in fast memory, designated $\hat{A}$ , $\hat{B}$ , and $\hat{C}$ (respectively), each holding $L$ elements (corresponding to the transaction size).
+  * Two of the buffers ($\hat{A}$ and $\hat{B}$ ) are used for storing elements from A and B (respectively).
+  * The other buffer ($\hat{C}$ ) is used for storing the elements of the output.
+
+<center>
+<img src="./assets/03-021.png" width="650">
+</center>
+
+<center>
+<img src="./assets/03-022.png" width="650">
+</center>
+
+To perform the merge, start by reading one $L$-sized block from each of $A$ and $B$ into $\hat{A}$ and $\hat{B}$ (respectively) (as in the figures shown above), thereby moving them from slow memory to fast memory, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{read\ }}L{\rm{-sized\ blocks\ of\ }}A,B \to \hat A,\hat B}
+\end{array}
+}
+$$
+
+<center>
+<img src="./assets/03-023.png" width="650">
+</center>
+
+Subsequently, the following sequence is performed:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{while\ any\ unmerged\ items\ in\ }}A{\rm{\ or\ }}B{\rm{\ do}}\\
+\ \ \ \ {\rm{merge\ }}\hat A,\hat B \to \hat C{\rm{\ as\ possible}}\\
+\ \ \ \ {\rm{if\ }}\hat A{\rm{\ or\ }}\hat B{\rm{\ empty\ then\ read\ more}}\\
+\ \ \ \ {\rm{if\ }}\hat C{\rm{\ full\ then\ flush}}
+\end{array}
+}
+$$
+
+Here, iteration is performed until either all of $A$ or all of $B$ is read. Then, elements from $\hat{A}$ and $\hat{B}$ are merged into $\hat{C}$ , until elements from either $\hat{A}$ or $\hat{B}$ are exhausted (in which case additional elements are read from slow memory) or until the output buffer of $\hat{C}$ becomes full (in which case the memory is flushed).
+
+<center>
+<img src="./assets/03-024.png" width="650">
+</center>
+
+Finally, when either $A$ or $B$ is exhausted, the remaining elements are copied accordingly, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{flush\ any\ unmerged\ in\ }}A{\rm{\ or\ }}B}
+\end{array}
+}
+$$
+
+<center>
+<img src="./assets/03-025.png" width="650">
+</center>
+
+What is the corresponding cost to merge the pair of runs $A$ and $B$ ?
+
+This scheme only ever ***loads*** elements from A or B from slow memory ***once***, and it only ***writes*** a given output block ***once***, i.e.,:
+
+$$
+\underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{loads}}} + \underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{writes}}}
+$$
+
+<center>
+<img src="./assets/03-026.png" width="650">
+</center>
+
+Furthermore, this scheme only ever ***writes*** a given output block $C$ ***once***, i.e.,:
+
+$$
+\underbrace {{{{2^{k}} \cdot s} \over L}}_{{\rm{writes}}}
+$$
+
+<center>
+<img src="./assets/03-027.png" width="650">
+</center>
+
+Therefore, this cumulatively yields a total number of transfers as follows:
+
+$$
+\underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{loads}}} + \underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{writes}}} + \underbrace {{{{2^{k}} \cdot s} \over L}}_{{\rm{writes}}} = {{{{2^{k+1}} \cdot s} \over L}}
+$$
+
+Furthermore, with respect to comparisons, this is also linear in $s$ , i.e.,:
+
+$$
+\Theta(2^{k} \cdot s)
+$$
+
+<center>
+<img src="./assets/03-028.png" width="650">
+</center>
+
+Note that the aforementioned is for merging only ***one*** pair $A and $B$ ; returning to the original tree (as in the figure shown above), at each level, the number of pairs can be counted accordingly, i.e., the pairs merged at a given level $k$ is $n \over{2^{k} \cdot s}$  . Furthermore, the total number of levels is $\log_2 {n \over{s}}$.
+
+<center>
+<img src="./assets/03-029.png" width="650">
+</center>
+
+Therefore, combining across all levels yields the following:
+
+| Measurement | Size |
+|:--:|:--:|
+| Transfers | ${{{2^{\bcancel{k} + 1}} \cdot \bcancel{s}} \over L} \times {n \over \bcancel{{2^k} \cdot s}} \times {\log _2}{n \over s} = 2{n \over L}{\log _2}{n \over s}$ |
+| Comparisons | $\Theta (\bcancel{{2^k} \cdot s}) \times {n \over {\bcancel{{2^k} \cdot s}}} \times {\log _2}{n \over s} = \Theta (n{\log _2}{n \over s})$ |
+
+This begs the question: Is this performance *good* or *bad*?
+
+## 6. External Memory Merge Sort with a 2-Way Merge Step Quiz and Answers
+
