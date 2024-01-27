@@ -514,3 +514,157 @@ Two-way merge sort ***under-utilizes*** the fast-memory capacity, $Z$ .
   * Note that the merging procedure only works on pairs of arrays at a time, and it only requires ***one*** block of size $L$ of fast memory per pair. Therefore, merging in this manner is very sensitive to $L$ , but it is not at all sensitive to $Z$ .
 
 ## 8. Multi-Way Merging
+
+<center>
+<img src="./assets/03-035.png" width="650">
+</center>
+
+Recall (cf. Section 5) two-way merge, whereby $m$ input runs of size $s$ (each sorted in ascending order) are combined in such a manner which produces a ***single*** sorted output (as in the figure shown above).
+
+Correspondingly, a natural scheme (based on the classical merge sort idea) is to take pairs of runs and to combine them in a tree-like fashion, yielding the following asymptotic performance:
+
+$$
+{Q_{{\rm{2-way}}}}(n;Z,L) = O\left( {{n \over L}{{\log }_2}{n \over Z}} \right)
+$$
+
+A distinct ***problem*** with two-way merging is that it does not utilize fast memory to its fullest potential.
+
+<center>
+<img src="./assets/03-036.png" width="650">
+</center>
+
+Recall (cf. Section 5) that at any given time, two-way merging uses very little of the available fast-memory space (i.e., only three such $L$-sized blocks, for two inputs $\hat{A}$ and $\hat{B}$ one output $\hat{C}$ , as in the figure shown above).
+
+### Multi-Way Merging of $k$ Input Items
+
+<center>
+<img src="./assets/03-037.png" width="650">
+</center>
+
+In an attempt to improve the performance, a natural idea is to merge not only ***two*** runs at a time, but rather $k$ such runs (as in the figure shown above).
+
+<center>
+<img src="./assets/03-038.png" width="650">
+</center>
+
+Consider one such merge (as in the figure shown above).
+
+Given is a set of $k$ inputs, each of size $s$ , and assume they start in slow memory and are sorted in ascending order. Furthermore, suppose that $k$ is chosen such that at least $k + 1$ blocks of size $L$ will fit in fast memory. 
+
+Note that the choice of $k$ here is ***not*** arbitrary. Suppose that $k$ is selected such that $(k + 1)L \le Z$ (thereby allowing sufficient fast-memory allocation for all $k$ inputs, as well as one additional memory block for the output).
+
+<center>
+<img src="./assets/03-039.png" width="650">
+</center>
+
+Initially, the inputs are filled with blocks of the input runs (as in the figure shown above).
+
+<center>
+<img src="./assets/03-040.png" width="650">
+</center>
+
+At each step of the local merge (as in the figure shown above), it is necessary to know which of the $k$ input blocks has the next-smallest item.
+
+<center>
+<img src="./assets/03-041.png" width="650">
+</center>
+
+Suppose that the shaded items in the figure shown above are the next ones under consideration from each of the $k$ input blocks. Of these, it is somehow necessary to determine the smallest value.
+
+<center>
+<img src="./assets/03-042.png" width="650">
+</center>
+
+Suppose that the smallest-value block is identified (as in the figure shown above).
+  * ***N.B.*** The matter of making this determination will be revisited momentarily.
+
+<center>
+<img src="./assets/03-043.png" width="650">
+</center>
+
+The identified smallest-value block can be consequently moved into the output buffer (as in the figure shown above).
+
+<center>
+<img src="./assets/03-044.png" width="650">
+</center>
+
+Furthermore, the next item from the source buffer now becomes active (as in the figure shown above).
+
+<center>
+<img src="./assets/03-045.png" width="650">
+</center>
+
+<center>
+<img src="./assets/03-046.png" width="650">
+</center>
+
+This process is subsequently repeated (as in the figures shown above).
+
+<center>
+<img src="./assets/03-047.png" width="650">
+</center>
+
+As with two-way merge, eventually the output block becomes full (as in the figure shown above).
+
+<center>
+<img src="./assets/03-048.png" width="650">
+</center>
+
+At this point, it is necessary to flush the output block (as in the figure shown above).
+
+<center>
+<img src="./assets/03-049.png" width="650">
+</center>
+
+Similarly, eventually, one of the input buffers will be exhausted in this manner, thereby necessitating a corresponding flush as well (as in the figure shown above).
+
+<center>
+<img src="./assets/03-050.png" width="650">
+</center>
+
+Furthermore, if there are any unread blocks of the input remaining, then these are simply refilled accordingly (as in the figures shown above).
+
+### Selecting the Next-Smallest Item from the Input Frontier via Min-Heap
+
+<center>
+<img src="./assets/03-051.png" width="650">
+</center>
+
+Now, consider again: How to determine the next-smallest item from the input frontier?
+
+There are several natural options. One simple way is to perform a linear scan. This yields generally acceptable performance for an input size of small $k$ .
+
+However, if $k$ is relatively large, then a ***priority-queue-like*** data structure is useful, e.g., a **min-heap**, comprised of the following operations:
+
+| Min-heap operation | Asymptotic performance |
+|:--:|:--:|
+| $\rm{build}$ | $O(k)$ |
+| $\rm{extract\ min}$ | $O(\log k)$ |
+| $\rm{insert}$ | $O(\log k)$ |
+
+After loading the first $k$ blocks via $\rm{build}$ (cost $O(k)$), then anytime the next item to merge is sought, $\rm{extract\ min}$ would be used (cost $O(\log k)$ ). Furthermore, after extracting this item, it may be subsequently replaced via $\rm{insert}$ (cost $O(\log k)$ ).
+  * ***N.B.*** These are all ***fast-memory operations***, therefore when considering these costs, they will be simply counted as comparisons accordingly.
+
+### Cost of a Single $k$-Way Merge via Min-Heap
+
+<center>
+<img src="./assets/03-052.png" width="650">
+</center>
+
+Now, assuming a min-heap-based implementation, what is the corresponding cost of a ***single*** $k$-way merge?
+
+With respect to slow-fast memory transfer operations, since the distinct input blocks are only read ***once***, and similarly writing distinct output blocks only occurs ***once*** as well, this yields the following ***per-merge*** transfer cost:
+
+$$
+{2ks}\over{L}
+$$
+
+Furthermore, with respect to comparisons, there is an initial $\rm{build}$ , followed by a subsequent $\rm{extract\ min}$ or $\rm{insert}$ on a ***per-merge*** basis (with respect to each of the $k \cdot s$ input items), i.e.,: 
+
+$$
+O( {\underbrace k_{{\rm{build}}} + \underbrace {ks\log k}_{{\rm{extract\ min\ or\ insert}}}} )
+$$
+
+Before considering the ***full*** $k$-way merge tree, consider some additional information with respect to this ***single*** $k$-way merge (as discussed in the following section).
+
+## 9. Cost of Multi-Way Merge Quiz and Answers
