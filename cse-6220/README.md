@@ -7,6 +7,8 @@
 | [0](./00-introduction.md) | Introduction |
 | [1](./01-basic-model-of-locality.md) | Basic Model of Locality |
 | [2](./02-algorithmic-time.md) | Algorithmic Time: Energy and Power |
+| [3](./03-io-avoiding-algorithms.md) | I/O-Avoiding Algorithms |
+| [4](./04-cache-oblivious-algorithms.md) | Cache-Oblivious Algorithms |
 
 ## Videos Reference
 
