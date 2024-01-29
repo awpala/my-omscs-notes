@@ -830,3 +830,98 @@ To obtain this result, it is necessary to use two common ***approximation identi
   * (b) $\log {a\choose b} \approx b \log {a\over b}$
 
 ## 11. How Many Transfers in Binary Search Quiz and Answers
+
+<center>
+<img src="./assets/03-070Q.png" width="650">
+</center>
+
+Consider the algorithm for binary search (as in the figure shown above). Given a sorted array $A$ and target value $v$ , the goal is to find largest $i$ such that $A[i] \le v$ .
+
+<center>
+<img src="./assets/03-071Q.png" width="650">
+</center>
+
+For example, consider the configuration as in the figure shown above, which attempts to find the position of target value $f$ in the array $A$ .
+
+The standard binary search algorithm begins with the median element of $A$ (i.e., value $j$ at index $5$ ), comparing target value $f$ to it accordingly.
+
+<center>
+<img src="./assets/03-072Q.png" width="650">
+</center>
+
+<center>
+<img src="./assets/03-073Q.png" width="650">
+</center>
+
+This process repeats in the left and right halves (as in the figures shown above), depending on whether the target value is less than or greater than the median.
+
+<center>
+<img src="./assets/03-074Q.png" width="650">
+</center>
+
+Suppose that $A$ resides entirely in slow memory (as in the figure shown above). How many asymptotic transfers might this algorithm incur?
+  * ***N.B.*** The usual simplifying assumptions apply (i.e., $L | n$ , $A$ is word-aligned, and constituent quantities $n$ , $L$ , and $Z$ are all powers of $2$ .)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-075A.png" width="650">
+</center>
+
+The asymptotic transfers for this binary search algorithm are as follows:
+
+$$
+Q(n;Z,L) = O \left( \log_2{n\over{L}} \right)
+$$
+
+<center>
+<img src="./assets/03-076A.png" width="650">
+</center>
+
+During the search, at some point, all of the elements being considered all fall within the ***same*** block of size $L$ (as in the figure shown above).
+
+At this point, the current worst-case behavior is as follows:
+
+<math display='block'>
+ <mi>Q</mi><mo stretchy='false'>(</mo><mi>n</mi><mo>;</mo><mi>Z</mi><mo>,</mo><mi>L</mi><mo stretchy='false'>)</mo><mo>=</mo><mrow><mo>{</mo> <mrow>
+  <mtable columnalign='left'>
+   <mtr columnalign='left'>
+    <mtd columnalign='left'>
+     <mrow>
+      <mn>1</mn><mo>+</mo><mi>Q</mi><mrow><mo>(</mo>
+       <mrow>
+        <mfrac>
+         <mi>n</mi>
+         <mn>2</mn>
+        </mfrac>
+        <mo>;</mo><mi>Z</mi><mo>,</mo><mi>L</mi></mrow>
+      <mo>)</mo></mrow></mrow>
+    </mtd>
+    <mtd columnalign='left'>
+     <mrow>
+      <mo>,</mo><mtext>&#x00A0;</mtext><mi>n</mi><mo>&#x003E;</mo><mi>L</mi></mrow>
+    </mtd>
+   </mtr>
+   <mtr columnalign='left'>
+    <mtd columnalign='left'>
+     <mn>1</mn>
+    </mtd>
+    <mtd columnalign='left'>
+     <mrow>
+      <mo>,</mo><mtext>&#x00A0;</mtext><mi>n</mi><mo>&#x2264;</mo><mi>L</mi></mrow>
+    </mtd>
+   </mtr>
+  </mtable></mrow> </mrow>
+</math>
+
+While the size of the interval $n$ is $n > L$ , a new transfer is incurred, followed by a recursion. Otherwise, once the interval size falls to smaller than this (i.e., $n \le L$ ), only *one* transfer is required to process the entire block.
+
+Therefore, this simplifies to:
+
+$$
+Q(n;Z,L) = O \left( \log_2{n\over{L}} \right)
+$$
+
+A more interesting question is: Can this be improved?
+
+## 12. Lower Bounds for Search Quiz and Answers
