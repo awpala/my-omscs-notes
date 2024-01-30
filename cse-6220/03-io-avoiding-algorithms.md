@@ -925,3 +925,69 @@ $$
 A more interesting question is: Can this be improved?
 
 ## 12. Lower Bounds for Search Quiz and Answers
+
+This quiz section will explore a technique for considering lower bounds on memory transfer, which is inspired by information theory.
+
+<center>
+<img src="./assets/03-077Q.png" width="650">
+</center>
+
+Consider again (cf. Section 11) the problem of search, given an ordered collection (as in the figure shown above). Here, a sorted array $A$ containing $n$ unique elements is given. The objective is to find the ***largest*** index $i$ such that $A[i] \le v$ .
+
+Recall (cf. Section 11) that the standard binary search algorithm performs $Q(n;Z,L) = O \left( \log_2{n\over{L}} \right)$ transfers in the worst case.
+
+<center>
+<img src="./assets/03-078Q.png" width="650">
+</center>
+
+Now, reconsider the problem in a different manner: To store the index $i$ , this requires around $\left\lfloor {\log n} \right\rfloor  + 1 = O(\log n)$ bits.
+
+Furthermore, when reading a block of $i$ elements from $A$ , you learn at most $x$ bits of information about this index. If $x$ can be provided an upper bound, then a lower bound on the number of $i$'s during the search can be defined accordingly, i.e., let $x(L)$ be defined as the maximum number of bits "learned" per $L$-sized read.
+
+Correspondingly, the lower bound on search is therefore:
+
+$$
+Q_{\rm{search}}(n;Z,L) = \Omega \left( {{{\log n} \over {x(L)}}} \right)
+$$
+
+This corresponds to the ratio of the bits attempted to learn, to bits learned on each $L$-sized read.
+
+Given this formulation, what is an asymptotic upper bound on $x(L)$ ?
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-079A.png" width="650">
+</center>
+
+The asymptotic upper bound on $x(L)$ is as follows:
+
+$$
+x(L) = {\log _2}L
+$$
+
+<center>
+<img src="./assets/03-080A.png" width="650">
+</center>
+
+Analogously to the size of the index itself, read $L$ words should reveal approximately $log L$ bits of information.
+
+Consider such a block of $L$ words (as in the figure shown above). The key value searches among the word in question, or otherwise to its left or to its right. Therefore, this reveals $log L$ bits of the index, i.e.,:
+
+$$
+{Q_{{\rm{search}}}}(n;Z,L) = \Omega \left( {{{\log n} \over {\log L}}} \right) = \Omega \left( {{{\log }_L}n} \right)
+$$
+
+<center>
+<img src="./assets/03-081A.png" width="650">
+</center>
+
+Comparing this lower bound against the lower bound for naive binary search (cf. Section 11), the latter of which being as follows:
+
+$$
+Q(n;Z,L) = O \left( {\log {n \over {L}}} \right) = O \left( \log n - \log L \right)
+$$
+
+Therefore, there is a corresponding "net speed" by a factor of approximately $O(\log L)$ accordingly.
+
+## 13. I/O-Efficient Data Structures Quiz and Answers
