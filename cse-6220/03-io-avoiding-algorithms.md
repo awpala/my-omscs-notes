@@ -470,7 +470,7 @@ As these results suggest, merge sort is optimal with respect to comparisons (rel
 As it turns out, the known lower bound for the transfer operations is as follows:
 
 $$
-{n\over{L}}log_{Z\over{L}}{n\over{L}}
+{n\over{L}}\log_{Z\over{L}}{n\over{L}}
 $$
 
 ***N.B.*** Demonstration of this is left as an exercise to the reader.
@@ -991,3 +991,105 @@ $$
 Therefore, there is a corresponding "net speed" by a factor of approximately $O(\log L)$ accordingly.
 
 ## 13. I/O-Efficient Data Structures Quiz and Answers
+
+<center>
+<img src="./assets/03-082Q.png" width="650">
+</center>
+
+Consider the problem of searching in an ***ordered collection*** (as in the figures shown above).
+
+<center>
+<img src="./assets/03-083Q.png" width="650">
+</center>
+
+
+ Representative classical ***data structures*** (as in the figure shown above) used for storing the collection (i.e., besides a sorted array) include the following:
+  * doubly-linked list (ordered)
+  * binary search tree
+    * ***N.B.*** The sorted array $A$ is the net result if performing an in-order traversal of a binary search tree, while otherwise disregarding the left- and right-child pointers
+  * skip list
+  * B-tree
+
+Which of these classical data structures, if any, attain the aforementioned (cf. Section 12) lower bound? (Select all that apply, or none.)
+  * ***N.B.*** This quiz will address this topic "lazily" (i.e., not otherwise "comprehensively" with respect to each data structure in question here; that is left as an exercise to the reader).
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/03-084A.png" width="650">
+</center>
+
+As given, among the available choices here, only a ***B-tree*** can attain the lower bound, i.e.,:
+
+$$
+{Q_{{\rm{search}}}}(n;Z,L) = \Omega \left( {{{\log }_L}n} \right)
+$$
+
+***N.B.*** This section will primarily focus on why a B-tree *can* be I/O-efficient, rather than comprehensively describing why the other data structures *cannot*.
+
+<center>
+<img src="./assets/03-085A.png" width="650">
+</center>
+
+A **B-tree** is a tree structure comprised of **nodes**, whereby each node contains a set of **keys** and a set of **child pointers** (as in the figure shown above).
+
+Furthermore, the **branching factor** at each node can vary, but must otherwise lie within a specific ***range***.
+
+<center>
+<img src="./assets/03-086A.png" width="650">
+</center>
+
+The keys within a given node are ***sorted*** (as in the figure shown above).
+
+<center>
+<img src="./assets/03-087A.png" width="650">
+</center>
+
+Examining a given node (as in the figure shown above), designated as $x$ , the corresponding branching factor lies within a specific interval, defined as ${n_x} \in [B + 1,2B - 1]$ for some $B \ge 2$ , where $B$ is a user-defined parameter.
+
+
+<center>
+<img src="./assets/03-088A.png" width="650">
+</center>
+
+Now, consider the $i\rm{th}$ key of value $x$ (as in the figure shown above); let this **key** be denoted as $k_i$ . Furthermore, consider any key within the subtree rooted at the $i\rm{th}$ child of $x$ , denoted as $c_i$ .
+
+A B-tree data structure maintains the following ***invariant***:
+
+$$
+{c_1} \le {k_1} \le {c_2} \le  \cdots {c_i} \le {k_i} \le {c_{i + 1}} \le  \cdots  \le {k_n} \le {c_{n + 1}}
+$$
+
+i.e., $k_i$ lies between the key values of its children to its left and to its right.
+
+<center>
+<img src="./assets/03-089A.png" width="650">
+</center>
+
+Given this invariant, it can be readily shown (as in the figure shown above) that the **height** of this B-tree is therefore the following:
+
+$$
+O(\log_{B} n)
+$$
+
+Therefore, in order for search of the B-tree to attain the lower bound on slow-fast memory transfers, this simply requires appropriate judicious selection of branching-factor size $B$ accordingly for ***I/O optimality***; namely, select $B$ in the following manner:
+
+$$
+B = \Theta (L)
+$$
+
+Note that a ***key point*** here is that a B-tree can be made I/O-optimal, but ***only*** if the branching factor $B$ is chosen appropriately; in particular, this branching factor must be ***specific to the machine***.
+  * ***N.B.*** Later, the notion of "algorithmic portability" in this context will be revisited.
+
+## 14. Conclusion
+
+I/O-avoiding algorithms *can* be "messy" (i.e., much more comparatively so to their conventional serial-RAM counterparts). Nevertheless, this lesson started by attempting to argue that this effort *can* be worthwhile.
+
+<center>
+<img src="./assets/03-090.png" width="450">
+</center>
+
+Recall (cf. Section 2) that indeed a potential reduction in I/O's is possible, given realistic memory hierarchy parameters, thereby making corresponding computations much faster. Furthermore, note that this would occur *if* memory accesses can be made contiguous while also exploiting fast-memory capacity to the greatest extent possible; indeed, these optimizations can occur even if the factors of improvement are only on the order of $\log L$ (or $\log Z$ , in the case of merge sort).
+
+In closing this lesson, consider the following ***meta-comment***: Our model assumes that the time spent moving the data from slow to fast memories dominates, suggesting that optimization lies within reducing I/O operations. However, how can we be certain whether data movement does indeed dominate?
+  * ***N.B.*** In considering this latter question, revisit pertinent high-level concepts (e.g., computational intensity and machine balance).
