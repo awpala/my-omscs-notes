@@ -287,3 +287,32 @@ With respect to work $W(n)$ and span $D(n)$ , what can be said about the time ($
 These two observations provide a useful set of heuristics, however, more discussion is necessary to further elucidate this work-span analysis, as discussed subsequently in this lesson.
 
 ## 6. Work and Span Quiz and Answers
+
+Before proceeding further with work-span analysis, consider a review (cf. Section 5) of the basic definitions for work and span.
+
+<center>
+<img src="./assets/05-025Q.png" width="650">
+</center>
+
+Given the directed acyclic graph (DAG) as in the figure shown above, what is the corresponding work $W(n)$ and span $D(n)$ ? (Provide integer/non-symbolic answers.)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-026A.png" width="650">
+</center>
+
+The corresponding work and span are (respectively) as follows:
+
+$$
+W(n) = 16
+$$
+
+$$
+D(n) = 7
+$$
+
+The work $W(n)$ is simply the total count of vertices. Furthermore, the span $D(n)$ constitutes the longest path from start to finish (as denoted by yellow outline in the figure shown above).
+  * ***N.B.*** In this particular DAG, by symmetry, all paths have the same span (i.e., $7$ vertices total); the figure shown above outlines one such representative critical path.
+
+## 7. Work and Span for Reduction Quiz and Answers
