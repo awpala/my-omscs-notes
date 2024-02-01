@@ -242,3 +242,48 @@ $$
 $$
 
 ## 5. Work and Span
+
+<center>
+<img src="./assets/05-021.png" width="650">
+</center>
+
+Given the directed acyclic graphs (DAGs) as in the figure shown above (both of which compute reductions), which one is better?
+
+The sequential/linear DAG has a sequential chain of dependencies, and therefore it is fundamentally incapable of using more than one processor at a time, aside from the load operations.
+
+Conversely, the tree-based DAG can utilize parallelism at every level of computation.
+
+Correspondingly the respective execution times are as follows:
+
+| DAG for performing reduction | Execution time |
+|:--:|:--:|
+| Sequential/linear | $O(n)$ |
+| Tree-based | $O(\log n)$ |
+
+Intuitively, given two DAGs both computing the same operations, then generally the DAG performing more parallelism is preferable (all else equal).
+
+However, is this the only principal concern? Are there any other relevant factors of considerations? These questions (and others) are addressed in the remainder of this section via the formalism known as **work-span analysis**.
+
+### Work-Span Analysis
+
+<center>
+<img src="./assets/05-023.png" width="450">
+</center>
+
+Given a directed acyclic graph (DAG) as in the figure shown above, two ***questions*** are of particular interest:
+  * 1 - How many ***vertices*** does the DAG contain in total? → This is called **work**, denoted by $W(n)$ (i.e., the total number of operations generally depends on the size of the input, $n$ )
+  * 2 - How long is the ***longest path*** (called the **critical path**) through the DAG? → This is called **span**, denoted by $D(n)$
+    * The longest path is denoted in yellow outline in the figure shown above.
+    * ***N.B.*** As a historical aside, the length of this critical path (or span) was historically called the **depth** (and hence denoted by symbol $D$ accordingly).
+
+<center>
+<img src="./assets/05-024.png" width="650">
+</center>
+
+With respect to work $W(n)$ and span $D(n)$ , what can be said about the time ($T_P$ ) to execute the DAG on a parallel random access memory (PRAM) machine with $P$ processors? Observe the following:
+  * If all of the operations have a ***unit cost***, then the time to execute this DAG using only ***one*** processor should be exactly the work, i.e., $T_{1}(n) = W(n)$ .
+  * Conversely, if given an ***infinite*** number of processors executing corresponding unit-cost operations, then the time to execute this DAG using these infinite processors is still constrained by the critical path, i.e., $T_{\infty} = D(n)$ .
+
+These two observations provide a useful set of heuristics, however, more discussion is necessary to further elucidate this work-span analysis, as discussed subsequently in this lesson.
+
+## 6. Work and Span Quiz and Answers
