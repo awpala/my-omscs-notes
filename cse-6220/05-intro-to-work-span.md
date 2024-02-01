@@ -169,3 +169,76 @@ $$
 In conclusion, a single reduction requires $n$ total operations, even when executed on a PRAM.
 
 ## 4. A Reduction Tree Quiz and Answers
+
+<center>
+<img src="./assets/05-016Q.png" width="650">
+</center>
+
+Suppose that the directed acyclic graph (DAG) for the reduction (cf. Section 3) were instead organized as a tree (as in the figure shown above).
+
+Furthermore, let us make the technical ***assumption*** of **associativity**, whereby the following property holds with respect to the addition operations:
+
+$$
+a + (b + c) = (a + b) + c
+$$
+
+As this property implies, parenthesization is effectively "arbitrary" (with respect to affecting the resulting computation).
+
+To build this tree representation for the DAG in question, first consider the (level $0$ , at the "top" level in the figure shown above) load operations $A[1]$ , $A[2]$ , ..., $A[n-1]$ , $A[n]$ as before (cf. Section 3). Next, add pairs of inputs (thereby forming the next level of the tree). Such intermediate results are subsequently paired in a similar manner, until the final intermediate-results pair is added to give the overall result (at the "height" level of the tree, at the "bottom" level in the figure shown above).
+
+Given a parallel random access memory (PRAM) machine with $P = n$ processors, what is the minimum time required to execute this DAG on the PRAM machine? (Select the appropriate choice.)
+  * $O(1)$
+  * $O(\log n)$
+  * $O(n)$
+  * $O(n \log n)$
+  * $O(n^2)$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-017A.png" width="650">
+</center>
+
+The minimum required execution time is as follows:
+
+$$
+O(\log n)
+$$
+
+<center>
+<img src="./assets/05-018A.png" width="650">
+</center>
+
+First, consider the load operations (as in the figure shown above). There are no input dependencies, and there are $n$ such load operations, therefore the required execution time is as follows:
+
+$$
+{T_P} \ge \left\lceil {{n \over P}} \right\rceil \underbrace  = _{{\rm{given\ }}n = P}1
+$$
+
+<center>
+<img src="./assets/05-019A.png" width="650">
+</center>
+
+With respect to the addition operations (as in the figure shown above), at the first level, there are $N\over{2}$ nodes and $N$ available processors (i.e., a sufficient quantity of processors to execute all addition operations simultaneously), therefore the corresponding execution time is as follows:
+
+$$
+{T_P} = O(1)
+$$
+
+<center>
+<img src="./assets/05-020A.png" width="650">
+</center>
+
+Furthermore, generalizing in this manner for the subsequent downstream addition operations (as in the figure shown above), this similarly implies a per-level execution time as follows:
+
+$$
+{T_P} = O(1)
+$$
+
+Essentially, the DAG is executed on a level-by-level basis, with each level requiring constant time of execution. Therefore, the total execution time across all such levels is given by the height of the (binary) tree, i.e.,:
+
+$$
+{T_P} = O(\log n)
+$$
+
+## 5. Work and Span
