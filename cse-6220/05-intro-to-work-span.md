@@ -316,3 +316,37 @@ The work $W(n)$ is simply the total count of vertices. Furthermore, the span $D(
   * ***N.B.*** In this particular DAG, by symmetry, all paths have the same span (i.e., $7$ vertices total); the figure shown above outlines one such representative critical path.
 
 ## 7. Work and Span for Reduction Quiz and Answers
+
+Now, consider the application of work and span in a more abstract setting.
+
+<center>
+<img src="./assets/05-027Q.png" width="650">
+</center>
+
+Recall (cf. Section 5) the two directed acyclic graphs (DAGs) for the reduction example (as in the figure shown above).
+
+What are the respective spans $D(n)$ for each DAG? (Select one choice for each DAG among the following for choices.)
+  * $O(1)$
+  * $O(\log n)$
+  * $O(n)$
+  * $O(n \log n)$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-028A.png" width="650">
+</center>
+
+For the sequential/linear DAG, the critical path traverses all of the addition operations, and since there are $n$ such addition operations, this suggests the following:
+
+$$
+D(n) = O(n)
+$$
+
+For the tree-based DAG, all paths include at least one vertex from each level, and since there are $\log n$ levels in the tree, this suggests the following:
+
+$$
+D(n) = O(\log n)
+$$
+
+## 8. Basic Work-Span Laws
