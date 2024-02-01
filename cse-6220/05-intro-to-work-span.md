@@ -84,3 +84,88 @@ For present purposes, the **cost model** in question will be that which is subje
 Starting with these assumptions, discussion will now proceed onto applying this cost model to representative DAGs.
 
 ## 3. Example: Sequential Reduction
+
+<center>
+<img src="./assets/05-009.png" width="350">
+</center>
+
+Consider the following example program, which given an array $A$ , it computes the sum of all of its elements, returned as value $s$ :
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{let\ }}A \equiv {\rm{array\ of\ length\ }}n\\
+{s \leftarrow 0}\\
+{\rm{for\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do}}\\
+\ \ \ \ {s \leftarrow s + A[i]}
+\end{array}
+}
+$$
+
+This operation is an example of a pattern called a **reduction**.
+
+Now, suppose that only the costs for the addition operation $+$ and for the array-access operation $A[i]$ are of concern (i.e., ***assume*** that the cost of all other operations is negligible). Subsequent discussion will examine how the DAG for this computation unfolds, subject to this assumption.
+
+### Constructing the Directed Acyclic Graph (DAG)
+
+<center>
+<img src="./assets/05-010.png" width="550">
+</center>
+
+In the first iteration (as in the figure shown above), the addition node $+$ has a dependency (as denoted by corresponding dependence edge, denoted by solid brown arrow in the figure shown above) on the upstream load operation $A[1]$ , since the addition cannot proceed until the load operation is complete.
+
+<center>
+<img src="./assets/05-011.png" width="550">
+</center>
+
+In the second iteration (as in the figure shown above), the aforementioned process is repeated with respect to load operation $A[2]$ and corresponding addition operation $+$ . Furthermore, observe that there are ***three*** dependence edges, as follows:
+  * A dependence edge from the downstream operation $+$ of node $A[2]$ itself (denoted by solid brown arrow in the figure shown above)
+  * A dependence edge from the downstream operation $+$ of node $A[1]$ to the downstream operation $+$ of node $A[2]$ (denoted by solid brown arrow in the figure shown above)
+  * A dependence edge from the downstream operation $+$ of node $A[1]$ (denoted by red dashed arrow in the figure shown above)
+    * ***N.B.*** The code is being executed ***sequentially***, thereby introducing a corresponding **control dependency** between executions of the body of the $\rm{for}$ loop (i.e., $A[2]$ cannot execute until $A[1]$ has completed). However, for present purposes, these control dependencies will be ***ignored***.
+
+<center>
+<img src="./assets/05-012.png" width="650">
+</center>
+
+The iterations proceed in this manner through iteration $n$ (as in the figure shown above), ignoring control dependencies accordingly, yielding the corresponding final form of the DAG in question.
+
+### Determining the Cost of the Directed Acyclic Graph (DAG)
+
+Now, suppose that a parallel random access memory (PRAM) machine is given with corresponding $P$ processors. How long will it take the PRAM machine to execute this DAG (as denoted by $T_{P}(n)$ )?
+
+<center>
+<img src="./assets/05-013.png" width="650">
+</center>
+
+Observe that the ***load operations*** (i.e., $A[i]$ ) have no input dependencies (as in the figure shown above). Correspondingly, these can be executed as a group, assigned to corresponding processors among the available $P$ processors. Such batch execution suggests the following cost:
+
+$$
+{T_P} \ge \underbrace {\left\lceil {{n \over P}} \right\rceil }_{{\rm{loads}}}
+$$
+
+Here, $n$ load operations are divided among the $P$ processors, with each load operation requiring ***one*** unit of time; furthermore, since dealing with finite, discrete counts of processors performing discrete load operations, this implies a ceiling accordingly.
+
+<center>
+<img src="./assets/05-014.png" width="650">
+</center>
+
+With respect to the ***addition operations*** (i.e., $+$ , as in the figure shown above), observe that there are dependencies among them. Correspondingly, a given addition operation $+$ in iteration $i$ cannot proceed until the previous addition operation (i.e., that of stage $i-1$ ) has concluded, irrespectively of the number of available processors; therefore, this implies the following cost:
+
+$$
+{T_P} \ge \underbrace n_{{\rm{additions}}}
+$$
+
+<center>
+<img src="./assets/05-015.png" width="650">
+</center>
+
+Further simplification for expressing the cost is possible. Since $P$ is at least $1$ (i.e., the machine is comprised of at least one processor), then this strictly implies that $\left\lceil {{n \over P}} \right\rceil  \le n$ , and therefore the overall cost becomes:
+
+$$
+{T_P} \ge n
+$$
+
+In conclusion, a single reduction requires $n$ total operations, even when executed on a PRAM.
+
+## 4. A Reduction Tree Quiz and Answers
