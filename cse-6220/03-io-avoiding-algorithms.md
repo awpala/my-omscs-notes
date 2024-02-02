@@ -213,7 +213,7 @@ $$
 }
 $$
 
-In this quiz, count the number of asymptotic slow-fast transfers and the number of comparisons incurred at each step (as designated with "boxes" $O(\cdots)$ in the figure shown above), as aggregated over all iterations. Express the results in terms of $n , $Z$ , $L$ , and other numeric constant (but ignoring $f$ , which is simply a "corrective" constant to ensure that the size of the input buffers fit properly into the fast memory, along with any necessary "working space").
+In this quiz, count the number of asymptotic slow-fast transfers and the number of comparisons incurred at each step (as designated with "boxes" $O(\cdots)$ in the figure shown above), as aggregated over all iterations. Express the results in terms of $n$ , $Z$ , $L$ , and other numeric constant (but ignoring $f$ , which is simply a "corrective" constant to ensure that the size of the input buffers fit properly into the fast memory, along with any necessary "working space").
   * Furthermore, express the answer with respect to ***totals*** taken overall $n\over{Z}$ iterations.
   * Also, assume that everything divides "everything else" (i.e., $L|(f \cdot Z)$ and $(f \cdot Z)|L$ ), and assume that any local sort is an ***optimal*** comparison-based sort
 
@@ -354,7 +354,7 @@ What is the corresponding cost to merge the pair of runs $A$ and $B$ ?
 This scheme only ever ***loads*** elements from A or B from slow memory ***once***, and it only ***writes*** a given output block ***once***, i.e.,:
 
 $$
-\underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{loads}}} + \underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{writes}}}
+{\underbrace{{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{loads}}}} + {\underbrace{{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{writes}}}}
 $$
 
 <center>
@@ -642,7 +642,7 @@ However, if $k$ is relatively large, then a ***priority-queue-like*** data struc
 | $\rm{extract\ min}$ | $O(\log k)$ |
 | $\rm{insert}$ | $O(\log k)$ |
 
-After loading the first $k$ blocks via $\rm{build}$ (cost $O(k)$), then anytime the next item to merge is sought, $\rm{extract\ min}$ would be used (cost $O(\log k)$ ). Furthermore, after extracting this item, it may be subsequently replaced via $\rm{insert}$ (cost $O(\log k)$ ).
+After loading the first $k$ blocks via $\rm{build}$ (cost $O(k)$ ), then anytime the next item to merge is sought, $\rm{extract\ min}$ would be used (cost $O(\log k)$ ). Furthermore, after extracting this item, it may be subsequently replaced via $\rm{insert}$ (cost $O(\log k)$ ).
   * ***N.B.*** These are all ***fast-memory operations***, therefore when considering these costs, they will be simply counted as comparisons accordingly.
 
 ### Cost of a Single $k$-Way Merge via Min-Heap
