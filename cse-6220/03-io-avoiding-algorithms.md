@@ -237,9 +237,9 @@ The iteration-wise counts are as follows:
 
 With respect to the transfers (as in the figure shown above), the read and write operations involve around $Z/L$ transfers each, repeated for all iterations, i.e.,:
 
-$$
+```math
 \underbrace {\left( {{\bcancel{f \cdot Z} \over L}} \right)}_{{\rm{transfers\ per\ operation}}} \times \underbrace {\left( {{n \over \bcancel{f \cdot Z}}} \right)}_{{\rm{total\ operations}}} = O\left( {{n \over L}} \right)
-$$
+```
 
 <center>
 <img src="./assets/03-017A.png" width="650">
@@ -247,9 +247,9 @@ $$
 
 Furthermore, with respect to the comparisons (as in the figure shown above), an optimal comparison-based sort incurs around $Z \log Z$ comparisons, repeated for all iterations, i.e.,:
 
-$$
+```math
 \underbrace {\left( {\bcancel{f \cdot Z} \log \left( {f \cdot Z} \right)} \right)}_{{\rm{comparisons\ per\ operation}}} \times \underbrace {\left( {{n \over \bcancel{f \cdot Z}}} \right)}_{{\rm{total\ operations}}} = O\left( {n\log \left( {f \cdot Z} \right)} \right)
-$$
+```
 
 Observe that, in general, this algorithmic scheme is yielding behavior which is proportional to $n/L$ transactions, i.e., there *is* indeed utilization on a per-transaction basis.
 
@@ -373,9 +373,9 @@ $$
 
 Therefore, this cumulatively yields a total number of transfers as follows:
 
-$$
+```math
 \underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{loads}}} + \underbrace {{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{writes}}} + \underbrace {{{{2^{k}} \cdot s} \over L}}_{{\rm{writes}}} = {{{{2^{k+1}} \cdot s} \over L}}
-$$
+```
 
 Furthermore, with respect to comparisons, this is also linear in $s$ , i.e.,:
 
@@ -724,9 +724,9 @@ $$
 
 Furthermore, given the number (cf. given "hint" from previously in this section), this yields a total number of asymptotic memory transfers of:
 
-$$
+```math
 \Theta \left( {{n \over L}} \right) \times \underbrace {\Theta \left( {{{\log }_{{Z \over L}}}{n \over L}} \right)}_\ell  = \Theta \left( {{n \over L}{{\log }_{{Z \over L}}}{n \over L}} \right)
-$$
+```
 
 ## 10. A Lower Bound on External Memory Sorting
 
