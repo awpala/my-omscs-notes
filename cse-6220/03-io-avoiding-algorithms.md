@@ -465,6 +465,191 @@ Combining these gives the following:
 | Comparisons | $\underbrace {O(n{\log_2}Z)}_{{\rm{Phase\ 1}}} + \underbrace {O\left( n{\log_2 {n \over Z}} \right)}_{{\rm{Phase\ 2}}} = O\left(\bcancel{n \log_2 Z} + n \log_2 n - \bcancel{n \log_2 Z} \right) = O(n\log_2n)$ |
 | Transfers | $\underbrace {O\left( {{n \over L}} \right)}_{{\rm{Phase\ 1}}} + \underbrace {O\left( {{n \over L}{\log_2 n \over Z}} \right)}_{{\rm{Phase\ 2}}} = O\left( {{n \over L}\left( {1 + {\log_2 n \over Z}} \right)} \right)\underbrace  \approx _{1 \ll {\log_2 n \over Z}{\rm{\ as\ }}n \to \infty }O\left( {{n \over L}{\log_2 n \over Z}} \right)$ |
 
+<table>
+  <thead>
+    <tr>
+      <th style="text-align:center">Operation</th>
+      <th style="text-align:center">Asymptotic cost</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align:center">Comparisons</td>
+      <td>
+        <math display='block'>
+          <munder>
+            <munder>
+            <mrow>
+              <mi>O</mi><mo stretchy='false'>(</mo><mi>n</mi><msub>
+              <mrow>
+                <mi>log</mi></mrow>
+              <mn>2</mn>
+              </msub>
+              <mi>Z</mi><mo stretchy='false'>)</mo></mrow>
+            <mo stretchy='true'>&#xFE38;</mo>
+            </munder>
+            <mrow>
+            <mtext>Phase&#x00A0;1</mtext></mrow>
+          </munder>
+          <mo>+</mo><munder>
+            <munder>
+            <mrow>
+              <mi>O</mi><mrow><mo>(</mo>
+              <mrow>
+                <mi>n</mi><msub>
+                <mrow>
+                  <mi>log</mi></mrow>
+                <mn>2</mn>
+                </msub>
+                <mfrac>
+                <mi>n</mi>
+                <mi>Z</mi>
+                </mfrac>
+                </mrow>
+              <mo>)</mo></mrow></mrow>
+            <mo stretchy='true'>&#xFE38;</mo>
+            </munder>
+            <mrow>
+            <mtext>Phase&#x00A0;2</mtext></mrow>
+          </munder>
+          <mo>=</mo><mi>O</mi><mrow><mo>(</mo>
+            <mrow>
+            <menclose notation='downdiagonalstrike'>
+              <mrow>
+              <mi>n</mi><msub>
+                <mrow>
+                <mi>log</mi></mrow>
+                <mn>2</mn>
+              </msub>
+              <mi>Z</mi></mrow>
+            </menclose>
+            <mo>+</mo><mi>n</mi><msub>
+              <mrow>
+              <mi>log</mi></mrow>
+              <mn>2</mn>
+            </msub>
+            <mi>n</mi><mo>&#x2212;</mo><menclose notation='downdiagonalstrike'>
+              <mrow>
+              <mi>n</mi><msub>
+                <mrow>
+                <mi>log</mi></mrow>
+                <mn>2</mn>
+              </msub>
+              <mi>Z</mi></mrow>
+            </menclose>
+            </mrow>
+          <mo>)</mo></mrow><mo>=</mo><mi>O</mi><mo stretchy='false'>(</mo><mi>n</mi><msub>
+            <mi>log</mi>
+            <mn>2</mn>
+          </msub>
+          <mi>n</mi><mo stretchy='false'>)</mo>
+        </math>
+      </td>
+    </tr>
+    <tr>
+      <td style="text-align:center">Transfers</td>
+      <td>
+        <math display='block'>
+          <munder>
+            <munder>
+            <mrow>
+              <mi>O</mi><mrow><mo>(</mo>
+              <mrow>
+                <mfrac>
+                <mi>n</mi>
+                <mi>L</mi>
+                </mfrac>
+                </mrow>
+              <mo>)</mo></mrow></mrow>
+            <mo stretchy='true'>&#xFE38;</mo>
+            </munder>
+            <mrow>
+            <mtext>Phase&#x00A0;1</mtext></mrow>
+          </munder>
+          <mo>+</mo><munder>
+            <munder>
+            <mrow>
+              <mi>O</mi><mrow><mo>(</mo>
+              <mrow>
+                <mfrac>
+                <mi>n</mi>
+                <mi>L</mi>
+                </mfrac>
+                <msub>
+                <mrow>
+                  <mi>log</mi></mrow>
+                <mn>2</mn>
+                </msub>
+                <mfrac>
+                <mi>n</mi>
+                <mi>Z</mi>
+                </mfrac>
+                </mrow>
+              <mo>)</mo></mrow></mrow>
+            <mo stretchy='true'>&#xFE38;</mo>
+            </munder>
+            <mrow>
+            <mtext>Phase&#x00A0;2</mtext></mrow>
+          </munder>
+          <mo>=</mo><mi>O</mi><mrow><mo>(</mo>
+            <mrow>
+            <mfrac>
+              <mi>n</mi>
+              <mi>L</mi>
+            </mfrac>
+            <mrow><mo>(</mo>
+              <mrow>
+              <mn>1</mn><mo>+</mo><msub>
+                <mrow>
+                <mi>log</mi></mrow>
+                <mn>2</mn>
+              </msub>
+              <mfrac>
+                <mi>n</mi>
+                <mi>Z</mi>
+              </mfrac>
+              </mrow>
+            <mo>)</mo></mrow></mrow>
+          <mo>)</mo></mrow><munder>
+            <munder>
+            <mo>&#x2248;</mo>
+            <mo stretchy='true'>&#xFE38;</mo>
+            </munder>
+            <mrow>
+            <mn>1</mn><mo>&#x226A;</mo><msub>
+              <mrow>
+              <mi>log</mi></mrow>
+              <mn>2</mn>
+            </msub>
+            <mfrac>
+              <mi>n</mi>
+              <mi>Z</mi>
+            </mfrac>
+            <mtext>&#x00A0;as&#x00A0;</mtext><mi>n</mi><mo>&#x2192;</mo><mi>&#x221E;</mi></mrow>
+          </munder>
+          <mi>O</mi><mrow><mo>(</mo>
+            <mrow>
+            <mfrac>
+              <mi>n</mi>
+              <mi>L</mi>
+            </mfrac>
+            <msub>
+              <mrow>
+              <mi>log</mi></mrow>
+              <mn>2</mn>
+            </msub>
+            <mfrac>
+              <mi>n</mi>
+              <mi>Z</mi>
+            </mfrac>
+            </mrow>
+          <mo>)</mo></mrow>
+        </math>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 As these results suggest, merge sort is optimal with respect to comparisons (relative to any other comparison-based algorithm). Furthermore, with respect to memory transfers, Phase 2 dominates the total asymptotic cost.
 
 As it turns out, the known lower bound for the transfer operations is as follows:
