@@ -353,9 +353,9 @@ What is the corresponding cost to merge the pair of runs $A$ and $B$ ?
 
 This scheme only ever ***loads*** elements from A or B from slow memory ***once***, and it only ***writes*** a given output block ***once***, i.e.,:
 
-$$
-{\underbrace{{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{loads}}}} + {\underbrace{{{{2^{k - 1}} \cdot s} \over L}}_{{\rm{writes}}}}
-$$
+```latex
+\underbrace{{\frac{{2^{k - 1} \cdot s}}{{L}}}}_{{\text{{loads}}}} + \underbrace{{\frac{{2^{k - 1} \cdot s}}{{L}}}}_{{\text{{writes}}}}
+```
 
 <center>
 <img src="./assets/03-026.png" width="650">
