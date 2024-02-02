@@ -636,9 +636,9 @@ The frequency of switching is influenced by two ***factors***:
 
 Taken together, the aforementioned parameters can be used to compute/express the dynamic power as follows (sometimes called the **dynamic power equation** accordingly):
 
-$$
+```math
 \Delta P = \underbrace {C{V^2}}_{\left[ {{\textstyle{{{\rm{energy}}} \over {{\rm{gate}}}}}} \right]} \times \underbrace f_{\left[ {{\textstyle{{{\rm{cycles}}} \over {{\rm{time}}}}}} \right]} \times \underbrace a_{\left[ {{\textstyle{{{\rm{switches}}} \over {{\rm{cycle}}}}}} \right]}
-$$
+```
 
 Furthermore, note the relationship between $f$ (clock rate) and $V$ (supply voltage) as follows:
 
@@ -856,9 +856,10 @@ $$
 
 Therefore, the execution times are related as follows:
 
-$$
+```math
 {{{T_A}} \over {{T_C}}} = {{{T_A}} \over \bcancel{T_B}} \cdot {\bcancel{T_B} \over {{T_C}}}\underbrace  \Rightarrow _{{{{T_B}} \over {{T_C}}} \propto {{{f_C}} \over {{f_B}}}}{{{T_A}} \over {{T_C}}} = {{{T_A}} \over {{T_B}}} \cdot \underbrace {{{{f_C}} \over {{f_B}}}}_{{T_B}/{T_C}} = \underbrace {{{{T_A}} \over {{T_B}}}}_3\underbrace { \cdot {{{f_C}} \over \bcancel{f_A}} \cdot {\bcancel{f_A} \over {{f_B}}}}_{1 \cdot {1 \over {{6^{1/3}}}}} = {\left( {{9 \over 2}} \right)^{1/3}} \approx 1.65 > 1
 $$
+```
 
   * ***N.B.*** Here, ${{{T_B}} \over {{T_C}}} \propto {{{f_C}} \over {{f_B}}}$ is assumed, because System B and System C are the same except for their differing clock frequencies (i.e., execution time is inversely proportional to frequency, assuming that all other non-local compute costs can be neglected).
 
@@ -996,9 +997,9 @@ $$
 
 To derive this particular result, first consider Brent's theorem, which gives the following:
 
-$$
+```math
 {{\hat T}_P} \le \underbrace {\sigma \left( {D + {{W - D} \over {{\sigma ^3}P}}} \right)}_{ \equiv g\left( \sigma  \right)}
-$$
+```
 
 This defines an upper bound on time (i.e., ${\hat T}_P$ ), given that there is a slowdown on a per-core basis (factor $\sigma$ ) but more cores are used to compensate for this (factor ${\sigma ^3}P$ ).
 
