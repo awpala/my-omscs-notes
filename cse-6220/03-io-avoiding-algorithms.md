@@ -460,11 +460,6 @@ Phases 1 and 2 were analyzed previously (cf. Sections 4 and 5), summarized as fo
 
 Combining these gives the following:
 
-| Operation | Asymptotic cost |
-|:--:|:--:|
-| Comparisons | $\underbrace {O(n{\log_2}Z)}_{{\rm{Phase\ 1}}} + \underbrace {O\left( n{\log_2 {n \over Z}} \right)}_{{\rm{Phase\ 2}}} = O\left(\bcancel{n \log_2 Z} + n \log_2 n - \bcancel{n \log_2 Z} \right) = O(n\log_2n)$ |
-| Transfers | $\underbrace {O\left( {{n \over L}} \right)}_{{\rm{Phase\ 1}}} + \underbrace {O\left( {{n \over L}{\log_2 n \over Z}} \right)}_{{\rm{Phase\ 2}}} = O\left( {{n \over L}\left( {1 + {\log_2 n \over Z}} \right)} \right)\underbrace  \approx _{1 \ll {\log_2 n \over Z}{\rm{\ as\ }}n \to \infty }O\left( {{n \over L}{\log_2 n \over Z}} \right)$ |
-
 <table>
   <thead>
     <tr>
