@@ -434,7 +434,7 @@ The available adjustments are as follows (select all that apply):
   * double the fast memory size ($Z$ )
   * double the bandwidth ($\beta_0$ )
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-037A.png" width="650">
@@ -669,7 +669,7 @@ Here, $T_1$ is the time required for a given program to run on Design 1.
 What is the corresponding dynamic power (expressed in `W`) and program execution time (expressed in terms of $T_1$ ) for Design 2?
   * ***N.B.*** As needed, assume that all other factors between the two designs are otherwise ***equal***.
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-058A.png" width="650">
@@ -710,7 +710,7 @@ Recall (cf. Section 9) the dynamic power equation (as in the figure shown above)
 
 Which of these "knobs" might be within the control of algorithms and software?
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-060A.png" width="650">
@@ -757,7 +757,7 @@ The relationship between $E$ and $T$ is plotted as a **phase diagram** in the fi
 
 Which system has a *lower* average power usage? (Select either one or both, or neither if there is insufficient information provided to make this determination.)
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-065A.png" width="650">
@@ -797,7 +797,7 @@ Consider the following two systems:
 Suppose that dynamic voltage and frequency scaling (DVFS) (cf. Section 11) is used to rescale System B, such that its average power usage is the ***same*** as that of System A. Consequently, will System B still be faster than System A?
   * ***N.B.*** For purposes of this quiz, ignore the effects of constant power ($P_0$ ), but rather only consider dynamic power ($\Delta P$ ).
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-067A.png" width="650">
@@ -885,7 +885,7 @@ The simplest model for parallelism is the **work-span** (or **multi-threaded dir
 
 So, then, of these five metrics, which is the ***best*** to use for quantifying energy? (Select only *one*.)
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-072A.png" width="650">
@@ -912,7 +912,7 @@ Recall (cf. Section 14) the algorithmic metrics of the work-span model (also cal
 Of these five metrics, which is the ***best*** to use for quantifying dynamic power? (Select only *one*.)
   * ***N.B.*** Ignore constant power ($P_0$ ), and assume ***constant*** energy per operation.
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-074A.png" width="650">
@@ -978,7 +978,7 @@ $$
 
 In this scenario, what is the best value of $\sigma$ to use? (Answer symbolically in terms of $W$, $D$, $P$, and other constants.)
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/02-077A.png" width="650">

@@ -824,7 +824,7 @@ Plotting $R_{\max }$ in this manner yields the general form as in the figure sho
 
 What are the values of $x_0$ and $y_0$? (Express these in terms of the parameters $I$ , $B$ , $W$ , and $W_*$ .)
 
-### Answer and Explanation:
+### ***Answer and Explanation***:
 
 <center>
 <img src="./assets/01-078A.png" width="650">
