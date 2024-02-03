@@ -566,4 +566,53 @@ As a final point, note that this derived result is an ***upper bound*** for a gi
 
 An interesting fact is that both the upper and lower bounds as given here are within a factor of $2 \times$ of each other. This implies that the DAG may be executed in a time that is otherwise ***less*** than that predicted by Brent's theorem (though, of course, the lower bound cannot be exceeded).
 
-## 12. Applying Brent's Theorem Quiz and Answers
+## 12. Applying Brent's Theorem, Part 1 Quiz and Answers
+
+<center>
+<img src="./assets/05-044Q.png" width="650">
+</center>
+
+Consider running the directed acyclic graph (DAG) as in the figure shown above on a two-processor parallel random access memory (PRAM) machine. What is the upper bound predicted by Brent's Theorem? (Provide a positive integer.)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-045A.png" width="650">
+</center>
+
+There are $6$ total units of work ($W$ ) and a critical-path length ($D$ ) of $4$ . Therefore, Brent's Theorem predicts the following upper bound:
+
+$$
+{T_2} \le {{6 - 4} \over 2} + 4 = 5
+$$
+
+## 13. Applying Brent's Theorem, Part 2 Quiz and Answers
+
+Brent's theorem is an upper bound on the execution time. This means that given a directed acyclic graph (DAG) running on a parallel random access memory (PRAM) machine, the PRAM machine might run the DAG in less time than Brent's Theorem would otherwise predict.
+
+<center>
+<img src="./assets/05-046Q.png" width="650">
+</center>
+
+Returning to the previous example (cf. Section 12), it was shown that the predicted upper bound is $5$ time units (i.e., $T_{2} \le 5$ ).
+
+By inspection, as this DAG suggests, it can be readily observed that execution is possible using only $4$ time units, by dividing into corresponding phases (as denoted by broken goldenrod lines in the figure shown above), with $4$ phases having at most $2$ units of work (i.e., with full utilization of the two processors at any given time). Accordingly, there is some "slack" in Brent's Theorem with respect to the upper bound.
+
+<center>
+<img src="./assets/05-047Q.png" width="650">
+</center>
+
+Correspondingly, provide a different (but valid) assignment of the vertices to corresponding phases that instead takes $5$ time units rather than $4$ time units. (Denote by corresponding phase number in the boxes provided in the figure shown above.)
+  * ***N.B.*** Recall (cf. Section 9) that the first condition states that every phase must include exactly ***one*** critical-path vertex.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-048A.png" width="650">
+</center>
+
+One possible assignment is as in the figure shown above. Here, after phase $1$ completes, any of the three downstream units can commence execution; assigning all three to phase $2$ accordingly, this creates a corresponding "bottleneck" with respect to the two-processor PRAM machine, thereby requiring two steps to execute this phase. This essentially demonstrates the "slack" introduced by the ceiling in Brent's Theorem.
+
+Furthermore, observe that choosing such assignments of work to corresponding processors, and correspondingly breaking down the execution phases in this manner, is precisely what makes scheduling an inherently challenging objective (i.e., as the complexity of the DAG in question increases).
+
+## 14. Desiderata: Speedup, Work-Optimality, and Weak-Scalability
