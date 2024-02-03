@@ -397,9 +397,9 @@ This is called the **work law**.
 
 Furthermore, since both laws hold in general (and simultaneously), then these can be combined into the **(combined) work-span law** as follows:
 
-$$
+```math
 {T_p}(n) \ge \max \left\{ {D(n),\left\lceil {{{W(n)} \over P}} \right\rceil } \right\}
-$$
+```
 
 To summarize, the averaged available parallelism in the DAG is characterized by $W(n) \over {D(n)}$ , whereas the work-span law describes the lower bound with respect to $P$ available processors running the overall work of the DAG.
 
