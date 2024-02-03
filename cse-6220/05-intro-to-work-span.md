@@ -480,3 +480,27 @@ $$
 ***N.B.*** The utility of this intermediate result will become more apparent shortly.
 
 ## 10. Brent's Theorem Aside: Floor and Ceiling Identities Quiz and Answers
+
+<center>
+<img src="./assets/05-039Q.png" width="650">
+</center>
+
+Suppose two positive integers $a$ and $b$ are given, such that $a, b > 0$ . Which of the following identities are true? (Select all that apply.)
+  * $\left\lceil {{a \over b}} \right\rceil  = \left\lfloor {{{a + b - 1} \over b}} \right\rfloor$
+  * $\left\lceil {{a \over b}} \right\rceil  = \left\lfloor {{{a - 1} \over b}} \right\rfloor  + 1$
+  * $\left\lfloor {{a \over b}} \right\rfloor  = \left\lceil {{{a - b + 1} \over b}} \right\rceil$
+  * $\left\lfloor {{a \over b}} \right\rfloor  = \left\lceil {{{a + 1} \over b}} \right\rceil  - 1$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-040A.png" width="650">
+</center>
+
+All of these identities are true.
+
+### Instructor's Notes
+
+This [page](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions) on Wikipedia provides corresponding derivations for several of these identities.
+
+## 11. Brent's Theorem, Part 2 (Finish)
