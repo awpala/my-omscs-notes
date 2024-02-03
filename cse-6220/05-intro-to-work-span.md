@@ -504,3 +504,66 @@ All of these identities are true.
 This [page](https://en.wikipedia.org/wiki/Floor_and_ceiling_functions) on Wikipedia provides corresponding derivations for several of these identities.
 
 ## 11. Brent's Theorem, Part 2 (Finish)
+
+<center>
+<img src="./assets/05-041.png" width="650">
+</center>
+
+Recall (cf. Section 9) that the objective of Brent's Theorem is to provide an upper bound on the execution time.
+
+To accomplish this objective, execution of the directed acyclic graph (DAG) on the parallel random access memory (PRAM) machine with $P$ processors was divided into corresponding **phases** (as in the figure shown above), with each phase $k$ performing $W_k$ unites of work. Furthermore, the time to execute each phase ($t_k$ ) can be used to define the overall execution time ($T_P$ ) as follows:
+
+$$
+{T_P} = \sum\limits_{k = 1}^D {\underbrace {\left\lceil {{{{W_k}} \over P}} \right\rceil }_{{t_k}}}
+$$
+
+With respect to the ceiling in this expression, note the following fact (cf. Section 10):
+
+$$
+\left\lceil {{a \over b}} \right\rceil  = \left\lfloor {{{a - 1} \over b}} \right\rfloor  + 1
+$$
+
+<center>
+<img src="./assets/05-042.png" width="650">
+</center>
+
+Using this fact, the ceiling can be converted to a floor as follows:
+
+$$
+{T_P} = \sum\limits_{k = 1}^D {\left( {\left\lfloor {{{{W_k} - 1} \over P}} \right\rfloor  + 1} \right)}
+$$
+
+While this may not appear to "improve" the ability to arrive at the objective, note that the objective is to determine the upper bound. Correspondingly, note the following in this vein:
+
+$$
+\left\lfloor x \right\rfloor \le x
+$$
+
+Therefore, the floor can be eliminated accordingly as follows:
+
+$$
+{T_P} \le \sum\limits_{k = 1}^D {\left( {{{{W_k} - 1} \over P} + 1} \right)}
+$$
+
+<center>
+<img src="./assets/05-043.png" width="650">
+</center>
+
+Evaluating the right-hand-side expression therefore yields the following:
+
+$$
+{T_P} \le {{W - D} \over P} + D
+$$
+
+In fact, this final result is **Brent's theorem**. Furthermore, note that this result is rather intuitive: It states that the time to execute the DAG ($T_P$ ) is no more than the sum of the time to execute the critical path ($D$ ) and the time to execute off of the critical path using the available $P$ processors (${W - D} \over {P}$ ).
+  * ***N.B.*** Furthermore, this result sets a corresponding ***goal*** for any scheduler. When critically assessing a proposed scheduling algorithm, its ideal possible performance will be constrained by Brent's theorem accordingly.
+
+As a final point, note that this derived result is an ***upper bound*** for a given DAG. However, recall (cf. Section 9) that the (combined) work-span law provides the corresponding ***lower bound*** as well, i.e.,:
+
+$$
+\max \left\{ {D(n),\left\lceil {{{W(n)} \over P}} \right\rceil } \right\} \le {T_P} \le {{W - D} \over P} + D
+$$
+
+An interesting fact is that both the upper and lower bounds as given here are within a factor of $2 \times$ of each other. This implies that the DAG may be executed in a time that is otherwise ***less*** than that predicted by Brent's theorem (though, of course, the lower bound cannot be exceeded).
+
+## 12. Applying Brent's Theorem Quiz and Answers
