@@ -708,3 +708,31 @@ As a recap of the overall algorithm design goal, this is summarized as follows:
 | Weak-scalability | $P = O({W_* \over D})$ or ${W_* \over P} = \Omega(D)$ | In the latter form, the work $W$ per processor $P$ should grow as a function of the input size $n$ (via span $D(n)$ ) |
 
 ## 15. Which Parallel Algorithm Is Better? Quiz and Answers
+
+<center>
+<img src="./assets/05-054Q.png" width="650">
+</center>
+
+Consider the following two parallel algorithms:
+
+| Algorithm | Work | Span |
+|:--:|:--:|:--:|
+| $1$ | $W_1(n) = n^{2} \log n$ | $D_1(n) = \log n$ |
+| $2$ | $W_2(n) = n^2$ | $D_2(n) = n$ |
+
+Which parallel algorithm has better performance? If so, why?
+  * ***N.B.*** This is an open-ended question.
+
+### Answer and Explanation:
+
+<center>
+<img src="./assets/05-055A.png" width="650">
+</center>
+
+There is no definitively "better" among the two algorithms. "Better" in this context depends on what is being optimized for, i.e., work-optimality, lowest span, linear speedup, faster execution time, etc. For this purpose, there are many cases to consider accordingly.
+
+### Instructor's Notes
+
+See provided solution for Fall 2015 Question 1 for further elaboration.
+
+## 16. Basic Concurrency Primitives: Spawn and Sync
