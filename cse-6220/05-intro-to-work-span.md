@@ -560,9 +560,9 @@ In fact, this final result is **Brent's theorem**. Furthermore, note that this r
 
 As a final point, note that this derived result is an ***upper bound*** for a given DAG. However, recall (cf. Section 9) that the (combined) work-span law provides the corresponding ***lower bound*** as well, i.e.,:
 
-$$
+```math
 \max \left\{ {D(n),\left\lceil {{{W(n)} \over P}} \right\rceil } \right\} \le {T_P} \le {{W - D} \over P} + D
-$$
+```
 
 An interesting fact is that both the upper and lower bounds as given here are within a factor of $2 \times$ of each other. This implies that the DAG may be executed in a time that is otherwise ***less*** than that predicted by Brent's theorem (though, of course, the lower bound cannot be exceeded).
 
