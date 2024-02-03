@@ -625,9 +625,9 @@ Given a directed acyclic graph (DAG) and a weight-estimated execution time, how 
 
 The metric used for this purpose will be **speedup**, defined as follows:
 
-$$
+```math
 \underbrace {{S_P}(n)}_{{\rm{speedup}}} \equiv {{\overbrace {{T_*}(n)}^{{\rm{optimal\ sequential\ time}}}} \over {\underbrace {{T_P}(n)}_{{\rm{parallel\ time}}}}}
-$$
+```
 
 ***N.B.*** Here, in general, $T_P(n) = f(W, D; n, P)$ (where $W$ is the work, $D$ is the span, $n$ is the problem size, and $P$ is the number of processors),  whereas $T_*(n)$ only depends on $n$ (i.e., the work performed by the optimal sequential algorithm); therefore, for notational consistency, $W_*(n)$ will be used to represent the latter for notational consistency.
 
