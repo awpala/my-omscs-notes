@@ -626,12 +626,12 @@ Given a directed acyclic graph (DAG) and a weight-estimated execution time, how 
 The metric used for this purpose will be **speedup**, defined as follows:
 
 ```math
-\underbrace {{S_P}(n)}_{{\rm{speedup}}} \equiv {{\overbrace {{T_*}(n)}^{{\rm{optimal\ sequential\ time}}}} \over {\underbrace {{T_P}(n)}_{{\rm{parallel\ time}}}}}
+\underbrace {{S_P}(n)}_{{\rm{speedup}}} \equiv {{\overbrace {{T_* }(n)}^{{\rm{optimal\ sequential\ time}}}} \over {\underbrace {{T_P}(n)}_{{\rm{parallel\ time}}}}}
 ```
 
-***N.B.*** Here, in general, $T_P(n) = f(W, D; n, P)$ (where $W$ is the work, $D$ is the span, $n$ is the problem size, and $P$ is the number of processors),  whereas $T_* (n)$ only depends on $n$ (i.e., the work performed by the optimal sequential algorithm); therefore, for notational consistency, $W_*(n)$ will be used to represent the latter for notational consistency.
+***N.B.*** Here, in general, $T_P(n) = f(W, D; n, P)$ (where $W$ is the work, $D$ is the span, $n$ is the problem size, and $P$ is the number of processors),  whereas $T_* (n)$ only depends on $n$ (i.e., the work performed by the optimal sequential algorithm); therefore, for notational consistency, $W_* (n)$ will be used to represent the latter for notational consistency.
 
-So, then, what is particularly "optimal" about the best sequential time $W_*(n)$ ?
+So, then, what is particularly "optimal" about the best sequential time $W_* (n)$ ?
 
 ### Speedup
 
@@ -650,13 +650,13 @@ $$
 Now, consider the speedup in terms of the best sequential work and parallel time, i.e.,:
 
 $$
-S_P(n) = {{W_*(n)} \over {T_P(n)}}
+S_P(n) = {{W_* (n)} \over {T_P(n)}}
 $$
 
 Furthermore, using Brent's Theorem (cf. Section 11), an upper bound on time can be applied (and consequently a lower bound on speedup), as follows:
 
 ```math
-S_P(n) = {{W_*(n)} \over {T_P(n)}} \ge {{W_*} \over {{W - D} \over P} + D}
+S_P(n) = {{W_* (n)} \over {T_P(n)}} \ge {{W_* } \over {{W - D} \over P} + D}
 ```
 
 ***N.B.*** For notational convenience, $(n)$ is omitted in the right-hand expression.
@@ -670,14 +670,14 @@ S_P(n) = {{W_*(n)} \over {T_P(n)}} \ge {{W_*} \over {{W - D} \over P} + D}
 Furthermore, algebraic simplification of the right-hand side yields the following:
 
 ```math
-S_P(n) = {{W_*(n)} \over {T_P(n)}} \ge {{P} \over {{W \over {W_*}} + {{P - 1} \over {{W_*}/D}}}}
+S_P(n) = {{W_* (n)} \over {T_P(n)}} \ge {{P} \over {{W \over {W_* }} + {{P - 1} \over {{W_* }/D}}}}
 ```
 
 In this form, it is more readily apparent what is necessary in order to achieve ideal scaling per the right-hand expression: Relative to the numerator $P$ (i.e., the number of processors), the corresponding penalty is determined by the denominator (i.e., in order to achieve ideal/linear scaling, the denominator must be constant, i.e., $O(1)$ ).
 
 In order to achieve a constant denominator, consider each term in turn.
 
-With respect to the first term in the denominator, this requires $W = W_*$ , a condition called **work-optimality**. Intuitively, work-optimality prevents a form of "cheating": Work-optimality implies that if a highly parallel algorithm is achieved simply by dramatically increasing the work relative to the best sequential algorithm, then this is actually *detrimental* to achieving speedup.
+With respect to the first term in the denominator, this requires $W = W_* $ , a condition called **work-optimality**. Intuitively, work-optimality prevents a form of "cheating": Work-optimality implies that if a highly parallel algorithm is achieved simply by dramatically increasing the work relative to the best sequential algorithm, then this is actually *detrimental* to achieving speedup.
 
 ### Weak Scalability
 
@@ -691,7 +691,7 @@ $$
 P = O\left( {{{{W_ * }} \over D}} \right) \Rightarrow {{{W_ * }} \over P} = \Omega (D)
 $$
 
-This is similar to the idea of the average available parallelism (cf. Section 8), however, here it is expressed with respect to $W_*$ (i.e., rather than $W$ ). Furthermore, in the latter characterization (i.e., $W_* \over {P}$ , the work per processor) suggests that the work per processor must grow proportionally to the span $D$ (recall that $D$ depends on the problem size $n$ ). In the literature, this problem-size-dependent growth is called **weak scalability**, i.e., as the concurrency of the machine is increased, then in order to achieve adequate scaling, this may require a corresponding increase in the problem size.
+This is similar to the idea of the average available parallelism (cf. Section 8), however, here it is expressed with respect to $W_* $ (i.e., rather than $W$ ). Furthermore, in the latter characterization (i.e., $W_* \over {P}$ , the work per processor) suggests that the work per processor must grow proportionally to the span $D$ (recall that $D$ depends on the problem size $n$ ). In the literature, this problem-size-dependent growth is called **weak scalability**, i.e., as the concurrency of the machine is increased, then in order to achieve adequate scaling, this may require a corresponding increase in the problem size.
 
 ### Recap
 
@@ -703,8 +703,8 @@ As a recap of the overall algorithm design goal, this is summarized as follows:
 
 | Characteristic | Algorithmic time | Comment |
 |:--:|:--:|:--:|
-| Speedup | $S_P(n) \equiv {{T_*(n)} \over T_P(n)} = \Theta(P)$ | To achieve linear scaling, this requires work-optimality and weak-scalability (two fundamental principles of good parallel algorithm design)\
-| Work-optimality | $W(n) = O(W_*(n))$ | The work of the parallel algorithm $W$ should match the work of the best sequential algorithm $W_*$ |
+| Speedup | $S_P(n) \equiv {{T_* (n)} \over T_P(n)} = \Theta(P)$ | To achieve linear scaling, this requires work-optimality and weak-scalability (two fundamental principles of good parallel algorithm design)\
+| Work-optimality | $W(n) = O(W_* (n))$ | The work of the parallel algorithm $W$ should match the work of the best sequential algorithm $W_* $ |
 | Weak-scalability | $P = O({W_* \over D})$ or ${W_* \over P} = \Omega(D)$ | In the latter form, the work $W$ per processor $P$ should grow as a function of the input size $n$ (via span $D(n)$ ) |
 
 ## 15. Which Parallel Algorithm Is Better? Quiz and Answers
