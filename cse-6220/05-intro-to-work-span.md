@@ -655,9 +655,9 @@ $$
 
 Furthermore, using Brent's Theorem (cf. Section 11), an upper bound on time can be applied (and consequently a lower bound on speedup), as follows:
 
-$$
+```math
 S_P(n) = {{W_*(n)} \over {T_P(n)}} \ge {{W_*} \over {{W - D} \over P} + D}
-$$
+```
 
 ***N.B.*** For notational convenience, $(n)$ is omitted in the right-hand expression.
 
@@ -669,9 +669,9 @@ $$
 
 Furthermore, algebraic simplification of the right-hand side yields the following:
 
-$$
+```math
 S_P(n) = {{W_*(n)} \over {T_P(n)}} \ge {{P} \over {{W \over {W_*}} + {{P - 1} \over {{W_*}/D}}}}
-$$
+```
 
 In this form, it is more readily apparent what is necessary in order to achieve ideal scaling per the right-hand expression: Relative to the numerator $P$ (i.e., the number of processors), the corresponding penalty is determined by the denominator (i.e., in order to achieve ideal/linear scaling, the denominator must be constant, i.e., $O(1)$ ).
 
