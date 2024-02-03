@@ -350,3 +350,57 @@ D(n) = O(\log n)
 $$
 
 ## 8. Basic Work-Span Laws
+
+<center>
+<img src="./assets/05-029.png" width="650">
+</center>
+
+To further develop intuition, consider the directed acyclic graph (DAG) as in the figure shown above, comprised of work $W(n)$ and span $D(n)$ . Their ratio is as follows:
+
+$$
+W(n) \over D(n)
+$$
+
+This ratio has a special ***interpretation***: It measures the amount of work per critical-path vertex. Accordingly, at every critical path, there is an average amount of work. Therefore, this ratio indicates the **average available parallelism** in the DAG.
+
+<center>
+<img src="./assets/05-030.png" width="650">
+</center>
+
+Consider a given critical-path vertex (as denoted by goldenrod arrow in the figure shown above). When this critical-path vertex executes, there is corresponding work performed, the average of which is characterized by $\approx {W \over D}$ .
+
+The implications of this is that given a parallel random access memory (PRAM) machine with $P$ processors, presumably $P \approx {W \over D}$ available processors would be ideal in this scenario, thereby ensuring that the processors are fully utilized on average at any given time.
+
+<center>
+<img src="./assets/05-031.png" width="650">
+</center>
+
+Work and span provide additional insight into this. Firstly, recall (cf. Section 5) that span is the lower bound on execution time, i.e.,:
+
+$$
+T_p(n) \ge D(n)
+$$
+
+This is called the **span law**.
+
+Additionally, besides a lower bound on the span, there is also a lower bound on the work itself, whereby if there is no distinct critical path (within the scope of the overall work to be performed), then all of the work can be divided evenly among the $P$ processors, i.e.,:
+
+$$
+{T_p}(n) \ge \left\lceil {{{W(n)} \over P}} \right\rceil
+$$
+
+This is called the **work law**.
+
+<center>
+<img src="./assets/05-032.png" width="650">
+</center>
+
+Furthermore, since both laws hold in general (and simultaneously), then these can be combined into the **(combined) work-span law** as follows:
+
+$$
+{T_p}(n) \ge \max \left\{ {D(n),\left\lceil {{{W(n)} \over P}} \right\rceil } \right\}
+$$
+
+To summarize, the averaged available parallelism in the DAG is characterized by $W(n) \over {D(n)}$ , whereas the work-span law describes the lower bound with respect to $P$ available processors running the overall work of the DAG.
+
+## 9. Brent's Theorem, Part 1 (Setup)
