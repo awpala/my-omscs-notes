@@ -401,6 +401,82 @@ Furthermore, since both laws hold in general (and simultaneously), then these ca
 {T_p}(n) \ge \max \left\{ {D(n),\left\lceil {{{W(n)} \over P}} \right\rceil } \right\}
 ```
 
-To summarize, the averaged available parallelism in the DAG is characterized by $W(n) \over {D(n)}$ , whereas the work-span law describes the lower bound with respect to $P$ available processors running the overall work of the DAG.
+To summarize, the averaged available parallelism in the DAG is characterized by $W(n) \over {D(n)}$ , whereas the work-span law describes the ***lower bound*** with respect to $P$ available processors running the overall work of the DAG.
 
 ## 9. Brent's Theorem, Part 1 (Setup)
+
+<center>
+<img src="./assets/05-033.png" width="650">
+</center>
+
+Recall (cf. Section 8) that work and span laws quantify the minimum possible time. However, consider an additional interesting question: Is there an ***upper bound*** on the time to execute the directed acyclic graph (DAG)? Symbolically:
+
+$$
+T_{P}(n) \le \rm{\ ?}
+$$
+
+In fact, such an upper bound does indeed exist, according to a **theorem** by Richard Brent (i.e., **Brent's theorem**).
+  * ***N.B.*** This elegant theorem provides a lot of insight into parallel algorithms via its derivation, which is the corresponding focus in this and subsequent sections accordingly.
+
+### Three Conditions to Define Execution Phases
+
+<center>
+<img src="./assets/05-034.png" width="650">
+</center>
+
+Given a DAG with a certain amount of work and a particular span (as in the figure shown above), the ***objective*** is to estimate an upper bound on the execution time of this DAG, i.e., $T_{P}(n) \le \rm{\ ?}$ .
+
+Suppose that the system for its execution is given as a parallel random access memory (PRAM) machine with $P$ processors. In analyzing the execution of the DAG on this PRAM machine, the execution can be broken up into ***phases*** (as denoted by broken lines in the figure shown above), where each phase satisfies three **conditions**.
+
+#### The First Condition
+
+The **first condition** states that each phase has exactly ***one*** critical-path vertex.
+  * This condition immediately implies that there must be $D(n)$ such phases accordingly (denoted in teal numbering as $1$ , $2$ , $\cdots$ , $D(n)$ in the figure shown above). Furthermore, note that since the critical-path vertices are numbered, and there is one critical-path vertex per phase, then the phases can be correspondingly numbered unambiguously with the associated critical-path vertex (denoted by numbered broken goldenrod curves as in the figure shown above).
+
+#### The Second Condition
+
+<center>
+<img src="./assets/05-035.png" width="650">
+</center>
+
+The **second condition** states that ***all*** non-critical-path vertices within a given phase are independent (as in the figure shown above).
+
+<center>
+<img src="./assets/05-036.png" width="650">
+</center>
+
+Given any phase with its single critical-path vertex (as in the figure shown above), any non-critical-path vertices which have been assigned to this same phase (denoted by white circles in the figure shown above) can only have vertices that enter the phase or exit the phase, but they cannot otherwise ever depend on one another (e.g., such an invalid dependency is denoted by broken red arrow in the figure shown above).
+
+***N.B.*** The second condition is ***always*** possible to satisfy. The proof of this is left as an exercise to the reader. As a hint, consider basic facts about paths, and then apply this reasoning to the fact that the critical-path vertex lies on the longest path.
+
+#### The Third Condition
+
+<center>
+<img src="./assets/05-037.png" width="650">
+</center>
+
+The **third condition** states that ***every*** vertex must appear in some phase, and ***only*** in one such phase (as in the figure shown above).
+
+Given a DAG divided into phases (as in the figure shown above), every such phase $k$ will have some number of vertices associated with it, denoted by $W_k$ . Furthermore, note that this value $W_k$ includes the critical-path vertex.
+
+By this third condition, the implication is that the sum of $W_k$'s across all of the phases yields the total number of vertices, i.e.,:
+
+$$
+\sum\limits_{k = 1}^D {{W_k}} = W
+$$
+
+<center>
+<img src="./assets/05-038.png" width="650">
+</center>
+
+So, then, how long will it take to execute phase $k$ (as denoted by $t_k$ )?
+
+Given $W_k$ units of independent work (as per the second condition) and $P$ available processors, then this implies (summing over all phases accordingly):
+
+$$
+{t_k} = \left\lceil {{{{W_k}} \over P}} \right\rceil  \Rightarrow {T_P} = \sum\limits_{k = 1}^D {{t_k}}
+$$
+
+***N.B.*** The utility of this intermediate result will become more apparent shortly.
+
+## 10. Brent's Theorem Aside: Floor and Ceiling Identities Quiz and Answers
