@@ -873,3 +873,61 @@ With respect to the DAG, this should create some dependence edges between the re
 Lastly, control eventually goes to the statement $\rm{return}$ , which returns the resulting sum $a + b$ accordingly.
 
 ## 17. A Subtle Point about Spawns Quiz and Answers
+
+<center>
+<img src="./assets/05-066Q.png" width="650">
+</center>
+
+The example of a recursive reduction as examined previously (cf. Section 16) uses two $\rm{spawn}$ operations. However, are these ***both*** necessary in this specific example?
+
+Posed another way: Which of these $\rm{spawn}$ operations may be eliminated without otherwise increasing the span (asymptotically)? (Select the correct option.)
+  * $A$ but not $B$
+  * $B$ but not $A$
+  * $A$ or $B$ , but not both
+  * Neither (must keep both)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-068A.png" width="650">
+</center>
+
+The $\rm{spawn}$ for $B$ *can* be eliminated, but *not* that for $A$ . This can be seen both intuitively, as well as more formally. This section will discuss the "intuitive" way, and the formal approach will be discussed subsequently in this lesson.
+
+<center>
+<img src="./assets/05-069A.png" width="650">
+</center>
+
+The intuitive argument is based on the depiction as in the figure shown above. Suppose that both "spawned" directed acyclic graphs (DAGs) for both $A$ and $B$ are kept. Observe that there are three possible paths, all of which are potential critical paths; therefore, it is necessary to understand how they grow.
+
+The first path follows the "spine" of the DAG (as denoted by solid red arrow in the previous figure), comprised of a ***constant*** number of nodes along this path. This suggests that it is most likely ***not*** the critical path.
+
+THe second path (denoted by $A$ and goldenrod curve in the figure shown above) follows the branch $A$ . This path interestingly goes through a sub-graph, which itself involves several recursive calls, thereby contributing to the growth in the length of the corresponding path.
+
+The third path (denoted by $B$ and orange curve in the figure shown above) follows the branch $B$ . Similarly to the branch $A$ , the branch $B$ proceeds through a sub-graph.
+
+Now, consider some hypothetical ***scenarios***.
+
+<center>
+<img src="./assets/05-070A.png" width="650">
+</center>
+
+Suppose that the first $\rm{spawn}$ with respect to $A$ is eliminated. This results in a corresponding change in the structure of the DAG (as in the figure shown above), whereby the "spine" follows directly through the sub-graph of $A$ before returning back to the $\rm{spawn}$ point of $B$ .
+
+<center>
+<img src="./assets/05-071A.png" width="650">
+</center>
+
+Consequently, this DAG now has two interesting paths (as in the figure shown above):
+  * One (denoted by $A$ and goldenrod curve in the figure shown above) follows the $A$ statement
+  * The other (denoted by $B$ and orange curve in the figure shown above) follows the $B$ statement
+
+Observe that both paths overlap substantially, particularly including the sub-graph of $A$ . However, the $B$ path additionally continues through the sub-graph of $B$ . Additionally, note the following ***critical observation***:  The recursive calls in the sub-graph of $A$ occurs ***before*** that of $B$ , thereby implying that there is ***no*** concurrency among the two sub-graphs' respective executions. Therefore, this suggests that eliminating the first $\rm{spawn}$ (i.e., that associated with $A$ ) effectively eliminates the overall concurrency in the DAG at large.
+
+<center>
+<img src="./assets/05-072A.png" width="650">
+</center>
+
+Now, Suppose that the second $\rm{spawn}$ with respect to $B$ is eliminated instead (as in the figure shown above). Per corresponding transformation of the DAG, observe that even with elimination of the second $\rm{spawn}$ (i.e., with respect to $B$ ), the two sub-graphs can still execute concurrently nevertheless (i.e., without otherwise materially impacting the span of the graph at large).
+
+## 18. Basic Analysis of Work and Span
