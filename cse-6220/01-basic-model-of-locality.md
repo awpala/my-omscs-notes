@@ -995,7 +995,7 @@ $$
 \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{let\ }}\hat A \equiv b \times b{\rm{\ block\ at\ }}A[i,k]}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{let\ }}\hat B \equiv b \times b{\rm{\ block\ at\ }}B[k,j]}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {\hat C \leftarrow \hat C + \hat A \cdot \hat B}\\
-\ \ \ \ \ \ \ \ {C[i,j]{\rm{ block}} \leftarrow \hat C}
+\ \ \ \ \ \ \ \ {C[i,j]{\rm{\ block}} \leftarrow \hat C}
 \end{array}
 }
 $$
