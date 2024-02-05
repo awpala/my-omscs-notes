@@ -871,7 +871,7 @@ $$
 {{\rm{for\ }}i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
 \ \ \ \ {{\rm{for\ }}j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
 \ \ \ \ \ \ \ \ {{\rm{for\ }}k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {C[i,j] +  = A[i,k] \cdot B[k,j]}
+\ \ \ \ \ \ \ \ \ \ \ \ {C[i,j] += A[i,k] \cdot B[k,j]}
 \end{array}
 }
 $$

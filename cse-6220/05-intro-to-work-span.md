@@ -872,6 +872,10 @@ With respect to the DAG, this should create some dependence edges between the re
 
 Lastly, control eventually goes to the statement $\rm{return}$ , which returns the resulting sum $a + b$ accordingly.
 
+### Instructor's Notes
+
+See [here](https://en.wikipedia.org/wiki/Call_stack) regarding call stacks.
+
 ## 17. A Subtle Point about Spawns Quiz and Answers
 
 <center>
@@ -931,3 +935,135 @@ Observe that both paths overlap substantially, particularly including the sub-gr
 Now, Suppose that the second $\rm{spawn}$ with respect to $B$ is eliminated instead (as in the figure shown above). Per corresponding transformation of the DAG, observe that even with elimination of the second $\rm{spawn}$ (i.e., with respect to $B$ ), the two sub-graphs can still execute concurrently nevertheless (i.e., without otherwise materially impacting the span of the graph at large).
 
 ## 18. Basic Analysis of Work and Span
+
+The $\rm{span-sync}$ framework allows to analyze the work and the span of algorithms in almost ***exactly*** the same way as is done for sequential algorithms. This section will demonstrate this premise by example.
+
+### Sequential Algorithm Analysis
+
+<center>
+<img src="./assets/05-073.png" width="650">
+</center>
+
+Recall (cf. Section 16) the pseudocode for performing a sequential reduction using divide and conquer, as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{reduce}}\left( {A[0:n - 1]} \right)}\\
+\ \ \ \ {{\rm{if\ }}n \ge 2{\rm{\ then}}}\\
+\ \ \ \ \ \ \ \ {a \leftarrow {\rm{reduce}}\left( {A\left[ {0:{n \over 2} - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {b \leftarrow {\rm{reduce}}\left( {A\left[ {{n \over 2}:n - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {{\rm{return\ }}a + b}\\
+\ \ \ \ {{\rm{//\ else\ }}n = 1}\\
+\ \ \ \ {{\rm{return\ }}A[0]}
+\end{array}
+}
+$$
+
+To analyze this algorithm, begin with a recurrence relation, and then solve the relation, i.e.,:
+
+$$
+T_* (n) = 
+\begin{cases} 
+  {2 \cdot {T_* }({n \over 2}) + O(1)} & n \ge 2 \\
+  {O(1)} & n \le 1 \\
+\end{cases}
+$$
+
+The recurrence (case $n \ge 2$ ) corresponds to the two recursive calls to $\rm{reduce}$ , i.e., two sub-problems, each having half of the original problem size $n$ .
+
+Solving this recurrence (e.g., via the Master Theorem) yields the following:
+
+$$
+T_* (n) = O(n)
+$$
+
+### Parallel Algorithm Analysis
+
+
+Recall (cf. Sections 16 and 17) the pseudocode for performing a parallel reduction using divide and conquer, as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{reduce}}\left( {A[0:n - 1]} \right)}\\
+\ \ \ \ {{\rm{if\ }}n \ge 2{\rm{\ then}}}\\
+\ \ \ \ \ \ \ \ {a \leftarrow {\rm{spawn\ reduce}}\left( {A\left[ {0:{n \over 2} - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {b \leftarrow {\rm{reduce}}\left( {A\left[ {{n \over 2}:n - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {\rm{sync}}\\
+\ \ \ \ \ \ \ \ {{\rm{return\ }}a + b}\\
+\ \ \ \ {{\rm{//\ else\ }}n = 1}\\
+\ \ \ \ {{\rm{return\ }}A[0]}
+\end{array}
+}
+$$
+
+<center>
+<img src="./assets/05-074.png" width="650">
+</center>
+
+To analyze the work $W(n)$ and span $D(n)$ , ***assume*** that each $\rm{spawn}$ and $\rm{sync}$ is a constant-time operation (as it turns out, in practice, this is not a bad/invalid assumption).
+
+<center>
+<img src="./assets/05-075.png" width="650">
+</center>
+
+With this assumption, analysis of the work $W(n)$ proceeds as follows (i.e., otherwise ignoring $\rm{spawn}$ and $\rm{sync}$ for purposes of the resulting recurrence relation):
+
+$$
+W(n) = 
+\begin{cases} 
+  {2 \cdot W({n \over 2}) + O(1)} & n \ge 2 \\
+  {O(1)} & n \le 1 \\
+\end{cases}
+$$
+
+And therefore:
+
+$$
+W(n) = O(n)
+$$
+
+As this demonstrates, the corresponding parallel-algorithm analysis is no more complicated than the analogous sequential-algorithm analysis.
+
+Furthermore, with respect to span $D(n)$ , this can be derived slightly differently. Consider a simpler example, as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{spawn\ }}A()}\\
+{B()}\\
+{{\rm{sync}}}
+\end{array}
+}
+$$
+
+Recall (cf. Section 17) that the operation $\rm{spawn}$ creates a branch and a directed acyclic graph (DAG) which yields two, distinct paths (as in the figure shown above); the critical path is the longer of these two paths. Therefore, if the length of the respective paths through branches $A$ and $B$ were known, then the span $D(n)$ would simply be the longer of these two.
+
+Correspondingly, mathematically, the span $D$ in this instance is therefore defined as:
+
+$$
+D = \max(D_A, D_B) + O(1)
+$$
+
+<center>
+<img src="./assets/05-076.png" width="650">
+</center>
+
+Furthermore, in this divide-and-conquer reduction, the span only depends on the problem size $n$ , with the recursive calls solving sub-problems of approximately equal size (i.e., $n \over 2$ ). Therefore, the corresponding recurrence relation is as follows:
+
+$$
+D(n) = 
+\begin{cases} 
+  {D({n \over 2}) + O(1)} & n \ge 2 \\
+  {O(1)} & n \le 1 \\
+\end{cases}
+$$
+
+***N.B.*** The solution of this recurrence relation is the topic of the next section.
+
+### Instructor's Notes
+
+See [here](https://en.wikipedia.org/wiki/Master_theorem) regarding the Master Theorem.
+
+## 19. Solve a Recurrence Quiz and Answers
