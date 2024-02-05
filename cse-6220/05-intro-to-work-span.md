@@ -723,7 +723,7 @@ Consider the following two parallel algorithms:
 Which parallel algorithm has better performance? If so, why?
   * ***N.B.*** This is an open-ended question.
 
-### Answer and Explanation:
+### ***Answer and Explanation:***
 
 <center>
 <img src="./assets/05-055A.png" width="650">
@@ -1067,3 +1067,41 @@ $$
 See [here](https://en.wikipedia.org/wiki/Master_theorem) regarding the Master Theorem.
 
 ## 19. Solve a Recurrence Quiz and Answers
+
+<center>
+<img src="./assets/05-077Q.png" width="650">
+</center>
+
+$$
+D(n) = 
+\begin{cases} 
+  {D({n \over 2}) + O(1)} & n \ge 2 \\
+  {O(1)} & n \le 1 \\
+\end{cases}
+$$
+
+What is the solution to the recurrence relation shown above (cf. Section 18)? (Select the correct choice.)
+  * $D(n) = O(1)$
+  * $D(n) = O(\log n)$
+  * $D(n) = O(n)$
+  * $D(n) = O(n \log n)$
+
+### ***Answer and Explanation:***
+
+<center>
+<img src="./assets/05-078A.png" width="650">
+</center>
+
+The solution to the recurrence relation is as follows:
+
+$$
+O(\log n)
+$$
+
+To arrive at this solution, either use the Master Theorem, or deduce this "by inspection" via examination of a few terms, i.e.,:
+
+$$
+D(n) = D\left( {{n \over 2}} \right) + O(1) = D\left( {{n \over 4}} \right) + O(1) + O(1) = D\left( {{n \over 8}} \right) + O(1) + O(1) + O(1) =  \cdots
+$$
+
+## 20. Desiderata for Work and Span
