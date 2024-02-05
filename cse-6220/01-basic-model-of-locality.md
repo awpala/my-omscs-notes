@@ -868,10 +868,10 @@ Consider again (cf. Section 6) non-Strassen matrix multiplication (as in the fig
 $$
 \boxed{
 \begin{array}{l}
-\rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] += A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]
+{{\rm{for\ }}i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
+\ \ \ \ {{\rm{for\ }}j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }}k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {C[i,j] +  = A[i,k] \cdot B[k,j]}
 \end{array}
 }
 $$
@@ -892,13 +892,13 @@ Now, consider a ***transformation*** of this nested-loops algorithm into a more 
 $$
 \boxed{
 \begin{array}{l}
-\rm{for\ }i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ {\rm{//\ read\ }}A\left[ {i,:} \right]\\
-\ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ {\rm{//\ read\ }}C\left[ {i,j} \right]{\rm{\ and\ }}B\left[ {:,j} \right]\\
-\ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ \ \ \ \ C\left[ {i,j} \right] +  = A\left[ {i,k} \right] \cdot B\left[ {k,j} \right]\\
-\ \ \ \ \ \ \ \ {\rm{//\ store\ }}C\left[ {i,j} \right]
+{{\rm{for\ }}i \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
+\ \ \ \ {{\rm{//\ read\ }}A[i,:]}\\
+\ \ \ \ {{\rm{for\ }}j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
+\ \ \ \ \ \ \ \ {{\rm{//\ read\ }}C[i,j]{\rm{\ and\ }}B[:,j]}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }}k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ do}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {C[i,j] += A[i,k] \cdot B[k,j]}\\
+\ \ \ \ \ \ \ \ {{\rm{//\ store\ }}C[i,j]}
 \end{array}
 }
 $$
