@@ -992,10 +992,10 @@ $$
 \ \ \ \ \rm{for\ }j \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ by\ }}b{\rm{\ do}}\\
 \ \ \ \ \ \ \ \ {\rm{let\ }}\hat C \equiv b \times b{\rm{\ block\ at\ }}C\left[ {i,j} \right]\\
 \ \ \ \ \ \ \ \ \rm{for\ }k \leftarrow 0{\rm{\ to\ }}n - 1{\rm{\ by\ }}b{\rm{\ do}}\\
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\rm{let\ }}\hat A \equiv b \times b{\rm{\ block\ at\ }}A\left[ {i,k} \right]\\
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {\rm{let\ }}\hat B \equiv b \times b{\rm{\ block\ at\ }}B\left[ {k,j} \right]\\
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \hat C \leftarrow \hat C + \hat A \cdot \hat B\\
-\ \ \ \ \ \ \ \ C\left[ {i,j} \right]{\rm{\ block}} \leftarrow \hat C
+\ \ \ \ \ \ \ \ \ \ \ \ {\rm{let\ }}\hat A \equiv b \times b{\rm{\ block\ at\ }}A\left[ {i,k} \right]\\
+\ \ \ \ \ \ \ \ \ \ \ \ {\rm{let\ }}\hat B \equiv b \times b{\rm{\ block\ at\ }}B\left[ {k,j} \right]\\
+\ \ \ \ \ \ \ \ \ \ \ \ {\hat C \leftarrow \hat C + \hat A \cdot \hat B}\\
+\ \ \ \ \ \ \ \ {C\left[ {i,j} \right]{\rm{\ block}} \leftarrow \hat C}
 \end{array}
 }
 $$
