@@ -1105,3 +1105,104 @@ D(n) = D\left( {{n \over 2}} \right) + O(1) = D\left( {{n \over 4}} \right) + O(
 $$
 
 ## 20. Desiderata for Work and Span
+
+Before proceeding, consider briefly the **goals** of parallel algorithm design with respect to work and span.
+
+<center>
+<img src="./assets/05-079.png" width="650">
+</center>
+
+One goal of parallel algorithm design is to achieve a degree of ***work*** that matches the best sequential algorithm, i.e.,:
+
+$$
+W(n) = W_* (n)
+$$
+
+This goal is tantamount to achieving **work-optimality**.
+
+Recalling from sequential algorithm analysis (i.e., in previous coursework, or equivalent), generally a "well performing" sequential algorithm is one which exhibits asymptotic linear time (i.e., $O(n)$ ), or perhaps even better.
+  * ***N.B.*** It is not always possible to achieve this, however, it is generally performant if achieved.
+
+Similarly, with respect to parallel algorithms, for work to be deemed "optimal," it should similarly exhibit $O(n)$ (or better) performance.
+
+<center>
+<img src="./assets/05-080.png" width="650">
+</center>
+
+With respect to ***span***, another goal of parallel algorithm design is to achieve at least poly-logarithmic span, i.e.,:
+
+$$
+D(n) = O(\log^k n)
+$$
+
+***N.B.*** Per this notation, $\log^k n = (\log n)^k$ .
+
+In this context, "poly-logarithmic" is synonymous with demonstrating a "low span."
+
+Why is logarithmic growth noteworthy in this context? Since $\log^n n$ grows asymptotically much more slowly than $n$ , and since $O(n)$ is considered optimal with respect to work, then accordingly poly-logarithmic span ensures that the ***average available parallelism*** grows with $n$ , i.e.,:
+
+$$
+W \over D = {O ({n \over {\log^k n}})}
+$$
+
+***N.B.*** Ultimately, discernment is necessary to determine whether a given parallel algorithm exhibits "acceptable" work and span characteristics. Nevertheless, these guidelines are provided here as a point of reference for this purpose.
+
+## 21. Concurrency Primitive: Parallel-for ("$\rm{par-for}$")
+
+<center>
+<img src="./assets/05-081.png" width="650">
+</center>
+
+Another useful concurrency primitive is a **parallel for** loop, or $\rm{par-for}$ , e.g.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{par-for\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do}}}\\
+\ \ \ \ {{\rm{foo}}(i)}
+\end{array}
+}
+$$
+
+***N.B.*** Certain academic literature pertaining to parallel algorithms uses $\rm{for-any}$ , $\rm{for-all}$ , and similar to equivalently denote this construct.
+
+A $\rm{par-for}$ specifies that all iterations are ***independent*** of one another, and therefore the iterations can be executed in any order accordingly
+
+In the context of a directed acyclic graph (DAG), a $\rm{par-for}$ construct creates $n$ independent sub-paths (as in the figure shown above), which is equivalent to executing $n$ independent $\rm{spawn}$ sub-graphs simultaneously (provided this is possible/permissible, as will be discussed subsequently in this lesson).
+
+<center>
+<img src="./assets/05-082.png" width="650">
+</center>
+
+By convention, the end of a $\rm{par-for}$ loop construct includes an ***implicit*** $\rm{sync}$ point, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{par-for\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do}}}\\
+\ \ \ \ {{\rm{foo}}(i)}\\
+\ \ \ \ {\rm{//\ implicit\ sync}}
+\end{array}
+}
+$$
+
+This implicit $\rm{sync}$ point forces all of the independent paths to ***join*** (as in the figure shown above).
+
+Now, suppose that every ieration has a ***constant*** cost, i.e.,:
+
+$$
+W_{\rm{foo}(i)}(n) = O(1)
+$$
+
+If there are $n$ iterations, then the ***work*** of a $\rm{par-for}$ construct is consequently $O(n)$ , i.e.,:
+
+$$
+W_{\rm{par-for}}(n) = O(n)
+$$
+
+Furthermore, with respect to the ***span*** of the $\rm{par-for}$ construct, while in theory it should be constant given constant-cost work per iteration, in practice, the span actually grows with $n$ , especially when $n$ is really large.
+  * ***N.B.*** In analogous terms with respect to electrical engineering, this is similar to a circuit having many (e.g., $10^{11}$ ) paths emitting from a gate.
+
+To further understand the span of the $\rm{par-for}$ construct, consider two different implementations of this construct, using only $\rm{spawn}$ and $\rm{sync}$ (as discussed in the subsequent sections).
+
+## 22. Implementing $\rm{par-for}$ (Part 1) Quiz and Answers
