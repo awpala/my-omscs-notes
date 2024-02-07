@@ -1147,7 +1147,7 @@ $$
 
 ***N.B.*** Ultimately, discernment is necessary to determine whether a given parallel algorithm exhibits "acceptable" work and span characteristics. Nevertheless, these guidelines are provided here as a point of reference for this purpose.
 
-## 21. Concurrency Primitive: Parallel-for ("$\rm{par-for}$" )
+## 21. Concurrency Primitive: Parallel-for (" $\rm{par-for}$ ")
 
 <center>
 <img src="./assets/05-081.png" width="650">
