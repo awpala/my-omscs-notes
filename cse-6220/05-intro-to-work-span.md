@@ -1354,15 +1354,15 @@ Let us further consider why it is ***not*** safe to make the innermost loop a $\
 
 Firstly, observe that all iterations $j$ write to the ***same*** location $y[i]$ ; this situation is called a **data race**. More precisely, a data race is defined as occurring when at least one read and at least one write may occur at the ***same*** memory location ***simultaneously***.
 
-As an example, consider two successive $j$ iterations (as discussed in the subsequent figures.)
+As an example, consider two successive $j$ iterations (as discussed in the subsequent figures).
 
 <center>
 <img src="./assets/05-091.png" width="650">
 </center>
 
-In the first two $j$ iterations, let the following values hold:
+In the first two $j$ iterations, let the following values hold (with initial value given as $y[1] = 0$ ):
 
-| Iteration | $i$ | $j$ | $y[j]$ |
+| Iteration | $i$ | $j$ | $y[i]$ |
 |:--:|:--:|:--:|:--:|
 | $0$ | $1$ | $1$ | $0$ |
 | $1$ | $1$ | $5$ | $y[1] + {\rm{A}}[1,5] \cdot x[5]$ |
@@ -1374,7 +1374,7 @@ In the first two $j$ iterations, let the following values hold:
 
 Suppose that iterations $1$ and $2$ execute simultaneously. Consequently, the expressions evaluate as follows:
 
-| Iteration | $i$ | $j$ | $y[j]$ |
+| Iteration | $i$ | $j$ | $y[i]$ |
 |:--:|:--:|:--:|:--:|
 | $0$ | $1$ | $1$ | $0$ |
 | $1$ | $1$ | $5$ | $y[1] + (72)$ |
@@ -1382,7 +1382,7 @@ Suppose that iterations $1$ and $2$ execute simultaneously. Consequently, the ex
 
 Furthermore, suppose that $y[1]$ is read ***simultaneously*** in ***both*** iterations, yielding value $0$, i.e.,:
 
-| Iteration | $i$ | $j$ | $y[j]$ |
+| Iteration | $i$ | $j$ | $y[i]$ |
 |:--:|:--:|:--:|:--:|
 | $0$ | $1$ | $1$ | $0$ |
 | $1$ | $1$ | $5$ | $0 + (72)$ |
