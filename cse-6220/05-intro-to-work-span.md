@@ -1288,3 +1288,47 @@ $$
 Note that this is a much more realistic way to implement a parallel for loop. Accordingly, it shall henceforth be ***assumed*** that this implementation is used accordingly.
 
 ## 24. Matrix-Vector Multiply Quiz and Answers
+
+<center>
+<img src="./assets/05-088Q.png" width="650">
+</center>
+
+Consider a nested-loop implementation of a matrix-by-matrix multiplication as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{//\ computes:\ }}y \leftarrow y + {\rm{A}} \cdot x}\\
+{{\rm{for\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ \ \ \ \ \ //\ Loop\ 1}}}\\
+\ \ \ \ {{\rm{for\ }}j \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ //\ Loop\ 2}}}\\
+\ \ \ \ \ \ \ \ {y[i] \leftarrow y[i] + A[i,j] \cdot x[j]}
+\end{array}
+}
+$$
+
+Given a square matrix $\rm{A}$ of size $n \times n$ and vectors $x$ and $y$ (each of length $n$ ), then this construct correspondingly computes $y \leftarrow y + {\rm{A}} \cdot x$ .
+
+Given $n \times n$ nested loops, the complexity of this construct is as follows:
+
+$$
+W(n) = O(n^{2})
+$$
+
+Given these two $\rm{for}$ loops, which can be converted into a $\rm{par-for}$ ? (Select the correct choice.)
+  * Only $\rm{Loop\ 1}$
+  * Only $\rm{Loop\ 2}$
+  * Both $\rm{Loop\ 1}$ and $\rm{Loop\ 2}$
+  * Neither $\rm{Loop\ 1}$ nor $\rm{Loop\ 2}$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-089A.png" width="650">
+</center>
+
+Only $\rm{Loop\ 1}$ can be safely converted to a $\rm{par-for}$ . The iterations of the $i$ loop are completed independently of one another, correspondingly updating separate/distinct values $y[i]$ .
+
+Conversely, the iterations of the $j$ loop are different in this regard, because during each iteration of this inner look, subsequent iterations of $j$ may still be updating the ***same*** location $i$ (i.e., correspondingly, different $j$ iterations are ***not*** necessarily independent of one another).
+  * ***N.B.*** As is discussed in a compilers course (or equivalent), in this context, the $j$ iterations ***carry a dependence***. The resulting problem created if attempting to parallelize the $j$ loop is a potential **race condition**.
+
+## 25. Data Races and Race Conditions
