@@ -1250,4 +1250,41 @@ Although a new path is created for each iteration, the corresponding $\rm{spawn}
 
 ***N.B.*** If it were the case that calling $\rm{foo}(i)$ is very expensive, then this "sequential bottleneck" may not be as directly perceptible. However, in the case of $O(1)$ with respect to $\rm{foo}(i)$ , this bottleneck *would* indeed be "perceptible."
 
-## 22. Implementing $\rm{par-for}$ (Part 2)
+## 23. Implementing $\rm{par-for}$ (Part 2)
+
+<center>
+<img src="./assets/05-086.png" width="650">
+</center>
+
+Now, suppose that $\rm{par-for}$ is implemented as procedure call ${\rm{ParForT}}({\rm{foo}},1,n)$ , where $\rm{ParForT}$ is defined as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{ParForT}}({\rm{foo}},a,b)}\\
+\ \ \ \ {{\rm{let }}n \equiv b - a + 1}\\
+\ \ \ \ {{\rm{if\ }}n = 1{\rm{\ then\ foo}}(a)}\\
+\ \ \ \ {{\rm{else}}}\\
+\ \ \ \ \ \ \ \ {{\rm{let\ }}m \equiv a + \left\lfloor {{n \over 2}} \right\rfloor }\\
+\ \ \ \ \ \ \ \ {{\rm{spawn\ ParForT}}({\rm{foo}},a,m - 1)}\\
+\ \ \ \ \ \ \ \ {{\rm{ParForT}}({\rm{foo}},m,b)}\\
+\ \ \ \ \ \ \ \ {{\rm{sync}}}
+\end{array}
+}
+$$
+
+where $n$ represents the number of iterations. In the trivial case of $n = 1$ this simply yields a call to $\rm{foo}(a)$ , otherwise a divide-and-conquer approach is followed, successively splitting iterations approximately in half via midpoint $m$ .
+
+<center>
+<img src="./assets/05-087.png" width="650">
+</center>
+
+This scheme results in the "typical" binary-tree-like recursion (as in the figure shown above). Correspondingly, assuming $\rm{foo}(i) = O(1)$ , then the span for this directed acyclic graph (DAG) is logarithmic, i.e.,:
+
+$$
+D(n) = O(\log n)
+$$
+
+Note that this is a much more realistic way to implement a parallel for loop. Accordingly, it shall henceforth be ***assumed*** that this implementation is used accordingly.
+
+## 24. Matrix-Vector Multiply Quiz and Answers
