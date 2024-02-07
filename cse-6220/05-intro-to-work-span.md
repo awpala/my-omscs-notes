@@ -1332,3 +1332,73 @@ Conversely, the iterations of the $j$ loop are different in this regard, because
   * ***N.B.*** As is discussed in a compilers course (or equivalent), in this context, the $j$ iterations ***carry a dependence***. The resulting problem created if attempting to parallelize the $j$ loop is a potential **race condition**.
 
 ## 25. Data Races and Race Conditions
+
+<center>
+<img src="./assets/05-090.png" width="650">
+</center>
+
+Consider again (cf. Section 24) the nested-loop implementation of a matrix-by-matrix multiplication as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{//\ computes:\ }}y \leftarrow y + {\rm{A}} \cdot x}\\
+{{\rm{for\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ \ \ \ \ \ //\ Loop\ 1}}}\\
+\ \ \ \ {{\rm{for\ }}j \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ //\ Loop\ 2}}}\\
+\ \ \ \ \ \ \ \ {y[i] \leftarrow y[i] + A[i,j] \cdot x[j]}
+\end{array}
+}
+$$
+
+Let us further consider why it is ***not*** safe to make the innermost loop a $\rm{par-for}$ loop.
+
+Firstly, observe that all iterations $j$ write to the ***same*** location $y[i]$ ; this situation is called a **data race**. More precisely, a data race is defined as occurring when at least one read and at least one write may occur at the ***same*** memory location ***simultaneously***.
+
+As an example, consider two successive $j$ iterations (as discussed in the subsequent figures.)
+
+<center>
+<img src="./assets/05-091.png" width="650">
+</center>
+
+In the first two $j$ iterations, let the following values hold:
+
+| Iteration | $i$ | $j$ | $y[j]$ |
+|:--:|:--:|:--:|:--:|
+| $0$ | $1$ | $1$ | $0$ |
+| $1$ | $1$ | $5$ | $y[1] + {\rm{A}}[1,5] \cdot x[5]$ |
+| $2$ | $1$ | $100$ | $y[1] + {\rm{A}}[1,100] \cdot x[100]$ |
+
+<center>
+<img src="./assets/05-092.png" width="650">
+</center>
+
+Suppose that iterations $1$ and $2$ execute simultaneously. Consequently, the expressions evaluate as follows:
+
+| Iteration | $i$ | $j$ | $y[j]$ |
+|:--:|:--:|:--:|:--:|
+| $0$ | $1$ | $1$ | $0$ |
+| $1$ | $1$ | $5$ | $y[1] + (72)$ |
+| $2$ | $1$ | $100$ | $y[1] + (-100)$ |
+
+Furthermore, suppose that $y[1]$ is read ***simultaneously*** in ***both*** iterations, yielding value $0$, i.e.,:
+
+| Iteration | $i$ | $j$ | $y[j]$ |
+|:--:|:--:|:--:|:--:|
+| $0$ | $1$ | $1$ | $0$ |
+| $1$ | $1$ | $5$ | $0 + (72)$ |
+| $2$ | $1$ | $100$ | $0 + (-100)$ |
+
+<center>
+<img src="./assets/05-093.png" width="650">
+</center>
+
+Now, suppose that iteration $1$ executes its write to $y[1]$ *first*, thereby updating corresponding value to $72$ . At this point, iteration $2$ is operating with a ***stale*** value of $y[1]$ (i.e., $-100$ ), resulting in an overwrite of the existing value (erroneous), rather than an accumulation (as intended).
+
+<center>
+<img src="./assets/05-094.png" width="650">
+</center>
+
+A data race which yields an error in this manner is called a **race condition**. Correspondingly, when designing parallel algorithms, one must be cautious to ***avoid*** such race conditions.
+  * ***N.B.*** As a general ***heuristic***, it is often helpful to avoid data races regardless (i.e., for semantic correctness). However, it is important to note that a data race does ***not*** necessarily always yield a race condition (examples of this will be demonstrated subsequently in this course).
+
+## 26Q. Putting It All Together, Part 1 Quiz and Answers
