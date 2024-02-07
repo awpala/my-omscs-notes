@@ -1142,7 +1142,7 @@ In this context, "poly-logarithmic" is synonymous with demonstrating a "low span
 Why is logarithmic growth noteworthy in this context? Since $\log^n n$ grows asymptotically much more slowly than $n$ , and since $O(n)$ is considered optimal with respect to work, then accordingly poly-logarithmic span ensures that the ***average available parallelism*** grows with $n$ , i.e.,:
 
 $$
-W \over D = {O ({n \over {\log^k n}})}
+{W \over D} = {O \left( {n \over {\log^k n}} \right)}
 $$
 
 ***N.B.*** Ultimately, discernment is necessary to determine whether a given parallel algorithm exhibits "acceptable" work and span characteristics. Nevertheless, these guidelines are provided here as a point of reference for this purpose.
@@ -1206,3 +1206,48 @@ Furthermore, with respect to the ***span*** of the $\rm{par-for}$ construct, whi
 To further understand the span of the $\rm{par-for}$ construct, consider two different implementations of this construct, using only $\rm{spawn}$ and $\rm{sync}$ (as discussed in the subsequent sections).
 
 ## 22. Implementing $\rm{par-for}$ (Part 1) Quiz and Answers
+
+<center>
+<img src="./assets/05-083Q.png" width="650">
+</center>
+
+One way to implement $\rm{par-for}$ using only one $\rm{spawn}$ and one $\rm{sync}$ is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{for\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do}}}\\
+\ \ \ \ {{\rm{spawn\ foo}}(i)}\\
+\ \ \ \ {\rm{sync}}
+\end{array}
+}
+$$
+
+Here, each iteration of the $\rm{for}$ loop results in a $\rm{spawn}$ , all of which are coordinated by the subsequent $\rm{sync}$ accordingly.
+
+Assuming the cost of $\rm{foo}$ is $O(1)$ (i.e., constant), what is the span of this implementation? (Select the correct choice.)
+  * $O(1)$
+  * $O(n)$
+  * $O(\log n)$
+  * $O(n \log n)$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-084A.png" width="650">
+</center>
+
+In this configuration, the span is $O(n)$ (i.e., linear).
+  * ***N.B.*** This is relatively "bad" performance (i.e., worse than the "ideal" poly-logarithmic span, cf. Section 20).
+
+<center>
+<img src="./assets/05-085A.png" width="650">
+</center>
+
+To understand the $O(n)$ span, consider how the directed acyclic graph (DAG) unfolds (as in the figure shown above).
+
+Although a new path is created for each iteration, the corresponding $\rm{spawn}$ operations are nevertheless executed ***sequentially***. Consequently, this effectively forms a "sequential bottleneck" in the DAG itself (i.e., along the "main spine," denoted by vertically aligned downward brown arrows in the figure shown above).
+
+***N.B.*** If it were the case that calling $\rm{foo}(i)$ is very expensive, then this "sequential bottleneck" may not be as directly perceptible. However, in the case of $O(1)$ with respect to $\rm{foo}(i)$ , this bottleneck *would* indeed be "perceptible."
+
+## 22. Implementing $\rm{par-for}$ (Part 2)
