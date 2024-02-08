@@ -1439,7 +1439,7 @@ What is the corresponding span $D(n)$ for this algorithm? (Select the correct ch
 <img src="./assets/05-096A.png" width="650">
 </center>
 
-The corresponding span for this algorithm is $O(n)$ . The reason for this is because the inner $j$ loop is linear, and is executed sequentially.
+The corresponding span $D(n)$ for this algorithm is $O(n)$ . The reason for this is because the inner $j$ loop is linear, and is executed sequentially.
 
 <center>
 <img src="./assets/05-097A.png" width="650">
@@ -1451,3 +1451,63 @@ The $\rm{par-for}$ proceeds to divide the iteration space via divide-and-conquer
   * ***N.B.*** Strictly speaking, therefore $D(n) = O(\log n + n)$ , however, $n$ dominates $\log n$ as $n$ increases asymptotically.
 
 ## 27Q. Putting It All Together, Part 2 Quiz and Answers
+
+<center>
+<img src="./assets/05-098Q.png" width="650">
+</center>
+
+Per the "safe" parallelization of a matrix-vector multiplication operation (cf. Section 26Q), the corresponding work $W(n)$ and $D(n)$ are as follows:
+
+$$
+W(n) = O({n^2})
+$$
+
+$$
+D(n) = O(n)
+$$
+
+Correspondingly, the average available parallelism is therefore:
+
+$$
+{W \over D} = O(n)
+$$
+
+While this is reasonably performant, it is possible to achieve even faster matrix-vector multiplication than this.
+
+<center>
+<img src="./assets/05-099Q.png" width="650">
+</center>
+
+The key insight to improve the asymptotic performance of this matrix-vector multiplication operation is to recognize that the innermost $\rm{for}$ loop is nothing more than a reduction (cf. Section 3); this idea is embodied by the following pseudocode:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{//\ computes:\ }}y \leftarrow y + {\rm{A}} \cdot x}\\
+{{\rm{parfor\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ \ \ \ \ \ //\ Loop\ 1}}}\\
+\ \ \ \ {{\rm{let\ }}t[1:n]{\rm{\ be\ a\ temporary\ array}}}\\
+\ \ \ \ {{\rm{parfor\ }}j \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ //\ Loop\ 2}}}\\
+\ \ \ \ \ \ \ \ {t[j] \leftarrow A[i,j] \cdot x[j]}\\
+\ \ \ \ {y[i] \leftarrow y[i] + {\rm{reduce}}(t)}
+\end{array}
+}
+$$
+
+Here, the temporary array $t$ stores the intermediate products $A[i,j] \cdot x[j]$ , the latter being computed in one shot using $\rm{par-for}$ . Finally, the temporary array $t$ is reduced, thereby yielding a single value which is accumulated in $y[i]$ .
+  * ***N.B.*** In order for this to work, it must be ***assumed*** that the temporary array $t$ is ***private*** to each iteration of $i$ . This is potentially problematic, because there may be a correspondingly large increase in intermediate storage (however, for present purposes, this is not of concern).
+
+With this improvement to the matrix-vector multiplication operations, what is the corresponding span $D(n)$ ? (Select the correct choice.)
+  * $O(\log n)$
+  * $O({\log^2} n)$
+  * $O({\log^3} n)$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-100A.png" width="650">
+</center>
+
+The corresponding span $D(n)$ for this algorithm is $O(\log n)$ .
+  * ***N.B.*** The rationale for this is left as an exercise for the reader.
+
+## 28. Vector Notation
