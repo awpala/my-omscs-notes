@@ -1402,3 +1402,52 @@ A data race which yields an error in this manner is called a **race condition**.
   * ***N.B.*** As a general ***heuristic***, it is often helpful to avoid data races regardless (i.e., for semantic correctness). However, it is important to note that a data race does ***not*** necessarily always yield a race condition (examples of this will be demonstrated subsequently in this course).
 
 ## 26Q. Putting It All Together, Part 1 Quiz and Answers
+
+<center>
+<img src="./assets/05-095Q.png" width="650">
+</center>
+
+Consider the following "safe" (i.e., non-race-conditioned) parallelization of the matrix-vector multiplication:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{//\ computes:\ }}y \leftarrow y + {\rm{A}} \cdot x}\\
+{{\rm{parfor\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ //\ Loop\ 1}}}\\
+\ \ \ \ {{\rm{for\ }}j \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ \ //\ Loop\ 2}}}\\
+\ \ \ \ \ \ \ \ {y[i] \leftarrow y[i] + A[i,j] \cdot x[j]}
+\end{array}
+}
+$$
+
+Here, the outer $\rm{for}$ loop is replaced with a $\rm{par-for}$ . The corresponding work $W(n)$ for this algorithm is:
+
+$$
+W(n) = O({n^2})
+$$
+
+What is the corresponding span $D(n)$ for this algorithm? (Select the correct choice.)
+  * $O(1)$
+  * $O(\log n)$
+  * $O(n)$
+  * $O(n \log n)$
+  * $O({n^2})$
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/05-096A.png" width="650">
+</center>
+
+The corresponding span for this algorithm is $O(n)$ . The reason for this is because the inner $j$ loop is linear, and is executed sequentially.
+
+<center>
+<img src="./assets/05-097A.png" width="650">
+</center>
+
+Consider this in terms of the corresponding directed acyclic graph (DAG) (as in the figure shown above).
+
+The $\rm{par-for}$ proceeds to divide the iteration space via divide-and-conquer, resulting in $\log n$ levels in the corresponding DAG tree. However, the $j$ iterations remain *sequential* , thereby yielding "leaves" of linear length at the "bottom end" of the DAG tree.
+  * ***N.B.*** Strictly speaking, therefore $D(n) = O(\log n + n)$ , however, $n$ dominates $\log n$ as $n$ increases asymptotically.
+
+## 27Q. Putting It All Together, Part 2 Quiz and Answers
