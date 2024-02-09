@@ -1561,3 +1561,37 @@ Since it is understood that the element-wise product $A[i,:] \cdot x[:]$ must pr
   * ***N.B.*** In doing so, be advised that the resulting memory usage/requirement to store this intermediate result is ***not*** eliminated, and correspondingly this must be taken into account when analyzing the storage cost accordingly.
 
 ## 29. Conclusion
+
+There were several big ideas presented in this lesson.
+
+### Weak Scalability
+
+The first big idea is that good algorithms are **work-optimal** and **low-span**.
+
+<center>
+<img src="./assets/05-104.png" width="450">
+</center>
+
+Imagine a directed acyclic graph (DAG) representing a human (as in the figure shown above).
+  * A "good" algorithm is characterized by low mass, short stature, and wide girth.
+  * Conversely, a "bad" algorithm is characterized by large mass, tall stature, and thinness.
+
+<center>
+<img src="./assets/05-105.png" width="450">
+</center>
+
+Related to this is the concept of **weak scalability**. To understand this idea, consider **Amdahl's law**, as well as its relationship the concept of weak scalability.
+
+### Divide-and-Conquer
+
+The second big idea from this lesson is the technique of **divide-and-conquer**, which should be familiar from sequential computing and similarly serves as an excellent tool and paradigm for considering parallel algorithms as well; in fact, it should generally be regarded as a "go-to" technique when devising parallel algorithms accordingly.
+
+### Concurrency
+
+The last big idea is to separate how concurrency is ***expressed*** from how it is ***executed***. This idea enables the achievement of truly elegant algorithms.
+
+### Shortfalls
+
+Unfortunately, this model for parallelism also ignores **communication**, which is absolutely necessary to devise vast and scalable parallel algorithms, at least once the problem size and system size have reached sufficient scale. Correspondingly, in order to model such communication, it is also necessary to apply some additional abstract models.
+
+Nevertheless, for present purposes, we will examine how far we can take dynamic multi-threading.
