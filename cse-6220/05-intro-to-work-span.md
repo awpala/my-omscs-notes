@@ -1511,3 +1511,53 @@ The corresponding span $D(n)$ for this algorithm is $O(\log n)$ .
   * ***N.B.*** The rationale for this is left as an exercise for the reader.
 
 ## 28. Vector Notation
+
+The aforementioned (cf. Section 27Q) matrix-vector multiplication operation provides an example for introducing several **pseudocode shortcuts**, all of which are based on expressing operations on arrays as vector operations.
+
+<center>
+<img src="./assets/05-101.png" width="650">
+</center>
+
+<center>
+<img src="./assets/05-102.png" width="550">
+</center>
+
+As per the vector "slicing" notation (e.g., $t[1:n]$ , which indexes over the range of elements $1$ through $n$ ), this can be additionally used to simplify the inner $\rm{par-for}$ loop as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{//\ computes:\ }}y \leftarrow y + {\rm{A}} \cdot x}\\
+{{\rm{parfor\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ //\ Loop\ 1}}}\\
+\ \ \ \ {{\rm{let\ }}t[1:n]{\rm{\ be\ a\ temporary\ array}}}\\
+\ \ \ \ {{{t[:] \leftarrow A[i,:] \cdot x[:]}}{\rm{\ //\ implicit\ parfor}}}\\
+\ \ \ \ {y[i] \leftarrow y[i] + {\rm{reduce}}(t)}
+\end{array}
+}
+$$
+
+The inner $\rm{par-for}$ loop takes a slice of the two-dimensional matrix $A[i,j]$ (i.e., $A[i,:]$ ) and multiplies it component-wise (or element-wise) with vector $x$ (i.e., $x[i]$ ), which in turn can be trivially (and therefore implicitly) converted into a corresponding parallelized for loop.
+  * ***N.B.*** The "slicing" notation $[:]$ here is equivalent to $[1:n]$ (i.e., the entire range of components/elements), which is a common notation in modern languages (e.g., Python, Matlab, and Fortran).
+
+Therefore, when analyzing pseudocode involving such vector operations, simply use such formalisms instead, noting the corresponding work and span accordingly. In particular, such element-wise operations have linear work (i.e., $W(n) = O(n)$ ) and logarithmic span (i.e., $D(n) = O(\log n)$ ).
+
+<center>
+<img src="./assets/05-103.png" width="450">
+</center>
+
+An additional simplification is possible, whereby the temporary array $t$ entirely, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{//\ computes:\ }}y \leftarrow y + {\rm{A}} \cdot x}\\
+{{\rm{parfor\ }}i \leftarrow 1{\rm{\ to\ }}n{\rm{\ do\ //\ Loop\ 1}}}\\
+\ \ \ \ {y[i] \leftarrow y[i] + {\rm{reduce}}({A[i,:] \cdot x[:]})}
+\end{array}
+}
+$$
+
+Since it is understood that the element-wise product $A[i,:] \cdot x[:]$ must produce such an intermediate result, it can be directly "inlined" as an argument to $\rm{reduce}$ in this manner instead.
+  * ***N.B.*** In doing so, be advised that the resulting memory usage/requirement to store this intermediate result is ***not*** eliminated, and correspondingly this must be taken into account when analyzing the storage cost accordingly.
+
+## 29. Conclusion
