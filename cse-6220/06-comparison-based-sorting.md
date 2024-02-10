@@ -324,3 +324,37 @@ Therefore, a valid final bitonic split circuit is as in the figure shown above.
   * ***N.B.*** As an additional exercise, what is the corresponding work and span for this circuit?
 
 ## 8. Bitonic Splits: A Parallel Scheme
+
+<center>
+<img src="./assets/06-036.png" width="650">
+</center>
+
+Recall (cf. Section 7) the eight-element bitonic splitting network (as in the figure shown above). Given a bitonic input sequence, this splitting network computes two bitonic sub-sequences as outputs, with elements of the first sub-sequence being strictly less than or equal to the elements of the second sub-sequence.
+
+This circuit can be correspondingly viewed as a directed acyclic graph (DAG) of independent comparators (as in the figure shown above), with each comparator constituting a node/vertex in the DAG accordingly.
+
+<center>
+<img src="./assets/06-037.png" width="650">
+</center>
+
+From this DAG-oriented observation, this naturally gives rise to the following parallel scheme (for simplicity, assume that $n$ is even, i.e., $2|n$ ):
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{bitonicSplit}}\left( {A[0:n - 1]} \right)}\\
+\ \ \ \ {{\rm{//\ assume\ }}2|n}\\
+\ \ \ \ {{\rm{parfor\ }}i \leftarrow 0{\rm{\ to\ }}{n \over 2} - 1\;{\rm{do}}}\\
+\ \ \ \ \ \ \ \ {a \leftarrow A[i]}\\
+\ \ \ \ \ \ \ \ {b \leftarrow A\left[ {i + {n \over 2}} \right]}\\
+\ \ \ \ \ \ \ \ {A[i] \leftarrow \min (a,b)}\\
+\ \ \ \ \ \ \ \ {A\left[ {i + {n \over 2}} \right] \leftarrow \max (a,b)}
+\end{array}
+}
+$$
+
+Here, each pair is iterated over in parallel (i.e., via $\rm{parfor}$ ), correspondingly determining the minimum and maximum for each pair (and overwriting the respective outputs accordingly).
+
+There is a ***subtle point*** to note, however: In the work-span model (cf. Lesson 5), the fixed-size circuit has a ***constant*** depth/span, whereas in general, the convention is to assume ***logarithmic*** depth/span for operations such as parallel for loops.
+
+## 9. Bitonic Merge
