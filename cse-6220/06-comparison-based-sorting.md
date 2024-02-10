@@ -107,3 +107,79 @@ As a follow-up question: Suppose that you are only allowed to use these two type
   * ***N.B.*** This question is left as an exercise for the reader.
 
 ## 3. Sort Four Values Quiz and Answers
+
+<center>
+<img src="./assets/06-013Q.png" width="650">
+</center>
+
+Consider the sorting of four input values $8$ , $7$ , $6$, and $3$ . Suppose it is claimed that this can be accomplished using the comparators-based circuit as in the figure shown above (comprised of one "-" comparator and five "+" comparators).
+
+Trace the corresponding flow of intermediate comparisons, in order to substantiate this claim.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/06-014A.png" width="650">
+</center>
+
+The corresponding comparisons are as in the figure shown above.
+
+<center>
+<img src="./assets/06-015A.png" width="650">
+</center>
+
+Now, suppose that the "-" comparator is changed to a "+" operator, as in the figure shown above.
+
+<center>
+<img src="./assets/06-016A.png" width="650">
+</center>
+
+Consequently, observe that the sequence in the right column is already in sorted order (as denoted by goldenrod outline in the figure shown above).
+
+<center>
+<img src="./assets/06-017A.png" width="650">
+</center>
+
+Therefore, the right-most comparators are evidently unnecessary in this particular example. However, is this strictly true (i.e., for any arbitrary input of four unsorted values)?
+  * ***N.B.*** This question is left as an exercise for the reader.
+
+## 4. Bitonic Sequences
+
+<center>
+<img src="./assets/06-018.png" width="650">
+</center>
+
+Filling in intermediate values in the example circuit as in figure shown above (cf. Section 3), note the following observation: The first step produces sequences wherein the first half increases and the second half decreases (denoted by golden rod arrows in the figure shown above). In fact, this observation leads to a nice algorithm.
+
+<center>
+<img src="./assets/06-019.png" width="650">
+</center>
+
+Consider a sequence of 32 values, depicted schematically in the figure shown above. Observe that the values begin increasing, and then eventually the values decrease. Such a sequence is called a **bitonic sequence** accordingly.
+  * ***N.B.*** In this context, "bitonic" contrasts with the (perhaps previously familiar) "monotonic," whereby values are strictly non-decreasing or strictly non-increasing.
+
+<center>
+<img src="./assets/06-020.png" width="650">
+</center>
+
+Defined more formally, a sequence $(a_0, a_1, \dots , a_{n-1})$ is **bitonic** if the following conditions hold (where element $a_i$ denotes the last-increasing element):
+
+$$
+a_0 \le a_1 \le \cdots \le a_i
+$$
+
+and
+
+$$
+a_{i+1} \ge \cdots \ge a_{n-1}
+$$
+
+<center>
+<img src="./assets/06-021.png" width="650">
+</center>
+
+Furthermore, a more complete definition of **bitonic** additionally stipulates that these inequalities hold not only for the original sequence, but ***also*** after performing some circular shift on the sequence.
+
+The subsequent section wil further demonstrate bitonic sequences by way of example.
+
+## 5. Bitonic Sequences Quiz and Answers
