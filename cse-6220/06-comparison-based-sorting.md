@@ -295,4 +295,32 @@ Furthermore, observe that all elements of the $\max()$ subsequence are greater t
 
 As is readily apparent, such splitting can be performed ***in-place*** (i.e., without otherwise requiring additional storage), visually resulting in two corresponding bitonic subsequences (as in the figure shown above).
 
-## 7. Bitonic Spilts Quiz and Answers
+## 7. Bitonic Splits Quiz and Answers
+
+<center>
+<img src="./assets/06-033Q.png" width="650">
+</center>
+
+Recall (cf. Section 6) that a bitonic split takes a bitonic sequence as input and produces two bitonic sub-sequences as output (as in the figure shown above).
+
+Consider an eight-element bitonic sequence (as in the figure shown above). Perform the corresponding bitonic split using a comparators-based circuit using "+" comparators, restricted to only ***one*** such comparator per stage/column (e.g., as a demonstrative example, inputs $3$ and $1$ are "checked" to form a comparator-inputs pair in the figure shown above, resulting in outputs $1, \cdots , 3$ accordingly).
+
+### ***Answers and Explanation***:
+
+<center>
+<img src="./assets/06-034A.png" width="650">
+</center>
+
+One possible solution is as in the figure shown above. Recall (cf. Section 6) that a bitonic split pairs elements from each half of the input bitonic sequence, and then for each such pair it subsequently segregates the smaller and the larger element, which is consistent with the operation of a "+" comparator accordingly.
+
+Checking the outputs (as denoted by solid goldenrod arrows in the figure shown above), both haves in the corresponding output are bitonic, up to a circular shift.
+  * ***N.B.*** Per this circular shift, any permutation of comparators would be equally valid, besides that as in the figure shown above.
+
+<center>
+<img src="./assets/06-035A.png" width="650">
+</center>
+
+Therefore, a valid final bitonic split circuit is as in the figure shown above.
+  * ***N.B.*** As an additional exercise, what is the corresponding work and span for this circuit?
+
+## 8. Bitonic Splits: A Parallel Scheme
