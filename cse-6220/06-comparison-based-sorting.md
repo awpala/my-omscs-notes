@@ -178,8 +178,38 @@ $$
 <img src="./assets/06-021.png" width="650">
 </center>
 
-Furthermore, a more complete definition of **bitonic** additionally stipulates that these inequalities hold not only for the original sequence, but ***also*** after performing some circular shift on the sequence.
+Furthermore, a more complete definition of **bitonic** additionally stipulates that these inequalities hold not only for the original sequence, but ***also*** after performing some arbitrary circular shift on the sequence.
 
 The subsequent section wil further demonstrate bitonic sequences by way of example.
 
 ## 5. Bitonic Sequences Quiz and Answers
+
+<center>
+<img src="./assets/06-022Q.png" width="650">
+</center>
+
+Consider the following two sequences (as in the figure shown above):
+  * $2$ , $3$ , $6$ , $1$ , $0$
+  * $4$ , $7$ , $2$ , $0$ , $5$
+
+Which of these sequences is bitonic? (Select all that apply.)
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/06-023A.png" width="650">
+</center>
+
+Only sequence $2$ , $3$ , $6$ , $1$ , $0$ is bitonic.
+
+<center>
+<img src="./assets/06-024A.png" width="650">
+</center>
+
+Recall (cf. Section 4) provides a stricter definition of bitonic by way of a circular shift.
+
+In the sequence $2$ , $3$ , $6$ , $1$ , $0$ , clockwise examination indicates that all increases ("+") are consecutive and all decreases ("-") are consecutive. Correspondingly, this sequence is bitonic up to a circular shift.
+
+Conversely, in the sequence $4$ , $7$ , $2$ , $0$ , $5$ , the increases ("+") and decreases ("-") are not strictly consecutive along the clockwise "ring" (i.e., there is no corresponding circular shift possible to satisfy the inequalities requirement among the elements).
+
+## 6. Bitonic Splits
