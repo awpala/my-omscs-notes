@@ -358,3 +358,86 @@ Here, each pair is iterated over in parallel (i.e., via $\rm{parfor}$ ), corresp
 There is a ***subtle point*** to note, however: In the work-span model (cf. Lesson 5), the fixed-size circuit has a ***constant*** depth/span, whereas in general, the convention is to assume ***logarithmic*** depth/span for operations such as parallel for loops.
 
 ## 9. Bitonic Merge
+
+<center>
+<img src="./assets/06-038.png" width="650">
+</center>
+
+Recall (cf. Section 8) that a bitonic split naturally gives rise to a divide-and-conquer scheme for sorting any bitonic input sequence. To further demonstrate this, consider the following figures.
+
+<center>
+<img src="./assets/06-039.png" width="450">
+</center>
+
+Given an input sequence (as in the figure shown above), split it into corresponding halves. 
+
+<center>
+<img src="./assets/06-040.png" width="650">
+</center>
+
+In this case, there are 32 inputs, so the elements are paired at a distance of ${n \over 2} = 16$ apart (as in the figure shown above).
+
+<center>
+<img src="./assets/06-041.png" width="450">
+</center>
+
+Subsequently to the first splitting step, the result is two bitonic sub-sequences, each of length 16 (as in the figure shown above).
+
+This process is repeated accordingly, as follows.
+
+<center>
+<img src="./assets/06-042.png" width="650">
+</center>
+
+<center>
+<img src="./assets/06-043.png" width="450">
+</center>
+
+In the next splitting step, the elements are paired at a distance of 8 apart (as in the figures shown above), resulting in four bitonic sub-sequences, each of length 8.
+
+<center>
+<img src="./assets/06-044.png" width="650">
+</center>
+
+<center>
+<img src="./assets/06-045.png" width="450">
+</center>
+
+In the next splitting step, the elements are paired at a distance of 4 apart (as in the figures shown above), resulting in eight bitonic sub-sequences, each of length 4.
+
+<center>
+<img src="./assets/06-046.png" width="650">
+</center>
+
+In the final splitting step, the elements are paired at a distance of 2 apart (as in the figure shown above), resulting in sixteen bitonic sub-sequences, each of length 2.
+
+<center>
+<img src="./assets/06-047.png" width="450">
+</center>
+
+Finally, the sorted sequence results in the trivial case of thirty-two sorted elements (as in the figure shown above).
+
+<center>
+<img src="./assets/06-048.png" width="650">
+</center>
+
+The aforementioned steps are called a **bitonic merge**, i.e., the transformation from a bitonic input sequence into a sorted output. The corresponding pseudocode for this operation is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{bitonicMerge}}\left( {A[0:n - 1]} \right)}\\
+\ \ \ \ {{\rm{//\ assume\ }}A{\rm{\ is\ bitonic}}}\\
+\ \ \ \ {{\rm{if\ }}n \ge 2{\rm{\ then}}}\\
+\ \ \ \ \ \ \ \ {{\rm{//\ assume\ }}2|n}\\
+\ \ \ \ \ \ \ \ {{\rm{bitonicSplit}}({A[:]})}\\
+\ \ \ \ \ \ \ \ {{\rm{spawn\ bitonicMerge}}\left( {A\left[ {0:{n \over 2} - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {{\rm{bitonicMerge}}\left( {A\left[ {{n \over 2}:n - 1} \right]} \right)}
+\end{array}
+}
+$$
+
+Here, $\rm{bitonicSplit}(A[:])$ splits the bitonic input sequence into two bitonic sub-sequences, each of which are subsequently merged.
+  * ***N.B.*** Note that all elements of one sub-sequence are ***strictly*** less than or equal to all elements of the other sub-sequence. This ***independence*** property in turn allows to use a $\rm{spawn}$ operation accordingly.
+
+## 10. Bitonic Merge Networks Quiz and Answers
