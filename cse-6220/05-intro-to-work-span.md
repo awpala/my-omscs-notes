@@ -1401,7 +1401,7 @@ Now, suppose that iteration $1$ executes its write to $y[1]$ *first*, thereby up
 A data race which yields an error in this manner is called a **race condition**. Correspondingly, when designing parallel algorithms, one must be cautious to ***avoid*** such race conditions.
   * ***N.B.*** As a general ***heuristic***, it is often helpful to avoid data races regardless (i.e., for semantic correctness). However, it is important to note that a data race does ***not*** necessarily always yield a race condition (examples of this will be demonstrated subsequently in this course).
 
-## 26Q. Putting It All Together, Part 1 Quiz and Answers
+## 26. Putting It All Together, Part 1 Quiz and Answers
 
 <center>
 <img src="./assets/05-095Q.png" width="650">
@@ -1450,13 +1450,13 @@ Consider this in terms of the corresponding directed acyclic graph (DAG) (as in 
 The $\rm{par-for}$ proceeds to divide the iteration space via divide-and-conquer, resulting in $\log n$ levels in the corresponding DAG tree. However, the $j$ iterations remain *sequential* , thereby yielding "leaves" of linear length at the "bottom end" of the DAG tree.
   * ***N.B.*** Strictly speaking, therefore $D(n) = O(\log n + n)$ , however, $n$ dominates $\log n$ as $n$ increases asymptotically.
 
-## 27Q. Putting It All Together, Part 2 Quiz and Answers
+## 27. Putting It All Together, Part 2 Quiz and Answers
 
 <center>
 <img src="./assets/05-098Q.png" width="650">
 </center>
 
-Per the "safe" parallelization of a matrix-vector multiplication operation (cf. Section 26Q), the corresponding work $W(n)$ and $D(n)$ are as follows:
+Per the "safe" parallelization of a matrix-vector multiplication operation (cf. Section 26), the corresponding work $W(n)$ and $D(n)$ are as follows:
 
 $$
 W(n) = O({n^2})
