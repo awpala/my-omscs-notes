@@ -213,3 +213,86 @@ In the sequence $2$ , $3$ , $6$ , $1$ , $0$ , clockwise examination indicates th
 Conversely, in the sequence $4$ , $7$ , $2$ , $0$ , $5$ , the increases ("+") and decreases ("-") are not strictly consecutive along the clockwise "ring" (i.e., there is no corresponding circular shift possible to satisfy the inequalities requirement among the elements).
 
 ## 6. Bitonic Splits
+
+<center>
+<img src="./assets/06-025.png" width="650">
+</center>
+
+Recall (cf. Section 4) the definition for a **bitonic** sequence. Additionally, consider the following claim: Once a sequence is bitonic, it can be sorted trivially/easily. This claim wil be further substantiated in this section.
+
+<center>
+<img src="./assets/06-026.png" width="650">
+</center>
+
+First, conceptually divide the given bitonic sequence into its two constituent halves (as in the figure shown above).
+  * ***N.B.*** Here, for simplicity, it is assumed that division between the increasing sequences and the decreasing sequences occurs in the middle, however, this is not strictly necessary in general.
+
+After splitting this sequence, now pair elements of the first sub-sequence with elements of the other sub-sequence, starting with the pair $(a_0, a_{n \over 2})$ (as denoted by goldenrod arrows in the figure shown above).
+
+<center>
+<img src="./assets/06-027.png" width="650">
+</center>
+
+Similarly, pair elements of the respective sub-sequences in this manner until all are paired (as in the figure shown above), i.e.,:
+
+$$
+(a_0, a_{n \over 2})\\
+(a_1, a_{{n \over 2} + 1})\\
+(a_2, a_{{n \over 2} + 2})\\
+\vdots\\
+(a_{{n \over 2} - 1}, a_{n - 1})\\
+$$
+
+<center>
+<img src="./assets/06-028.png" width="650">
+</center>
+
+To observe this more readily, consider a corresponding visual pairing of these element pairs (as in the figure shown above).
+
+<center>
+<img src="./assets/06-029.png" width="650">
+</center>
+
+Now, consider taking the smallest of each pair (as in the figure shown above), i.e.,:
+
+$$
+\min(a_0, a_{n \over 2})\\
+\min(a_1, a_{{n \over 2} + 1})\\
+\min(a_2, a_{{n \over 2} + 2})\\
+\vdots\\
+\min(a_{{n \over 2} - 1}, a_{n - 1})\\
+$$
+
+In doing so, observe that the result forms a bitonic sequence (as denoted by goldenrod curve in the figure shown above).
+
+<center>
+<img src="./assets/06-030.png" width="650">
+</center>
+
+Similarly, taking the largest of each pair (as in the figure shown above), i.e.,:
+
+$$
+\max(a_0, a_{n \over 2})\\
+\max(a_1, a_{{n \over 2} + 1})\\
+\max(a_2, a_{{n \over 2} + 2})\\
+\vdots\\
+\max(a_{{n \over 2} - 1}, a_{n - 1})\\
+$$
+
+This also correspondingly yields a bitonic sequence (as denoted by goldenrod curve in the figure shown above), to within a circular shift of the previous (i.e., resulting from taking the minima of each pair).
+
+<center>
+<img src="./assets/06-031.png" width="650">
+</center>
+
+This general approach is called a **bitonic split**, i.e., the pairing of elements of a bitonic input sequence and subsequent application of $\min()$ or $\max()$ to these input pairs, resulting in two bitonic subsequences accordingly.
+
+Furthermore, observe that all elements of the $\max()$ subsequence are greater than or equal to all elements of the $\min()$ subsequence (as delineated by solid black line in the figure shown above), thereby naturally suggesting a ***divide-and-conquer*** scheme.
+
+<center>
+<img src="./assets/06-032.png" width="650">
+</center>
+
+As is readily apparent, such splitting can be performed ***in-place*** (i.e., without otherwise requiring additional storage), visually resulting in two corresponding bitonic subsequences (as in the figure shown above).
+
+## 7. Bitonic Spilts Quiz and Answers
