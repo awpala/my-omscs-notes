@@ -441,3 +441,60 @@ Here, $\rm{bitonicSplit}(A[:])$ splits the bitonic input sequence into two biton
   * ***N.B.*** Note that all elements of one sub-sequence are ***strictly*** less than or equal to all elements of the other sub-sequence. This ***independence*** property in turn allows to use a $\rm{spawn}$ operation accordingly.
 
 ## 10. Bitonic Merge Networks Quiz and Answers
+
+Recall (cf. Section 9) that given a bitonic input sequence, a bitonic merge produces a correspondingly sorted output.
+
+<center>
+<img src="./assets/06-049Q.png" width="650">
+</center>
+
+For this quiz, the task is to create a bitonic merge network, starting with the "empty" network as in the figure shown above. In each column, insert one or more non-overlapping "+" comparators, by correspondingly selecting an even number of boxes in each column.
+
+<center>
+<img src="./assets/06-050Q.png" width="650">
+</center>
+
+<center>
+<img src="./assets/06-051Q.png" width="650">
+</center>
+
+For example, if selecting the boxes for inputs $3$ and $14$ (as in the figures shown above), this implies a corresponding "+" comparator between these inputs accordingly.
+  * ***N.B.*** This particular selection is shown for demonstration purposes, however, it of course does not yield the correctly sorted output.
+
+<center>
+<img src="./assets/06-052Q.png" width="650">
+</center>
+
+<center>
+<img src="./assets/06-053Q.png" width="650">
+</center>
+
+Conversely, consider selection of the four boxes as in the figures shown above, noting that comparators in a given column *cannot* overlap. (This still results in an incorrect output, however.)
+
+In this manner, the outputs from one comparator can be "chained" to the inputs of the next.
+
+Furthermore, note that the objective of this bitonic merge network is to sort ***any*** arbitrary eight-element input sequence, not only the particular sequence given here.
+
+### ***Answers and Explanation***:
+
+<center>
+<img src="./assets/06-054A.png" width="650">
+</center>
+
+Recall (cf. Section 9) that a bitonic merge is simply a sequence of splits, whereby such a sequence of splits is constituted by a set of min-max pairs.
+
+Furthermore, since the input is of length eight elements, correspondingly the first split should pair elements that are four away from each other (as in the figure shown above), resulting in two sets of four-element bitonic sequences at the respective outputs (denoted by goldenrod annotations in the figure shown above).
+
+<center>
+<img src="./assets/06-055A.png" width="650">
+</center>
+
+<center>
+<img src="./assets/06-056A.png" width="650">
+</center>
+
+Proceeding in this manner, the two sets of four elements are similarly halved into four sets of two-element pairs at a distance of two elements apart (as in the figures shown above), eventually converging on the trivial case of four sets of adjacent pairs (denoted by goldenrod annotations in the figure shown above), thereby yielding the sorted output accordingly.
+
+***N.B.*** The second figure in the pair of figures shown above annotates the traces of the intermediate values on each wire. As an additional follow-up exercise, compare this circuit with the pseudocode for $\rm{bitonicMerge}$ (cf. Section 9).
+
+## 11. Generate a Bitonic Sequence Quiz and Answers
