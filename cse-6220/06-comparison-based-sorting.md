@@ -498,3 +498,55 @@ Proceeding in this manner, the two sets of four elements are similarly halved in
 ***N.B.*** The second figure in the pair of figures shown above annotates the traces of the intermediate values on each wire. As an additional follow-up exercise, compare this circuit with the pseudocode for $\rm{bitonicMerge}$ (cf. Section 9).
 
 ## 11. Generate a Bitonic Sequence Quiz and Answers
+
+<center>
+<img src="./assets/06-057Q.png" width="650">
+</center>
+
+Given a bitonic input sequence, recall (cf. Section 10) that a network such as that in the figure shown above wil sort it accordingly.
+
+However, given an ***arbitrary*** input, how is such a bitonic-sequence input generated from it in the first place?
+
+<center>
+<img src="./assets/06-058Q.png" width="650">
+</center>
+
+To further investigate this matter, create a comparator network that takes an arbitrary sequence (such as that in the figure shown above) and creates a bitonic sequence from it. Do this by inserting one or more non-overlapping comparators in each column. Use either "+" or "-" comparators as necessary.
+
+To assist with this, the first and last columns are provided in the figure shown above. Furthermore, as an additional hint, the values of the first groups of comparators are annotated in the figure (denoted by orange font), as a prompt/reminder of the difference between the "+" and "-" comparators.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/06-059A.png" width="650">
+</center>
+
+To determine this network, consider what this first group of comparators is doing: This group is creating up-and-down pairs (as denoted by arrows in the figure shown above). Furthermore, given that this is the case, then it is necessarily true that both the first-four and second-four elements comprise bitonic sub-sequences.
+
+<center>
+<img src="./assets/06-060A.png" width="650">
+</center>
+
+Now, the remaining task is to converge on a *single* bitonic sequence across the entire set of inputs, which can be accomplished by converting one of the four-element sub-sequences into an increasing sub-sequence, and the other four-element sub-sequence into a correspondingly decreasing sub-sequence.
+
+Taking the top-half four-element sub-sequence into consideration (as denoted by goldenrod annotation in the figure shown above), given a bitonic sequence, in order to yield an increasing sub-sequence from this, a bitonic merge can be used accordingly.
+
+<center>
+<img src="./assets/06-061A.png" width="650">
+</center>
+
+Correspondingly, applying this idea yields the resulting network as in the figure shown above, where the bottom-half sub-sequence uses the analogous premise but with "-" comparators to produce a decreasing sub-sequence.
+  * ***N.B.*** In this context, the provided first-column selections are effectively bitonic merges of size $2$ .
+
+<center>
+<img src="./assets/06-062A.png" width="650">
+</center>
+
+To further verify the result, note the trace of the intermediate values (as in the figure shown above). To summarize:
+  * 1 - Starting with an arbitrary input, corresponding "+" and "-" bitonic merges of size 2 are performed.
+  * 2 - Next, "+" and "-" bitonic merges of size 4 are performed.
+  * 3 - Generalizing in this manner, subsequently double-sized bitonic merges are performed.
+
+Therefore, to convert from an arbitrary input to a bitonic sequence, a corresponding series of bitonic merges of increasing size are performed accordingly (i.e., until yielding a single bitonic sequence).
+
+## 12. Bitonic Sort
