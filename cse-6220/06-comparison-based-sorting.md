@@ -550,3 +550,69 @@ To further verify the result, note the trace of the intermediate values (as in t
 Therefore, to convert from an arbitrary input to a bitonic sequence, a corresponding series of bitonic merges of increasing size are performed accordingly (i.e., until yielding a single bitonic sequence).
 
 ## 12. Bitonic Sort
+
+For completeness, consider a summary to recap with respect to sorting, using bitonic ideas.
+
+<center>
+<img src="./assets/06-063.png" width="450">
+</center>
+
+First, given an arbitrary input (as in the figure shown above), the procedure to generate a bitonic sequence is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{genBitonic}}({A[0:n - 1]})}\\
+\ \ \ \ {{\rm{if\ }}n \ge 2{\rm{\ then}}}\\
+\ \ \ \ \ \ \ \ {{\rm{//\ assume\ }}2|n}\\
+\ \ \ \ \ \ \ \ {{\rm{spawn\ genBitonic}}\left( {A\left[ {0:{n \over 2} - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {{\rm{genBitonic}}\left( {A\left[ {{n \over 2}:n - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {{\rm{sync}}}\\
+\ \ \ \ \ \ \ \ {{\rm{spawn\ bitonicMerge}}{_ +}\left( {A\left[ {0:{n \over 2} - 1} \right]} \right)}\\
+\ \ \ \ \ \ \ \ {{\rm{bitonicMerge}}{_\_}\left( {A\left[ {{n \over 2}:n - 1} \right]} \right)}
+\end{array}
+}
+$$
+
+This pseudocode follows a divide-and-conquer approach, whereby two bitonic sub-sequences are created, which are subsequently converted into respective increasing ("+") and decreasing ("-") sub-sequences.
+  * ***N.B.*** "+" and "-" variations of procedure $\rm{bitonicMerge}$ are used to achieve the latter.
+
+<center>
+<img src="./assets/06-064.png" width="650">
+</center>
+
+Given the primitive operation $\rm{benBitonic}$ , sorting is relatively simple to accomplish, i.e.,:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{bitonicSort}}\left( {A[0:n - 1]} \right)}\\
+\ \ \ \ {{\rm{genBitonic}}\left( {A[:]} \right)}\\
+\ \ \ \ {{\rm{bitonicMerge}}{_ +}\left( {A[:]} \right)}
+\end{array}
+}
+$$
+
+Schematically (as in the figure shown above), this effectively entails combining the "output stage" of the $\rm{genBitonic}$ circuit into the "input stage" of the $\rm{bitonicMerge}{_ +}$ circuit. 
+
+<center>
+<img src="./assets/06-065.png" width="650">
+</center>
+
+The work $D(n)$ and $W(n)$ for $\rm{bitonicSort}$ are (respectively) as follows:
+
+$$
+W_{\rm{bs}}(n) = \Theta(n \log^2 n)
+$$
+
+$$
+D_{\rm{bs}}(n) = \Theta(\log^2 n)
+$$
+
+With respect to span $D(n)$, $\rm{bitonicSort}$ is poly-logarithmic (as desired). However, with respect to work $W(n)$ , $\rm{bitonicSort}$ ***not*** work-optimal, relative to optimal $n \log n$ performance for a comparison sort. This then begs the question: Why even bother with bitonic sorting?
+
+## 13. Conclusion
+
+One key advantage of bitonic sorting is that it gives rise to a nice visual representation, which in turn connects it to the dynamic multi-threading model. Furthermore, bitonic sort has a fixed, regular parallel structure, lending itself to a natural implementation (e.g., field programmable gate arrays [FPGAs]). This regular structure also means that bitonic sorting maps well to fixed-data parallel hardware (e.g., single instruction multi data [SIMD], vector processing systems, graphics co-processors [GPUs], etc.).
+
+However, a key downside of bitonic sorting is that it is not work-optimal, even when restricted to only the class of comparison-based algorithms. Therefore, in practice, this begets an engineering decision/trade-off with respect to the platform and the scale in question for intended use of the algorithm. The best way to understand this trade-off is to implement bitonic sorting and competing algorithms on real systems, and observe the resulting behavior.

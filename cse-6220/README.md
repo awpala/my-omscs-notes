@@ -10,6 +10,7 @@
 | [3](./03-io-avoiding-algorithms.md) | I/O-Avoiding Algorithms |
 | [4](./04-cache-oblivious-algorithms.md) | Cache-Oblivious Algorithms |
 | [5](./05-intro-to-work-span.md) | Introduction to the Work-Span Model |
+| [6](./06-comparison-based-sorting.md) | Comparison-Based Sorting |
 
 ## Videos Reference
 
