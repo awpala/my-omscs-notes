@@ -53,3 +53,26 @@ In this particular course, the focus will be on compilers.
   * ***N.B.*** Compilers and interpreters share many phases and features, however, this is beyond the scope of this course.
 
 # 4. Why Compilers?
+
+Before commencing with the formal study of compilers, consider some historic artifacts to understand ***why*** compilers came into being in the first place.
+
+<center>
+<img src="./assets/01-P1L1-004.png" width="650">
+</center>
+
+In the 1950s, the modern notion of "programming of computers" began, which entailed a rather tedious process for writing such source code at a low level, dealing directly at the "bit" level (and still later on arrival of assembly languages, which did not solve this particular problem). This gave rise to a rather tedious and error-prone software development cycle accordingly (i.e., features addition, fixing of bugs, etc.)
+
+<center>
+<img src="./assets/01-P1L1-005.png" width="650">
+</center>
+
+In 1954, IBM released the first compiler for Fortran (as in the figure shown above), which translated the Fortran source code into lower-level assembly language. This enabled to perform corresponding updates, bug fixes, etc. in the higher-level Fortran language (which provides additionally useful abstractions such as arrays, along with the more human-readable syntax), rather than dealing directly with the lower-level assembly language.
+
+<center>
+<img src="./assets/01-P1L1-006.png" width="650">
+</center>
+
+The final downstream step from this high-level language to low-level language translation is the conversion of assembly language into the binary machine language (as in the figure shown above), i.e., the constituent bits of the program running directly on the processor. Therefore, the role of the compiler is more specifically situated in the high-level-language-to-assembly-language translation, after which the **assembler** assumes responsibility for the final translation to directly executing binary instructions running on the processor itself.
+  * ***N.B.*** By comparison, the role of the assembler is relatively straightforward, as it more or less "directly" translates the bit-format representation of the assembly instructions into the corresponding constituent bits; conversely, the compiler involves the comparatively much more complex task of converting the high-level language to the low-level assembly code, which does not have such a direct/one-to-one correspondence. The latter process is the particular focus of this course.
+
+# 5. How Compilers Work
