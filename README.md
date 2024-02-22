@@ -4,7 +4,8 @@
 | :--: | :--:| :--: |
 | [CS 6200](/cs-6200) | Graduate Introduction to Operating Systems | Fall 2021 |
 | [CS 6290](/cs-6290) | High Performance Computer Architecture | Fall 2023 |
-| [CSE 6220](/cse-6220) | High Performance Computing | Spring 2024 |
+| [CS 8803-O08]() | Compilers - Theory and Practice | Spring 2025|
+| [CSE 6220](/cse-6220) | High Performance Computing | ~~Spring 2024~~ Withdrawal |
 
 ## License and Terms
 
