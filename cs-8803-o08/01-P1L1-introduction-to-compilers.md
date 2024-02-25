@@ -52,7 +52,7 @@ With respect to compilers vs. interpreters, the respective use cases are distinc
 In this particular course, the focus will be on compilers.
   * ***N.B.*** Compilers and interpreters share many phases and features, however, this is beyond the scope of this course.
 
-# 4. Why Compilers?
+## 4. Why Compilers?
 
 Before commencing with the formal study of compilers, consider some historic artifacts to understand ***why*** compilers came into being in the first place.
 
@@ -75,10 +75,10 @@ In 1954, IBM released the first compiler for Fortran (as in the figure shown abo
 The final downstream step from this high-level language to low-level language translation is the conversion of assembly language into the binary machine language (as in the figure shown above), i.e., the constituent bits of the program running directly on the processor. Therefore, the role of the compiler is more specifically situated in the high-level-language-to-assembly-language translation, after which the **assembler** assumes responsibility for the final translation to directly executing binary instructions running on the processor itself.
   * ***N.B.*** By comparison, the role of the assembler is relatively straightforward, as it more or less "directly" translates the bit-format representation of the assembly instructions into the corresponding constituent bits; conversely, the compiler involves the comparatively much more complex task of converting the high-level language to the low-level assembly code, which does not have such a direct/one-to-one correspondence. The latter process is the particular focus of this course.
 
-# 5-6. How Compilers Work
+## 5-6. How Compilers Work
 Having discussed the motivation behind the development of compilers previously in this lesson (i.e., enhancement of developer productivity), consider now the compiler **internals**, and how they work at a high level. Subsequently, each **phase** of the compiler will be examined in further detail.
 
-## 5. Overview
+### 5. Overview
 
 <center>
 <img src="./assets/01-P1L1-007.png" width="650">
@@ -106,4 +106,32 @@ In summary, the compiler performs two key activities:
 The corresponding three phases of the compiler (scanner, parser, and semantic action) collectively comprise the **front end** of the compiler, which involves analysis of the program's syntax and semantics.
   * ***N.B.*** Many such compiler front ends additionally incur activities/phases which are particular to a given language, and therefore the front end is particularly amenable to customization with respect to the language specification in question.
 
-## 6. Details
+### 6. Details
+
+Let us further consider the details of the front end, particularly the semantic analysis phase.
+
+<center>
+<img src="./assets/01-P1L1-009.png" width="650">
+</center>
+
+When the compiler is invoked, this is tantamount to invoking the **parser** (as in the figure shown above). The parser essentially tracks the "location" during the compilation process (i.e., how much of the source code has been traversed up to a given point, what is the next step to perform, what checks should be performed on the program, etc.).
+
+The parser invokes the **scanner** which in turn provides the next **token** (e.g., constants, variables, keywords, etc.) derived from the input **source file**.
+  * ***N.B.*** A **keyword** is a reserved word which is used for a specific purpose in the language (and generally invalid as a variable name, etc.).
+
+The interaction of the parser and the scanner occurs ***iteratively***, determining whether the resulting expression is syntactically valid. Eventually, the parser will have processed a ***partial sentence***, which at this point is determined to be syntactically correct.
+
+<center>
+<img src="./assets/01-P1L1-010.png" width="650">
+</center>
+
+Subsequently to identifying a syntactically-correct expression, the corresponding **semantic analysis** can be performed on it accordingly (as in the figure shown above). Several types of semantic analyses can be performed on such a candidate expression.
+
+One of the key features of the semantic analysis is identification of all **variables** which are present in the program. Along these lines, the compiler determines whether a variable has been ***declared*** prior to its use in the program (along with appropriate type, scope level in the program, etc.). All of this information regarding declared variables is maintained in the compiler's **symbol table**. The compiler in turn looks up the corresponding variable-name information in the symbol table.
+  * If the variable is ***found*** in the symbol table (i.e., the declaration was previously present there already), then it performs subsequent semantic checks (e.g., attributes such as type, scope, etc. for the variable in question, as defined in the symbol-table entry).
+  * COnversely, if the variables is ***not*** found in the symbol table, then this implies that the variable in question has not yet been declared. In general, there are two types of statements in a high-level programming languages: Declarations and uses. Generally, declarations must occur ***before*** uses. Therefore, when such a statement is encountered during semantic analysis, the corresponding declaration is placed into the symbol table, for subsequent use-oriented statements with respect to the particular input in question.
+
+Finally, once semantic checks have passed (e.g., declarations, type compatibility of operands in operator expressions, etc.), **code generation** can occur, yielding the resulting **intermediate code** (which more closely resembles the target assembly language), for subsequent generation of the assembly code in the next pass of the compiler.
+  * At this point, it is still possible for semantic checks to ***fail*** (e.g., type incompatibility, use of a variable without its preceding declaration, an unavailable variable in the given scope, etc.), which results in corresponding **semantic errors**, which are consequently flagged and reported. In such cases of either syntactic or semantic errors, the code generation is simply abandoned, as it is not sensible to proceed with code generation of an otherwise invalid program. In order to resolve these errors, the source program must first be ***corrected*** accordingly before re-processing in this manner via the front end.
+
+## 7. Compiler Parts
