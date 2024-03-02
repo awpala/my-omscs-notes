@@ -171,3 +171,67 @@ Next, in the **parsing** phase (as conducted by the aforementioned parsers), the
 
 ## 9. Tokenization Quiz and Answers
 
+<center>
+<img src="./assets/01-P1L1-013Q.png" width="650">
+</center>
+
+To check understanding of tokenization (or word formation), consider the following. If we use a whitespace character to delimit the end of a word (i.e., the prescribed lexical rule), then how many tokens/words are present in the following quoted sentence (ignoring quotation and period characters)?
+
+> *"The question of whether a computer can think is no more interesting than the question of whether a submarine can swim."*
+  *   ***N.B.*** Quote of famed computer scientist Edsger W. Dijkstra.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-P1L1-014A.png" width="650">
+</center>
+
+There are `21` total tokens in the quoted sentence.
+  * ***N.B.*** Here, each (English) word is a "token." The concept is analogous in programming languages, however, of course they do not strictly adhere to the same lexicon as the English language in this regard.
+
+## 10. Scanning and Tokenization
+
+Having seen the high-level view of a compiler previously in this lesson, consider now the process of **scanning** (i.e., **token generation**) in more detail.
+
+<center>
+<img src="./assets/01-P1L1-015.png" width="650">
+</center>
+
+Starting with one (or more) **source file**(s), the scanner proceeds with reading the input file character-by-character. The read characters are in turn placed sequentially into the **token buffer**, which contains the candidate **token** pending identification.
+
+<center>
+<img src="./assets/01-P1L1-016.png" width="650">
+</center>
+
+Consider the famous/familiar "hello world" program as follows (as implemented in the C programming language):
+
+```c
+main()
+{
+  printf("Hello World");
+}
+```
+
+On input of the source file, the token buffer processes the character sequence as follows:
+
+| Sequence | Token buffer contents |
+|:--:|:--:|
+| `S1` | `m` |
+| `S2` | `am` |
+| `S3` | `iam` |
+| `S4` | `niam` |
+| `S5` | `(niam` |
+
+As the sequence proceeds, the scanner commences with identification of a legal token (i.e., via inputs `m`, `a`, `i`, `n`) per the corresponding lexical rules for the programming language C.
+
+<center>
+<img src="./assets/01-P1L1-017.png" width="650">
+</center>
+
+On encountering the character `(`, the parser determines that there is no valid token of form `m...(` as per the lexical specification for C, suggesting that the parser has now traversed past a legal token.
+
+At this point, the scanner sends the character `(` back from the buffer (i.e., for subsequent identification of the next legal token), and correspondingly identifies the valid/legal token `main`, which is a keyword in the C programming language. In the meantime, this token `main` is completed and send over to the parser for subsequent processing.
+
+In general, observe that during the character-by-character processing into the token buffer, at any given point, the scanner determines whether the in-progress scan is either ***starting*** a new legal token or otherwise ***extending*** a legal token's formation. Eventually, the scanner reaches a point where the subsequently read character cannot further extend a legal token, indicating that the next valid token has been encountered (thereby sending this character back for re-processing of the next valid token). Correspondingly, this process is called the **longest-match algorithm** (i.e., forming the maximum/longest token that is legally formed via concatenation in this manner), and is the most commonly used algorithm for scanners.
+
+## 11. Parser Quiz and Answers
