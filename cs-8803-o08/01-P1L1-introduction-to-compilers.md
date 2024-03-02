@@ -392,3 +392,48 @@ Recalling the grammar (cf. Section 13, and as repeated in the figure shown above
 On matching of the token `main`, the next token is demanded by the parser from the scanner. It will proceed in this manner until the full source program is analyzed, until all tokens are fully matched (success) or an invalid expression is encountered (failure, i.e., syntax error).
 
 ### 15. Overview
+
+<center>
+<img src="./assets/01-P1L1-028.png" width="650">
+</center>
+
+Consider now an ***overview*** of how the parser works (as in the figure shown above).
+  * 1 - The parser starts by **matching**, using a given **rule**.
+  * 2 - When the match occurs at a certain position in that rule, the parser will proceed onto the next location in that rule in order to retrieve the next token, and this process repeats accordingly as follows:
+    * 2A - If **expansion** of a given candidate token is necessary, it must do so using the appropriate **rule**:
+      * 2Ai - If ***no*** appropriate rule for expansion is found, then an **error** is declared
+      * 2Aii - Otherwise if ***several*** rules are found, then the grammar is **ambiguous** (in general, a correctly-specified grammar should be able to unambiguously select a ***distinct*** rule for a given candidate token)
+
+***N.B.*** For present purposes, with respect to step 2A, it is not yet apparent *how* such a rule is appropriately chosen, but rather it is ***assumed*** here that the parser *is* indeed capable of making this appropriate decision accordingly.
+
+<center>
+<img src="./assets/01-P1L1-029.png" width="650">
+</center>
+
+Recalling the grammar (cf. Section 13, and as repeated in the figure shown above), let us further consider the notion of ***expanding*** a candidate token.
+
+As a representative example, the initial rule `<C-PROG> → MAIN OPENPAR <PARAMS> CLOSEPAR <MAIN-BODY>` contains sub-token `<PARAMS>` which can be further specified/expanded, as per the following valid candidate tokens:
+  * `<PARAMS> → NULL`
+  * `<PARAMS> → VAR <VARLIST>`, which in turn expands via `<VARLIST>` to:
+    * `<VARLIST> → , VAR <VARLIST>`
+    * `<VARLIST> → NULL`
+
+
+<center>
+<img src="./assets/01-P1L1-030.png" width="650">
+</center>
+
+Recall (cf. Section 14) the simple program as follows:
+
+```c
+main() {
+  int a,b;
+  a = b;
+}
+```
+
+The first set of valid tokens is therefore `main()`, which corresponds to the function header with a `NULL` declaration of parameters (i.e., empty parameters list), corresponding to the expansion `<PARAMS> → NULL`.
+
+More generally, the grammar therefore specifies the most general way in which such a "micro C" program can be validly constructed (i.e., per appropriate expansion accordingly). Correspondingly, the ***key decision*** made by the parser with respect to a given input program is the expansion performed in this manner, in order to determine syntactic correctness of the program in question.
+
+### 16. Ambiguity
