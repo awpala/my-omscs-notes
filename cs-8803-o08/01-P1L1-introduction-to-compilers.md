@@ -499,3 +499,128 @@ For this particular example, an unambiguous grammar can be specified as in the f
   * As an additional exercise, it can be shown that this unambiguous grammar can be applied appropriately to the original candidate statement `if x==1 then if y==2 print 1 else print 2`.
 
 ## 18. Scanning and Parsing
+
+Having demonstrated parsing and grammar ambiguity previously in this lesson, consider now a "completing the loop" with respect to the parser-scanner interaction.
+
+<center>
+<img src="./assets/01-P1L1-039.png" width="650">
+</center>
+
+Recall (cf. Section 14) the simple "micro C" program as follows:
+
+```c
+main() {
+  int a,b;
+  a = b;
+}
+```
+
+Initially, the parser demands the next token from the scanner (as in the figure shown above).
+
+<center>
+<img src="./assets/01-P1L1-040.png" width="650">
+</center>
+
+The first-received token is `MAIN` (i.e., `main`), which is the starting point of the program (i.e., `<C-PROG>` as per the grammar, which is called the grammar's **start symbol** accordingly). This is detected as a valid token, and thus the next token is subsequently requested accordingly.
+
+<center>
+<img src="./assets/01-P1L1-041.png" width="650">
+</center>
+
+The next-received token is `OPENPAR` (i.e., `(`), similarly constituting a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-042.png" width="650">
+</center>
+
+The next-received token is `CLOSEPAR` (i.e., `)`). At this point, At this point, there are two possible conforming rules per the grammar with respect to token `<PARAMS>`. In this particular case, the conforming rule is `<PARAMS> → NULL` (i.e., parameter-less function signature), which constitutes a valid token per the grammar.
+  * ***N.B.*** In this case, the parser has the "discernment" to choose among the two possible rules for the token in question (i.e., parameter-containing vs. parameter-less function signature). Furthermore, note that as described here, the parser is "keeping track" of these two different possibilities during parsing, and then selecting the appropriate rule accordingly (i.e., and correspondingly eliminating the alternate candidate[s] accordingly); such a "prediction-based" approach is called **predictive parsing**. Conversely, more "naive" parsers will perform backtracking to try another alternative, if reaching such a "branch point" with respect to multiple possibilities among candidate "sub-expressions." This topic will be examined further later in the course.
+
+<center>
+<img src="./assets/01-P1L1-043.png" width="650">
+</center>
+
+The next-received token is `CURLYOPEN` (i.e., `{`), which in turn corresponds to expansion for `<MAIN-BODY>` (which is otherwise a unique rule with respect this starting token). This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-044.png" width="650">
+</center>
+
+The next-received token is `INT` (i.e., `int`), which in turn corresponds to expansion for `<DECL-STMT>`. This results in a corresponding sub-expansion for `<DECL-STMT>` (one rule), which in turn yields two corresponding sub-expansions for `<TYPE>`. However, there is no ambiguity in this case, as the resulting token is `INT`, which constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-045.png" width="650">
+</center>
+
+The next-received token is `VAR` (i.e., `a`), which in turn corresponds to expansion for `<VAR>` (a corresponding sub-expansion for previously expanded `<DECL-STMT>`). This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-046.png" width="650">
+</center>
+
+The next-received token is `,` (i.e., `,`), which in turn corresponds to expansion for `<VARLIST>` (a corresponding sub-expansion for previously expanded `<DECL-STMT>`). Per corresponding sub-expansion, this unambiguously yields token `, VAR <VARLIST>`, which constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-047.png" width="650">
+</center>
+
+The next-received token is `VAR` (i.e., `b`), which in turn corresponds to expansion for `<VAR>` (a corresponding sub-expansion for previously expanded `<VARLIST>`). This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-048.png" width="650">
+</center>
+
+<center>
+<img src="./assets/01-P1L1-049.png" width="650">
+</center>
+
+The next-received token is `;` (i.e., `;`), which in turn corresponds to expansion for `<VARLIST>` (a corresponding sub-expansion for previously expanded `<VARLIST>`). At this point, the terminating `;` corresponds to the intermediate expansion for `<VARLIST> → NULL`, thereby completing the "outer" sub-expansion `<VARLIST>` and "outermost" expansion `<DECL-STMT>`. This constitutes a valid token per the grammar.
+
+At this point, the declaration statement has been completely matched, and the parser proceeds to the subsequent assignment statement accordingly.
+
+<center>
+<img src="./assets/01-P1L1-050.png" width="650">
+</center>
+
+The next-received token is `VAR` (i.e., `a`), which in turn corresponds to expansion for `<ASSIGN-STMT>` (one rule). This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-051.png" width="650">
+</center>
+
+The next-received token is `=` (i.e., `=`), which in turn corresponds to sub-expansion for previously expanded `<ASSIGN-STMT>`. This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-052.png" width="650">
+</center>
+
+The next-received token is `VAR` (i.e., `b`), which in turn corresponds to expansion for `<EXPR>` (a corresponding sub-expansion for previously expanded `<ASSIGN-STMT>`). Per corresponding sub-expansion, this unambiguously yields token `<EXPR> → VAR` (among multiple candidate sub-expansions), which constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-053.png" width="650">
+</center>
+
+The next-received token is `;` (i.e., `;`), thereby completing the "outermost" expansion `<ASSIGN-STMT>`. This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-054.png" width="650">
+</center>
+
+The next-received token is `CURLYCLOSE` (i.e., `}`), thereby completing the "outermost" expansion `<MAIN-BODY>`. This constitutes a valid token per the grammar.
+
+<center>
+<img src="./assets/01-P1L1-055.png" width="650">
+</center>
+
+Note that immediately prior to `CURLYCLOSE`, the token `<ASSIGN-STMT>` is ***completely matched***. This means that all of the sub-expansions have been resolved immediately prior to proceeding onto token `CURLYCLOSE` (which in turn constitutes a sub-expansion of "outermost" token `<MAIN-BODY>`).
+
+<center>
+<img src="./assets/01-P1L1-056.png" width="650">
+</center>
+
+More generally, in the sub-expansions, this "drilling down" occurs until all of the right-hand-side expansions of the constituent symbols (i.e., relative to `→`) have been resolved accordingly.
+
+As demonstrated here, since all of the tokens have been parsed, the candidate program in question is syntactically ***valid*** with respect to the "micro C" program specification.
+  * ***N.B.*** Otherwise, if a mismatch or ambiguity were encountered, then the candidate program would have been rendered/reported as ***invalid*** (i.e., having a **syntax error**) accordingly.
+
+## 19. Syntax vs. Semantics Quiz and Answers
