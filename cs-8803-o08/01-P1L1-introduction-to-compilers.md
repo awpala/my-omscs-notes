@@ -311,3 +311,24 @@ Following this process of scanning, there are two possible **outcomes**:
   * **success** → generation of the subsequent token, until reaching the point of semantic action (i.e., forwarding accordingly)
 
 ### 13. Grammar Rules
+
+This section will introduce a mini grammar for a very small language, in order to give an idea of how the parsing process between the parser and scanner work.
+
+<center>
+<img src="./assets/01-P1L1-021.png" width="650">
+</center>
+
+The grammar for a "micro C" language is specified as in the figure shown above. This language is simply capable of declaring the function `main()`.
+  * The parameter list `<PARAMS>` is delimited in parenthesis (i.e., `OPENPAR` and `CLOSEPAR`).
+  * The parameter list `<PARAMS>` is either `NULL`, or otherwise comprised of one or more variables (i.e., `VAR` or correspondingly comma-separated `<VARLIST>`, respectively).
+  * The body of function `main()` (i.e., `MAIN-BODY`) is delimited by curly brackets (i.e., `CURLYOPEN` and `CURLYCLOSE`), and is comprised of a constituent declaration statement(s) `<DECL-STMT>` and assignment statement(s) `<ASSIGN-STMT>`.
+  * Both `<DECL-STMT>` and `<ASSIGN-STMT>` are terminated by a semicolon `;`.
+  * Lastly, the atomic operators `<OP>` are restricted to `+` and `-`,  and the atomic types `<TYPE>` are restricted to `INT` and `FLOAT`.
+
+***N.B.*** At a glance, this "micro C" language has relatively limited utility/functionality (i.e., restricted solely to the function `main()`, does not include input-output, etc.). However, it is nevertheless useful for demonstration of grammar specification and corresponding syntax checking.
+
+One important thing to note here is that there is no prescription with respect to mixing of types with respect to the operands/operators (e.g., "addition" of a float and an integer operand). This is not a relevant specification with respect to ***syntax***, but rather such a specification falls under the purview of the ***semantics specification*** (which in turn is implemented as part of the **semantic check** accordingly, rather than the syntactic check).
+  * The reason for such a "separation of concerns" is that by comparison, most semantic checks are relatively much more ***context-sensitive*** (where as for most language specifications, the upstream parsing activity is relatively ***context-insensitive***). Correspondingly, two different mechanisms can be used for checking syntax (which is much simpler and inexpensive) vs. checking semantics (which is much more complex and expensive, due to the added context required to perform the corresponding semantics checking).
+  * Therefore, the design of the compiler checks is such that the upstream syntax checks occur ***first***, i.e., before commencing with (and correspondingly incurring the higher cost of) the more expensive semantics checks. Otherwise, there is no benefit gained from performing semantics checks on a syntactically invalid expression in the first place.
+
+### 14. Example
