@@ -332,3 +332,63 @@ One important thing to note here is that there is no prescription with respect t
   * Therefore, the design of the compiler checks is such that the upstream syntax checks occur ***first***, i.e., before commencing with (and correspondingly incurring the higher cost of) the more expensive semantics checks. Otherwise, there is no benefit gained from performing semantics checks on a syntactically invalid expression in the first place.
 
 ### 14. Example
+
+Consider now a simple example for performing the syntax checking via the parser-scanner interaction, as per the previously specified (cf. Section 13) "micro C" language.
+
+<center>
+<img src="./assets/01-P1L1-022.png" width="650">
+</center>
+
+Consider the simple program as follows:
+
+```c
+main() {
+  int a,b;
+  a = b;
+}
+```
+
+<center>
+<img src="./assets/01-P1L1-023.png" width="650">
+</center>
+
+Initially, the parser demands the token from the scanner (as in the figure shown above).
+
+<center>
+<img src="./assets/01-P1L1-024.png" width="650">
+</center>
+
+Subsequently, the scanner performs a character-by-character sequential analysis of the input source file (as in the figure shown above), summarized as follows:
+
+| Sequence | Token buffer contents |
+|:--:|:--:|
+| `S1` | `m` |
+| `S2` | `am` |
+| `S3` | `iam` |
+| `S4` | `niam` |
+| `S5` | `(niam` |
+
+Since the input `(` does not form a legal token via `m...)`, it is discarded.
+
+<center>
+<img src="./assets/01-P1L1-025.png" width="650">
+</center>
+
+However, the resulting expression `main` *is* a valid token (i.e., a keyword per the grammar), it is consequently sent to the parser (as in the figure shown above).
+
+<center>
+<img src="./assets/01-P1L1-026.png" width="650">
+</center>
+
+Correspondingly, the parser receives the token and verifies it against the grammar rules. Indeed, `main` is the first token which is expected at the start of any valid "micro C" program as per the specification.
+
+<center>
+<img src="./assets/01-P1L1-027.png" width="650">
+</center>
+
+Recalling the grammar (cf. Section 13, and as repeated in the figure shown above), a valid program `<C-PROG>` begins with token `MAIN` (ignoring case-sensitivity for simplicity). Therefore, at present, the input source code is syntactically ***valid*** as of this point.
+  * ***N.B.*** At this point, if any ***other*** token were received besides `main`, then the program would be rendered as syntactically ***invalid***.
+
+On matching of the token `main`, the next token is demanded by the parser from the scanner. It will proceed in this manner until the full source program is analyzed, until all tokens are fully matched (success) or an invalid expression is encountered (failure, i.e., syntax error).
+
+### 15. Overview
