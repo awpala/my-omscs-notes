@@ -418,7 +418,6 @@ As a representative example, the initial rule `<C-PROG> → MAIN OPENPAR <PARAMS
     * `<VARLIST> → , VAR <VARLIST>`
     * `<VARLIST> → NULL`
 
-
 <center>
 <img src="./assets/01-P1L1-030.png" width="650">
 </center>
@@ -437,3 +436,20 @@ The first set of valid tokens is therefore `main()`, which corresponds to the fu
 More generally, the grammar therefore specifies the most general way in which such a "micro C" program can be validly constructed (i.e., per appropriate expansion accordingly). Correspondingly, the ***key decision*** made by the parser with respect to a given input program is the expansion performed in this manner, in order to determine syntactic correctness of the program in question.
 
 ### 16. Ambiguity
+
+In the previous section, the parsing process was examined more carefully, whereby the corresponding **parsing algorithm** chooses a **rule** at each step (with each such rule being ***unique***), in order to predict the next set of tokens to be matched for the current input program. Furthermore, it was noted that a ***problematic*** case may arise whereby a unique/distinct rule ***cannot*** be identified for a particular candidate token. Consider now a further examination of this **ambiguity**, to further understand its implications.
+  * ***N.B.*** Sometimes the language specification itself gives rise to ambiguities, which in turn does not lend itself to a well-specified grammar as result. However, for present purposes, it is assumed that the language in question *is* sufficiently designed in order to be well-specified (i.e., unambiguously) with respect to the corresponding grammar accordingly.
+
+<center>
+<img src="./assets/01-P1L1-031.png" width="650">
+</center>
+
+In a given grammar, an **ambiguity** is a property of the grammar which is at the core of the concept of parsing itself. Here, parsing is not simply a matter of matching tokens, but rather also encompasses the conferral of ***structure*** on a sentence. In particular, when selecting the appropriate (i.e., unambiguous) grammar rule, it is imperative to understand the sentence (and its constituent "sub-sentence"/"sub-token" accordingly).
+
+In this regard, if an ambiguity arises, then this can lead to an "understanding" of a given sentence in two (or more) ***different*** ways, resulting in the ***highly undesirable*** assignment of two (or more) meanings to the ***same*** sentence. For example, the expression `2 * 2 + 3` can be interpreted in the following two distinct ways:
+  * `2 * 2` produces `4` which is added to `3`, yielding result `7`, or
+  * `2 + 3` produces `5` which is multiplied by `2`, yielding result `10`
+
+Therefore, to avoid this particular ambiguity, it is necessary to specify the appropriate ***precedence*** of the candidate sub-expressions/operands with respect to the operators in question.
+
+## 17. Ambiguity Quiz and Answers
