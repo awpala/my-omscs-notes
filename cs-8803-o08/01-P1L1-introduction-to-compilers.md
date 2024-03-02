@@ -453,3 +453,49 @@ In this regard, if an ambiguity arises, then this can lead to an "understanding"
 Therefore, to avoid this particular ambiguity, it is necessary to specify the appropriate ***precedence*** of the candidate sub-expressions/operands with respect to the operators in question.
 
 ## 17. Ambiguity Quiz and Answers
+
+<center>
+<img src="./assets/01-P1L1-032Q.png" width="650">
+</center>
+
+To test understanding of ambiguity in parsing (cf. Section 16), consider the candidate statement as follows:
+
+```
+if x==1 then if y==2 print 1 else print 2
+```
+
+Given this statement, which of the following grammar rules should be applied, with appropriate expansion if necessary, to unambiguously parse the statement (where `stmt` is a statement and `expr` is an expression)?
+  * `stmt → if expr then stmt`
+  * `stmt → if expr then stmt else stmt`
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-P1L1-033A.png" width="650">
+</center>
+
+Focusing on the expression `if y==2 print 1 else print 2`, this conforms the corresponding expansion `stmt → if expr then stmt else stmt`. This in turn can serve as the sub-expansion for `stmt → if expr then stmt` to complete the parsing of the candidate statement.
+
+<center>
+<img src="./assets/01-P1L1-034A.png" width="650">
+</center>
+
+Conversely, the expression `if y==2 print` conforms to the corresponding expansion `stmt → if expr then stmt`. This in turn can serve as the sub-expansion for `stmt → if expr then stmt else stmt` to complete the parsing of the candidate statement.
+
+<center>
+<img src="./assets/01-P1L1-037A.png" width="650">
+</center>
+
+Therefore, for this particular candidate statement, there is an ambiguity, whereby both grammar rules can be applied in either order to yield a "valid" parsing, arising from how the `else` clause is parsed. This type of ambiguity regarding ***operator associativity*** for a particular operator (e.g., ternary operator `if ... else ...` in this case) is typical, as was encountered previously (cf. Section 16) with respect to candidate statement `2 * 2 + 3` (as in the figure shown above) in terms of its operands (`2`, `2`, and `3`) and corresponding operators (`*` and `+`).
+  * ***N.B.*** In the case of arithmetic operator, a typical disambiguation would be PEMDAS to arbitrate among the two enumerated possibilities (i.e., multiplication preceding addition vs. addition preceding multiplication).
+
+***N.B.*** By design, languages are typically specified in a manner which does *not* yield ambiguous grammars. Later in the course, we will examine how to remove such ambiguities by rewriting the grammar accordingly.
+
+<center>
+<img src="./assets/01-P1L1-038A.png" width="650">
+</center>
+
+For this particular example, an unambiguous grammar can be specified as in the figure shown above. Per this specification, a given `else` clause is ***always*** associated with the innermost `if`. Here, `unmatched_stmt` is expanded until an `else` clause is encountered.
+  * As an additional exercise, it can be shown that this unambiguous grammar can be applied appropriately to the original candidate statement `if x==1 then if y==2 print 1 else print 2`.
+
+## 18. Scanning and Parsing
