@@ -129,9 +129,45 @@ Subsequently to identifying a syntactically-correct expression, the correspondin
 
 One of the key features of the semantic analysis is identification of all **variables** which are present in the program. Along these lines, the compiler determines whether a variable has been ***declared*** prior to its use in the program (along with appropriate type, scope level in the program, etc.). All of this information regarding declared variables is maintained in the compiler's **symbol table**. The compiler in turn looks up the corresponding variable-name information in the symbol table.
   * If the variable is ***found*** in the symbol table (i.e., the declaration was previously present there already), then it performs subsequent semantic checks (e.g., attributes such as type, scope, etc. for the variable in question, as defined in the symbol-table entry).
-  * COnversely, if the variables is ***not*** found in the symbol table, then this implies that the variable in question has not yet been declared. In general, there are two types of statements in a high-level programming languages: Declarations and uses. Generally, declarations must occur ***before*** uses. Therefore, when such a statement is encountered during semantic analysis, the corresponding declaration is placed into the symbol table, for subsequent use-oriented statements with respect to the particular input in question.
+  * Conversely, if the variables is ***not*** found in the symbol table, then this implies that the variable in question has not yet been declared. In general, there are two types of statements in a high-level programming languages: Declarations and uses. Generally, declarations must occur ***before*** uses. Therefore, when such a statement is encountered during semantic analysis, the corresponding declaration is placed into the symbol table, for subsequent use-oriented statements with respect to the particular input in question.
 
 Finally, once semantic checks have passed (e.g., declarations, type compatibility of operands in operator expressions, etc.), **code generation** can occur, yielding the resulting **intermediate code** (which more closely resembles the target assembly language), for subsequent generation of the assembly code in the next pass of the compiler.
   * At this point, it is still possible for semantic checks to ***fail*** (e.g., type incompatibility, use of a variable without its preceding declaration, an unavailable variable in the given scope, etc.), which results in corresponding **semantic errors**, which are consequently flagged and reported. In such cases of either syntactic or semantic errors, the code generation is simply abandoned, as it is not sensible to proceed with code generation of an otherwise invalid program. In order to resolve these errors, the source program must first be ***corrected*** accordingly before re-processing in this manner via the front end.
 
 ## 7. Compiler Parts
+
+The previous sections of this lesson discussed the compiler phases and their interactions (i.e., intermediate checks), resulting in a net conversion from the high-level source code into a lower-level intermediate representation.
+
+<center>
+<img src="./assets/01-P1L1-011.png" width="650">
+</center>
+
+The compiler is comprised of two key parts: The **front end** and the **back end**.
+
+The **front end** performs the following ***phases***:
+  * 1 - **lexical analysis** → scanning activity to identify the valid groupings of tokens in the source code
+  * 2 - **syntax analysis** → parsing of statements to verify their correctness
+  * 3 - **semantic analysis** → downstream of the lexical and syntax analyses, this is the determination of whether or not the resulting statement is semantically meaningful
+
+The **back end** involves translation/conversion of the intermediate representation (i.e., output of the front end) into the machine-level assembly code. The back end therefore performs the following ***phases***:
+  * 4 - **code generation** → converting the intermediate representation into assembly code
+  * 5 - **optimization** → as software becomes extremely large and complex, with correspondingly demanding performance, this ensures that the resulting assembly code is very efficient (e.g., fast execution, efficient packing of data segments, etc.)
+    * ***N.B.*** The optimization phase is characteristic of most modern compilers. This course will briefly touch on this topic (e.g., handling of registers, and instruction selection), however, it will not be discussed comprehensively.
+
+## 8. The Big Picture
+
+Having seen the parts of the compiler previously in this lesson, consider now the corresponding details.
+
+<center>
+<img src="./assets/01-P1L1-012.png" width="650">
+</center>
+
+First, there is the **scanning** phase. The principal objective of the **scanner** is to convert the input text into a stream of known objects called **tokens** (or **words**), for subsequent feeding into the **parser**.
+
+Next, in the **parsing** phase (as conducted by the aforementioned parsers), the principal objective is to match the input tokens (from the scanner) according to the defined **rules** in the **grammar** of the language in question (i.e., ensuring ***syntactic correctness*** of the tokens accordingly).
+  * The **lexical rules** (or **word lexicon**) of the language (as used by the scanner) dictate how a **legal word** is ***formed*** by concatenating the corresponding constituent **alphabet**.
+  * The high-level programming language also defines a **grammar**, which dictates the **syntactic rules** of the language (i.e., how a **legal sentence** is formed in the language).
+    * Analogously, the English languages specifies a syntactic rule/convention of subject-verb-object, for example. Similarly, in a typical programming language, an assignment statement has a left-hand operand and a right-hand operand (and perhaps a terminating semicolon).
+
+## 9. Tokenization Quiz and Answers
+
