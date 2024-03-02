@@ -235,3 +235,59 @@ At this point, the scanner sends the character `(` back from the buffer (i.e., f
 In general, observe that during the character-by-character processing into the token buffer, at any given point, the scanner determines whether the in-progress scan is either ***starting*** a new legal token or otherwise ***extending*** a legal token's formation. Eventually, the scanner reaches a point where the subsequently read character cannot further extend a legal token, indicating that the next valid token has been encountered (thereby sending this character back for re-processing of the next valid token). Correspondingly, this process is called the **longest-match algorithm** (i.e., forming the maximum/longest token that is legally formed via concatenation in this manner), and is the most commonly used algorithm for scanners.
 
 ## 11. Parser Quiz and Answers
+
+<center>
+<img src="./assets/01-P1L1-018Q.png" width="650">
+</center>
+
+Having understood the working of the scanner (cf. Section 10), consider now the following grammar rules for defining a valid expression `E` (where `id` represents a variable name):
+  * `E -> E + E` (addition/concatenation)
+  * `E -> E * E` (multiplication/joining)
+  * `E -> -E` (negation)
+  * `E -> (E)` (parenthesization)
+  * `E -> id` (defining an identifier)
+
+Here, the rules start from the most-base case of `E -> id` and increase in complexity moving upwards.
+
+Apply these grammar rules to the following candidate expressions, and determine which are valid:
+  * `a + b`
+    * `CORRECT`
+  * `a + b * c`
+    * `CORRECT`
+  * `a b + c`
+    * `INCORRECT`
+  * `a + b + (a) c`
+    * `INCORRECT`
+
+***N.B.*** This act of applying grammar rules to evaluate the validity of a candidate expression is called **parsing**.
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-P1L1-019A.png" width="650">
+</center>
+
+In `a + b`:
+  * `a` and `b` are valid operands for the operator `+` (second rule),
+  * `a` and `b` are identifiers (fifth rule),
+  * and therefore forms a ***valid*** expression.
+
+In `a + b * c`:
+  * `a` and `b * c` are valid operands for the operator `+` (first rule),
+  * `b` and `c` are valid operands for the operator `*` (second rule),
+  * `a`, `b`, and `c` are identifiers (fifth rule),
+  * and therefore forms a ***valid*** expression.
+
+In `a b + c`:
+  * `a b` and `c` are valid operands for the operator `+` (first rule),
+  * however, `a b` is not a valid expression,
+    * ***N.B.*** This is generally true if attempting to match ***any*** of the given grammar rules, as this candidate sub-expression conforms to none of them as specified.
+  * and therefore forms an ***invalid*** expression.
+
+In `a + b + (a) c`:
+  * By inspection, the sub-expression `(a) c` is not a valid expression, and therefore forms an ***invalid*** expression.
+    * ***N.B.*** This analysis was done in an abbreviated manner, however, systematic analysis as for the previous candidate statements will yield a similar conclusion.
+
+***N.B.*** In the case of malformed expression, the corresponding result of parsing is a **syntax error**.
+
+## 12. Parser
