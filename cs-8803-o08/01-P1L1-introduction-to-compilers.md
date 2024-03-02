@@ -290,4 +290,24 @@ In `a + b + (a) c`:
 
 ***N.B.*** In the case of malformed expression, the corresponding result of parsing is a **syntax error**.
 
-## 12. Parser
+## 12-16. Parser
+
+### 12. Introduction
+
+Now having a better understanding of grammar rules, consider a review of the working of the **parser**.
+
+<center>
+<img src="./assets/01-P1L1-020.png" width="650">
+</center>
+
+The main objective of the parser is to ***check*** the syntax using the grammatical rules of the language.
+
+Furthermore, the parser ***controls*** the overall operation of parsing (i.e., in addition to checking the candidate expressions for valid syntax, the parser controls the flow of input characters from the scanner and subsequent forwarding to the semantic checker of validated tokens).
+
+Lastly, the parser ***regulates*** the scanner by demanding its production of a candidate token for subsequent matching per the specified grammar.
+
+Following this process of scanning, there are two possible **outcomes**:
+  * **failure** → results in a syntax error
+  * **success** → generation of the subsequent token, until reaching the point of semantic action (i.e., forwarding accordingly)
+
+### 13. Grammar Rules
