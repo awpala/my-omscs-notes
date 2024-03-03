@@ -624,3 +624,43 @@ As demonstrated here, since all of the tokens have been parsed, the candidate pr
   * ***N.B.*** Otherwise, if a mismatch or ambiguity were encountered, then the candidate program would have been rendered/reported as ***invalid*** (i.e., having a **syntax error**) accordingly.
 
 ## 19. Syntax vs. Semantics Quiz and Answers
+
+<center>
+<img src="./assets/01-P1L1-057Q.png" width="650">
+</center>
+
+In addition to syntax errors, there are also possibilities of semantic errors (e.g., type mismatches, undeclared variables, etc.). To test understanding of the distinction between syntax vs. semantics, consider the following program written in the C programming language:
+
+```c
+int main() {
+  int a,b,c;
+  a +- = b;     // S1
+  a = b + c;    // S2
+  d = a + b + ; // S3
+  d = a + b;    // S4
+}
+```
+
+Of the four statements (as commented above), which are characterized by the following designations?
+  * `A` → syntactically incorrect
+  * `B` → semantically incorrect
+  * `C` → both syntactically and semantically correct
+
+### ***Answer and Explanation***:
+
+<center>
+<img src="./assets/01-P1L1-058A.png" width="650">
+</center>
+
+Statement `S1` (i.e., `a +- = b;`) is syntactically incorrect, as there is no such operator `+-` that is validly specified in the language C.
+  * ***N.B.*** If a statement is syntactically incorrect, then it is generally semantically incorrect as well.
+
+Statement `S2` (i.e., `a = b + c;`) is neither syntactically nor semantically incorrect (i.e., the statement is validly specified per the language C). The syntax is correct, and furthermore, semantically `a`, `b`, and `c` are all declared in the current scope prior to use, and are of compatible types (`int`) with respect to the operands in question (`=` and `+`).
+
+Statement `S3` (i.e., `d = a + b + ;`) is neither syntactically nor semantically correct. There is a syntax error with respect to the right-most (binary) operator `+`, which is missing an operand. Furthermore, there is a semantic error, because the left-hand operand `d` of the assignment operator `=` is not declared in the current scope.
+
+Statement `S4` (i.e., `d = a + b`) is syntactically correct, however, it is semantically incorrect because `d` is not declared in this scope (similarly to statement `S3`).
+
+***N.B.*** Observe that syntax checking is relatively simple and localized, whereas semantics checking is more complex and requires a larger context (i.e., across multiple statements, etc.). For this reason, syntax checking generally occurs first, as a syntax error precludes performing an otherwise more expensive subsequent semantics check.
+
+## 20. Syntax vs. Semantics
