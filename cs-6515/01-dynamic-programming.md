@@ -154,18 +154,68 @@ To resolve this inefficiency (i.e., redundant computations), the algorithm will 
 
 To accomplish this, an ***array*** $F$ is defined, where $F_i$ denotes the $i$<sup>th</sup> Fibonacci number. Correspondingly, starting at index $i = 0$ , the first Fibonacci number is recorded as $0$ . Proceeding in this manner yields the following:
 
-| $i$ | $F_i$ |
+| $i$ | $F[i]$ |
 |:--:|:--:|
 | $0$ | $0$ |
 | $1$ | $1$ |
 | $2$ | $1$ |
 | $3$ | $2$ |
 | $\vdots$ | $\vdots$ |
-| $n$ | $F_n$ |
+| $n$ | $F[n]$ |
 
-where in general $F_i = F_{i-1} + F_{i-2}$ (i.e., until reaching $F_i = F_n$ accordingly).
+where in general $F[i] = F[i-1] + F[i-2]$ (i.e., until reaching $F[i] = F[n]$ accordingly).
 
 This constitutes the corresponding ***dynamic programming algorithm*** in question, which will be defined more precisely next.
 
 ### 5. Dynamic Programming Algorithm
+
+#### Algorithm
+
+Now, let us detail our dynamic programming algorithm for computing the $n$<sup>th</sup> Fibonacci number.
+
+<center>
+<img src="./assets/01-DP1-006.png" width="650">
+</center>
+
+The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</spu> Fibonacci number is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{Fib2}}(n):}\\
+\ \ \ \ {F[0]=0}\\
+\ \ \ \ {F[1]=1}\\
+\ \ \ \ {{\rm{for\ }} i=2 \to n:}\\
+\ \ \ \ \ \ \ \ {F[i] = F[i-1] + F[i-2]}\\
+\ \ \ \ {{\rm{return\ }} (F[n])}\\
+\end{array}
+}
+$$
+
+Recall (cf. Section 4) that the array $F$ stores the Fibonacci numbers.
+
+At the first two indices (i.e., $0$ and $1$ ), the two **base cases** are stored (i.e., $0$ and $1$ , respectively).
+
+From there, the **subsequent iterations** are handled via corresponding $\rm{for}$ loop, which is the sum of the previous two array elements (which in turn are already stored in the array, and readily available, rather than requiring recomputation at this point).
+
+Finally, the $n$<sup>th</sup> Fibonacci number is simply returned as the value $F[n]$ , the last index in the array.
+
+This completes the definition of the algorithm. Observe that there is ***no*** recursion present in this algorithm.
+  * ***N.B.*** A *recursive formula* is used to define $F[i]$ , however, there is *no* corresponding recursive call (i.e., to ${\rm{Fib2}}(i)$ itself) here.
+
+#### Analysis
+
+Let us now analyze the runtime of this algorithm, ${\rm{Fib2}}(i)$ .
+
+<center>
+<img src="./assets/01-DP1-007.png" width="650">
+</center>
+
+As before (cf. Section 3), the base cases have a runtime of $O(1)$ apiece.
+
+With respect to the subsequent iterations, there is a $\rm{for}$ loop of size $O(n)$ , which in turn iterates on $O(1)$ steps. Correspondingly, the total runtime for the $\rm{for}$ loop is $O(n)$ .
+
+Therefore, the total runtime for this algorithm is $O(n)$ total time. This completes the algorithm, and gives a glimpse of a dynamic programming algorithm.
+
+### 6. Dynamic Programming Recap
 
