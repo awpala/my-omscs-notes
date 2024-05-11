@@ -14,7 +14,7 @@ The ***outline*** for this section is as follows:
     * **Chain Matrix Multiplication**
     * **Shortest Path Algorithms**
 
-# 1. Dynamic Programming 1: Fibonacci, Longest Increasing Subsequence (LIS), Longest Common Subsequence (LCS)
+# Dynamic Programming 1: Fibonacci, Longest Increasing Subsequence (LIS), Longest Common Subsequence (LCS)
 
 ## Fibonacci Numbers
 
@@ -28,7 +28,7 @@ Given an integer $n$, we wil look at an algorithm for generating the correspondi
 
 Recall that the Fibonacci numbers are the following sequence:
 
-$0, 1, 1, 2, 3, 5, 8, 13, 21, 34, \cdots$
+$$0, 1, 1, 2, 3, 5, 8, 13, 21, 34, \dots$$
 
 There is a simple recursive formula that defines the Fibonacci numbers as follows:
 
@@ -51,3 +51,83 @@ We want an ***efficient*** algorithm to achieve this goal/output. Therefore, we 
 Since the Fibonacci numbers are defined by this simple recursive formula, we might therefore think that a recursive algorithm is a natural algorithm for this particular problem. We will look at this recursive algorithm next, as well as analyze it accordingly.
 
 ### 3. Recursive Algorithm
+
+#### Algorithm
+
+Let us now examine the natural recursive algorithm for computing the $n$<sup>th</sup> Fibonacci number.
+
+<center>
+<img src="./assets/01-DP1-002.png" width="650">
+</center>
+
+Recall (cf. Section 2) that the recursive formula for the $n$<sup>th</sup> Fibonacci number is the sum of the previous two Fibonacci numbers, i.e.,:
+
+$$
+\rm{for}\ n > 1:\ F_{n} = F_{n-1} + F_{n-2}
+$$
+
+The recursive algorithm ($\rm{Fib1}(n)$) can be specified in more detail as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{\rm{Fib1}(n):}\\
+\ \ \ \ {\rm{input:\ integer\ } n \ge 0}\\
+\ \ \ \ {\rm{output:\ } F_{n}}\\
+\ \ \ \ {\rm{if\ }n = 0,\ \rm{return\ } (0)}\\
+\ \ \ \ {\rm{if\ }n = 1,\ \rm{return\ } (1)}\\
+\ \ \ \ {\rm{return\ } (Fib1(n-1) + Fib1(n-2))}
+\end{array}
+}
+$$
+
+In the ***base cases***, the Fibonacci numbers $0$ and $1$ are simply returned.
+
+In the more general ***recursive cases***, the previous two Fibonacci numbers are computed and returned recursively as a sum.
+
+This completes the definition of the recursive algorithm.
+
+#### Analysis
+
+Let us now consider the ***running time*** of this recursive algorithm.
+
+<center>
+<img src="./assets/01-DP1-003.png" width="650">
+</center>
+
+To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., $\rm{Fib1}(n)$), given an input size of $n$ .
+
+The two base cases each require $O(1)$ time.
+
+The two recursive calls require time $T(n-1) + T(n-2)$ .
+
+Combining these two gives the following general formula:
+
+$$
+T(n) \le O(1) + T(n-1) + T(n-2)
+$$
+
+This formula may be familiar: It resembles the Fibonacci numbers themselves!
+  * ***N.B.*** cf. $F_{n} = F_{n-1} + F_{n-2}$ from previously in this section.
+
+Therefore, in general:
+
+$$
+T(n) \ge F_{n}
+$$
+
+Unfortunately, the Fibonacci numbers grow exponentially in $n$ , i.e.,:
+
+$$
+T(n) \ge F_{n} \approx {\phi^{n}  \over {\sqrt 5 }}
+$$
+
+where the constant $\phi$ is called the **golden ratio**, defined as:
+
+$$
+\phi = {{1 + \sqrt{5}} \over {2}} \approx 1.618
+$$
+
+Therefore, since the runtime grows ***exponentially*** in $n$ for this recursive algorithm $\rm{Fib1}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
+
+### 4. Exponential Running Time
