@@ -63,7 +63,7 @@ Let us now examine the natural recursive algorithm for computing the $n$<sup>th<
 Recall (cf. Section 2) that the recursive formula for the $n$<sup>th</sup> Fibonacci number is the sum of the previous two Fibonacci numbers, i.e.,:
 
 $$
-\rm{for\ } n > 1 \rm{:\ } {F_{n} = F_{n-1} + F_{n-2}}
+{\rm{for\ }}n > 1:\ F_n = F_{n-1} + F_{n-2}
 $$
 
 The recursive algorithm ($\rm{Fib1}(n)$ ) can be specified in more detail as follows:
@@ -71,12 +71,12 @@ The recursive algorithm ($\rm{Fib1}(n)$ ) can be specified in more detail as fol
 $$
 \boxed{
 \begin{array}{l}
-{\rm{Fib1}(n):}\\
-\ \ \ \ {\rm{input:\ integer\ } n \ge 0}\\
-\ \ \ \ {\rm{output:\ }{F_{n}}}\\
-\ \ \ \ {\rm{if\ }n = 0,\ \rm{return\ } (0)}\\
-\ \ \ \ {\rm{if\ }n = 1,\ \rm{return\ } (1)}\\
-\ \ \ \ {\rm{return\ } (\rm{Fib1}(n-1) + \rm{Fib1}(n-2))}
+{{\rm{Fib1}}(n):}\\
+\ \ \ \ {{\rm{input:\ integer\ }} n \ge 0}\\
+\ \ \ \ {{\rm{output:\ }}{F_{n}}}\\
+\ \ \ \ {{\rm{if\ }}n = 0,\ {\rm{return\ }} (0)}\\
+\ \ \ \ {{\rm{if\ }}n = 1,\ {\rm{return\ }} (1)}\\
+\ \ \ \ {{\rm{return\ }} ({\rm{Fib1}}(n-1) + {\rm{Fib1}}(n-2))}
 \end{array}
 }
 $$
