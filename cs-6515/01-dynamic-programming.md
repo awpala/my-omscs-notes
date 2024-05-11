@@ -136,3 +136,36 @@ Therefore, since the runtime grows ***exponentially*** in $n$ for this recursive
 
 ### 4. Exponential Running Time
 
+Let us now consider the ***recursive*** nature of this recursive algorithm.
+
+<center>
+<img src="./assets/01-DP1-004.png" width="650">
+</center>
+
+At the top level of the recursion, the $n$<sup>th</sup> Fibonacci number is computed. From there, recursive sub-calls are made to compute the $n-1$ and $n-2$ Fibonacci numbers. The recursive calls similarly proceed in this manner.
+
+Observe that several of the sub-calls are computed *multiple* times (e.g., $n-4$ ). In fact, these "redundant sub-computations" increase exponentially with $n$ ; indeed, this is the root cause of the inefficiency in this recursive algorithm (i.e., repeated computation of the smaller sub-problems).
+
+<center>
+<img src="./assets/01-DP1-005.png" width="650">
+</center>
+
+To resolve this inefficiency (i.e., redundant computations), the algorithm will be "flipped on its head": We will compute the *smallest* sub-problems *first*, and then proceed in this manner up to the larger sub-problems (until reaching $n$ ).
+
+To accomplish this, an ***array*** $F$ is defined, where $F_i$ denotes the $i$<sup>th</sup> Fibonacci number. Correspondingly, starting at index $i = 0$ , the first Fibonacci number is recorded as $0$ . Proceeding in this manner yields the following:
+
+| $i$ | $F_i$ |
+|:--:|:--:|
+| $0$ | $0$ |
+| $1$ | $1$ |
+| $2$ | $1$ |
+| $3$ | $2$ |
+| $\vdots$ | $\vdots$ |
+| $n$ | $F_n$ |
+
+where in general $F_i = F_{i-1} + F_{i-2}$ (i.e., until reaching $F_i = F_n$ accordingly).
+
+This constitutes the corresponding ***dynamic programming algorithm*** in question, which will be defined more precisely next.
+
+### 5. Dynamic Programming Algorithm
+
