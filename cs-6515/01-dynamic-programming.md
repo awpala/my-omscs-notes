@@ -177,7 +177,7 @@ Now, let us detail our dynamic programming algorithm for computing the $n$<sup>t
 <img src="./assets/01-DP1-006.png" width="650">
 </center>
 
-The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</spu> Fibonacci number is as follows:
+The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</sup> Fibonacci number is as follows:
 
 $$
 \boxed{
