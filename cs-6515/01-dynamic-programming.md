@@ -63,20 +63,20 @@ Let us now examine the natural recursive algorithm for computing the $n$<sup>th<
 Recall (cf. Section 2) that the recursive formula for the $n$<sup>th</sup> Fibonacci number is the sum of the previous two Fibonacci numbers, i.e.,:
 
 $$
-\rm{for}\ n > 1:\ F_{n} = F_{n-1} + F_{n-2}
+\rm{for\ } n > 1 \rm{:\ } {F_{n} = F_{n-1} + F_{n-2}}
 $$
 
-The recursive algorithm ($\rm{Fib1}(n)$) can be specified in more detail as follows:
+The recursive algorithm ($\rm{Fib1}(n)$ ) can be specified in more detail as follows:
 
 $$
 \boxed{
 \begin{array}{l}
 {\rm{Fib1}(n):}\\
 \ \ \ \ {\rm{input:\ integer\ } n \ge 0}\\
-\ \ \ \ {\rm{output:\ } F_{n}}\\
+\ \ \ \ {\rm{output:\ }{F_{n}}}\\
 \ \ \ \ {\rm{if\ }n = 0,\ \rm{return\ } (0)}\\
 \ \ \ \ {\rm{if\ }n = 1,\ \rm{return\ } (1)}\\
-\ \ \ \ {\rm{return\ } (Fib1(n-1) + Fib1(n-2))}
+\ \ \ \ {\rm{return\ } (\rm{Fib1}(n-1) + \rm{Fib1}(n-2))}
 \end{array}
 }
 $$
@@ -95,7 +95,7 @@ Let us now consider the ***running time*** of this recursive algorithm.
 <img src="./assets/01-DP1-003.png" width="650">
 </center>
 
-To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., $\rm{Fib1}(n)$), given an input size of $n$ .
+To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., $\rm{Fib1}(n)$ ), given an input size of $n$ .
 
 The two base cases each require $O(1)$ time.
 
@@ -108,7 +108,7 @@ T(n) \le O(1) + T(n-1) + T(n-2)
 $$
 
 This formula may be familiar: It resembles the Fibonacci numbers themselves!
-  * ***N.B.*** cf. $F_{n} = F_{n-1} + F_{n-2}$ from previously in this section.
+  * ***N.B.*** cf. $F_{n} = F_{n-1} + F_{n-2}$ from previously in this section. Furthermore, the constant term $O(1)$ is dominated by the other two terms as $n$ increases.
 
 Therefore, in general:
 
