@@ -4,6 +4,7 @@
 
 | Lesson | Topic |
 |:--:|:--:|
+| [intro](00-introduction.md) | Course Introduction |
 | [DP](01-dynamic-programming.md) | Dynamic Programming |
 
 ## Videos Reference

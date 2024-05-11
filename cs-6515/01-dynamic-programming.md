@@ -1,5 +1,9 @@
 # Dynamic Programming: Topic Introduction
 
+<center>
+<img src="./assets/01-DP1-000.png" width="300">
+</center>
+
 **Dynamic programming** (**DP**) is an extremely useful technique.
   * ***N.B.*** Students often have trouble with this topic, however, with sufficient practice, it will become more intuitive and familiar. The lectures will also demonstrate illustrative examples for this purpose.
 
@@ -131,3 +135,4 @@ $$
 Therefore, since the runtime grows ***exponentially*** in $n$ for this recursive algorithm $\rm{Fib1}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
 
 ### 4. Exponential Running Time
+
