@@ -4,7 +4,8 @@
 | :--: | :--:| :--: |
 | [CS 6200](/cs-6200) | Graduate Introduction to Operating Systems | Fall 2021 |
 | [CS 6290](/cs-6290) | High Performance Computer Architecture | Fall 2023 |
-| [CS 8803-O08](/cs-8803-o08/) | Compilers - Theory and Practice | Spring 2025|
+| [CS 6515](/cs-6515) | Graduate Algorithms | Spring 2025 |
+| [CS 8803-O08](/cs-8803-o08/) | Compilers - Theory and Practice | (N/A) |
 | [CSE 6220](/cse-6220) | High Performance Computing | ~~Spring 2024~~ Withdrawal |
 
 ## License and Terms
@@ -20,4 +21,4 @@ This work is licensed under a
 [cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
 [cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg
 
-These notes are shared publicly in this repo for the collective benefit of OMSCS students, however, it is expressly forbidden to use the material herein for commercial purposes, as that contradicts the spirit of OMSCS (i.e., making computer science education more widely accessible).
+These notes are shared publicly in this repo for the collective benefit of OMSCS students, however, it is expressly forbidden to use the material herein for commercial purposes, as that contradicts the spirit of OMSCS (i.e., making computer science education more widely accessible and affordable).
