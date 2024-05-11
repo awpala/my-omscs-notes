@@ -298,4 +298,29 @@ $$-3, 1, 4, 5, 8, 9$$
 
 having a length of $6$ , with this length being the corresponding output of the algorithm. Now, let us attempt to design a dynamic programming algorithm for this purpose.
 
-### 8. Sub-Problem Attempt 1
+### 8-9. Attempt 1
+
+#### 8. Sub-Problem
+
+Now, consider a "recipe" for designing such a dynamic programming algorithm.
+
+<center>
+<img src="./assets/01-DP1-010.png" width="650">
+</center>
+
+The first step is to define the **sub-problem** in words.
+  * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is defined as the $i$<sup>th</sup> Fibonacci number.
+
+The second step is to state the **recursive relation**. Here, we want to express the solution to the $i$<sup>th</sup> sub-problem in terms of smaller sub-problems.
+  * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is expressed in terms of $F[i], \dots, F[i-1]$ , where $i - 1 < i$ . In this particular algorithm, these values are stored in the corresponding array $F$ for subsequent use in computing $F[i]$ accordingly, i.e., $F[i] = F[i-1] + F[i-2]$ can be readily computed in this manner.
+
+<center>
+<img src="./assets/01-DP1-011.png" width="650">
+</center>
+
+Now, let us consider how to follow this recipe for the longest increasing subsequence (LIS) problem:
+  * In the first step, let function $L(i) =$ length of longest increasing subsequence (LIS) on $a_1, a_2, \dots, a_i$ .
+    * ***N.B.*** Generally, the first attempt for defining this step will *always* involve using the *identical* problem on a *prefix* of the input (i.e., in this case, the longest increasing subsequence on the first $i$ elements of the input array).
+  * In the second step, we express $L(i)$ in terms of $L(1), \dots, L(i-1)$ (i.e., smaller sub-problems $1, \dots, i-1$ relative to $i$ itself). To do this, we will next revisit our earlier example to gain some intuition.
+
+#### 9. Recurrence
