@@ -219,3 +219,20 @@ Therefore, the total runtime for this algorithm is $O(n)$ total time. This compl
 
 ### 6. Dynamic Programming Recap
 
+<center>
+<img src="./assets/01-DP1-008.png" width="650">
+</center>
+
+Before moving onto a more sophisticated example, let us recap a few ***key issues***.
+
+One important point must be stressed regarding dynamic programming algorithms: There is ***no*** recursion within the algorithm itself.
+  * ***N.B.*** While the recursive nature of a given problem can be used to design the corresponding dynamic programming algorithm, the algorithm itself has *no* such recursion in its own definition.
+
+***N.B.*** There is an alternative approach to dynamic programming called **memoization**, whereby a hash table (or other similar structure) is used to maintain the sub-problems solved at a given point, in order to avoid their recomputation. However, this technique will ***not*** be used in this course. The purpose for its omission is due to the larger goal of learning dynamic programming; to avoid confusion, a "no recursion in our algorithms" policy will be enforced for present purposes. Along these lines, dynamic programming has several advantages over memoization (and other similar techniques): Some may say that the algorithms themselves are "more beautiful" (they are certainly faster, due to less overhead incurred by avoiding recursion altogether), but beyond this, it is much more simple and straightforward to analyze the running time of dynamic programming algorithms.
+
+Dynamic programming is widely used. At first, students often find it challenging; however, with sufficient practice, the dynamic programming algorithms will become increasingly more resembling of each other, at which point, more intuition/insight will be gained into how to devise such algorithms accordingly. Therefore, achieving this point requires practice, practice, practice!
+
+## Longest Increasing Subsequence (LIS)
+
+### 7. Introduction
+
