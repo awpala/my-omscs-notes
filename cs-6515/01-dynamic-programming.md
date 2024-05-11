@@ -324,3 +324,77 @@ Now, let us consider how to follow this recipe for the longest increasing subseq
   * In the second step, we express $L(i)$ in terms of $L(1), \dots, L(i-1)$ (i.e., smaller sub-problems $1, \dots, i-1$ relative to $i$ itself). To do this, we will next revisit our earlier example to gain some intuition.
 
 #### 9. Recurrence
+
+Recall (cf. Section 8) that our sub-problem definition is: Let function $L(i) =$ length of longest increasing subsequence (LIS) on input array $a_1, a_2, \dots, a_i$ . The goal is then to express $L(i)$ in terms of $L(i)$ in terms of $L(1), \dots, L(i-1)$ (the solutions of smaller sub-problems).
+
+<center>
+<img src="./assets/01-DP1-012.png" width="650">
+</center>
+
+Recall (cf. Section 7) the earlier example input array as follows (with $n = 12$ ):
+
+$$
+5, 7, 4, -3, 9, 1, 10, 4, 5, 8, 9, 3
+$$
+
+Initially, with respect to the one-element sub-array $5$ (i.e., the first element), the longest increasing subsequence (LIS) has corresponding length $1$ accordingly. Similarly, the two-element sub-array $5, 7$ has a longest increasing subsequence (LIS) of length $2$ .
+
+Proceeding in this manner yields the following:
+
+| $i$ | $a_i$ | $L(i)$ | LIS |
+|:--:|:--:|:--:|:--:|
+| $0$ | $5$ | $1$ | $5$ |
+| $1$ | $7$ | $2$ | $5, 7$ |
+| $2$ | $4$ | $2$ | $5, 7$ |
+| $3$ | $-3$ | $2$ | $5, 7$ |
+| $4$ | $9$ | $3$ | $5, 7, 9$ |
+| $5$ | $1$ | $3$ | $5, 7, 9$ |
+| $6$ | $10$ | $4$ | $5, 7, 9, 10$ |
+| $7$ | $4$ | $4$ | $5, 7, 9, 10$ |
+| $8$ | $5$ | $4$ | $5, 7, 9, 10$ |
+| $9$ | $8$ | $4$ | $5, 7, 9, 10$ |
+
+Let us pay special attention to the case of $i = 9$ . While we can append $8$ to gives subsequence $5, 7, 9, 10$ (as shown provisionally in the table above), there is in fact *another* possible solution: $-3, 1, 4, 5, 8$ .
+
+The problem, then, is as follows: How can we compute $L(9)$ using $L(1), \dots, L(8)$ ? In particular, how do we know whether or not we can append $8$ to the current solution at that point, if we do not otherwise maintain the current solution explicitly (but even if we were, how would we know to append $8$ at the end of it)?
+  * In particular, for the solution $5, 7, 9, 10$ , it is *not* appropriate to append $8$ , however, for the solution $-3, 1, 4, 5$ it *is* appropriate to append $8$ .
+
+So, then, suppose we did keep track of the current solution; in that case, what do we need to know? What we need to know is the *ending* element of the current solution (e.g., $10$ or $5$ in this case). Correspondingly, the ***key fact*** here is knowing the longest increasing subsequence with the *minimum* such element (e.g., $5$ in this case). Given the minimum such element, this yields the *most* corresponding opportunities to append an additional element onto the end of the subsequence.
+
+Therefore, in this case, in order to compute $L(9)$ using $L(1), \dots, L(8)$ , we need to keep track of the longest increasing subsequence solution with the minimum ending element (e.g., $5$ , which consequently allows to append $8$ to the end of the subsequence, thereby increasing the corresponding solution length from $4$ to $5$ accordingly).
+
+<center>
+<img src="./assets/01-DP1-013.png" width="650">
+</center>
+
+Let us return to $i = 8$ and see the subsequent complication in ths solution. At this point, our previous solution was $5, 7, 9, 10$ . However, with our *new* formulation, we want to maintain $-3, 1, 4, 5$ , since it is also of length $4$ while additionally ending in a smaller element (i.e., $5 < 10$ ).
+
+<center>
+<img src="./assets/01-DP1-014.png" width="650">
+</center>
+
+Similarly, let us now return to $i = 7$ . At this point, the longest increasing subsequence is $5, 7, 9, 10$ . However, note that at this point, we need to have sequence $-3, 1, 4$ , which at this point is sub-optimal, but nevertheless we need to maintain it in order to later obtain the solution $-3, 1, 4, 5$ of length $4$ .
+
+So, then, how do we maintain such a "sub-optimal" solution? The ***key*** is that for every possible ending element (e.g., $10$ in subsequence $5, 7, 9, 10$ , and $4$ in subsequence $-3, 1, 4$ ), we want to maintain the longest increasing solution with that ending character.
+
+<center>
+<img src="./assets/01-DP1-015.png" width="650">
+</center>
+
+Therefore, we need to know the length fo the longest increasing subsequence for every possible ending element. If we know every possible ending element, then upon examining a new element (e.g., $5$ ) we can correspondingly match this against the previous ending elements to determine the appropriate current solution accordingly.
+
+This begs the question: How many possible ending elements exist at any given solution point, and what are they? Necessarily, one of the ending elements must be an earlier element in the input array, therefore the potential candidates are finite (i.e., at most $i - 1$ such possible candidates).
+
+This, then, gives an idea of how to modify our sub-problem formulation accordingly: We want to know the length of the longest increasing subsequence (LIS) for every possible ending element, subject to the constraint that this will exist within the previous $i - 1$ elements. Therefore, we want to maintain the longest increasing subsequence (LIS) for every element of the array.
+
+To accomplish this, we will modify the definition of the sub-problem accordingly as follows: Let function $L(i) =$ length of longest increasing subsequence (LIS) on input array $a_1, a_2, \dots, a_i$ ***and*** includes $a_i$ .
+  * This in turn will give the longest increasing subsequence (LIS) which ends at the $i$<sup>th</sup> element of the array (i.e., $a_i$ ), e.g., ending at $5$ for $i = 8$ . By maintaining this from $i = 0$ through $i - 1$ , this can be used consequently to determine the longest increasing subsequence (LIS) at $i$ itself.
+
+We will next formulate this restated sub-problem more precisely, and then subsequently examine the corresponding recurrence.
+
+### 10-11. Attempt 2
+
+#### 10. Sub-Problem
+
+
+#### 11. Recurrence
