@@ -236,3 +236,66 @@ Dynamic programming is widely used. At first, students often find it challenging
 
 ### 7. Introduction
 
+Let us now consider a more sophisticated example of dynamic programming. The problem we will consider is the **longest increasing subsequence** (**LIS**) problem.
+
+<center>
+<img src="./assets/01-DP1-009.png" width="650">
+</center>
+
+In the longest increasing subsequence (LIS) problem, the ***input*** is $n$ numbers, denoted as follows:
+
+$$
+a_1, a_2, \dots, a_n
+$$
+
+Correspondingly, the ***goal*** is to compute the *length* of the longest increasing subsequence in these $n$ input numbers $a_1, \dots, a_n$ .
+  * ***N.B.*** The objective here is only to find the *length* of this subsequence, *not* the (constituent numbers/elements of the) subsequence itself. Upon determining the length, it is relatively trivial to transform this output into the corresponding algorithm to produce the underlying subsequence itself.
+
+Consider an example sequence as follows (where $n = 12$ ):
+
+$$
+5, 7, 4, -3, 9, 1, 10, 4, 5, 8, 9, 3
+$$
+
+Before defining the subsequence, consider the more common term substring. A **substring** is a string (i.e., consecutive set of elements) which occurs within the larger string. For example, the following are substrings of this sequence (denoted by red annotations in the figure shown above):
+
+$$
+-3, 9, 1, 10
+$$
+
+$$
+4
+$$
+
+$$
+9, 1, 10, 4, 5, 8, 9, 3
+$$
+
+A substring can be specified in this manner via its start and end indices; therefore, there is at most order of $O(n^2)$ such substrings accordingly.
+
+However, the problem at hand is not defined with respect to *substrings*, but rather with respect to *subsequences*. Correspondingly, a **subsequence** is a string which can be obtained by ***deleting*** corresponding elements of the larger string (i.e., the subset of elements is ordered, but given this ordered subset, elements can be ***skipped*** accordingly, rather than being strictly consecutive). The following are representative subsequences of the sequence (denoted by green annotations in the figure shown above):
+
+$$
+4, -3, 1, 9
+$$
+
+$$
+1
+$$
+
+$$
+5, 7, 3
+$$
+
+In this particular problem, we are attempting to find such a subsequence which is ***increasing***, i.e., wherein each element is strictly larger than the previous.
+  * In the case of $5, 7, 3$ , this is *not* an increasing subsequence, because $3 < 7$ .
+  * However, representative increasing subsequences includes $4, 9, 10$ .
+  * Conversely, $4, 4, 8, 9$ is also *not* a permissible subsequence under this definition, because it is not *strictly* increasing (i.e., $4 = 4$ ).
+
+With these definitions in mind, to reiterate, the ***goal*** is to find the ***longest*** such increasing subsequence for the input array. Correspondingly, in this particular example, the longest increasing subsequence (LIS) is:
+
+$$-3, 1, 4, 5, 8, 9$$
+
+having a length of $6$ , with this length being the corresponding output of the algorithm. Now, let us attempt to design a dynamic programming algorithm for this purpose.
+
+### 8. Sub-Problem Attempt 1
