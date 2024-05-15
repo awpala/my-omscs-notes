@@ -205,7 +205,7 @@ This completes the definition of the algorithm. Observe that there is ***no*** r
 
 #### Analysis
 
-Let us now analyze the runtime of this algorithm, ${\rm{Fib2}}(i)$ .
+Let us now analyze the runtime of this algorithm, ${\rm{Fib2}}(n)$ .
 
 <center>
 <img src="./assets/01-DP1-007.png" width="650">
@@ -312,7 +312,7 @@ The first step is to define the **sub-problem** in words.
   * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is defined as the $i$<sup>th</sup> Fibonacci number.
 
 The second step is to state the **recursive relation**. Here, we want to express the solution to the $i$<sup>th</sup> sub-problem in terms of smaller sub-problems.
-  * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is expressed in terms of $F[i], \dots, F[i-1]$ , where $i - 1 < i$ . In this particular algorithm, these values are stored in the corresponding array $F$ for subsequent use in computing $F[i]$ accordingly, i.e., $F[i] = F[i-1] + F[i-2]$ can be readily computed in this manner.
+  * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is expressed in terms of $F[1], \dots, F[i-1]$ , where $i - 1 < i$ . In this particular algorithm, these values are stored in the corresponding array $F$ for subsequent use in computing $F[i]$ accordingly, i.e., $F[i] = F[i-1] + F[i-2]$ can be readily computed in this manner.
 
 <center>
 <img src="./assets/01-DP1-011.png" width="650">
@@ -396,5 +396,13 @@ We will next formulate this restated sub-problem more precisely, and then subseq
 
 #### 10. Sub-Problem
 
+<center>
+<img src="./assets/01-DP1-016.png" width="650">
+</center>
+
+
+<center>
+<img src="./assets/01-DP1-017.png" width="650">
+</center>
 
 #### 11. Recurrence
