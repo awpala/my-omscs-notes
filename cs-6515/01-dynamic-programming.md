@@ -7,7 +7,7 @@
 **Dynamic programming** (**DP**) is an extremely useful technique.
   * ***N.B.*** Students often have trouble with this topic, however, with sufficient practice, it will become more intuitive and familiar. The lectures will also demonstrate illustrative examples for this purpose.
 
-The ***key*** to mastering dynamic programming is to perform lots of practice problems. While the homeworks are a starting point, do additional textbook problems and other references (e.g., textbooks, courses, etc.) for further practice.
+The ***key*** to mastering dynamic programming is to perform lots of practice problems. While the homeworks are a starting point, perform additional textbook problems and consult other/external references (e.g., textbooks, courses, etc.) for further practice.
 
 The ***outline*** for this section is as follows:
   * **Fibonacci numbers** → This is a "toy example" to illustrate the basic idea of dynamic programming
@@ -40,7 +40,7 @@ $$
 \boxed{
 \begin{array}{l}
 {F_{0} = 0,\ F_{1} = 1}\\
-{\rm{for}\ n > 1:}\\
+{{\rm{for\ }}n > 1:}\\
 \ \ \ \ {F_{n} = F_{n-1} + F_{n-2}}
 \end{array}
 }
@@ -50,7 +50,7 @@ Furthermore:
   * ***Input***: integer $n \ge 0$
   * ***Output***: $n$<sup>th</sup> Fibonacci number
 
-We want an ***efficient*** algorithm to achieve this goal/output. Therefore, we are aiming for a ***running time*** which is ***polynomial*** in $n$ .
+We want an ***efficient*** algorithm to achieve this goal/output. Therefore, we are aiming for a ***running time*** which is ***polynomial*** in $n$ (i.e., $O(n)$ ).
 
 Since the Fibonacci numbers are defined by this simple recursive formula, we might therefore think that a recursive algorithm is a natural algorithm for this particular problem. We will look at this recursive algorithm next, as well as analyze it accordingly.
 
@@ -132,7 +132,7 @@ $$
 \phi = {{1 + \sqrt{5}} \over {2}} \approx 1.618
 $$
 
-Therefore, since the runtime grows ***exponentially*** in $n$ for this recursive algorithm $\rm{Fib1}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
+Therefore, since the runtime grows ***exponentially*** in $n$ for this recursive algorithm ${\rm{Fib1}}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
 
 ### 4. Exponential Running Time
 
@@ -144,7 +144,7 @@ Let us now consider the ***recursive*** nature of this recursive algorithm.
 
 At the top level of the recursion, the $n$<sup>th</sup> Fibonacci number is computed. From there, recursive sub-calls are made to compute the $n-1$ and $n-2$ Fibonacci numbers. The recursive calls similarly proceed in this manner.
 
-Observe that several of the sub-calls are computed *multiple* times (e.g., $n-4$ ). In fact, these "redundant sub-computations" increase exponentially with $n$ ; indeed, this is the root cause of the inefficiency in this recursive algorithm (i.e., repeated computation of the smaller sub-problems).
+Observe that several of the sub-calls are computed *multiple* times (e.g., ${\rm{Fib1}}(n-4)$ , as circled in the figure shown above). In fact, these "redundant sub-computations" increase exponentially with $n$ ; indeed, this is the root cause of the inefficiency in this recursive algorithm (i.e., repeated computation of the smaller sub-problems).
 
 <center>
 <img src="./assets/01-DP1-005.png" width="650">
@@ -289,7 +289,7 @@ $$
 
 In this particular problem, we are attempting to find such a subsequence which is ***increasing***, i.e., wherein each element is strictly larger than the previous.
   * In the case of $5, 7, 3$ , this is *not* an increasing subsequence, because $3 < 7$ .
-  * However, representative increasing subsequences includes $4, 9, 10$ .
+  * However, a representative increasing subsequence includes $4, 9, 10$ .
   * Conversely, $4, 4, 8, 9$ is also *not* a permissible subsequence under this definition, because it is not *strictly* increasing (i.e., $4 = 4$ ).
 
 With these definitions in mind, to reiterate, the ***goal*** is to find the ***longest*** such increasing subsequence for the input array. Correspondingly, in this particular example, the longest increasing subsequence (LIS) is:
@@ -354,14 +354,14 @@ Proceeding in this manner yields the following:
 | $8$ | $5$ | $4$ | $5, 7, 9, 10$ |
 | $9$ | $8$ | $4$ | $5, 7, 9, 10$ |
 
-Let us pay special attention to the case of $i = 9$ . While we can append $8$ to gives subsequence $5, 7, 9, 10$ (as shown provisionally in the table above), there is in fact *another* possible solution: $-3, 1, 4, 5, 8$ .
+Let us pay special attention to the case of $i = 9$ . While we can append $8$ here to produce subsequence $5, 7, 9, 10$ (as shown provisionally in the table above), there is in fact *another* possible solution: $-3, 1, 4, 5, 8$ .
 
-The problem, then, is as follows: How can we compute $L(9)$ using $L(1), \dots, L(8)$ ? In particular, how do we know whether or not we can append $8$ to the current solution at that point, if we do not otherwise maintain the current solution explicitly (but even if we were, how would we know to append $8$ at the end of it)?
+The problem, then, is as follows: How can we compute $L(9)$ using $L(0), \dots, L(8)$ ? In particular, how do we know whether or not we can append $8$ to the current solution at that point, if we do not otherwise maintain the current solution explicitly (but even if we were to do so, how would we know to append $8$ at the end of it)?
   * In particular, for the solution $5, 7, 9, 10$ , it is *not* appropriate to append $8$ , however, for the solution $-3, 1, 4, 5$ it *is* appropriate to append $8$ .
 
 So, then, suppose we did keep track of the current solution; in that case, what do we need to know? What we need to know is the *ending* element of the current solution (e.g., $10$ or $5$ in this case). Correspondingly, the ***key fact*** here is knowing the longest increasing subsequence with the *minimum* such element (e.g., $5$ in this case). Given the minimum such element, this yields the *most* corresponding opportunities to append an additional element onto the end of the subsequence.
 
-Therefore, in this case, in order to compute $L(9)$ using $L(1), \dots, L(8)$ , we need to keep track of the longest increasing subsequence solution with the minimum ending element (e.g., $5$ , which consequently allows to append $8$ to the end of the subsequence, thereby increasing the corresponding solution length from $4$ to $5$ accordingly).
+Therefore, in this case, in order to compute $L(9)$ using $L(0), \dots, L(8)$ , we need to keep track of the longest increasing subsequence solution with the minimum ending element (e.g., $5$ , which consequently allows to append $8$ to the end of the subsequence, thereby increasing the corresponding solution length from $4$ to $5$ accordingly).
 
 <center>
 <img src="./assets/01-DP1-013.png" width="650">
@@ -375,7 +375,7 @@ Let us return to $i = 8$ and see the subsequent complication in ths solution. At
 
 Similarly, let us now return to $i = 7$ . At this point, the longest increasing subsequence is $5, 7, 9, 10$ . However, note that at this point, we need to have sequence $-3, 1, 4$ , which at this point is sub-optimal, but nevertheless we need to maintain it in order to later obtain the solution $-3, 1, 4, 5$ of length $4$ .
 
-So, then, how do we maintain such a "sub-optimal" solution? The ***key*** is that for every possible ending element (e.g., $10$ in subsequence $5, 7, 9, 10$ , and $4$ in subsequence $-3, 1, 4$ ), we want to maintain the longest increasing solution with that ending character.
+So, then, how do we maintain such a "sub-optimal" solution? The ***key*** is that for every possible ending element (e.g., $10$ in subsequence $5, 7, 9, 10$ , and $4$ in subsequence $-3, 1, 4$ ), we want to maintain the longest increasing solution with that particular ending element.
 
 <center>
 <img src="./assets/01-DP1-015.png" width="650">
@@ -387,7 +387,7 @@ This begs the question: How many possible ending elements exist at any given sol
 
 This, then, gives an idea of how to modify our sub-problem formulation accordingly: We want to know the length of the longest increasing subsequence (LIS) for every possible ending element, subject to the constraint that this will exist within the previous $i - 1$ elements. Therefore, we want to maintain the longest increasing subsequence (LIS) for every element of the array.
 
-To accomplish this, we will modify the definition of the sub-problem accordingly as follows: Let function $L(i) =$ length of longest increasing subsequence (LIS) on input array $a_1, a_2, \dots, a_i$ ***and*** includes $a_i$ .
+To accomplish this, we will ***modify*** the definition of the sub-problem accordingly as follows: Let function $L(i) =$ length of longest increasing subsequence (LIS) on input array $a_1, a_2, \dots, a_i$ ***and*** includes $a_i$ .
   * This in turn will give the longest increasing subsequence (LIS) which ends at the $i$<sup>th</sup> element of the array (i.e., $a_i$ ), e.g., ending at $5$ for $i = 8$ . By maintaining this from $i = 0$ through $i - 1$ , this can be used consequently to determine the longest increasing subsequence (LIS) at $i$ itself.
 
 We will next formulate this restated sub-problem more precisely, and then subsequently examine the corresponding recurrence.
