@@ -99,7 +99,7 @@ Let us now consider the ***running time*** of this recursive algorithm.
 <img src="./assets/01-DP1-003.png" width="650">
 </center>
 
-To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., $\rm{Fib1}(n)$ ), given an input size of $n$ .
+To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., ${\rm{Fib1}}(n)$ ), given an input size of $n$ .
 
 The two base cases each require $O(1)$ time.
 
