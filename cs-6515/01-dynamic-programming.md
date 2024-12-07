@@ -400,7 +400,9 @@ We will next formulate this restated sub-problem more precisely, and then subseq
 <img src="./assets/01-DP1-016.png" width="650">
 </center>
 
-We now have a new sub-problem formulation: Let $L(i)$ = length of longest-increasing subsequence in $a_1, \ldots, a_i$ , ***including*** $a_i$ itself.
+We now have a new sub-problem formulation:
+
+> Let $L(i)$ = length of longest-increasing subsequence in $a_1, \ldots, a_i$ , ***including*** $a_i$ itself.
 
 The latter is an extra restriction added to the sub-problem. This in turn will expedite the expressing of a recurrence, which formulates $L(i)$ in terms of $L(1), \ldots, L(i-1)$ .
 
@@ -447,3 +449,34 @@ Note that it is not strictly necessary to know the subsequence itself to append 
 This highlights the recurrence for the solution of $L(i)$ in terms of smaller sub-problems $L(1), \ldots, L(i-1)$ .
 
 #### 11. Recurrence
+
+<center>
+<img src="./assets/01-DP1-018.png" width="650">
+</center>
+
+Now, let us formally state the recurrence for $L(i)$ in terms of smaller sub-problems:
+
+$$L\left( i \right) = 1 + \mathop {\max }\limits_j \left\{ {L\left( j \right):{a_j} < {a_i}{\text{ and }}j < i} \right\}$$
+
+The first term $1$ accounts for the fact that $a_i$ is *included* in the definition of $L(i)$ .
+
+Furthermore, the second term $\mathop {\max }\limits_j \left\{ \cdots \right\}$ is the longest subsequence which can be appended onto the beginning. This is comprised of the subsequence $L(j)$ ending at element $a_j$ , to which $a_i$ can be appended only if (strictly) $a_j < a_i$ (where in general $j$ occurs earlier in the subsequence than $i$ , i.e., $ j < i$ ).
+
+This recurrence can also be re-expressed as follows:
+
+$$
+L\left( i \right) = 1 + \max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \left\{ L\left( j \right) \right\}
+$$
+
+Here, the second term $\max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \left\{ L\left( j \right) \right\}$ considers some sequence $a_1, \ldots, a_j, a_i$ , where element $a_j$ is at some index $j$ occurring earlier than index $i$ of element $a_i$ (i.e., somewhere in the range $1, \ldots, j, \ldots, i-1$ , wherein strictly $j < i$ and $a_j < a_i$ ), which in turn contains the value $L(j)$ accordingly.
+
+This comprises the full definition, along with the definition of the sub-problem (cf. Section 10), which fully satisfies the problem.
+
+Next, we will define the dynamic programming algorithm corresponding to this definition.
+
+### 12-13. Dynamic Programming Algorithm
+
+#### 12. Pseudocode
+
+
+#### 13. Running Time Quiz and Answers
