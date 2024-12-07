@@ -456,7 +456,9 @@ This highlights the recurrence for the solution of $L(i)$ in terms of smaller su
 
 Now, let us formally state the recurrence for $L(i)$ in terms of smaller sub-problems:
 
-$$L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}$$
+```math
+L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}
+```
 
 The first term $1$ accounts for the fact that $a_i$ is *included* in the definition of $L(i)$ .
 
@@ -464,11 +466,11 @@ Furthermore, the second term $\mathop {\max }\limits_j { \cdots }$ is the longes
 
 This recurrence can also be re-expressed as follows:
 
-$$
+```math
 L(i) = 1 + \max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \big\{ L(j) \big\}
-$$
+```
 
-Here, the second term $\max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \big\{ L(j) \big\}$ considers some sequence $a_1, \ldots, a_j, a_i$ , where element $a_j$ is at some index $j$ occurring earlier than index $i$ of element $a_i$ (i.e., somewhere in the range $1, \ldots, j, \ldots, i-1$ , wherein strictly $j < i$ and $a_j < a_i$ ), which in turn contains the value $L(j)$ accordingly.
+Here, the second term $\max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}}$ $\{$ $L(j)$ $\}$ considers some sequence $a_1, \ldots, a_j, a_i$ , where element $a_j$ is at some index $j$ occurring earlier than index $i$ of element $a_i$ (i.e., somewhere in the range $1, \ldots, j, \ldots, i-1$ , wherein strictly $j < i$ and $a_j < a_i$ ), which in turn contains the value $L(j)$ accordingly.
 
 This comprises the full definition, along with the definition of the sub-problem (cf. Section 10), which fully satisfies the problem.
 
