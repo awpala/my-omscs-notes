@@ -532,3 +532,25 @@ Therefore, the overall runtime is $O(n^2)$ , as dominated/determined by the firs
 <center>
 <img src="./assets/01-DP1-021.png" width="650">
 </center>
+
+This completes the formulation of our dynamic programming algorithm and the analysis of its runtime. Now, let us consider/review some ***important aspects*** of the algorithm design.
+  * The first step of the algorithm design process was to define the algorithm in words, i.e., expressing $L(i)$ in terms of words.
+    * Our initial attempt (cf. Section 8) used the prefix of the input, in order to find the longest-increasing subsequence on the first $i$ elements of the array $L$ .
+  * Next, the second step is to find a recurrence relation that the solution's sub-problems satisfy.
+    * In the initial attempt (cf. Section 9), the resulting recurrence relation was inadequate. To rectify this, we returned to the first step and reformulated the sub-problem definition (cf. Section 10), wherein an extra condition was added which consequently yielded the corresponding recurrence for the sub-problems, defined there as:
+
+  ```math
+  L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}
+  ```
+
+Furthermore, consider the ***intuition*** for why we wanted to strengthen the sub-problem definition.
+  * Recall (cf. discrete mathematics prerequisite course, or equivalent) that when attempting to prove some statement by **induction**, you first begin by stating the inductive hypothesis (typically having the same form as the statement to be proved). 
+  * Then, you attempt to prove that hypothesis by using induction, however, occasionally this yields difficulties. To rectify this, you go back and alter the inductive hypothesis; typically, this involves strengthening the inductive hypothesis by adding ***extra conditions*** to it (e.g., in the case of the present algorithm, adding the extra condition that the sub-problem $L(i)$ must also *include* $a_i$ itself).
+  * From there, you strengthen the inductive hypothesis and consequently prove that stronger statement (e.g., finding the length of the longest-increasing subsequence with a specific element at the end).
+  * Using the solution to this stronger problem, we can then solve the weaker problem (e.g., without particular concern to the identity of the ending element itself).
+
+Therefore, a lot of the intuition for dynamic programming originates from ideas in induction proofs.
+
+## Longest Common Subsequence
+
+### 15. Introduction
