@@ -478,5 +478,36 @@ Next, we will define the dynamic programming algorithm corresponding to this def
 
 #### 12. Pseudocode
 
+<center>
+<img src="./assets/01-DP1-019.png" width="650">
+</center>
+
+The pseudocode for the dynamic programming algorithm for the longest-increasing subsequence problem can be stated as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\rm{LIS}}(a_1,\ldots,a_n):}\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n:}\\
+\ \ \ \ \ \ \ \ {L(i) = 1}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} j=1 \to i-1:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} a_j < a_i {\rm{\ and\ }} L(i) < 1 + L(j) {\rm{\ then\ }} L(i) = 1 + L(j)}\\
+\ \ \ \ {\max = 1}\\
+\ \ \ \ {{\rm{for\ }} i=2 \to n:}\\
+\ \ \ \ \ \ \ \ {{\rm{if\ }} L(i) > L(\max) {\rm{\ then\ }} \max = i}\\
+\ \ \ \ {{\rm{return\ }} (L(\max))}\\
+\end{array}
+}
+$$
+
+***N.B.*** Recall (cf. Section 11) the definition for the recurrence: $L\left( i \right) = 1 + \mathop {\max }\limits_j \left\{ {L\left( j \right):{a_j} < {a_i}{\text{ and }}j < i} \right\}$ .
+
+The solution is expressed as a one-dimensional array, $L$ , which is filled in a "bottom-up" approach (i.e., starting from index $i = 1$ , and then proceeding up through index $i = n$ , as expressed by the outer $\rm{for}$ loop).
+
+Since the sub-problem *includes* $a_i$ in the sub-problem, $L(i)$ is initialized to $L(i) = 1$ . The nested $\rm{for}$ loop then iterates over $j$ (ranging from $1$ to $i - j$ ), with corresponding check that strictly $a_j < $a_i$ . If the solution obtained by appending $a_i$ onto the end of the solution ending at $a_j$ must be strictly longer than the current solution (i.e., $L(i) < 1 + L(j)$ ). If both of these conditions are satisfied, then $L(i)$ is updated to $L(i) = 1 + L(j)$ accordingly (i.e., the current best solution, obtained by appending $a_i$ to the end of $a_j$ ). This defines the table $L$ .
+
+Now, in order to obtain the actual solution (i.e., $L(\max)$ , the longest-increasing subsequence), we must obtain the corresponding output from the table (cf. the last element of the table generated for Fibonacci numbers, as per Section 5). In this case, the solution is the longest-increasing subsequence ending at some arbitrary position $i$ (in the range of $1, \ldots, n$ ). This is obtained straightforwardly by iterating over the entire array $L$ to determine $i$ such that $L(i) > L(\max)$ , and updating value $\max$ (initialized to value $1$ ) accordingly. This corresponding value is then consequently returned as $L(\max)$ accordingly, thereby completing the formulation of the dynamic programming algorithm.
+
+Now, let us consider the running time of this algorithm.
 
 #### 13. Running Time Quiz and Answers
