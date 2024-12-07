@@ -592,7 +592,21 @@ The main motivation of this example is to demonstrate another variation of the d
 
 ### 17-19 Attempt 1
 
+Let us consider again the two-step process for defining the dynamic programming algorithm for this problem, the longest-common subsequence (LCS).
+
+<center>
+<img src="./assets/01-DP1-025.png" width="650">
+</center>
+
+The first step is to define the ***sub-problem***, in words (cf. Sections 5 and 8). Generally, the first attempt is to always try to devise the sub-problem as the *same* problem on a ***prefix*** of the input. Therefore, the ***key*** is to perform the *identical* problem, but only on a prefix of it (i.e., from length $n$ reduced to some smaller, intermediate length $i$ ). Formally, this can be stated as:
+
+> For $i$ where $0\le i \le n$ , let $L(i)$ = the length of the longest-common subsequence (LCS) in $x_1 \cdots x_n$ and $y_1 \cdots y_n$ .
+
+The second step is to define the ***recurrence***. We want to express $L(i)$ in terms of $L(1), \dots, L(i-1)$ , as discussed next.
+
 #### 17. Sub-Problem
+
+Let us detail the sub-problem definition proposed previously (cf. Section 16).
 
 #### 18. Recurrence
 
