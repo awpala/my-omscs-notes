@@ -516,3 +516,19 @@ Now, in order to obtain the actual solution (i.e., $L(\max)$ , the longest-incre
 Now, let us consider the running time of this algorithm.
 
 #### 13. Running Time Quiz and Answers
+
+<center>
+<img src="./assets/01-DP1-020.png" width="650">
+</center>
+
+The outer $\rm{for}$ loop varies over $n$ elements with corresponding runtime of $O(n)$ . Furthermore, the nested $\rm{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\rm{if\ }\ldots$ statement takes and order of $O(1)$ runtime. Therefore, the overall runtime of the nested $\rm{for}$ loops is $O(n^2)$ .
+
+Furthermore, the subsequent $\rm{for}$ loop for determining $L(\max)$ has a runtime of $O(n)$ .
+
+Therefore, the overall runtime is $O(n^2)$ , as dominated/determined by the first set of nested $\rm{for}$ loops.
+
+### 14. Recap
+
+<center>
+<img src="./assets/01-DP1-021.png" width="650">
+</center>
