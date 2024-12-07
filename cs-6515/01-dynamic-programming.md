@@ -518,7 +518,7 @@ Now, let us consider the running time of this algorithm.
 #### 13. Running Time Quiz and Answers
 
 <center>
-<img src="./assets/01-DP1-020.png" width="650">
+<img src="./assets/01-DP1-020A.png" width="650">
 </center>
 
 The outer $\rm{for}$ loop varies over $n$ elements with corresponding runtime of $O(n)$ . Furthermore, the nested $\rm{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\rm{if\ }\ldots$ statement takes and order of $O(1)$ runtime. Therefore, the overall runtime of the nested $\rm{for}$ loops is $O(n^2)$ .
@@ -554,3 +554,60 @@ Therefore, a lot of the intuition for dynamic programming originates from ideas 
 ## Longest Common Subsequence
 
 ### 15. Introduction
+
+<center>
+<img src="./assets/01-DP1-022.png" width="650">
+</center>
+
+The next dynamic programming example is the **longest common subsequence** (**LCS**) problem.
+
+The ***input*** to the problem is two strings denoted as $X = x_1 \cdots x_n$ and $Y = y_1 \cdots y_n$ , which for simplicity (for now) are assumed to be of equal lengths $n$ .
+
+The ***goal*** is to find the *length* of the longest string which is a subsequence (*not* a substring) of *both* $X$ and $Y$ .
+  * Furthermore, with this length determined, it is possible to determine the corresponding substring appearing in the subsequence, which will also be demonstrated.
+
+### 16. Example Quiz and Answers
+
+Consider an example of the longest-common subsequence problem, in order to become more familiarized with the corresponding terminology.
+
+<center>
+<img src="./assets/01-DP1-024A.png" width="650">
+</center>
+
+Consider the following two strings, both of length $7$ :
+
+$$
+X=BCDBCDA
+$$
+
+$$
+Y=ABECBAB
+$$
+
+What is the longest-common subsequence (LCS), and what is its corresponding length?
+
+The corresponding solution is substring $BCBA$ having length $4$ .
+
+The main motivation of this example is to demonstrate another variation of the dynamic programming approach. Furthermore, this simple problem is used in the Unix-based application `diff`, which compares differences between two inputs (e.g., files' respective contents).
+
+### 17-19 Attempt 1
+
+#### 17. Sub-Problem
+
+#### 18. Recurrence
+
+#### 19. Recurrence Problem
+
+### 20-24. Attempt 2
+
+#### 20. Sub-Problem
+
+#### 21-23. Recurrence
+
+##### 21. Unequal Case
+
+##### 22. Equal Case
+
+##### 23. Equal Case Recap
+
+#### 24. Recurrence Summary
