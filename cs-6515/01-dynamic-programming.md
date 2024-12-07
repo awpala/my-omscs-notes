@@ -456,19 +456,19 @@ This highlights the recurrence for the solution of $L(i)$ in terms of smaller su
 
 Now, let us formally state the recurrence for $L(i)$ in terms of smaller sub-problems:
 
-$$L\left( i \right) = 1 + \mathop {\max }\limits_j \left\{ {L\left( j \right):{a_j} < {a_i}{\text{ and }}j < i} \right\}$$
+$$L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}$$
 
 The first term $1$ accounts for the fact that $a_i$ is *included* in the definition of $L(i)$ .
 
-Furthermore, the second term $\mathop {\max }\limits_j \left\{ \cdots \right\}$ is the longest subsequence which can be appended onto the beginning. This is comprised of the subsequence $L(j)$ ending at element $a_j$ , to which $a_i$ can be appended only if (strictly) $a_j < a_i$ (where in general $j$ occurs earlier in the subsequence than $i$ , i.e., $ j < i$ ).
+Furthermore, the second term $\mathop {\max }\limits_j { \cdots }$ is the longest subsequence which can be appended onto the beginning. This is comprised of the subsequence $L(j)$ ending at element $a_j$ , to which $a_i$ can be appended only if (strictly) $a_j < a_i$ (where in general $j$ occurs earlier in the subsequence than $i$ , i.e., $ j < i$ ).
 
 This recurrence can also be re-expressed as follows:
 
 $$
-L\left( i \right) = 1 + \max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \left\{ L\left( j \right) \right\}
+L(i) = 1 + \max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \big\{ L(j) \big\}
 $$
 
-Here, the second term $\max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \left\{ L\left( j \right) \right\}$ considers some sequence $a_1, \ldots, a_j, a_i$ , where element $a_j$ is at some index $j$ occurring earlier than index $i$ of element $a_i$ (i.e., somewhere in the range $1, \ldots, j, \ldots, i-1$ , wherein strictly $j < i$ and $a_j < a_i$ ), which in turn contains the value $L(j)$ accordingly.
+Here, the second term $\max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \big\{ L(j) \big\}$ considers some sequence $a_1, \ldots, a_j, a_i$ , where element $a_j$ is at some index $j$ occurring earlier than index $i$ of element $a_i$ (i.e., somewhere in the range $1, \ldots, j, \ldots, i-1$ , wherein strictly $j < i$ and $a_j < a_i$ ), which in turn contains the value $L(j)$ accordingly.
 
 This comprises the full definition, along with the definition of the sub-problem (cf. Section 10), which fully satisfies the problem.
 
@@ -500,7 +500,7 @@ $$
 }
 $$
 
-***N.B.*** Recall (cf. Section 11) the definition for the recurrence: $L\left( i \right) = 1 + \mathop {\max }\limits_j \left\{ {L\left( j \right):{a_j} < {a_i}{\text{ and }}j < i} \right\}$ .
+***N.B.*** Recall (cf. Section 11) the definition for the recurrence: $L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}$ .
 
 The solution is expressed as a one-dimensional array, $L$ , which is filled in a "bottom-up" approach (i.e., starting from index $i = 1$ , and then proceeding up through index $i = n$ , as expressed by the outer $\rm{for}$ loop).
 
