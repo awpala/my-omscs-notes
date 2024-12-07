@@ -400,9 +400,50 @@ We will next formulate this restated sub-problem more precisely, and then subseq
 <img src="./assets/01-DP1-016.png" width="650">
 </center>
 
+We now have a new sub-problem formulation: Let $L(i)$ = length of longest-increasing subsequence in $a_1, \ldots, a_i$ , ***including*** $a_i$ itself.
+
+The latter is an extra restriction added to the sub-problem. This in turn will expedite the expressing of a recurrence, which formulates $L(i)$ in terms of $L(1), \ldots, L(i-1)$ .
+
+Let us return to the previous example (cf. Section 7). The correspondingly more straightforward recurrence arises as follows:
+
+| $i$ | $a_i$ | $L(i)$ | LIS |
+|:--:|:--:|:--:|:--:|
+| $1$ | $5$ | $1$ | $1$ |
+| $2$ | $7$ | $2$ | $5, 7$ |
+| $3$ | $4$ | $1$ | $4$ |
+| $4$ | $-3$ | $1$ | $4$ |
+| $5$ | $9$ | $3$ | $5, 7, 9$ |
+| $6$ | $1$ | $2$ | $-3, 1$ |
+| $7$ | $10$ | $4$ | $5, 7, 9, 10$ |
+| $8$ | $4$ | $3$ | $-3, 1, 4$ |
+| $9$ | $5$ | $4$ | $-3, 1, 4, 5$ |
+
+Observe that a difference/divergence begins to occurs starting with $i = 3$ , wherein $L(i) = 1$ (via corresponding LIS of $4$ ).
+  * ***N.B.*** In the previous definition of $L(i)$ (cf. Section 8), the corresponding value was $L(i) = 2$ for $i = 3$ (note that the previous example started from index $0$ rather than $1$ ).
 
 <center>
 <img src="./assets/01-DP1-017.png" width="650">
 </center>
+
+Finally, consider the case of $i = 10$ (as in the figure shown above), the case which caused problems in the previous definition of $L(i)$ (cf. Section 9).
+
+In this case, we want to observe which sub-problems allow us to append $8$ to the end of the LIS. Accordingly, $8$ can be appended to any of the candidate subsequences, excluding those ending in $9$ or $10$ (i.e., thereby excluding candidates $L(5)$ and $L(7)$ , respectively). Therefore, among the remaining candidates subsequences, we will append $8$ to the longest one (i.e., $L(9) = 4$ ), as follows:
+
+| $i$ | $a_i$ | $L(i)$ | LIS |
+|:--:|:--:|:--:|:--:|
+| $1$ | $5$ | $1$ | $1$ |
+| $2$ | $7$ | $2$ | $5, 7$ |
+| $3$ | $4$ | $1$ | $4$ |
+| $4$ | $-3$ | $1$ | $4$ |
+| $5$ | $9$ | $3$ | $5, 7, 9$ |
+| $6$ | $1$ | $2$ | $-3, 1$ |
+| $7$ | $10$ | $4$ | $5, 7, 9, 10$ |
+| $8$ | $4$ | $3$ | $-3, 1, 4$ |
+| $9$ | $5$ | $4$ | $-3, 1, 4, 5$ |
+| $10$ | $8$ | $5$ | $-3, 1, 4, 5, 8$ |
+
+Note that it is not strictly necessary to know the subsequence itself to append this next element, but rather it is only necessary to know that it has (in this case) a length of $4$ and ends in element $5$ .
+
+This highlights the recurrence for the solution of $L(i)$ in terms of smaller sub-problems $L(1), \ldots, L(i-1)$ .
 
 #### 11. Recurrence
