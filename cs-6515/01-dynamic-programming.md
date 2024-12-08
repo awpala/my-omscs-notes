@@ -606,7 +606,70 @@ The second step is to define the ***recurrence***. We want to express $L(i)$ in 
 
 #### 17. Sub-Problem
 
-Let us detail the sub-problem definition proposed previously (cf. Section 16).
+<center>
+<img src="./assets/01-DP1-026.png" width="650">
+</center>
+
+Let us detail the sub-problem definition proposed previously (cf. Section 16):
+
+> For $i$ (the prefix length) where $0 \le i \le n$ , let $L(i)$ = length of the longest-common subsequence (LCS) in prefixes $x_1 \cdots x_i$ and $y_1 \cdots y_i$
+
+***N.B.*** This is analogous to the original problem, except that here the sub-problem is specified as *prefixes* of the respective inputs. Furthermore, $L(i)$ does not store the subsequence itself, but rather only its *length* (here, we want the table to store a number, or true/false).
+
+Now, recalling (cf. Section 16) the previous example:
+
+$$
+X=BCDBCDA
+$$
+
+$$
+Y=ABECBAB
+$$
+
+we would like to express a recurrence relation $L(i)$ such that $L(i)$ is defined in terms of smaller sub-problems $L(i), \dots, L(i-1)$ .
+
+In order to yield such a smaller sub-problem, consider the last character in each string, i.e.,:
+
+$$
+X=\cdots A
+$$
+
+$$
+Y=\cdots B
+$$
+
+Given these last characters, we will examine how $x_i$ and $y_i$ (respectively) are used in teh solution of $L(i)$ , and then we can use the solution to the subproblem of size $i-1$ (i.e., $L(i-1)$ ). We then take the optimal solution for the subproblem of size $i-1$ and then we append on the solution for $x_i$ and $y_i$ .
+
+<center>
+<img src="./assets/01-DP1-027.png" width="650">
+</center>
+
+Proceeding in this manner, there are ***two cases*** two consider:
+  * 1) The last characters are the *same* (i.e., $x_i = y_i$ )
+  * 2) The last characters are *different* (i.e., $x_i \ne y_i$ )
+
+Consider the first case first, which turns out to be the relatively easier case. Let us modify the example accordingly as follows (i.e., with both strings terminating in character $C$ ):
+
+$$
+X=BCDBCDAC
+$$
+
+$$
+Y=ABECBABC
+$$
+
+When both ending characters are the same, we know that the longest-common subsequence (LCS) must end in this same character as well.
+  * ***N.B.*** Why is this necessarily true? Consider a longest-common subsequence (LCS) for which this last character is *not* included. If that is the case, then this last character can be appended to such an subsequence, thereby yielding a *longer* subsequence accordingly. Therefore, it must be necessarily true that the *longest* subsequence contains this last character.
+
+Therefore, in the case where the last character is equal in both strings, we can define $L(i)$ as follows:
+
+$$
+L(i) = 1 + L(i-1)
+$$
+
+where the first term accounts for the (common) last character, appended onto the longest-common subsequence (LCS) of length $L(i-1)$ in the prefix subsequence. Observe that this constitutes a recurrence relation accordingly (i.e., $L(i)$ expressed in terms of $L(i-1)$ ).
+
+Next, consider the case where $x_i \ne y_i$ .
 
 #### 18. Recurrence
 
