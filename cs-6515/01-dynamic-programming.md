@@ -592,6 +592,8 @@ The main motivation of this example is to demonstrate another variation of the d
 
 ### 17-19 Attempt 1
 
+#### 17. Sub-Problem
+
 Let us consider again the two-step process for defining the dynamic programming algorithm for this problem, the longest-common subsequence (LCS).
 
 <center>
@@ -604,13 +606,13 @@ The first step is to define the ***sub-problem***, in words (cf. Sections 5 and 
 
 The second step is to define the ***recurrence***. We want to express $L(i)$ in terms of $L(1), \dots, L(i-1)$ , as discussed next.
 
-#### 17. Sub-Problem
+#### 18. Recurrence
 
 <center>
 <img src="./assets/01-DP1-026.png" width="650">
 </center>
 
-Let us detail the sub-problem definition proposed previously (cf. Section 16):
+Let us detail the sub-problem definition proposed previously (cf. Section 17):
 
 > For $i$ (the prefix length) where $0 \le i \le n$ , let $L(i)$ = length of the longest-common subsequence (LCS) in prefixes $x_1 \cdots x_i$ and $y_1 \cdots y_i$
 
@@ -645,8 +647,8 @@ Given these last characters, we will examine how $x_i$ and $y_i$ (respectively) 
 </center>
 
 Proceeding in this manner, there are ***two cases*** two consider:
-  * 1) The last characters are the *same* (i.e., $x_i = y_i$ )
-  * 2) The last characters are *different* (i.e., $x_i \ne y_i$ )
+  * 1 - The last characters are the *same* (i.e., $x_i = y_i$ )
+  * 2 - The last characters are *different* (i.e., $x_i \ne y_i$ )
 
 Consider the first case first, which turns out to be the relatively easier case. Let us modify the example accordingly as follows (i.e., with both strings terminating in character $C$ ):
 
@@ -671,9 +673,90 @@ where the first term accounts for the (common) last character, appended onto the
 
 Next, consider the case where $x_i \ne y_i$ .
 
-#### 18. Recurrence
-
 #### 19. Recurrence Problem
+
+Consider the case when the last characters of the two input strings are different (i.e., $x_i \ne y_i$ ), returning to the previous example (cf. Section 18) as follows:
+
+$$
+X=BCDBCDA
+$$
+
+$$
+Y=ABECBAB
+$$
+
+In this particular example, there are three possibilities for the last character:
+  * $A$ (via $x_i$ ),
+  * $B$ (via $y_i$ ), or
+  * neither.
+
+##### Case A: The last character is $x_i$
+
+<center>
+<img src="./assets/01-DP1-028.png" width="650">
+</center>
+
+Suppose the first case holds, whereby the last character is $A$ (i.e., $x_i$ ). In string $Y$ , the last character $B$ is eliminated by default, since its matches in $X$ have been exhausted by that point.
+
+##### Case B: The last character is $y_i$
+
+<center>
+<img src="./assets/01-DP1-029.png" width="650">
+</center>
+
+By similar rationale, in the second case, wherein the last character is $B$ (i.e., $y_i$ ), then in string $X$ , the last character $A$ (as well as the other preceding characters back to the last-occurring $B$ in string $X$ ) is eliminated by default, due to exhaustion of corresponding matches in $X$ .
+
+##### Case C: The last character is neither $x_i$ nor $y_i$
+
+<center>
+<img src="./assets/01-DP1-030.png" width="650">
+</center>
+
+Finally, in the third/final case, wherein the last character matches neither $A$ nor $B$ (i.e., neither $x_i$ nor $y_i$ , respectively).
+
+##### Defining the recurrence (a problem!)
+
+Now, consider how we might express $L(i)$ for these three cases.
+
+<center>
+<img src="./assets/01-DP1-031.png" width="650">
+</center>
+
+In the case where neither $x_i$ nor $y_i$ are the last character, this simply omits the corresponding $1$ count in $L(i)$ relative to the corresponding expression for $x_i = y_i$ (cf. Section 18), since the character in question is not a contributor to the length, i.e.,:
+
+```math
+L(i) = \cancel{{1}}+L(i - 1)
+```
+
+<center>
+<img src="./assets/01-DP1-032.png" width="650">
+</center>
+
+In the case where $y_i$ is the last character (i.e., $x_i$ is dropped), an ***ambiguity*** arises: $X$ now has a prefix length of $i-1$ , whereas $Y$ has a prefix length of $i$ . Therefore, there is no (unambiguous) way to find the corresponding value in table $L(i)$ , i.e., the solution does not exist there, because the candidates prefix strings $X$ and $Y$ are of *different* lengths.
+
+Furthermore, even if the length were determinate in terms of how the last characters in the resulting prefix strings matched (e.g., $B$ of $y_i$ matching with the fourth character $B$ in $x_i$ in this particular example), this would still result in inconsistent prefix lengths (i.e., length $3$ for prefix $X$ vs. length $7$ for prefix $Y$ via match on character $B$ ).
+
+<center>
+<img src="./assets/01-DP1-033.png" width="650">
+</center>
+
+By symmetrical reasoning, with $x_i$ as the last character (and $y_i$ correspondingly dropped), this similarly yields unequal lengths in the resulting prefix strings (i.e., $7$ and $6$ for $X$ and $Y$ , respectively, if matching on last character $A$ ), giving rise to an ambiguous match in the table $L(i)$ accordingly. Therefore, in this case, a corresponding lookup would require searching for the longest-common subsequence (LCS) in $x_1 \cdots x_i$ and separately in $y_1 \cdots y_{i-1}$ accordingly. Proceeding in this manner will also yield further asymmetries in the resulting prefix strings.
+
+<center>
+<img src="./assets/01-DP1-034.png" width="650">
+</center>
+
+Therefore, for the sub-problem definition given as follows (cf. Section 18):
+
+> For $i$ where $0\le i \le n$ , let $L(i)$ = the length of the longest-common subsequence (LCS) in  $x_1 \cdots x_i$ and $y_1 \cdots y_i$ .
+
+it is not possible to (unambiguously) define a corresponding recurrence (i.e., expressing $i$ in terms of smaller sub-problems). However, the preceding discussion did provide some insight into what constitutes a potential ***valid*** sub-problem definition: The difficulty which arises is due to the generally ***varying*** prefix lengths of the input strings.
+
+Therefore, to reconcile this impasse, we ***modify*** our sub-problem definition as follows:
+
+> For $i$ where $0\le i \le n$ and $j$ where $0\le j \le n$ , let $L(i, j)$ = the length of the longest-common subsequence (LCS) in $x_1 \cdots x_i$ and $y_1 \cdots y_j$ .
+
+Here, the single parameter $i$ is now expanded to parameters $i$ and $j$ , and correspondingly the one-dimensional table $L(i)$ is now expanded to a two-dimensional table $L(i, j)$ in order to accommodate the possibility of variably sized prefix strings.
 
 ### 20-24. Attempt 2
 
