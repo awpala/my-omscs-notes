@@ -762,6 +762,27 @@ Here, the single parameter $i$ is now expanded to parameters $i$ and $j$ , and c
 
 #### 20. Sub-Problem
 
+<center>
+<img src="./assets/01-DP1-035.png" width="650">
+</center>
+
+Let us now revise our sub-problem definitions with the insight from the first attempt; recall (cf. Section 19) that these insights were as follows:
+  * The two prefix strings are independently indexed as $i$ (prefix in string $X$ ) and $j$ (prefix in string $Y$ )
+  * The resulting table is two-dimensional (i.e., $L(i, j)$ )
+    * cf. In previous examples, tables were generally one-dimensional up to this point
+
+Therefore, formalizing the sub-problem definition gives the following:
+
+> For $i$ and $j$ where $0 \le i \le n$ and $0 \le j \le n$ , let $L(i, j)$ = length of the longest-common subsequence (LCS) in $x_1 \cdots x_i$ and $y_1 \cdots y_j$ .
+
+With this new sub-problem defition, the corresponding ***recurrences*** can be defined with the following ***base cases***:
+ * $L(i, 0) = 0$
+ * $L(0, j) = 0$
+
+Intuitively, in these cases, the prefix string for the longest-common subsequence (LCS) has trivial length $0$ .
+
+Next, we will consider the ***recursive cases***.
+
 #### 21-23. Recurrence
 
 ##### 21. Unequal Case
