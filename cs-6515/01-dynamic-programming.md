@@ -960,7 +960,7 @@ The pseudocode for the dynamic programming algorithm for the longest-common subs
 \ \ \ \ \ \ \ \ {{\rm{for\ }} j=1 \to n}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} x_i = y_j {\rm{\ then\ }} L(i,j) = 1 + L(i-1,j-1)}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} L(i,j) = \max \big\{ L(i,j-1), L(i-1, j) \big\}}\\
-\ \ \ \ {{\rm{return\ }} (L(n,n))}\\
+\ \ \ \ {{\rm{return\ }} (L(n,n))}
 \end{array}
 }
 ```
@@ -976,6 +976,18 @@ Next, the table $L(i,j)$ is populated on a row-increasing basis via the recursiv
 Finally, the optimal length is returned in the entry $L(n,n)$ , the bottom-right entry of the table, which constitutes the longest-common subsequence (LCS) of the two input strings.
 
 #### Running Time Quiz and Answers
+
+<center>
+<img src="./assets/01-DP1-044.png" width="650">
+</center>
+
+Consider the running time for the dynamic programming algorithm for the least-common subsequence (LCS) problem.
+
+Each initializing $\rm{for\ } \dots$ loop has a running time of $O(n)$ .
+
+In the subsequently nested $\rm{for\ } \dots$ loops, each have a running time of $O(n)$ and perform an inner operation (i.e., update of $L(i,j)$ ) having a running time of $O(1)$ . Due to the nesting, this yields an overall running time of $O(n^2)$ for the nested $\rm{for\ } \dots$ loops. Furthermore, this running time dominates the algorithm, therefore comprising its overall total running time accordingly.
+
+This concludes analysis of the longest-common subsequence (LCS) algorithm. This particular algorithm was interesting, due to its requirement of a two-dimensional table $L(i, j)$ , in order to accommodate the fact that in general the prefix strings at any given intermediate result may be of unequal length and/or having unequal last characters.
 
 ### 26-27. Dynamic Programming Table
 
