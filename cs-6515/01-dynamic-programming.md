@@ -640,7 +640,7 @@ $$
 Y=\cdots B
 $$
 
-Given these last characters, we will examine how $x_i$ and $y_i$ (respectively) are used in teh solution of $L(i)$ , and then we can use the solution to the subproblem of size $i-1$ (i.e., $L(i-1)$ ). We then take the optimal solution for the subproblem of size $i-1$ and then we append on the solution for $x_i$ and $y_i$ .
+Given these last characters, we will examine how $x_i$ and $y_i$ (respectively) are used in the solution of $L(i)$ , and then we can use the solution to the subproblem of size $i-1$ (i.e., $L(i-1)$ ). We then take the optimal solution for the subproblem of size $i-1$ and then we append on the solution for $x_i$ and $y_i$ .
 
 <center>
 <img src="./assets/01-DP1-027.png" width="650">
@@ -775,7 +775,7 @@ Therefore, formalizing the sub-problem definition gives the following:
 
 > For $i$ and $j$ where $0 \le i \le n$ and $0 \le j \le n$ , let $L(i, j)$ = length of the longest-common subsequence (LCS) in $x_1 \cdots x_i$ and $y_1 \cdots y_j$ .
 
-With this new sub-problem defition, the corresponding ***recurrences*** can be defined with the following ***base cases***:
+With this new sub-problem definition, the corresponding ***recurrences*** can be defined with the following ***base cases***:
  * $L(i, 0) = 0$
  * $L(0, j) = 0$
 
@@ -787,7 +787,7 @@ Next, we will consider the ***recursive cases***.
 
 ##### 21. Unequal Case
 
-Given the new sub-problem definition (cf. Section 20), now consider defining the corresponding recurrence relation, starting with the case of unequal string lengths.
+Given the new sub-problem definition (cf. Section 20), now consider defining the corresponding recurrence relation, starting with the case of unequal last characters in the respective prefix strings (i.e., $x_i \ne y_j$ ).
 
 <center>
 <img src="./assets/01-DP1-036.png" width="650">
@@ -805,9 +805,9 @@ $$
 
 ***N.B.*** Here, to make the strings of unequal length, character $D$ is appended to the end of $Y$ (relative to previously).
 
-The ***key insight*** is that if the strings are unequal in length, then the last character in the optimal-length longest-common subsequence (LCS) ends in either $x_i$ , $y_i$ , or neither.
+The ***key insight*** is that if the last characters are unequal, then the last character in the optimal-length longest-common subsequence (LCS) ends in either $x_i$ , $y_j$ , or neither.
   * If neither, then the respective last characters can be dropped from both prefix strings. 
-  * Therefore, there are only two additional cases to consider: Dropping either $x_i$ *or* $y_i$ , and consequently taking one of these results as the optimal one.
+  * Therefore, there are only two additional cases to consider: Dropping either $x_i$ *or* $y_j$ , and consequently taking one of these results as the optimal one.
 
 <center>
 <img src="./assets/01-DP1-037.png" width="650">
@@ -815,7 +815,7 @@ The ***key insight*** is that if the strings are unequal in length, then the las
 
 Following this approach, the respective recurrence relations can be correspondingly defined as follows:
   * If dropping $x_i$ , then $L(i, j) = L(i-1, j)$
-  * If dropping $y_i$ , then $L(i, j) = L(i, j-1)$
+  * If dropping $y_j$ , then $L(i, j) = L(i, j-1)$
 
 <center>
 <img src="./assets/01-DP1-038.png" width="650">
@@ -829,8 +829,38 @@ L(i,j) = \max \big\{ L(i-1,j), L(i, j-1) \big\}
 
 This constitutes the recurrence relation for the case where $x_i \ne y_j$ . Next, we consider the case where $x_i = y_j$ .
 
-##### 22. Equal Case
+##### 22-23. Equal Case
 
-##### 23. Equal Case Recap
+Now consider defining the recurrence relation for the case of unequal last characters in the respective prefix strings (i.e., $x_i = y_j$ ).
+
+<center>
+<img src="./assets/01-DP1-039.png" width="650">
+</center>
+
+For this purpose, we return to the example from previously (cf. Section 19):
+
+$$
+X=BCDBCDA
+$$
+
+$$
+Y=ABECBA
+$$
+
+***N.B.*** Here, to make the strings of unequal length but of equal last character (i.e., $A$ ), character $B$ is truncated from the end of $Y$ (relative to previously).
+
+Here, there are three possibilities to consider for the optimal-length solution to the longest-common subsequence (LCS):
+  * drop $x_i$ ,
+  * drop $y_j$ (which is equivalent to previous, given that $x_i = y_j$ ), or
+  * ends at $x_i = $y_j$
+    * ***N.B.*** This is a distinctly different consideration from the previous scenario of $x_i \ne y_j$ (cf. Section 21)
+
+Proceeding similarly to before as in the case of $x_i \ne $y_j$ (cf. Section 21), we will consider these three cases, taking the "best" (longest-length) of the three:
+  * If dropping $x_i$ , then $L(i, j) = L(i-1, j)$
+  * If dropping $y_j$ , then $L(i, j) = L(i, j-1)$
+  * If $x_i = y_j$ , then $L(i,j) = 1 + L(i-1, j-1)$
+    * In this case (i.e., $x_i = y_j$ ), the first term $1$ represents the common character. Furthermore, this common last character is correspondingly dropped, with the optimal solution taken as the resulting smaller prefix $L(i-1, j-1)$ .
+
+###### 23. Recap
 
 #### 24. Recurrence Summary
