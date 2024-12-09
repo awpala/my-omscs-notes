@@ -833,7 +833,7 @@ This constitutes the recurrence relation for the case where $x_i \ne y_j$ . Next
 
 ###### 22. Overview
 
-Now consider defining the recurrence relation for the case of unequal last characters in the respective prefix strings (i.e., $x_i = y_j$ ).
+Now consider defining the recurrence relation for the case of equal last characters in the respective prefix strings (i.e., $x_i = y_j$ ).
 
 <center>
 <img src="./assets/01-DP1-039.png" width="650">
