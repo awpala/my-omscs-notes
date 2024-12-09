@@ -1055,7 +1055,7 @@ The instructor recommends the following practice problems from the course compan
 
 Now, consider a summary of the general ***approach*** when solving dynamic programming algorithm problems.
 
-The first step is to defne the sub-problem in words.
+The first step is to define the sub-problem in words.
   * Begin with the original problem, and devise a ***prefix*** (i.e., indexed as $i$ , or equivalent) having the same general form as the original input
 
 The next step is to define a recurrence relation. 
@@ -1080,7 +1080,7 @@ The ***goal*** of the problem is to find a contiguous subsequence (or equivalent
 
 Let us now attempt to define the ***sub-problem***. We can attempt the same problem on a prefix of the input via corresponding prefix parameter $i$ , which varies as $0 \le i \le n$ . We can then define the sub-problem in words as follows:
 
-> Let S(i) = max sum from a substring of $a_1, \dots, a_i$
+> Let $S(i)$ = max sum from a substring of $a_1, \dots, a_i$
 
 ***N.B.*** Here, "max sum" is the original problem, and the substring $a_1, \dots, a_i$ is a prefix of the input $a_1, \dots, a_n$ .
 
@@ -1091,3 +1091,47 @@ Now, we attempt to define a recurrence relation, whereby $S(i)$ is defined in te
 Given that the substring must be contiguous, it is indeterminate a priori whether or not it is necessarily/generally appropriate to append $a_i$ to the substring. Therefore, it must be further determined where $S(i-1)$ ends in order to make this determination more definitively; however, this is not possible with the current definition of $S(i) . Nevertheless, a resolution for this would be feasible if it were known whether or not the expression for $S(i)$ contains $a_{i-1}$ , thereby allowing to make the determination of inclusion/exclusion of $a_i$ accordingly. Therefore, it is necessary to revisit the sub-problem definition for $S(i)$ , in order to strengthen it accordingly, as discussed next.
 
 ##### 30. Solution
+
+<center>
+<img src="./assets/01-DP1-051.png" width="650">
+</center>
+
+To solve Practice Problem 6.1, let us reformulate the sub-problem per the insight gained in defining the initial approach (cf. Section 29). We correspondingly redefine the (stronger) sub-problem with an extra restriction as follows:
+
+> Let $S(i)$ = max sum from a substring of $a_1, \dots, a_i$ , which ***includes*** $a_i$
+
+Now, we can express the recurrence for $S(i)$ accordingly.
+
+The ***base case*** is simply $S(0) = 0$ , the trivial result for an empty input string.
+
+<center>
+<img src="./assets/01-DP1-052.png" width="650">
+</center>
+
+The ***recursive cases*** require use of $a_i$ in the definition of $S(i)$ (i.e., $S(i) = a_i + \cdots$ ), as we determined. Furthermore, appended to this are two possibilities:  
+  * $a_i$ by itself, or
+  * the max sum of the prefix substring $S(i-1)$
+
+Summarizing these observations yields the following:
+
+```math
+S(i) = a_i + max \big\{ 0, S(i-1) \big\}
+```
+
+***N.B.*** As expressed here, if $S(i-1) < 0$ , then $\max$ { $\cdots$ } simply calculates $S(i)$ as $S(i) = a_i + 0 = a_i$ .
+
+Given this definition, the corresponding ***table*** $S(i)$ can be readily populated accordingly for $0 \le i \le n$ .
+
+The final ***output*** of the algorithm is not necessarily $S(n)$ (the longest max-sum substring which *includes* $a_n$ ), but rather we are looking for the max sum for *any* arbitrary substring (which may or may not include the last element, $a_n$ ). Therefore, this can be determined simply as follows:
+
+```math
+\mathop {\max }\limits_i \big\{ {S(i)} \big\}
+```
+
+To determine the ***running time*** for this algorithm, each entry into the table requires a running time of $O(1)$ (via corresponding comparison $\max$ { $0, S(i-1)$ }), and a maximum of $n$ such entries are performed; therefore, the overall running time is $O(n)$ .
+
+# Dynamic Programming 2: Knapsack, Chain Multiply
+
+## Knapsack Problem
+
+### 1. Introduction
