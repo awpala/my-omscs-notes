@@ -831,6 +831,8 @@ This constitutes the recurrence relation for the case where $x_i \ne y_j$ . Next
 
 ##### 22-23. Equal Case
 
+###### 22. Overview
+
 Now consider defining the recurrence relation for the case of unequal last characters in the respective prefix strings (i.e., $x_i = y_j$ ).
 
 <center>
@@ -862,5 +864,41 @@ Proceeding similarly to before as in the case of $x_i \ne $y_j$ (cf. Section 21)
     * In this case (i.e., $x_i = y_j$ ), the first term $1$ represents the common character. Furthermore, this common last character is correspondingly dropped, with the optimal solution taken as the resulting smaller prefix $L(i-1, j-1)$ .
 
 ###### 23. Recap
+
+Let us recap the case where $x_i = y_j$ .
+
+<center>
+<img src="./assets/01-DP1-040.png" width="650">
+</center>
+
+This case results in three possibilities (cf. Section 22), which can be expressed/consolidated as follows:
+
+```math
+L(i,j) = \max \big\{ L(i-1,j), L(i,j-1), 1 + L(i-1,j-1) \big\}
+```
+
+An astute observer will likely note that only the last case is relevant here, since it will necessarily be the longest of the three; therefore, this simplifies to:
+
+$$
+L(i,j) = 1 + L(i-1,j-1)
+$$
+
+Consider a brief ***intuition*** for why this is necessarily always the case. Consider again (cf. Section 22) the present example:
+
+$$
+X=BCDBCDA
+$$
+
+$$
+Y=ABECBA
+$$
+
+If the optimal solution does not contain this last character (i.e., $A$ ), then it could otherwise be appended to the longest-common subsequence (LCS), thereby yielding a longer prefix (and thus the candidate in question was sub-optimal to begin with). Therefore, it is necessarily true that the longest-common subsequence (LCS) must include either $x_i$ or $y_j$ (but *not* neither).
+
+<center>
+<img src="./assets/01-DP1-041.png" width="650">
+</center>
+
+It may also be the case that $x_i$ matches with some earlier/non-last occurrence of the character in string $Y$ (e.g., $A$ of $x_i$ matching $y_1$ in the figure shown above). However, any case in which the last character matches an earlier occurrence of the character in the other candidate string would still otherwise be consistent with matching the same-occurring last character (i.e., any such subsequence occurs in the larger subsequence with the longest-matching last character regardless). Consequently, the expression $L(i-1,j-1)$ is comprehensively encompassing of these potential "shorter" (i.e., "earlier-matching") subsequences.
 
 #### 24. Recurrence Summary
