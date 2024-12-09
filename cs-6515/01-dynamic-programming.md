@@ -36,7 +36,7 @@ $$0, 1, 1, 2, 3, 5, 8, 13, 21, 34, \dots$$
 
 There is a simple recursive formula that defines the Fibonacci numbers as follows:
 
-$$
+```math
 \boxed{
 \begin{array}{l}
 {F_{0} = 0,\ F_{1} = 1}\\
@@ -44,7 +44,7 @@ $$
 \ \ \ \ {F_{n} = F_{n-1} + F_{n-2}}
 \end{array}
 }
-$$
+```
 
 Furthermore:
   * ***Input***: integer $n \ge 0$
@@ -72,7 +72,7 @@ $$
 
 The recursive algorithm (${\rm{Fib1}}(n)$ ) can be specified in more detail as follows:
 
-$$
+```math
 \boxed{
 \begin{array}{l}
 {{\rm{Fib1}}(n):}\\
@@ -83,7 +83,7 @@ $$
 \ \ \ \ {{\rm{return\ }} ({\rm{Fib1}}(n-1) + {\rm{Fib1}}(n-2))}
 \end{array}
 }
-$$
+```
 
 In the ***base cases***, the Fibonacci numbers $0$ and $1$ are simply returned.
 
@@ -179,7 +179,7 @@ Now, let us detail our dynamic programming algorithm for computing the $n$<sup>t
 
 The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</sup> Fibonacci number is as follows:
 
-$$
+```math
 \boxed{
 \begin{array}{l}
 {{\rm{Fib2}}(n):}\\
@@ -190,7 +190,7 @@ $$
 \ \ \ \ {{\rm{return\ }} (F[n])}\\
 \end{array}
 }
-$$
+```
 
 Recall (cf. Section 4) that the array $F$ stores the Fibonacci numbers.
 
@@ -486,7 +486,7 @@ Next, we will define the dynamic programming algorithm corresponding to this def
 
 The pseudocode for the dynamic programming algorithm for the longest-increasing subsequence problem can be stated as follows:
 
-$$
+```math
 \boxed{
 \begin{array}{l}
 {{\rm{LIS}}(a_1,\ldots,a_n):}\\
@@ -500,7 +500,7 @@ $$
 \ \ \ \ {{\rm{return\ }} (L(\max))}\\
 \end{array}
 }
-$$
+```
 
 ***N.B.*** Recall (cf. Section 11) the definition for the recurrence as follows:
 ```math
@@ -940,14 +940,45 @@ In a two-dimensional array $L(i, j)$ filled out row-wise (i.e., increasing $i$ a
 
 Now, we can finally state the dynamic programming algorithm, as will be done next.
 
-### 25-26. Dynamic Programming Algorithm
+### 25. Dynamic Programming Algorithm
 
-#### 25. Pseudocode
+#### Pseudocode
 
-#### 26. Running Time Quiz and Answers
+<center>
+<img src="./assets/01-DP1-043.png" width="650">
+</center>
 
-### 27-28. Dynamic Programming Table
+The pseudocode for the dynamic programming algorithm for the longest-common subsequence (LCS) problem is given as follows:
 
-#### 27. Dynamic Programming Table Quiz and Answers
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{LCS}}(X,Y):}\\
+\ \ \ \ {{\rm{for\ }} i=0 \to n},\ L(i,0)=0\\
+\ \ \ \ {{\rm{for\ }} j=0 \to n},\ L(0,j)=0\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} j=1 \to n}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} x_i = y_j {\rm{\ then\ }} L(i,j) = 1 + L(i-1,j-1)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} L(i,j) = \max \big\{ L(i,j-1), L(i-1, j) \big\}}\\
+\ \ \ \ {{\rm{return\ }} (L(n,n))}\\
+\end{array}
+}
+```
 
-#### 28. Extract Sequence Quiz and Answers
+Here, $X$ and $Y$ are the two input strings.
+
+First, the base cases are defined (i.e., zero-initializing the top row and first column).
+
+Next, the table $L(i,j)$ is populated on a row-increasing basis via the recursive cases, with consideration for two scenarios:
+  * If the current last characters are equal ($x_i = y_j$ ), then the common last character is appended to the optimal solution, and then the solution recurses "diagonally"
+  * Otherwise if the current last characters are not equal ($x_i \ne $y_j$ ), then the optimal solution takes the greater of the two lengths and recursing accordingly (i.e., upwards if dropping $y_j$ , or otherwise to the left if dropping $x_i$ )
+
+Finally, the optimal length is returned in the entry $L(n,n)$ , the bottom-right entry of the table, which constitutes the longest-common subsequence (LCS) of the two input strings.
+
+#### Running Time Quiz and Answers
+
+### 26-27. Dynamic Programming Table
+
+#### 26. Dynamic Programming Table Quiz and Answers
+
+#### 27. Extract Sequence Quiz and Answers
