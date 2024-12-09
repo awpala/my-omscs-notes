@@ -1115,7 +1115,7 @@ The ***recursive cases*** require use of $a_i$ in the definition of $S(i)$ (i.e.
 Summarizing these observations yields the following:
 
 ```math
-S(i) = a_i + max \big\{ 0, S(i-1) \big\}
+S(i) = a_i + \max \big\{ 0, S(i-1) \big\}
 ```
 
 ***N.B.*** As expressed here, if $S(i-1) < 0$ , then $\max$ { $\cdots$ } simply calculates $S(i)$ as $S(i) = a_i + 0 = a_i$ .
