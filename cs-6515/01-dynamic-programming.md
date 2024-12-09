@@ -994,7 +994,7 @@ This concludes analysis of the longest-common subsequence (LCS) algorithm. This 
 #### 26. Dynamic Programming Table Quiz and Answers
 
 <center>
-<img src="./assets/01-DP1-045Q.png" width="650">
+<img src="./assets/01-DP1-045Q.png" width="350">
 </center>
 
 Given the dynamic programming algorithm for the longest-common subsequence (LCS) problem, consider the corresponding (partially filled) ***table*** as in the figure shown above, for the previous example (cf. Section 22) having the following input strings:
@@ -1010,7 +1010,7 @@ $$
 Complete the rest of the table accordingly.
 
 <center>
-<img src="./assets/01-DP1-046A.png" width="650">
+<img src="./assets/01-DP1-046A.png" width="350">
 </center>
 
 The figure shown above is the resulting completed table.
@@ -1032,6 +1032,39 @@ As in the figure shown above, tracing back from the last matching cell, this yie
 
 #### 28. Overview
 
+At this point, it is advisable to perform some practice problems in dynamic programming.
+
+<center>
+<img src="./assets/01-DP1-048.png" width="650">
+</center>
+
+The instructor recommends the following practice problems from the course companion textbook *Algorithms* by Dasgupta et al.:
+  * 6.1 - find the contiguous subsequence of maximum sum
+    * ***N.B.*** A contiguous subsequence is equivalent to a substring (cf. Section 7)
+  * 6.2 - hotel stops with minimal penalty
+  * 6.3 - Yuckdonald's
+  * 6.4 - break up a string into words
+  * 6.11 - longest-common subsequence (LCS)
+    * This topic was already covered in the current lesson, however, also consider practicing the variant of a longest-common *substring*, which demonstrates variants (i.e., subsequence vs. substring) in how the dynamic programming algorithm is applied
+
+***N.B.*** In general, the suggested practice problems in the lectures will be accompanied by a short descriptor, in order to disambiguate among potential numbering discrepancies across textbook versions.
+
+<center>
+<img src="./assets/01-DP1-049.png" width="650">
+</center>
+
+Now, consider a summary of the general ***approach*** when solving dynamic programming algorithm problems.
+
+The first step is to defne the sub-problem in words.
+  * Begin with the original problem, and devise a ***prefix*** (i.e., indexed as $i$ , or equivalent) having the same general form as the original input
+
+The next step is to define a recurrence relation. 
+  * For a problem involving a one-dimensional table, express entry $T(i)$ in terms of smaller sub-problems $T(i), \dots, T(i-1)$ .
+
+In certain problems (e.g., longest-increasing subsequence [LIS]), these steps may be insufficient to adequately devise the corresponding algorithm. In this case, revisit the first step and redefine/strengthen the sub-problem, by correspondingly adding a ***constraint*** (which typically involves somehow ***including*** the last element in the recurrence-relation definition for the sub-problem itself).
+  * ***N.B.*** One thing to keep in mind is that typically when adding such a constraint to the sub-problem, whereby consequently the final output is no longer necessarily the last element of the table, this will additionally require a traversal over the entire table via $\max$  { $\cdots$ } or $\min$  { $\cdots$ } in order to further identify the corresponding optimum.
+
+Let us now demonstrate this via Dasgupta Practice Problem 6.1 accordingly.
 
 #### 29-30. Practice Problem 6.1
 
