@@ -132,7 +132,7 @@ $$
 \phi = {{1 + \sqrt{5}} \over {2}} \approx 1.618
 $$
 
-Therefore, since the runtime grows ***exponentially*** in $n$ for this recursive algorithm ${\rm{Fib1}}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
+Therefore, since the running time grows ***exponentially*** in $n$ for this recursive algorithm ${\rm{Fib1}}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
 
 ### 4. Exponential Running Time
 
@@ -205,17 +205,17 @@ This completes the definition of the algorithm. Observe that there is ***no*** r
 
 #### Analysis
 
-Let us now analyze the runtime of this algorithm, ${\rm{Fib2}}(n)$ .
+Let us now analyze the running time of this algorithm, ${\rm{Fib2}}(n)$ .
 
 <center>
 <img src="./assets/01-DP1-007.png" width="650">
 </center>
 
-As before (cf. Section 3), the base cases have a runtime of $O(1)$ apiece.
+As before (cf. Section 3), the base cases have a running time of $O(1)$ apiece.
 
-With respect to the subsequent iterations, there is a $\rm{for}$ loop of size $O(n)$ , which in turn iterates on $O(1)$ steps. Correspondingly, the total runtime for the $\rm{for}$ loop is $O(n)$ .
+With respect to the subsequent iterations, there is a $\rm{for}$ loop of size $O(n)$ , which in turn iterates on $O(1)$ steps. Correspondingly, the total running time for the $\rm{for}$ loop is $O(n)$ .
 
-Therefore, the total runtime for this algorithm is $O(n)$ total time. This completes the algorithm, and gives a glimpse of a dynamic programming algorithm.
+Therefore, the total running time for this algorithm is $O(n)$ total time. This completes the algorithm, and gives a glimpse of a dynamic programming algorithm.
 
 ### 6. Dynamic Programming Recap
 
@@ -521,11 +521,11 @@ Now, let us consider the running time of this algorithm.
 <img src="./assets/01-DP1-020A.png" width="650">
 </center>
 
-The outer $\rm{for}$ loop varies over $n$ elements with corresponding runtime of $O(n)$ . Furthermore, the nested $\rm{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\rm{if\ }\ldots$ statement takes and order of $O(1)$ runtime. Therefore, the overall runtime of the nested $\rm{for}$ loops is $O(n^2)$ .
+The outer $\rm{for}$ loop varies over $n$ elements with corresponding running time of $O(n)$ . Furthermore, the nested $\rm{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\rm{if\ }\ldots$ statement takes and order of $O(1)$ running time. Therefore, the overall running time of the nested $\rm{for}$ loops is $O(n^2)$ .
 
-Furthermore, the subsequent $\rm{for}$ loop for determining $L(\max)$ has a runtime of $O(n)$ .
+Furthermore, the subsequent $\rm{for}$ loop for determining $L(\max)$ has a running time of $O(n)$ .
 
-Therefore, the overall runtime is $O(n^2)$ , as dominated/determined by the first set of nested $\rm{for}$ loops.
+Therefore, the overall running time is $O(n^2)$ , as dominated/determined by the first set of nested $\rm{for}$ loops.
 
 ### 14. Recap
 
@@ -533,7 +533,7 @@ Therefore, the overall runtime is $O(n^2)$ , as dominated/determined by the firs
 <img src="./assets/01-DP1-021.png" width="650">
 </center>
 
-This completes the formulation of our dynamic programming algorithm and the analysis of its runtime. Now, let us consider/review some ***important aspects*** of the algorithm design.
+This completes the formulation of our dynamic programming algorithm and the analysis of its running time. Now, let us consider/review some ***important aspects*** of the algorithm design.
   * The first step of the algorithm design process was to define the algorithm in words, i.e., expressing $L(i)$ in terms of words.
     * Our initial attempt (cf. Section 8) used the prefix of the input, in order to find the longest-increasing subsequence on the first $i$ elements of the array $L$ .
   * Next, the second step is to find a recurrence relation that the solution's sub-problems satisfy.
@@ -902,3 +902,52 @@ If the optimal solution does not contain this last character (i.e., $A$ ), then 
 It may also be the case that $x_i$ matches with some earlier/non-last occurrence of the character in string $Y$ (e.g., $A$ of $x_i$ matching $y_1$ in the figure shown above). However, any case in which the last character matches an earlier occurrence of the character in the other candidate string would still otherwise be consistent with matching the same-occurring last character (i.e., any such subsequence occurs in the larger subsequence with the longest-matching last character regardless). Consequently, the expression $L(i-1,j-1)$ is comprehensively encompassing of these potential "shorter" (i.e., "earlier-matching") subsequences.
 
 #### 24. Recurrence Summary
+
+Let us now summarize the recurrence relation for the longest-common subsequence (LCS) problem.
+
+<center>
+<img src="./assets/01-DP1-042.png" width="650">
+</center>
+
+For the case of two non-empty input strings (i.e., $i \ge 1$ and $j \ge 1$ ), recurrence relation for the ***recursive cases*** is defined as follows:
+
+```math
+L(i,j) = 
+\begin{cases}
+  {\max \big\{ {L(i - 1,j),L(i,j - 1)} \big\}}&{{\rm{if\ }}{x_i} \ne {y_j}}\\ 
+  {1 + L(i - 1,j - 1)}&{{\rm{if\ }}{x_i} = {y_j}} 
+\end{cases}
+```
+
+In the case where $x_i = y_j$ (i.e., the *same* last character), the resulting length is simply the sum of $1$ (the last character in question) and the correspondingly reduced prefix strings (i.e., of lengths $-1$ ).
+
+In the case where $x_i \ne y_j$ (i.e., *different* last characters), this gives rise to two scenarios:
+  * drop the last character from $x_i$ (i.e., $L(i-1,j)$ ), or
+  * drop the last character from $y_i$ (i.e., $L(i, j-1)$ )
+
+with the optimal being the longer of the two (i.e., $\max$ { $\cdots$ } ).
+
+Otherwise, recall (cf. Section 20) that the ***base cases*** are as follows:
+  * $L(i, 0) = 0$
+  * $L(0, j) = 0$
+
+In a two-dimensional array $L(i, j)$ filled out row-wise (i.e., increasing $i$ and increasing $j$ directions), at some arbitrary entry $i, j$ , this definition corresponds the following "directions" (as in the figure shown above):
+  * diagonal $\nwarrow$ , $L(i-1,j-1)$
+  * directly above $\uparrow$ , $L(i,j-1)$
+  * directly left $\leftarrow$ , $L(i-1,j)$
+
+***N.B.*** Populating the table in such a row-wise manner ensures that this entry $i, j$ will be well-defined.
+
+Now, we can finally state the dynamic programming algorithm, as will be done next.
+
+### 25-26. Dynamic Programming Algorithm
+
+#### 25. Pseudocode
+
+#### 26. Running Time Quiz and Answers
+
+### 27-28. Dynamic Programming Table
+
+#### 27. Dynamic Programming Table Quiz and Answers
+
+#### 28. Extract Sequence Quiz and Answers
