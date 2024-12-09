@@ -993,4 +993,31 @@ This concludes analysis of the longest-common subsequence (LCS) algorithm. This 
 
 #### 26. Dynamic Programming Table Quiz and Answers
 
+<center>
+<img src="./assets/01-DP1-045Q.png" width="650">
+</center>
+
+Given the dynamic programming algorithm for the longest-common subsequence (LCS) problem, consider the corresponding (partially filled) ***table*** as in the figure shown above, for the previous example (cf. Section 22) having the following input strings:
+
+$$
+X = BCDBCDA
+$$
+
+$$
+Y = ABECBA
+$$
+
+Complete the rest of the table accordingly.
+
+<center>
+<img src="./assets/01-DP1-046A.png" width="650">
+</center>
+
+The figure shown above is the resulting completed table.
+
+As the table indicates, the longest-common subsequence (LCS) has length $4$ (per entry $L(n,n)$ in the bottom-right corner).
+
 #### 27. Extract Sequence Quiz and Answers
+
+Given the completed dynamic programming table (cf. Section 26), now consider how to extract the corresponding longest-common subsequence (LCS).
+  * ***N.B.*** As a hint, start with the last matching cell.
