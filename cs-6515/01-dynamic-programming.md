@@ -462,7 +462,7 @@ L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < 
 
 The first term $1$ accounts for the fact that $a_i$ is *included* in the definition of $L(i)$ .
 
-Furthermore, the second term $\mathop {\max }\limits_j { \cdots }$ is the longest subsequence which can be appended onto the beginning. This is comprised of the subsequence $L(j)$ ending at element $a_j$ , to which $a_i$ can be appended only if (strictly) $a_j < a_i$ (where in general $j$ occurs earlier in the subsequence than $i$ , i.e., $j < i$ ).
+Furthermore, the second term $\mathop {\max }\limits_j$ { $\cdots$ } is the longest subsequence which can be appended onto the beginning. This is comprised of the subsequence $L(j)$ ending at element $a_j$ , to which $a_i$ can be appended only if (strictly) $a_j < a_i$ (where in general $j$ occurs earlier in the subsequence than $i$ , i.e., $j < i$ ).
 
 This recurrence can also be re-expressed as follows:
 
