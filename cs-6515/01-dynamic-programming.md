@@ -1070,4 +1070,24 @@ Let us now demonstrate this via Dasgupta Practice Problem 6.1 accordingly.
 
 ##### 29. Problem
 
+<center>
+<img src="./assets/01-DP1-050.png" width="650">
+</center>
+
+The ***input*** to this problem is the numeric sequence $a_1, \dots, a_n$ .
+
+The ***goal*** of the problem is to find a contiguous subsequence (or equivalently a substring) with a maximum sum.
+
+Let us now attempt to define the ***sub-problem***. We can attempt the same problem on a prefix of the input via corresponding prefix parameter $i$ , which varies as $0 \le i \le n$ . We can then define the sub-problem in words as follows:
+
+> Let S(i) = max sum from a substring of $a_1, \dots, a_i$
+
+***N.B.*** Here, "max sum" is the original problem, and the substring $a_1, \dots, a_i$ is a prefix of the input $a_1, \dots, a_n$ .
+
+Now, we attempt to define a recurrence relation, whereby $S(i)$ is defined in terms of smaller sub-problems $S(1), \dots, S(i-1)$ . Consider $S(i-1)$ , which is the max sum obtained from a substring of $a_1, \dots, a_i$ . There are now two possibilities to consider:
+  * append $a_i$ to the end of this substring, or
+  * do not append $a_i$ to the end of the substring
+
+Given that the substring must be contiguous, it is indeterminate a priori whether or not it is necessarily/generally appropriate to append $a_i$ to the substring. Therefore, it must be further determined where $S(i-1)$ ends in order to make this determination more definitively; however, this is not possible with the current definition of $S(i) . Nevertheless, a resolution for this would be feasible if it were known whether or not the expression for $S(i)$ contains $a_{i-1}$ , thereby allowing to make the determination of inclusion/exclusion of $a_i$ accordingly. Therefore, it is necessary to revisit the sub-problem definition for $S(i)$ , in order to strengthen it accordingly, as discussed next.
+
 ##### 30. Solution
