@@ -854,10 +854,10 @@ $$
 Here, there are three possibilities to consider for the optimal-length solution to the longest-common subsequence (LCS):
   * drop $x_i$ ,
   * drop $y_j$ (which is equivalent to previous, given that $x_i = y_j$ ), or
-  * ends at $x_i = $y_j$
+  * ends at $x_i = y_j$
     * ***N.B.*** This is a distinctly different consideration from the previous scenario of $x_i \ne y_j$ (cf. Section 21)
 
-Proceeding similarly to before as in the case of $x_i \ne $y_j$ (cf. Section 21), we will consider these three cases, taking the "best" (longest-length) of the three:
+Proceeding similarly to before as in the case of $x_i \ne y_j$ (cf. Section 21), we will consider these three cases, taking the "best" (longest-length) of the three:
   * If dropping $x_i$ , then $L(i, j) = L(i-1, j)$
   * If dropping $y_j$ , then $L(i, j) = L(i, j-1)$
   * If $x_i = y_j$ , then $L(i,j) = 1 + L(i-1, j-1)$
@@ -971,7 +971,7 @@ First, the base cases are defined (i.e., zero-initializing the top row and first
 
 Next, the table $L(i,j)$ is populated on a row-increasing basis via the recursive cases, with consideration for two scenarios:
   * If the current last characters are equal ($x_i = y_j$ ), then the common last character is appended to the optimal solution, and then the solution recurses "diagonally"
-  * Otherwise if the current last characters are not equal ($x_i \ne $y_j$ ), then the optimal solution takes the greater of the two lengths and recursing accordingly (i.e., upwards if dropping $y_j$ , or otherwise to the left if dropping $x_i$ )
+  * Otherwise if the current last characters are not equal ($x_i \ne y_j$ ), then the optimal solution takes the greater of the two lengths and recursing accordingly (i.e., upwards if dropping $y_j$ , or otherwise to the left if dropping $x_i$ )
 
 Finally, the optimal length is returned in the entry $L(n,n)$ , the bottom-right entry of the table, which constitutes the longest-common subsequence (LCS) of the two input strings.
 
@@ -1088,7 +1088,7 @@ Now, we attempt to define a recurrence relation, whereby $S(i)$ is defined in te
   * append $a_i$ to the end of this substring, or
   * do not append $a_i$ to the end of the substring
 
-Given that the substring must be contiguous, it is indeterminate a priori whether or not it is necessarily/generally appropriate to append $a_i$ to the substring. Therefore, it must be further determined where $S(i-1)$ ends in order to make this determination more definitively; however, this is not possible with the current definition of $S(i) . Nevertheless, a resolution for this would be feasible if it were known whether or not the expression for $S(i)$ contains $a_{i-1}$ , thereby allowing to make the determination of inclusion/exclusion of $a_i$ accordingly. Therefore, it is necessary to revisit the sub-problem definition for $S(i)$ , in order to strengthen it accordingly, as discussed next.
+Given that the substring must be contiguous, it is indeterminate a priori whether or not it is necessarily/generally appropriate to append $a_i$ to the substring. Therefore, it must be further determined where $S(i-1)$ ends in order to make this determination more definitively; however, this is not possible with the current definition of $S(i)$ . Nevertheless, a resolution for this would be feasible if it were known whether or not the expression for $S(i)$ contains $a_{i-1}$ , thereby allowing to make the determination of inclusion/exclusion of $a_i$ accordingly. Therefore, it is necessary to revisit the sub-problem definition for $S(i)$ , in order to strengthen it accordingly, as discussed next.
 
 ##### 30. Solution
 
