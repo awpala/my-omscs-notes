@@ -787,6 +787,48 @@ Next, we will consider the ***recursive cases***.
 
 ##### 21. Unequal Case
 
+Given the new sub-problem definition (cf. Section 20), now consider defining the corresponding recurrence relation, starting with the case of unequal string lengths.
+
+<center>
+<img src="./assets/01-DP1-036.png" width="650">
+</center>
+
+For this purpose, we return to the example from previously (cf. Section 19):
+
+$$
+X=BCDBCDA
+$$
+
+$$
+Y=ABECBABD
+$$
+
+***N.B.*** Here, to make the strings of unequal length, character $D$ is appended to the end of $Y$ (relative to previously).
+
+The ***key insight*** is that if the strings are unequal in length, then the last character in the optimal-length longest-common subsequence (LCS) ends in either $x_i$ , $y_i$ , or neither.
+  * If neither, then the respective last characters can be dropped from both prefix strings. 
+  * Therefore, there are only two additional cases to consider: Dropping either $x_i$ *or* $y_i$ , and consequently taking one of these results as the optimal one.
+
+<center>
+<img src="./assets/01-DP1-037.png" width="650">
+</center>
+
+Following this approach, the respective recurrence relations can be correspondingly defined as follows:
+  * If dropping $x_i$ , then $L(i, j) = L(i-1, j)$
+  * If dropping $y_i$ , then $L(i, j) = L(i, j-1)$
+
+<center>
+<img src="./assets/01-DP1-038.png" width="650">
+</center>
+
+So, then, how to determine which of these is the most optimal of the two? This is simply follows directly from whichever of the two is *longer*, i.e.,:
+
+```math
+L(i,j) = \max \big\{ L(i-1,j), L(i, j-1) \big\}
+```
+
+This constitutes the recurrence relation for the case where $x_i \ne y_j$ . Next, we consider the case where $x_i = y_j$ .
+
 ##### 22. Equal Case
 
 ##### 23. Equal Case Recap
