@@ -1021,3 +1021,20 @@ As the table indicates, the longest-common subsequence (LCS) has length $4$ (per
 
 Given the completed dynamic programming table (cf. Section 26), now consider how to extract the corresponding longest-common subsequence (LCS).
   * ***N.B.*** As a hint, start with the last matching cell.
+
+<center>
+<img src="./assets/01-DP1-047A.png" width="650">
+</center>
+
+As in the figure shown above, tracing back from the last matching cell, this yields the corresponding longest-common subsequence $BCBA$ for this example.
+
+### 28-30. Addendum: Practice Problems
+
+#### 28. Overview
+
+
+#### 29-30. Practice Problem 6.1
+
+##### 29. Problem
+
+##### 30. Solution
