@@ -1318,6 +1318,36 @@ Now, the ***goal*** is to compute entry $K(n, B)$ (i.e., bottom-right corner ent
 
 ##### 7. Recurrence
 
+Now, let us consider the recurrence relation.
+
+<center>
+<img src="./assets/02-DP2-011.png" width="650">
+</center>
+
+In general, the recurrence relation will involve two potential scenarios: Object $i$ is either included or omitted.
+
+First, we must determine whether or not object $i$ even fits in the remaining capacity of the knapsack to be considered at all.
+  * If $w_i \le b$ (i.e., object $i$ *does* fit in the remaining capacity), then the corresponding value is that of object $i$ added to the value of the prefix $i-1$ having total capacity $b - w_i$ (where $w_i$ is correspondingly included), i.e., $K(i,b) = v_i + K(i-1,b-w_i)$ .
+  * Otherwise, if object $i$ is *not* included (i.e., even if $w_i \le b$ holds), then correspondingly $K(i,b) = 0 + K(i-1,b) = K(i-1,b)$ , where object $i$ is excluded and therefore the available capacity to the remaining objects is simply $b$ .
+
+Therefore, we take the corresponding maximum among these two possibilities, as follows:
+
+```math
+K(i,b) = \max \big\{ v_i + K(i-1,b-w_i), K(i-1, b) \big\}
+```
+
+Additionally, if $w_i > b$ (and therefore cannot be included in the knapsack in the first place), then similarly $K(i,b) = 0 + K(i-1,b) = K(i-1,b)$ .
+
+Finally, to complete the definition, we must also consider the ***base cases***:
+  * $K(0, b) = 0$
+  * $K(i, 0) = 0$
+
+which correspondingly populate the table's first row and first column (respectively) with zeros.
+
+Following this definition, the table $K(i, b)$ is therefore correspondingly populated row-wise (i.e., increasing $i$ and increasing $b$ directions), whereby at some arbitrary entry $i, b$ , this definition corresponds the following "directions" (as in the figure shown above):
+  * diagonal $\nwarrow$ , $L(i,b-w_i)$
+  * directly above $\uparrow$ , $L(i-1,b)$
+
 #### 8-9. Dynamic Programming Algorithm
 
 ##### 8. Pseudocode
