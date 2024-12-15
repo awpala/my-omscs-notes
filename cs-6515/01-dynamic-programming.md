@@ -1292,6 +1292,30 @@ Therefore, to resolve this issue with the sub-problem definition, we must additi
 
 ##### 6. Sub-Problem
 
+Now, let us revise our sub-problem definition, based on insight gained from the first attempt (cf. Section 5).
+
+<center>
+<img src="./assets/02-DP2-009.png" width="650">
+</center>
+
+Our initial definition of the sub-problem was as follows:
+
+> Let $K(i)$ = maximum value achievable using a subset of object $1, \dots, i$
+
+However, this is an insufficient definition, because it does not allow use of $K(i-1)$ in the definition of $K(i)$ . Instead, we must additional add the restriction that the total weight $\le B - w_i$ . By including the weight of object $i$ (i.e., $w_i$ ) in the sub-problem definition, while this may result in a sub-optimal solution locally, it ultimately gives rise to a globally optimal solution (i.e., maximizing $K$ relative to constraint $B$ ).
+
+Therefore, we redefine the sub-problem as having two parameters $i$ (the object) and $b$ (the total weight available for object $i$ ), correspondingly giving rise to a two-dimensional table accordingly. 
+
+<center>
+<img src="./assets/02-DP2-010.png" width="650">
+</center>
+
+This updated sub-problem can now be formally redefined as follows:
+
+> For $i$ and $b$ where $0 \le i \le n$ and $0 \le b \le B$ , let $K(i, b)$ = maximum value achievable using a subset of objects $1, \dots, i$ and total weight $\le b$
+
+Now, the ***goal*** is to compute entry $K(n, B)$ (i.e., bottom-right corner entry of the table), the maximum value obtained by using a subset of the $n$ objects to obtain a total weight of at most $B$ .
+
 ##### 7. Recurrence
 
 #### 8-9. Dynamic Programming Algorithm
