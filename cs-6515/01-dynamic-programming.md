@@ -187,7 +187,7 @@ The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</su
 \ \ \ \ {F[1]=1}\\
 \ \ \ \ {{\rm{for\ }} i=2 \to n:}\\
 \ \ \ \ \ \ \ \ {F[i] = F[i-1] + F[i-2]}\\
-\ \ \ \ {{\rm{return\ }} (F[n])}\\
+\ \ \ \ {{\rm{return\ }} (F[n])}
 \end{array}
 }
 ```
@@ -497,7 +497,7 @@ The pseudocode for the dynamic programming algorithm for the longest-increasing 
 \ \ \ \ {\max = 1}\\
 \ \ \ \ {{\rm{for\ }} i=2 \to n:}\\
 \ \ \ \ \ \ \ \ {{\rm{if\ }} L(i) > L(\max) {\rm{\ then\ }} \max = i}\\
-\ \ \ \ {{\rm{return\ }} (L(\max))}\\
+\ \ \ \ {{\rm{return\ }} (L(\max))}
 \end{array}
 }
 ```
@@ -1351,6 +1351,43 @@ Following this definition, the table $K(i, b)$ is therefore correspondingly popu
 #### 8-9. Dynamic Programming Algorithm
 
 ##### 8. Pseudocode
+
+Now, consider the pseudocode for implementing the dynamic programming algorithm to solve the knapsack problem with *no* repetition of candidate objects in the subset (i.e., any given object can only be used *once* at most).
+
+<center>
+<img src="./assets/02-DP2-012.png" width="650">
+</center>
+
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{KnapsackNoRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
+\ \ \ \ {{\rm{for\ }} b=0 \to B}:\ K(0,b)=0\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n}:\ K(i,0)=0\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n}:\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} b=1 \to B}:\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ then\ }} K(i,b) = \max \big\{ v_i + K(i-1,b-w_i), K(i-1, b) \big\}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} K(i,b) = K(i-1,b)}\\
+\ \ \ \ {{\rm{return\ }} (K(n,B))}
+\end{array}
+}
+```
+
+The ***inputs*** to the algorithm are the weights of the objects $w_1, \dots, w_n$ , their corresponding values $v_1, \dots, v_n$ , and the total knapsack capacity $B$ .
+
+The ***base cases*** populate the corresponding first-row and first-column entries of the table $K(i,b)$ .
+
+Next, to populate the interior of the table (i.e., recursive cases), this is done in a row-wise manner (i.e., increasing $i$ and increasing $b$ directions) via corresponding nested loops. The subsequent determination is based on the check $w_i \le b$ , which dictates whether or not object $i$ is included: Its inclusion adds value $v_i$ and reduces corresponding capacity by $w_i$ (i.e., $b-w_i$ ), otherwise its exclusion correspondingly adds no additional value relative to the optimal solution of the prefix (i.e., $K(i-1, b)$ ).
+
+Finally, the algorithm returns the optimal value in entry table $K(n, B)$ (i.e., the solution to the original problem), corresponding to the bottom-right corner of the table.
+
+###### Analysis
+
+The ***running time*** of the algorithm can be determined readily/straightforwardly.
+
+The row-initializing and column-initializing loops have a running time of $O(B)$ and $O(n)$ (respectively).
+
+The nested $\rm{for}$ loops comprise an overall running time of $O(B) \times O(n) = O(nB)$ , with each operation itself (i.e., populating value $K(i,b)$ ) taking $O(1)$ . Furthermore, $O(nB)$ is the dominating operation of the algorithm, thereby constituting its overall running time accordingly.
 
 ##### 9. Polynomial Time Quiz and Answers
 
