@@ -1170,3 +1170,18 @@ Let us further summarize the problem to reinforce understanding of it. Given (in
 ***N.B.*** A notable application of this problem include scheduling jobs given limited computation-time resources. Furthermore, it serves as a representative example of another style of problem that can be solved effectively with a dynamic programming algorithm.
 
 ### 2. Problem Variants
+
+<center>
+<img src="./assets/02-DP2-003.png" width="650">
+</center>
+
+There are two natural variants of the knapsack problem, with each having a corresponding dynamic programming solution (and thus it is useful to examine both accordingly):
+ * 1 - In the first version, there is *one* copy of each object, i.e., determining the corresponding solution comprised of object subsets *without* repetition
+ * 2 - In the other version, there is an *unlimited* supply of each object in order to satisfy the goal/constraints of the problem, including *with* repetition of objects (i.e., a resulting multi-set solution) if applicable
+
+Our discussion will begin with the first version, and then proceed onto the other.
+
+### 3-9. First Variant: Knapsack Problem without Repetition
+
+
+### 10-15. Second Variant: Knapsack Problem with Repetition
