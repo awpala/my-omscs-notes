@@ -1235,6 +1235,20 @@ We will now proceed onto devising a more optimal dynamic programming solution.
 
 ##### 4. Sub-Problem
 
+Recall (cf. Dynamic Programming 1, Section 8) the basic process for devising a dynamic programming algorithm.
+
+<center>
+<img src="./assets/02-DP2-007.png" width="650">
+</center>
+
+First, we define the sub-problem in words. The first attempt typically involves defining the *same* problem on a *prefix* of the input. Therefore:
+
+> Let $K(i)$ = maximum value achievable using a subset of object $1, \dots, i$
+
+where objects $1, \dots\, i$ are a subset of the total set of objects $1, \dots, n$ .
+
+The next step is to find a recursive relation which expresses the $i$<sup>th</sup> sub-problem (i.e., $K(i)$ ) in terms of smaller sub-problems (i.e., $K(1), \dots, K(i-1)$ ). We will examine this next. 
+
 ##### 5. Recurrence
 
 #### 6-7. Attempt 2
