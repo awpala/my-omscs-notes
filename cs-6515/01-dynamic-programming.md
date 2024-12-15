@@ -1135,3 +1135,38 @@ To determine the ***running time*** for this algorithm, each entry into the tabl
 ## Knapsack Problem
 
 ### 1. Introduction
+
+The next problem under consideration is the knapsack problem.
+
+<center>
+<img src="./assets/02-DP2-001.png" width="650">
+</center>
+
+In the knapsack problem, the ***input*** is $n$ objects, each characterized by the following (integer) values:
+  * integer weights: $w_1, \dots, w_n$
+  * integer values: $v_i, \dots, v_n$
+  * total weight capacity of the knapsack: $B$
+
+The corresponding ***goal*** in this problem is to find subset $S$ among these objects which satisfies the following requirements:
+  * the objects fit in the knapsack, i.e., total weight $\le B$
+  * the value of the selected subset of objects is maximized
+
+We can restate these goals in more mathematically precise terms as follows (respectively):
+
+```math
+\sum\limits_{i \in S} {\big[ {{w_i} \le B} \big]}
+```
+
+```math
+\max \big\{ {\sum\limits_{i \in S} {{v_i}} } \big\}
+```
+
+<center>
+<img src="./assets/02-DP2-002.png" width="650">
+</center>
+
+Let us further summarize the problem to reinforce understanding of it. Given (integer) inputs for weights $w_i, \dots, w_n$ , values $v_i, \dots, v_n$ , and total knapsack capacity $B$ , the corresponding goal is to find a subset of objects (i.e., among those given from $i$ to $n$ ) such that this subset fits in the knapsack (i.e., relative to its total capacity $B$ ), in such a manner that the corresponding value of this subset of objects is maximized (i.e., per corresponding total value of constituent values $v_i, \dots, v_n$ ).
+
+***N.B.*** A notable application of this problem include scheduling jobs given limited computation-time resources. Furthermore, it serves as a representative example of another style of problem that can be solved effectively with a dynamic programming algorithm.
+
+### 2. Problem Variants
