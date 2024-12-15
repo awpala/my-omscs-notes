@@ -1410,6 +1410,18 @@ As it turns out, this form of knapsack problem is **NP-complete**, meaning that 
 
 #### 10. Sub-Problem
 
+Now, consider the second variant of the knapsack problem, wherein each candidate object can be included multiplicatively (cf. strictly only *one* inclusion of each object in the first variant, as discussed previously in this section).
+
+<center>
+<img src="./assets/02-DP2-015.png" width="650">
+</center>
+
+To design a dynamic programming algorithm, recall (cf. Dynamic Programming 1, Section 8) that the first step is to define a sub-problem. For this, let us repurpose the corresponding definition (cf. Section 6) from the first variant, i.e.,:
+
+> Let $K(i,b) = maximum value attainable from a multiset of objects { $1, \dots, i$ } with weight $\le b$
+
+Since this variant of the problem allows multiple inclusions of the *same* object, here we correspondingly define a "multiset" for this purpose (cf. subset in the case of the first variant).
+
 #### 11-13. Recurrence
 
 ##### 11. Initial Attempt
