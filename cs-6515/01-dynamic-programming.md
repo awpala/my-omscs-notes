@@ -1183,5 +1183,70 @@ Our discussion will begin with the first version, and then proceed onto the othe
 
 ### 3-9. First Variant: Knapsack Problem without Repetition
 
+#### 3. Greedy Algorithm Quiz and Answers
+
+To motivate discussion of the dynamic programming solution, first consider a greedy algorithm approach to this problem (which yields a corresponding pitfall, as will be demonstrated shortly). 
+
+<center>
+<img src="./assets/02-DP2-004Q.png" width="650">
+</center>
+
+Consider the inputs comprised of the following:
+
+| Object | Value | Weight |
+|:--:|:--:|:--:|
+| $1$ | $15$ | $15$ |
+| $2$ | $10$ | $12$ |
+| $3$ | $8$ | $10$ |
+| $4$ | $1$ | $5$ |
+
+Furthermore, the total weight capacity of the knapsack is $B = 22$ .
+
+Now, consider how to achieve the optimal solution using a greedy approach.
+
+<center>
+<img src="./assets/02-DP2-005A.png" width="650">
+</center>
+
+By inspection, the maximum value obtained is $18$ via objects subset { $2, 3$ }.
+
+In a greedy approach, we start with the most valuable object, and proceed accordingly to the next-most-valuable object, etc. To express "most valuable" in this manner, we consider the value per unit of weight (i.e., $r_i = \tfrac{v_i}{w_i}$ ), as follows:
+
+| Object | Value | Weight | Ratio |
+|:--:|:--:|:--:|:--:|
+| $1$ | $15$ | $15$ | $1$ |
+| $2$ | $10$ | $12$ | $0.83$ |
+| $3$ | $8$ | $10$ | $0.8$ |
+| $4$ | $1$ | $5$ | $0.2$ |
+
+Therefore, here, $r_1 > r_2 > r_3 > r_4$ .
+
+<center>
+<img src="./assets/02-DP2-006A.png" width="650">
+</center>
+
+However, following this greedy approach, the corresponding (sub-optimal) solution yields objects subset { $1, 4$ } having total value $16$ (obtained by starting with the "most valuable" object $1$ having weight $15$ , which then leaves a remaining capacity of $22 - 15 = 7$ in the knapsack, satisfied by the next-most-valuable object subject to these constraints, object $4$ having weight $5$ ), which is less than the maximum-possible total value for this example (cf. $18$ ).
+
+This example demonstrates why the greedy approach ***fails***: Selecting the initially most valuable object exhausts the remaining/residual capacity of the knapsack in such a manner which induces subsequently sub-optimal selection. In this case, the optimal solution is obtained by skipping this most valuable object and instead selecting a different subset among the remaining objects, which correspondingly yield a higher overall value.
+
+We will now proceed onto devising a more optimal dynamic programming solution.
+
+#### 4-5. Attempt 1
+
+##### 4. Sub-Problem
+
+##### 5. Recurrence
+
+#### 6-7. Attempt 2
+
+##### 6. Sub-Problem
+
+##### 7. Recurrence
+
+#### 8-9. Dynamic Programming Algorithm
+
+##### 8. Pseudocode
+
+##### 9. Polynomial Time Quiz and Answers
 
 ### 10-15. Second Variant: Knapsack Problem with Repetition
