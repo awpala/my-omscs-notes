@@ -1251,6 +1251,43 @@ The next step is to find a recursive relation which expresses the $i$<sup>th</su
 
 ##### 5. Recurrence
 
+<center>
+<img src="./assets/02-DP2-008.png" width="650">
+</center>
+
+To summarize the first attempt of the dynamic programming algorithm (cf. Section 4), we define the following sub-problem:
+
+> Let $K(i)$ = maximum value achievable using a subset of object $1, \dots, i$
+
+Furthermore, we must now find the recurrence relation to express $K(i)$ in terms of $K(1), \dots, K(i-1)$ .
+
+Let us know return to the previous example (cf. Section 3), with the following inputs:
+
+| Object | Value | Weight |
+|:--:|:--:|:--:|
+| $1$ | $15$ | $15$ |
+| $2$ | $10$ | $12$ |
+| $3$ | $8$ | $10$ |
+| $4$ | $1$ | $5$ |
+
+Furthermore, the corresponding knapsack capacity is $B = 22$ .
+
+We now attempt to create a table $K$ which contains the prefix maximum value (as comprised of the subset of corresponding objects), defined via recurrence relation accordingly. Conceptually, this can be described as follows:
+
+| $i$ | $K(i)$ | Subset |
+|:--:|:--:|:--:|
+| $1$ | $15$ | { $1$ } |
+| $2$ | $15$ | { $1$ } |
+| $3$ | $18$ | { $2, 3$ } |
+
+Examining $K(3)$ , is it possible to obtain this value $18$ via either $K(1)$ or $K(2)$ ? Since object $3$ is added as a sub-optimal selection relative to $K(2)$ (which uses object $1$ but correspondingly eliminates the capacity to contain object $3$ ), we must correspondingly take such a sub-optimal solution to $i = 2$ accordingly. However, the ***key*** is to select such a sub-optimal solution in a manner whereby there is sufficient remaining capacity to eventually accommodate the corresponding value-maximizing objects subset, i.e., capacity $\le B - w_3$ (where $B$ is the total available capacity, and $w_3$ is the additional object weight introduced as a prospective subset member as of $i = 3$ ). Therefore, we want to optimize the smaller prefix relative to this "effective" capacity.
+
+Proceeding in this manner, given constraint $B - w_3 = 22 - 10 = 12$ , object $1$ no longer fits within this constraint, and therefore object $2$ is selected accordingly, yielding a corresponding total value of $8 + 10 = 18$ via corresponding subset { $3, 2$ }.
+
+However, as this attempt demonstrates, the definition of the sub-problem is insufficient to express $K(i)$ in terms of its prefix (i.e., $K(3)$ in terms of $K(1)$ or $K(2)$ ), because the solution itself does not directly derive from the prefix value(s), but rather the prefix values are based on a sub-optimal solution (i.e., object $1$ in this case) having insufficient/limited remaining capacity relative to the optimal solution.
+
+Therefore, to resolve this issue with the sub-problem definition, we must additional ***limit*** the capacity available of the corresponding prefixes/sub-problems (i.e., consider the objects $1, \dots, i$ ***and*** limiting of the resulting capacity). This correspondingly motivates the second attempt at devising a dynamic programming algorithm for this problem, as discussed next.
+
 #### 6-7. Attempt 2
 
 ##### 6. Sub-Problem
