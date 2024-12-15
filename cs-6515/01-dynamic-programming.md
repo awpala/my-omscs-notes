@@ -1381,7 +1381,7 @@ Next, to populate the interior of the table (i.e., recursive cases), this is don
 
 Finally, the algorithm returns the optimal value in entry table $K(n, B)$ (i.e., the solution to the original problem), corresponding to the bottom-right corner of the table.
 
-###### Analysis
+###### Running Time
 
 The ***running time*** of the algorithm can be determined readily/straightforwardly.
 
@@ -1391,4 +1391,41 @@ The nested $\rm{for}$ loops comprise an overall running time of $O(B) \times O(n
 
 ##### 9. Polynomial Time Quiz and Answers
 
-### 10-15. Second Variant: Knapsack Problem with Repetition
+Recall (cf. Section 8) that the running time of the dynamic programming algorithm just described is $O(nB)$ . Is this an ***efficient*** algorithm? More precisely, is the running time at worst ***polynomial*** in the input size?
+
+<center>
+<img src="./assets/02-DP2-014A.png" width="650">
+</center>
+
+This algorithm is ***not*** polynomial in the input size. While $nB$ is indeed a polynomial expression (i.e., with respect to the running time), the corresponding ***input size*** is nevertheless not polynomial.
+
+To represent number $B$ , the corresponding memory/space required (i.e., as bits) is $O(\log B)$ . Furthermore, representing number $n$ (i.e., the weights $w_1, \dots, w_n$ and values $v_1, \dots, v_n$ of the objects $1, \dots, n$ ) also requires $2n \times O(1)$ bits. Therefore, the corresponding input size is $O(n\log B)$ .
+
+Therefore, while goal of the running time is polynomial with respect to inputs $n$ and $logB$ , the actual running time $O(nB)$ is ***exponential*** with respect to these inputs.
+
+As it turns out, this form of knapsack problem is **NP-complete**, meaning that while such a polynomial-time algorithm may exist, it is not certain to be so. Furthermore, if such a polynomial-time algorithm were discovered for this problem, then it would correspondingly *also* resolve this issue in all other NP-complete problems as well.
+  * ***N.B.*** NP-completeness is discussed later in this course, in a dedicated lesson.
+
+### 10-16. Second Variant: Knapsack Problem with Repetition
+
+#### 10. Sub-Problem
+
+#### 11-13. Recurrence
+
+##### 11. Initial Attempt
+
+##### 12. Recap
+
+##### 13. Simpler Sub-Problem
+
+#### 14-16. Dynamic Programming Algorithm
+
+##### 14. Pseudocode
+
+##### 15. Running Time
+
+##### 16. Traceback
+
+## Chain Matrix Multiply
+
+### 17. Introduction
