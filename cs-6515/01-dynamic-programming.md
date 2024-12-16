@@ -1690,7 +1690,7 @@ Consider a matrix $W$ of six $a \times b$ and another matrix $Y$ of size $b \tim
 Now, consider an arbitrary element $z_{i,j}$ of the product matrix $Z$ . To determine this entry, this requires the following computation:
 
 ```math
-z_{i,j} = w_{1,1}y_{1,1} + \cdots + w_{1,k}y_{k,1} + \cdots + w_{1,b}y_{b,1} = \sum_{k=1}^b w_{i,k}y_{k,j}
+z_{i,j} = w_{i,1}y_{1,j} + \cdots + w_{i,k}y_{k,j} + \cdots + w_{i,b}y_{b,j} = \sum_{k=1}^b w_{i,k}y_{k,j}
 ```
 
 where each row-wise element of $W$ (i.e., of general form $w_{i,k}$ with respect to row $i$ in matrix $A$ ) is multiplied by each column-wise element of $Y$ (i.e., of general form $y_{k,j}$ with respect to column $j$ in matrix $B$ ), and the resulting product-matrix element $z_{i,j}$ is the sum of these sub-elements' inner products.
@@ -1734,6 +1734,28 @@ Conversely, in the case of parenthesization $((A \times B) \times C) \times D$ ,
 #### 22-23. Sub-Problem
 
 ##### 22. Attempt 1
+
+Now, let us attempt to devise the the dynamic programming algorithm for the matrix multiplication problem.
+
+<center>
+<img src="./assets/02-DP2-029.png" width="650">
+</center>
+
+The first step is to define the sub-problem in words. Here, we have:
+
+> Let $C(i)$ = minimum cost for computing product matrix $A_1 \times A_2 \times \cdots \times A_i$
+
+Furthermore, let us attempt to define a recurrence relation for this sub-problem. Recalling (cf. Section 21) the graphical view of this problem, the target overall product $A_1 \times A_2 \times \cdots \times A_n$ resides at the root node in this representation, where the respective children nodes relative to the root are:
+  * $A_1 \times A_2 \times \cdots \times A_i$ for $1 \le i < n$ (left child), and 
+  * $A_{i+1} \times \cdots \times A_{n-1} \times A_n$ for $i \le n$ (right child)
+
+Given this "split point" $i$ , we will examine all possibilities recursively in the resulting subtree, and so on. However, given that we are generally attempting to examine *prefixes* (i.e., decreasing the problem size with each recursive level), note that the "right" subtree results in a *suffix*; so, then, should we proceed similarly with the suffix?
+
+<center>
+<img src="./assets/02-DP2-030.png" width="650">
+</center>
+
+To further examine the suffix, let us expand the tree by another level (as in the figure shown above), having corresponding "split point" $j$ , yielding subtrees $A_{i+1} \times \cdots \times A_j$ (left) and $A_{j+1} \times \cdots \times A_n$ (right) accordingly. Proceeding as before, we attempt to examine the respective costs of these sub-trees in the table accordingly. However, observe that subtree $A_{i+1} \times \cdots \times A_j$ (left) is neither a prefix nor a suffix, but rather it is a ***substring***. This turns out to be a useful intermediate result/computation which is sufficient for devising the solution; however, we will need to revise our sub-problem definition accordingly (i.e., to consider substrings rather than prefixes), as discussed next.
 
 ##### 23. Substrings
 
