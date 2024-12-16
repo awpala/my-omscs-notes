@@ -563,7 +563,7 @@ Furthermore, consider the ***intuition*** for why we wanted to strengthen the su
 
 Therefore, a lot of the intuition for dynamic programming originates from ideas in induction proofs.
 
-## Longest Common Subsequence
+## Longest Common Subsequence (LCS)
 
 ### 15. Introduction
 
@@ -1596,7 +1596,7 @@ Here, we introduce an additional multiset $S$ which contains the corresponding o
 
 ## Chain Matrix Multiply
 
-### 17-21. Background
+### 17-19. Background
 
 #### 17. Introduction
 
@@ -1653,7 +1653,7 @@ where $A$ has dimensions $m \times p$ and $B$ has dimensions $p \times n$ with m
 As a representative example, the product of the first row of $A$ multiplied by the first column of $B$ yields the following element in the resulting product matrix (i.e., at position $1,1$ ):
 
 ```math
-a_{1,1} \times b_{1,1} + \cdots + a_{1,k} \times b_{k,1} + \cdots + a_{1,p} \times b_{p,1} = \sum_{k=1}^p a_{1,k}b_{k,1}
+a_{1,1}b_{1,1} + \cdots + a_{1,k}b_{k,1} + \cdots + a_{1,p}b_{p,1} = \sum_{k=1}^p a_{1,k}b_{k,1}
 ```
 
 And similarly for the remaining entries in the resulting product matrix.
@@ -1677,26 +1677,53 @@ So, then, which of these is the best? And what is the corresponding cost of this
 
 #### 19. Cost for Matrix Multiply
 
-#### 20. General Problem
+<center>
+<img src="./assets/02-DP2-025.png" width="650">
+</center>
+
+Consider a matrix $W$ of six $a \times b$ and another matrix $Y$ of size $b \times c$ . Furthermore, consider the product $Z$ of these matrices, i.e., $Z = W \times Y$ , having corresponding size $a \times c$ .
+
+<center>
+<img src="./assets/02-DP2-026.png" width="650">
+</center>
+
+Now, consider an arbitrary element $z_{i,j}$ of the product matrix $Z$ . To determine this entry, this requires the following computation:
+
+```math
+z_{i,j} = w_{1,1}y_{1,1} + \cdots + w_{1,k}y_{k,1} + \cdots + w_{1,p}y_{p,1} = \sum_{k=1}^b w_{i,k}y_{k,j}
+```
+
+where each row-wise element of $W$ (i.e., of general form $w_{i,k}$ with respect to row $i$ in matrix $A$ ) is multiplied by each column-wise element of $Y$ (i.e., of general form $y_{k,j}$ with respect to column $j$ in matrix $B$ ), and the resulting product-matrix element $z_{i,j}$ is the sum of these sub-elements' inner products.
+
+Therefore, to compute *one* such element in product matrix $Z$ , this requires correspondingly $b$ such multiplication operations and $b-1$ such addition operations. Furthermore, product matrix $Z$ has $a \times c$ such elements, correspondingly requiring $a \times c \times b$ multiplication operations and $a \times c \times (b-1)$ addition operations accordingly; therefore, this overall ***cost*** can be summarized simply as $a \times c \times b$ such operations.
+  * ***N.B.*** $a \times c \times b \approx a \times c \times (b-1)$ , and furthermore typically multiplication operations are more expensive than addition operations, and thus $a \times c \times b$ is dominating and generally/broadly encompassing in this scenario.
+
+### 20-21. General Problem
+
+#### 20. Introduction
 
 #### 21. Graphical View
 
-#### 22-27. Chain Multiply
+### 22-27. Chain Multiply (Attempt 1)
 
-##### 22. Prefixes
+#### 22-23. Sub-Problem
+
+##### 22. Introduction
 
 ##### 23. Substrings
 
-##### 24. Recurrence
+#### 24-26. Recurrence
+
+##### 24. Introduction
 
 ##### 25. Summary
 
 ##### 26. Filling the Table
 
-##### 27. Dynamic Programming Algorithm
+#### 27. Dynamic Programming Algorithm
 
-###### Pseudocode
+##### Pseudocode
 
-###### Running Time
+##### Running Time
 
 ### 28. Addendum: Practice Problems
