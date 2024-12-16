@@ -1,5 +1,8 @@
 # Dynamic Programming: Topic Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6 (Dynamic Programming).
+
 <center>
 <img src="./assets/01-DP1-000.png" width="300">
 </center>
@@ -23,6 +26,9 @@ The ***outline*** for this section is as follows:
 ## Fibonacci Numbers
 
 ### 2. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: Notes [DP Part 1](https://cs6505.wordpress.com/schedule/dp-1/)
 
 <center>
 <img src="./assets/01-DP1-001.png" width="650">
@@ -236,6 +242,9 @@ Dynamic programming is widely used. At first, students often find it challenging
 
 ### 7. Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: Notes [DP Part 1](https://cs6505.wordpress.com/schedule/dp-1/)
+
 Let us now consider a more sophisticated example of dynamic programming. The problem we will consider is the **longest increasing subsequence** (**LIS**) problem.
 
 <center>
@@ -324,6 +333,9 @@ Now, let us consider how to follow this recipe for the longest increasing subseq
   * In the second step, we express $L(i)$ in terms of $L(1), \dots, L(i-1)$ (i.e., smaller sub-problems $1, \dots, i-1$ relative to $i$ itself). To do this, we will next revisit our earlier example to gain some intuition.
 
 #### 9. Recurrence
+
+> [!NOTE]
+> ***Instructor's Note***: There is an error in this video -- the reference to $L(9)$ should be $L(10)$ , and $L(8)$ should be $L(9)$
 
 Recall (cf. Section 8) that our sub-problem definition is: Let function $L(i) =$ length of longest increasing subsequence (LIS) on input array $a_1, a_2, \dots, a_i$ . The goal is then to express $L(i)$ in terms of $L(i)$ in terms of $L(1), \dots, L(i-1)$ (the solutions of smaller sub-problems).
 
@@ -555,6 +567,9 @@ Therefore, a lot of the intuition for dynamic programming originates from ideas 
 
 ### 15. Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: Notes [DP Part 1](https://cs6505.wordpress.com/schedule/dp-1/)
+
 <center>
 <img src="./assets/01-DP1-022.png" width="650">
 </center>
@@ -567,6 +582,9 @@ The ***goal*** is to find the *length* of the longest string which is a subseque
   * Furthermore, with this length determined, it is possible to determine the corresponding substring appearing in the subsequence, which will also be demonstrated.
 
 ### 16. Example Quiz and Answers
+
+> [!NOTE]
+> ***Instructor's Note***: Enter the length of the Longest Common Subsequence (as an integer), not the string itself.
 
 Consider an example of the longest-common subsequence problem, in order to become more familiarized with the corresponding terminology.
 
@@ -1136,6 +1154,9 @@ To determine the ***running time*** for this algorithm, each entry into the tabl
 
 ### 1. Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6.4 (Knapsack) and Eric's notes [DP Part 2](https://cs6505.wordpress.com/schedule/dp-part-ii/)
+
 The next problem under consideration is the knapsack problem.
 
 <center>
@@ -1234,6 +1255,9 @@ We will now proceed onto devising a more optimal dynamic programming solution.
 #### 4-5. Attempt 1
 
 ##### 4. Sub-Problem
+
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6.4 (Knapsack) and Eric's notes [DP Part 2](https://cs6505.wordpress.com/schedule/dp-part-ii/)
 
 Recall (cf. Dynamic Programming 1, Section 8) the basic process for devising a dynamic programming algorithm.
 
@@ -1410,6 +1434,9 @@ As it turns out, this form of knapsack problem is **NP-complete**, meaning that 
 
 #### 10. Sub-Problem
 
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6.4 (Knapsack) and Eric's notes [DP Part 2](https://cs6505.wordpress.com/schedule/dp-part-ii/)
+
 Now, consider the second variant of the knapsack problem, wherein each candidate object can be included multiplicatively (cf. strictly only *one* inclusion of each object in the first variant, as discussed previously in this section).
 
 <center>
@@ -1531,7 +1558,41 @@ Finally, the solution to the problem is returned as the last entry in the table,
 
 ##### 15. Running Time
 
+Now, consider the running time for the algorithm (cf. Section 14).
+
+<center>
+<img src="./assets/02-DP2-021.png" width="650">
+</center>
+
+The outer $\rm{for}$ loop has a running time of $O(B)$ . Furthermore, the nested $\rm{for}$ loop has a running time of $O(n)$ , with each operation (i.e., populating table value $K(b)$ ) requiring a running time of $O(1)$ . Therefore, the overall running time is $O(nB)$ , similarly to previously (cf. Section 11), however, it requires less space/memory and also constitutes a comparatively simpler solution (i.e., a one-dimensional table rather than a two-dimensional table).
+
 ##### 16. Traceback
+
+> [!NOTE]
+> ***Instructor's Note***: For further discussion, see the illustration in Lecture DP1: LCS: Extract Sequence. In addition, see [DPV] Chapter 6.2 (which points back to the analogous use of the prev[] array in Dijkstra's algorithm), and also try problem 6.4(b) which partitions a string into a sequence of words.
+
+<center>
+<img src="./assets/02-DP2-022.png" width="650">
+</center>
+
+To output the actual multiset of the constituent objects corresponding to the solution, we must explicitly keep track of object $i$ used to obtain the currently optimal solution at sub-problem $k(b)$ . The following pseudocode contains the appropriate adjustments for this purpose:
+
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
+\ \ \ \ {{\rm{for\ }} b=0 \to B}\\
+\ \ \ \ \ \ \ \ {K(b)=0}\\
+\ \ \ \ \ \ \ \ {S(b)=\emptyset}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} i=1 \to n}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ and\ }} K(b) < v_i + K(b-w_i) {\rm{\ then\ }} K(b) = v_i + K(b-w_i) {\rm{\ and\ }} S(b) = i}\\
+\ \ \ \ {{\rm{return\ }} (K(B))}
+\end{array}
+}
+```
+
+Here, we introduce an additional multiset $S$ which contains the corresponding objects (initialized as empty set $\emptyset$ ). Now, we can use this multiset $S$ to hold $i$ , and subsequently recurse on the sub-problem solution $K(b-w_i)$ . In this manner of backtracking, multiset $S$ is updated accordingly, ultimately producing the multiset containing the corresponding objects for the solution $K(B)$ on completion of running the algorithm.
+  * ***N.B.*** The details of this backtracking are similar to what was done previously for the longest common subsequence (cf. Dynamic Programming 1, Section 27).
 
 ## Chain Matrix Multiply
 
