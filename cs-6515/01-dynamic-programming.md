@@ -1466,6 +1466,16 @@ Furthermore, given a table of dimension $n \times B$ , with each entry requiring
 
 ##### 12. Recap
 
+<center>
+<img src="./assets/02-DP2-018.png" width="650">
+</center>
+
+Let us examine the algorithm devised previously (cf. Section 11). Oftentimes, when generating a solution involving a two- or three-dimensional table, it is useful to critically examine the solution in order to determine if a smaller table could otherwise be used instead (or otherwise a solution that is faster, has a smaller space/memory requirement, is simpler, etc.).
+
+Consider the parameter $i$ in the expression for $K(i,b)$ . In the first variant of the knapsack problem (cf. Section 7), the purpose of $i$ was to track which of the objects $1, \dots, i$ have been considered or not up to that point (i.e., after examining object $i$ , proceed onto object $i-1$ , and so on). However, in the current variant of the knapsack problem (i.e., wherein repetition of object $i$ is permitted), it is not clear as to why it is even necessary to consider object $i$ explicitly in the recurrence relation; in fact, it is *not* necessary here at all.
+
+Therefore, let us now rewrite the sub-problem in such a manner which eliminates parameter $i$ and simply considers the weight via parameter $b$ .
+
 ##### 13. Simpler Sub-Problem
 
 #### 14-16. Dynamic Programming Algorithm
