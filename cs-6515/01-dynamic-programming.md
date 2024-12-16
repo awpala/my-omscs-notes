@@ -1690,7 +1690,7 @@ Consider a matrix $W$ of six $a \times b$ and another matrix $Y$ of size $b \tim
 Now, consider an arbitrary element $z_{i,j}$ of the product matrix $Z$ . To determine this entry, this requires the following computation:
 
 ```math
-z_{i,j} = w_{1,1}y_{1,1} + \cdots + w_{1,k}y_{k,1} + \cdots + w_{1,p}y_{p,1} = \sum_{k=1}^b w_{i,k}y_{k,j}
+z_{i,j} = w_{1,1}y_{1,1} + \cdots + w_{1,k}y_{k,1} + \cdots + w_{1,b}y_{b,1} = \sum_{k=1}^b w_{i,k}y_{k,j}
 ```
 
 where each row-wise element of $W$ (i.e., of general form $w_{i,k}$ with respect to row $i$ in matrix $A$ ) is multiplied by each column-wise element of $Y$ (i.e., of general form $y_{k,j}$ with respect to column $j$ in matrix $B$ ), and the resulting product-matrix element $z_{i,j}$ is the sum of these sub-elements' inner products.
@@ -1701,6 +1701,17 @@ Therefore, to compute *one* such element in product matrix $Z$ , this requires c
 ### 20-21. General Problem
 
 #### 20. Introduction
+
+<center>
+<img src="./assets/02-DP2-027.png" width="650">
+</center>
+
+In the general problem, there are $n$ matrices $A_1, A_2, \dots, A_n$ as inputs, where each matrix $A_i$ has corresponding size $m_{i-1} \times m_i$ (i.e., matrices $A_1, A_2, \dots, A_n$ having corresponding sizes $m_0 \times m_1$ , $m_1 \times m_2$ , $\dots$ , $m_{n-1} \times m_n$ , respectively, whereby each inner dimension is correspondingly matching).
+  * ***N.B.*** For purposes of this problem, only the *size* of the corresponding input matrices must be known, but otherwise the (identify of the) constituent elements can be regarded as arbitrary/insignificant.
+
+Therefore, the corresponding ***input*** is $m_0, m_1, \dots, m_n$ (i.e., the sizes of the respective input matrices) accordingly.
+
+The ***goal*** is to compute the corresponding product matrix $A_1 \times A_2 \times \cdots \times A_n$ with minimal cost. Once this is determined, the correspondingly optimal parenthesization can be readily determined accordingly.
 
 #### 21. Graphical View
 
