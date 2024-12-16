@@ -1660,6 +1660,21 @@ And similarly for the remaining entries in the resulting product matrix.
 
 #### 18. Order of Operation
 
+<center>
+<img src="./assets/02-DP2-024.png" width="650">
+</center>
+
+Recall (cf. Section 17) that the goal is to compute the matrix product $A \times B \times C \times D$ . Matrix multiplication is an ***associative*** operation, and therefore there are many ways to determine this target matrix product accordingly.
+
+The standard approach would be to perform this as $((A \times B) \times C) \times D$ , where $A \times B$ is performed first, followed by $(\cdots) \times C$ , and then finally $((\cdots) \times \cdots) \times D$ .
+
+However, this is not the only possibility; other valid/correct approaches include the following:
+  * $(A \times B) \times (C \times D)$
+  * $(A \times (B \times C)) \times D$
+  * $A \times (B \times (C \times D))$
+
+So, then, which of these is the best? And what is the corresponding cost of this optimal parenthesization? In order to make this determination, it is necessary to assign a corresponding ***cost*** for each of these operations, as discussed next.
+
 #### 19. Cost for Matrix Multiply
 
 #### 20. General Problem
@@ -1668,9 +1683,9 @@ And similarly for the remaining entries in the resulting product matrix.
 
 #### 22-27. Chain Multiply
 
-##### 22. prefixes
+##### 22. Prefixes
 
-##### 23. substrings
+##### 23. Substrings
 
 ##### 24. Recurrence
 
