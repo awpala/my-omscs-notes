@@ -1778,6 +1778,24 @@ For the remaining ***recursive cases***, we are attempting to compute the upper-
 
 ##### 24. Introduction
 
+<center>
+<img src="./assets/02-DP2-032.png" width="650">
+</center>
+
+Now, consider the more general recurrence relation for arbitrary element $C(i,j)$ in the product matrix, which corresponds to the product of the matrices defined by the substring $i \cdots j$ .
+
+To determine this, consider the graphical representation of the problem (as in the figure shown above). The root of the tree corresponds to the product of the (intermediate) matrices $A_i \times \cdots \times A_j$ . Furthermore, we examine the "split" point $\ell$ , resulting in the following subtrees:
+  * $A_i \times \cdots \times A_{\ell}$ of size $m_{i-1} \times m_{\ell}$ (left child), and 
+  * $A_{\ell+1} \times \cdots \times A_j$ of size $m_{\ell} \times m_j$ (right child)
+
+These subtrees comprise a smaller substring, with the combined total cost of these comprising the corresponding cost of the parent. In the case of the left child's subtree, the root has cost $\times m_{\ell} \times m_j$ . Furthermore, the total cost for the left child's subtree (i.e., the root along with its own constituent children subtrees) is thus as follows:
+
+```math
+(m_{i-1} \times m_{\ell} \times m_j) + C(i,\ell) + C(\ell + 1,j)
+```
+
+Furthermore, we will try all possibilities of $\ell$ , in order to determine which is cost-minimizing.
+
 ##### 25. Summary
 
 ##### 26. Filling the Table
