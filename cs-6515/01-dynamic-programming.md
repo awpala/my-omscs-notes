@@ -1418,13 +1418,51 @@ Now, consider the second variant of the knapsack problem, wherein each candidate
 
 To design a dynamic programming algorithm, recall (cf. Dynamic Programming 1, Section 8) that the first step is to define a sub-problem. For this, let us repurpose the corresponding definition (cf. Section 6) from the first variant, i.e.,:
 
-> Let $K(i,b) = maximum value attainable from a multiset of objects { $1, \dots, i$ } with weight $\le b$
+> Let $K(i,b)$ = maximum value attainable from a multiset of objects { $1, \dots, i$ } with weight $\le b$
 
 Since this variant of the problem allows multiple inclusions of the *same* object, here we correspondingly define a "multiset" for this purpose (cf. subset in the case of the first variant).
 
 #### 11-13. Recurrence
 
 ##### 11. Initial Attempt
+
+Now, consider writing the recurrence relation for the sub-problem definition devised previously (cf. Section 10).
+
+<center>
+<img src="./assets/02-DP2-016.png" width="650">
+</center>
+
+Here, we attempt to express $K(i,b)$ in terms of smaller sub-problems. Using the insight gained in the first variant of the knapsack problem (cf. Section 7), there are two possible scenarios: Object $i$ is either included or excluded in the knapsack (with the resulting higher value dictating the choice). This will yield the following general expression:
+
+```math
+K(i,b) = \max \big\{ \cdots \big\}
+```
+
+Furthermore, in this particular variant (i.e., *with* permissible repetition of object $i$ ), there are two additional decisions to make: Either include another copy of object $i$ or do not include any more copies of object $i$ (with the remaining elements being comprised of items $1, \dots, i-1$ and having remaining total capacity $b$ ). These are correspondingly expressed as follows:
+  * Include another copy of object $i$ : $K(i,b) = v_i + K(i,b-w_i)$
+    * ***N.B.*** Here, in the expression $K(i,b-w_i)$ , index $i$ is used because object $i$ may be reused (cf. $i-1$ in Section 7, wherein exclusive use of $i$ precluded its reuse)
+  * No more copies of object $i$ : $K(i,b) = K(i-1,b)$
+
+Therefore, combining these observations yields the following:
+
+```math
+K(i,b) = \max \big\{ K(i-1,b), v_i + K(i,b-w_i) \big\}
+```
+
+<center>
+<img src="./assets/02-DP2-017.png" width="650">
+</center>
+
+Let us now consider whether or not this is a valid recurrence (i.e., is $K(i,b)$ expressed in terms of smaller sub-problems?). Previously, when expressing the current entry, we did so with respect to entries in previous rows of the table. However, this expression includes a reference to the current row (i.e., expression $K(i,b-w_i)$ via $K(i,\dots)$ ).
+
+Consider arbitrary table entry $K(i,b)$ , which has been populated row-wise (i.e., increasing $i$ and increasing $b$ directions), as in the figure shown above. Populating in this manner, indeed both entries will have been populated by this point, i.e.,:
+  * in the previous row ($K(i-1,b)$ via direction $\uparrow$ ), and
+  * in the previous column in the same row ($K(i,b-w_i)$ via direction $\leftarrow$ ) 
+
+Therefore, this is indeed a valid recurrence relation (i.e., $K(i,b)$ is validly expressed in terms of smaller sub-problems). Accordingly, we can repurpose the pseudocode from before (cf. Section 8), with the slightly modified recurrence relation and a corresponding check to ensure that the $i$<sup>th</sup> object fits within the remaining capacity $b-w_i$ (i.e., check if $w_i \le b$ ).
+
+Furthermore, given a table of dimension $n \times B$ , with each entry requiring running time $O(1)$ to populate, this yields an overall running time of $O(nB)$ as before (cf. Section 8).
+  * ***N.B.*** This analysis is abbreviated here, due to the similarity with the previous version (cf. Section 8).
 
 ##### 12. Recap
 
