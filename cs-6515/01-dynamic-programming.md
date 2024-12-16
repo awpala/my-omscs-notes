@@ -1362,10 +1362,10 @@ Now, consider the pseudocode for implementing the dynamic programming algorithm 
 \boxed{
 \begin{array}{l}
 {{\rm{KnapsackNoRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
-\ \ \ \ {{\rm{for\ }} b=0 \to B}:\ K(0,b)=0\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n}:\ K(i,0)=0\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n}:\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} b=1 \to B}:\\
+\ \ \ \ {{\rm{for\ }} b=0 \to B:\ K(0,b)=0}\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n:\ K(i,0)=0}\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n:}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} b=1 \to B:}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ then\ }} K(i,b) = \max \big\{ v_i + K(i-1,b-w_i), K(i-1, b) \big\}}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} K(i,b) = K(i-1,b)}\\
 \ \ \ \ {{\rm{return\ }} (K(n,B))}
@@ -1501,6 +1501,33 @@ Next, we will create the appropriate pseudocode for this simplified algorithm.
 #### 14-16. Dynamic Programming Algorithm
 
 ##### 14. Pseudocode
+
+Now, consider the pseudocode for the updated algorithm (cf. Section 13).
+
+<center>
+<img src="./assets/02-DP2-020.png" width="650">
+</center>
+
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
+\ \ \ \ {{\rm{for\ }} b=0 \to B}\\
+\ \ \ \ \ \ \ \ {K(b)=0}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} i=1 \to n}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ and\ }} K(b) < v_i + K(b-w_i) {\rm{\ then\ }} K(b) = v_i + K(b-w_i)}\\
+\ \ \ \ {{\rm{return\ }} (K(B))}
+\end{array}
+}
+```
+
+The ***inputs*** to the problem are the same as previously (cf. Section 8), i.e., the weights of the objects $w_1, \dots, w_n$ , their corresponding values $v_1, \dots, v_n$ , and the total knapsack capacity $B$ .
+
+In this one-dimensional table, there is *no* corresponding base case to consider; instead, the one-dimensional array/table $K(b)$ is populated in a "bottom-up" manner accordingly.
+  * The value is initialized to $0$ at position $K(b)$ , in case no objects are available at this current capacity $b$ .
+  * From there, each object $i, \dots, n$ is considered as the candidate for the *last* object to be added to the prefix in the current sub-problem/iteration (i.e., and correspondingly updating a previous iteration's solution if so). In particular, this candidate object must fit within the constraint of $w_i \le b$ , and also whether it satisfies the constraint of $v_i + K(b - w_i) > K(b)$ (i.e., having a higher value than previously for given object $i$ having current value $K(b)$ immediately prior to update). 
+
+Finally, the solution to the problem is returned as the last entry in the table, $K(B)$ .
 
 ##### 15. Running Time
 
