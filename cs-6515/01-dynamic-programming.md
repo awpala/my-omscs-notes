@@ -1702,6 +1702,9 @@ Therefore, to compute *one* such element in product matrix $Z$ , this requires c
 
 #### 20. Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6.6 (Chain Matrix Multiplication) and Eric's notes [DP Part 2](https://cs6505.wordpress.com/schedule/dp-part-ii/)
+
 <center>
 <img src="./assets/02-DP2-027.png" width="650">
 </center>
@@ -1758,6 +1761,18 @@ Given this "split point" $i$ , we will examine all possibilities recursively in 
 To further examine the suffix, let us expand the tree by another level (as in the figure shown above), having corresponding "split point" $j$ , yielding subtrees $A_{i+1} \times \cdots \times A_j$ (left) and $A_{j+1} \times \cdots \times A_n$ (right) accordingly. Proceeding as before, we attempt to examine the respective costs of these sub-trees in the table accordingly. However, observe that subtree $A_{i+1} \times \cdots \times A_j$ (left) is neither a prefix nor a suffix, but rather it is a ***substring***. This turns out to be a useful intermediate result/computation which is sufficient for devising the solution; however, we will need to revise our sub-problem definition accordingly (i.e., to consider substrings rather than prefixes), as discussed next.
 
 ##### 23. Substrings
+
+<center>
+<img src="./assets/02-DP2-031.png" width="650">
+</center>
+
+The revised sub-problem definition involves two parameters, $i$ and $j$ (intermediate positions within substring $1, \dots, n$ ). The corresponding sub-problem definition is as follows:
+
+> For $i$ and $j$ where $1 \le i \le j \le n$ , let $C(i,j)$ = minimum cost for computing product matrix $A_i \times A_{i+1} \times \cdots A_j$
+
+Now, let us attempt to define a recurrence relation for this sub-problem definition. The most straightforward case to compute is the ***base case*** when $i = j$ , which has corresponding cost $C(i,i) = 0$ . Furthermore, consider this base case more conceptually (as in the figure shown above): This corresponds to the main diagonal in the resulting product matrix.
+
+For the remaining ***recursive cases***, we are attempting to compute the upper-right section (relative to the main diagonal) of the product matrix (as in the figure shown above), per corresponding relationship $i \le j$ . We next examine this computation accordingly.
 
 #### 24-26. Recurrence
 
