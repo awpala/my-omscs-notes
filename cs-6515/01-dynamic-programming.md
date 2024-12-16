@@ -1596,4 +1596,92 @@ Here, we introduce an additional multiset $S$ which contains the corresponding o
 
 ## Chain Matrix Multiply
 
-### 17. Introduction
+### 17-21. Background
+
+#### 17. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6.4 (Knapsack) and Eric's notes [DP Part 2](https://cs6505.wordpress.com/schedule/dp-part-ii/)
+
+The next dynamic programming problem under consideration is Chain Matrix Multiply. This problem will be somewhat different in nature/style from previously, resulting in a comparatively more complicated solution accordingly.
+
+Let us now consider a more specific example to motivate this problem accordingly, and then we will later return to defining the more general problem.
+
+<center>
+<img src="./assets/02-DP2-023.png" width="650">
+</center>
+
+Consider four matrices $A$ , $B$ , $C$ , and $D$ having integer-value entries. The ***goal*** is to compute the product of these four matrices, i.e., $A \times B \times C \times D$ . Furthermore, this multiplication should be performed in the ***most efficient*** manner possible. But what do we mean by "most efficient" in this context?
+
+Let us further consider a more specific/concrete example, wherein these for matrices are defined as having the following dimensions:
+  * $A$ is of size $50 \times 20$
+  * $B$ is of size $20 \times 1$
+  * $C$ is of size $1 \times 10$
+  * $D$ is of size $10 \times 100$
+
+Note that for matrix multiplication, in general the "inner dimensions" of the two operand matrices must match (e.g., $A \times B$ is a valid matrix multiplication by virtue of "matching" dimension $20$ , and so on), i.e.,:
+
+```math
+A \times B =
+\begin{bmatrix}
+  {a_{1,1}}&{\cdots}&{a_{1,k}}&{\cdots}&{a_{1,p}}\\ 
+  {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
+  {a_{i,1}}&{\cdots}&{a_{i,k}}&{\cdots}&{a_{i,p}}\\
+  {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
+  {a_{m,1}}&{\cdots}&{a_{m,k}}&{\cdots}&{a_{m,p}}
+\end{bmatrix}
+\times
+\begin{bmatrix}
+  {b_{1,1}}&{\cdots}&{b_{1,j}}&{\cdots}&{b_{1,n}}\\ 
+  {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
+  {b_{k,1}}&{\cdots}&{b_{k,j}}&{\cdots}&{b_{k,n}}\\
+  {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
+  {b_{p,1}}&{\cdots}&{b_{p,j}}&{\cdots}&{b_{p,n}}
+\end{bmatrix}
+=
+\begin{bmatrix}
+  {\sum_{k=1}^p a_{1,k}b_{k,1}}&{\cdots}&{\sum_{k=1}^p a_{1,k}b_{k,j}}&{\cdots}&{\sum_{k=1}^p a_{1,k}b_{k,n}}\\ 
+  {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
+  {\sum_{k=1}^p a_{i,k}b_{k,1}}&{\cdots}&{\sum_{k=1}^p a_{i,k}b_{k,j}}&{\cdots}&{\sum_{k=1}^p a_{i,k}b_{k,n}}\\
+  {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
+  {\sum_{k=1}^p a_{m,k}b_{k,1}}&{\cdots}&{\sum_{k=1}^p a_{m,k}b_{k,j}}&{\cdots}&{\sum_{k=1}^p a_{m,k}b_{k,n}}
+\end{bmatrix}
+```
+
+where $A$ has dimensions $m \times p$ and $B$ has dimensions $p \times n$ with matching inner dimension $p$ , resulting in a product matrix of size $m \times n$ .
+
+As a representative example, the product of the first row of $A$ multiplied by the first column of $B$ yields the following element in the resulting product matrix (i.e., at position $1,1$ ):
+
+```math
+a_{1,1} \times b_{1,1} + \cdots + a_{1,k} \times b_{k,1} + \cdots + a_{1,p} \times b_{p,1} = \sum_{k=1}^p a_{1,k}b_{k,1}
+```
+
+And similarly for the remaining entries in the resulting product matrix.
+
+#### 18. Order of Operation
+
+#### 19. Cost for Matrix Multiply
+
+#### 20. General Problem
+
+#### 21. Graphical View
+
+#### 22-27. Chain Multiply
+
+##### 22. prefixes
+
+##### 23. substrings
+
+##### 24. Recurrence
+
+##### 25. Summary
+
+##### 26. Filling the Table
+
+##### 27. Dynamic Programming Algorithm
+
+###### Pseudocode
+
+###### Running Time
+
+### 28. Addendum: Practice Problems
