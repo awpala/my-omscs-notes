@@ -1788,7 +1788,7 @@ To determine this, consider the graphical representation of the problem (as in t
   * $A_i \times \cdots \times A_{\ell}$ of size $m_{i-1} \times m_{\ell}$ (left child), and 
   * $A_{\ell+1} \times \cdots \times A_j$ of size $m_{\ell} \times m_j$ (right child)
 
-These subtrees comprise a smaller substring, with the combined total cost of these comprising the corresponding cost of the parent. In the case of the left child's subtree, the root has cost $\times m_{\ell} \times m_j$ . Furthermore, the total cost for the left child's subtree (i.e., the root along with its own constituent children subtrees) is thus as follows:
+These subtrees comprise a smaller substring, with the combined total cost of these comprising the corresponding cost of the parent. In the case of the left subtree, the root has cost $\times m_{\ell} \times m_j$ . Furthermore, the total cost for the left subtree (i.e., the left root along with its own constituent children subtrees) is thus as follows:
 
 ```math
 (m_{i-1} \times m_{\ell} \times m_j) + C(i,\ell) + C(\ell + 1,j)
@@ -1797,6 +1797,22 @@ These subtrees comprise a smaller substring, with the combined total cost of the
 Furthermore, we will try all possibilities of $\ell$ , in order to determine which is cost-minimizing.
 
 ##### 25. Summary
+
+<center>
+<img src="./assets/02-DP2-033.png" width="650">
+</center>
+
+Let us now more formally define the recurrence relation for $C(i,j)$ , which corresponds to the computation at the "root" of the left subtree of intermediate computation $A_i \times A_{i+1} \times \cdots \times A_{\ell} \times \cdots \times A_j$ (relative to "split" point $\ell$ ), where $i \le \ell < j$ and the corresponding subtrees are as follows:
+  * left subtree $A_i \times \cdots \times A_{\ell}$ of size $m_{i-1} \times m_{\ell}$ and cost $C(i,\ell)$ , and
+  * right subtree $A_{\ell +1} \times \cdots \times A_j$ of size $m_{\ell} \times m_j$ and cost $C(\ell + 1,j)$
+
+Therefore, combining gives the following expression for the recurrence relation:
+
+```math
+C(i,j) = \mathop {\min }\limits_{\ell} \big\{ C(i,\ell) + C(\ell + 1,j) + m_{i-1}m_{\ell}m_j : i \le \ell \le j-1 \big\}
+```
+
+where additional term $+ m_{i-1}m_{\ell}m_j$ is incurred due to the cost for combining the subtrees.
 
 ##### 26. Filling the Table
 
