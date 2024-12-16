@@ -1478,6 +1478,26 @@ Therefore, let us now rewrite the sub-problem in such a manner which eliminates 
 
 ##### 13. Simpler Sub-Problem
 
+<center>
+<img src="./assets/02-DP2-019.png" width="650">
+</center>
+
+In the updated version of the knapsack problem (cf. Section 12), we now have a single parameter $b$ , giving rise to the following redefinition of the sub-problem accordingly:
+
+> For $b$ where $0 \le b \le B$ : $K(b)$ = maximum value attainable using weight $\le b$
+
+***N.B.*** Recall (cf. Section 10) that this variant of the knapsack problem allows for multiplicative inclusions of object $i$ , giving rise to a multiset accordingly.
+
+The corresponding recurrence relation does not make explicit consideration of object $i$ , but rather simply considers *all* possibilities for the last object to add to the prefix in the given current sub-problem. This is defined formally as follows:
+
+```math
+K(b) = \mathop{\max}\limits_i \big\{ v_i + K(b-w_i): 1 \le i \le n, w_i \le b \big\}
+```
+
+Here, the total weight of the optimal solution is reduced by $b-w_i$ , subject to the appropriate constraints of $1 \le i \le n$ (possible objects) and $w_i \le b$ (valid weights). The result of this overall simplification is a one-dimensional table, $K(b)$ , which is simply populated from $K(0), \dots, K(B)$ , where final entry $K(B)$ is the solution to the problem.
+
+Next, we will create the appropriate pseudocode for this simplified algorithm.
+
 #### 14-16. Dynamic Programming Algorithm
 
 ##### 14. Pseudocode
