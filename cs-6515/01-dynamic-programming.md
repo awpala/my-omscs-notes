@@ -1715,11 +1715,25 @@ The ***goal*** is to compute the corresponding product matrix $A_1 \times A_2 \t
 
 #### 21. Graphical View
 
-### 22-27. Chain Multiply (Attempt 1)
+To gain some additional intuition for the problem of matrix multiplication, consider an alternative representation: Rather than considering this as a parenthesization, instead let us represent the problem as a binary tree.
+
+<center>
+<img src="./assets/02-DP2-028.png" width="650">
+</center>
+
+Recall (cf. Section 18) the product of matrices $A \times B \times C \times D$ , with the standard computation method being $((A \times B) \times C) \times D$ , where $A \times B$ . To represent this parenthesization as a binary tree (cf. left side of the figure shown above), the leaves of the tree will represent the constituent matrices, and the internal nodes will represent intermediate computations, i.e.,:
+  * The root of the tree represents the final computation $((A \times B) \times C) \times D$ , where $A \times B$ .
+  * The first computation $A \times B$ is at the highest tree level, whose product is at the next-highest level along with leaf $C$ , and so on, until eventually the root is expressed accordingly.
+
+Conversely, in the case of parenthesization $((A \times B) \times C) \times D$ , where $A \times B$ (cf. right side of the figure shown above), the resulting binary tree is more symmetric/balanced and with a shorter height (i.e., 3 levels vs. 2), with the root of the resulting tree representing the same overall product $A \times B \times C \times D$ as before.
+
+***N.B.*** Observe that how the resulting binary tree is structured translates directly to how the parenthesization is performed for a given sub-problem.
+
+### 22-27. Chain Multiply 
 
 #### 22-23. Sub-Problem
 
-##### 22. Introduction
+##### 22. Attempt 1
 
 ##### 23. Substrings
 
