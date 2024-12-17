@@ -1930,7 +1930,7 @@ The ***key*** to building proficiency in the dynamic programming algorithm techn
 This lesson will focus on several shortest-path problems, utilizing dynamic programming techniques to design fast/efficient algorithms for these problems. 
 
 <center>
-<img src="./assets/02-DP2-039.png" width="650">
+<img src="./assets/03-DP3-001.png" width="650">
 </center>
 
 The context for these problems is based around the notion of a **directed graph** $\vec G = (V,E)$ (where the arrow denotes a *directed* graph), having **edge weights** $w(e)$ .
@@ -1959,7 +1959,7 @@ In this particular example, this can be determined by inspection as follows:
 #### Dijkstra's Algorithm
 
 <center>
-<img src="./assets/02-DP2-040.png" width="650">
+<img src="./assets/03-DP3-002.png" width="650">
 </center>
 
 The classical algorithm for this problem is **Dijkstra's algorithm**, which in its abbreviated form can be summarized as follows:
@@ -1973,5 +1973,30 @@ There is a notable ***limitation*** in Dijkstra's algorithm: It is strictly nece
 We wil next examine the more general problem which *does* allow for such negative weights to be present in the input graph.
 
 ### 2. Negative Weight Cycles
+
+<center>
+<img src="./assets/03-DP3-003.png" width="650">
+</center>
+
+Recall (cf. Section 1) the directed graph from previously, as in the figure shown above. Negative edge weights are present/permissible, and the goal is to find the shortest path from source vertex $s$ to all other vertices in the graph.
+
+The first question is whether the problem is well defined. In this example, it is: We have already previously determined by inspection (cf. Section 1) the shortest paths in this graph.
+
+<center>
+<img src="./assets/03-DP3-004.png" width="650">
+</center>
+
+However, let us now modify the graph to have a more extreme negative-weight value, as in the figure shown above (i.e., changing weight of edge $a \rightarrow e$ from $-2$ to $-6$ ). With this modification, what is ${\rm{dist}}(d)$ ?
+
+Recall (cf. Section 1) that before changing the weight, the shortest path ${\rm{dist}}(d)$ was $11$ . However, now, observe that the ***cycle*** $b \rightarrow a \rightarrow e \rightarrow b$ (denoted by goldenrod in the figure shown above) has length $-1$ . Therefore, an alternative route from $s$ to $d$ is now $s \rightarrow b \rightarrow a \rightarrow e \rightarrow b \rightarrow a \rightarrow d$ , which yields ${\rm{dist}}(d) = 10$ . Similarly, this cycle can be repeated several times, with each traversal decreasing ${\rm{dist}}(d)$ by $1$ accordingly; therefore, the "shortest" path would traverse this cycle infinitely many times.
+  * ***N.B.*** Such a cyclic traversal along the same vertices is called a "walk" rather than a "path."
+
+Such a cycle (e.g., $a \rightarrow e \rightarrow b \rightarrow a$ ) is called a ***negative weight cycle*** (i.e., having a net-negative sum in its edges' weights). When a graph contains such a negative weight cycle, the shortest path problem is no longer well defined. However, encountering such a negative weight cycle is nevertheless a useful observation/occurrence.
+
+Let us now consider a more general problem:
+
+> Given a directed graph $\vec G$ with edge weights $w(e)$ and starting vertex $s \in V$ , find negative weight cycles in the graph (if they exist at all) which is reachable from $s$ (otherwise, if such cycles are not reachable, then they are not considered). If no such negative weight cycles are found, then the shortest path problem is well defined, and in which case find ${\rm{dist}}(z)$ for all $z \in V$ .
+
+We we will next examine how to use dynamic programming to solve this problem.
 
 ## 3-7. Single-Source Shortest Path
