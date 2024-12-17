@@ -2034,6 +2034,36 @@ Next, we will express the recurrence relation for $D(i,z)$ , with the goal being
 
 #### 4. Introduction
 
+<center>
+<img src="./assets/03-DP3-006.png" width="650">
+</center>
+
+Recall (cf. Section 3) the definition of the sub-problem, as follows:
+
+> For $0 \le i \le n-1$ and $z \in V$ : Let $D(i,z)$ = length of the shortest path from $s$ to $z$ using $\le i$ edges
+
+The final solution of interest is $i = n-1$ , and the corresponding ***base case*** is $D(0,s) = 0$ and for all $z \ne s$ , $D(0,z) = \infty$ (i.e., all other vertices are unreachable from $s$ in the base case).
+
+Now, consider the ***recursive cases***, for which $i \ge 1$ . Here, we examine the shortest path $s \rightsquigarrow z$ using exactly $i$ edges (as in the figure shown above). In this path, there is some penultimate vertex $y$ having a corresponding path of $i-1$ edges, as well as a last edge from $y$ to $z$ ; therefore $s \rightsquigarrow y$ constitutes a "prefix path" (i.e., having length $i-1$ ) accordingly. However, there is a slight variation in the resulting prefix here: While the sub-problem definition allows for $\le i$ edges, the path $s \rightsquigarrow z$ as defined here is exactly/strictly $= i$ edges.
+
+First, let us consider this latter case, i.e., $= i$ edges. In this case, to define a recurrence relation $D(i,z)$ , we will consider all possibilities for the penultimate vertex $y$ on the path, and taking the optimal (i.e., shortest) result among these accordingly. This gives rise to the following definition:
+
+```math
+D(i,z) = \mathop {\min}\limits_{y:\vec{yz} \in E} \big\{ D(i-1,y) + w(y,z) \big\}
+```
+
+where $y:\vec{yz} \in E$ is a directed edge, $D(i-1,y)$ represents the length of the path $s \rightsquigarrow y$ , and $w(y,z)$ is the weight of the last edge (i.e., $y \rightarrow z$ ); thus, the sum $D(i-1,y) + w(y,z)$ represents the total path length for $s \rightsquigarrow z$ , and we minimize this accordingly (with respect to directed edges $y$ ).
+
+This yields a valid recurrence for $D(i,z)$ in the case where it is true that there are exactly/strictly $= i$ edges, however, when attempting to determine the optimal value for $\rm{dist}(z)$ , in general $\le i$ may be true, i.e.,:
+
+```math
+{\rm{dist}}(z) = \mathop {\min}\limits_i \big\{ D(i,z) \big\}
+```
+
+Therefore, to conform to this original (more general) sub-problem definition, we additionally account for $D(i-1,z)$ , which stores the length of the shortest path from $s \rightsquigarrow z$ using at most $i-1$ edges, with the net result being a choice among these two cases (i.e., exactly $=i$ vs. $\le i$ prefix edges).
+
+We will express $D(i,z)$ more formally taking this into account next.
+
 #### 5. Summary
 
 ### 6. Dynamic Programming Algorithm
