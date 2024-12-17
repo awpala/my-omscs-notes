@@ -1925,6 +1925,53 @@ The ***key*** to building proficiency in the dynamic programming algorithm techn
 
 ### 1. Problem Setup
 
+#### Directed Graphs
+
+This lesson will focus on several shortest-path problems, utilizing dynamic programming techniques to design fast/efficient algorithms for these problems. 
+
+<center>
+<img src="./assets/02-DP2-039.png" width="650">
+</center>
+
+The context for these problems is based around the notion of a **directed graph** $\vec G = (V,E)$ (where the arrow denotes a *directed* graph), having **edge weights** $w(e)$ .
+
+The figure shown above depicts such a representative directed graph, having six vertices and corresponding weighted edges. Furthermore, observe that *negative* weights are also permissible (e.g., $-2$ ), as well as anti-parallel edges (e.g., $a \rightarrow d$ and $a \leftarrow d$ , having different weights). Such anti-parallel edges are useful, because they allow to encode an otherwise undirected graph as a directed graph, by correspondingly replacing the (undirected) edge by an equivalent anti-parallel pair; in this manner, a directed graph gives rise to a more general problem than the undirected-graph counterpart.
+
+In the first problem, we have a designated/fixed ***starting vertex*** $s \in V$ , and attempt to determine the length of the ***shortest path*** from this starting vertex to every other vertex in the graph. To accomplish this, we define a function ${\rm{dist}}(z)$ as follows:
+
+> For $z \in V$ , ${\rm{dist}}(z)$ = length fo shortest path from $s$ to $z$
+
+where $z$ denotes each vertex in the graph.
+
+${\rm{dist}}(z)$ is defined for every vertex in the graph, giving rise to a corresponding array of length $n$ (i.e., for $n$ total vertices in $V$ ). Therefore, the goal is to compute this array.
+
+In this particular example, this can be determined by inspection as follows:
+
+| $z$ | ${\rm{dist}}(z)$ |
+|:--:|:--:|
+| $s$ | $0$ |
+| $b$ | $5$ |
+| $a$ | $8$ |
+| $e$ | $6$ |
+| $d$ | $12$ |
+| $f$ | $11$ |
+
+#### Dijkstra's Algorithm
+
+<center>
+<img src="./assets/02-DP2-040.png" width="650">
+</center>
+
+The classical algorithm for this problem is **Dijkstra's algorithm**, which in its abbreviated form can be summarized as follows:
+
+> Given $\vec G$ and and $s \in V$ , finds ${\rm{dist}}(z)$ for all $z \in V$
+
+Dijkstra's algorithm works in a manner analogous to breadth-first search (BFS), exploring the graph in such a "layered" approach. Recall (cf. previous coursework) that breadth-first search (BFS), similarly to depth-first search (DFS), has a running time of $O(n+m)$ (linear) with respect to $n$ vertices and $m$ edges; however, due to weighting of the edges, Dijkstra's algorithm additionally requires a min-heap or priority queue data structure (with each requiring $O(\log (n))$ running time operations), therefore, with this added overhead, the total running time for Dijkstra's algorithm is $O((m+n) \log (n))$ in order to compute the resulting array for ${\rm{dist}}(z)$ .
+
+There is a notable ***limitation*** in Dijkstra's algorithm: It is strictly necessary that $w(e) > 0$ in order to use this algorithm for a given input graph. This is due to the fact that negative edge weights do not guarantee to converge on a correct solution as certain paths "short-circuit" via negative weights towards "shorter" paths.
+
+We wil next examine the more general problem which *does* allow for such negative weights to be present in the input graph.
+
 ### 2. Negative Weight Cycles
 
 ## 3-7. Single-Source Shortest Path
