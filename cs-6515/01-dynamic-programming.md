@@ -1925,6 +1925,9 @@ The ***key*** to building proficiency in the dynamic programming algorithm techn
 
 ### 1. Problem Setup
 
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 6.6 (Shortest Paths) and Eric's notes [DP Part 3](https://cs6505.wordpress.com/schedule/dp-sp)
+
 #### Directed Graphs
 
 This lesson will focus on several shortest-path problems, utilizing dynamic programming techniques to design fast/efficient algorithms for these problems. 
@@ -1974,8 +1977,11 @@ We wil next examine the more general problem which *does* allow for such negativ
 
 ### 2. Negative Weight Cycles
 
+> [!NOTE]
+> ***Instructor's Note***: Typo: The path length of $s \rightarrow b \rightarrow a \rightarrow d$ is $12$ (not $11$ as I said in the video).
+
 <center>
-<img src="./assets/03-DP3-003.png" width="650">
+<img src="./assets/03-DP3-003.png" width="300">
 </center>
 
 Recall (cf. Section 1) the directed graph from previously, as in the figure shown above. Negative edge weights are present/permissible, and the goal is to find the shortest path from source vertex $s$ to all other vertices in the graph.
@@ -1989,7 +1995,7 @@ The first question is whether the problem is well defined. In this example, it i
 However, let us now modify the graph to have a more extreme negative-weight value, as in the figure shown above (i.e., changing weight of edge $a \rightarrow e$ from $-2$ to $-6$ ). With this modification, what is ${\rm{dist}}(d)$ ?
 
 Recall (cf. Section 1) that before changing the weight, the shortest path ${\rm{dist}}(d)$ was $11$ . However, now, observe that the ***cycle*** $b \rightarrow a \rightarrow e \rightarrow b$ (denoted by goldenrod in the figure shown above) has length $-1$ . Therefore, an alternative route from $s$ to $d$ is now $s \rightarrow b \rightarrow a \rightarrow e \rightarrow b \rightarrow a \rightarrow d$ , which yields ${\rm{dist}}(d) = 10$ . Similarly, this cycle can be repeated several times, with each traversal decreasing ${\rm{dist}}(d)$ by $1$ accordingly; therefore, the "shortest" path would traverse this cycle infinitely many times.
-  * ***N.B.*** Such a cyclic traversal along the same vertices is called a "walk" rather than a "path."
+  * ***N.B.*** Such a cyclic traversal along the same/repeating vertices is called a "walk" rather than a "path."
 
 Such a cycle (e.g., $a \rightarrow e \rightarrow b \rightarrow a$ ) is called a ***negative weight cycle*** (i.e., having a net-negative sum in its edges' weights). When a graph contains such a negative weight cycle, the shortest path problem is no longer well defined. However, encountering such a negative weight cycle is nevertheless a useful observation/occurrence.
 
@@ -2000,3 +2006,40 @@ Let us now consider a more general problem:
 We we will next examine how to use dynamic programming to solve this problem.
 
 ## 3-7. Single-Source Shortest Path
+
+### 3. Sub-Problem
+
+Let us now design an algorithm for the single-source shortest path problem.
+
+<center>
+<img src="./assets/03-DP3-005.png" width="650">
+</center>
+
+Given directed graph $\vec G$ with edge weights (which in general can be positive or negative) and some start/source vertex $s \in V$ , the ***goal*** is to find the shortest path from $s$ to every other vertex in the graph. For now, let us ***assume*** that there are *no* negative weight cycles present in the graph, thereby guaranteeing a well defined path from $s$ to every other vertex in the graph (i.e., wherein each intermediate vertex along the path is only visited strictly *once*).
+  * ***N.B.*** Later, we will relax this assumption, and correspondingly modify the algorithm to detect the presence of negative weight cycles.
+
+Since there are no negative weight cycles present in the graph, the shortest path $P$ from $s$ to any vertex $z$ in the graph visits every vertex at most *once*. Therefore, it follows directly that $|P| \le n-1$ edges.
+
+Now, consider defining the sub-problem for the dynamic programming algorithm for this single-source shortest path problem. Normally, we attempt to use a prefix of the original problem to define the sub-problem; however, in this problem, we will use a different approach. Given that path length $|P| \le n-1$ edges, let us attempt to use a prefix of the *path*, i.e., putting a corresponding constraint on the path accordingly. More precisely stated:
+
+> For $0 \le i \le n-1$ and $z \in V$ : Let $D(i,z)$ = length of the shortest path from $s$ to $z$ using $\le i$ edges
+
+where $i = 0 \to n-1$ edges on the path are used.
+
+In the ***base case*** ($i = 0$ ), there are no edges or corresponding paths.
+
+Next, we will express the recurrence relation for $D(i,z)$ , with the goal being to express this in terms of $i-1$ . 
+
+### 4-5. Recurrence
+
+#### 4. Introduction
+
+#### 5. Summary
+
+### 6. Dynamic Programming Algorithm
+
+#### Pseudocode
+
+#### Running Time
+
+### 7. Finding Negative Weight Cycle
