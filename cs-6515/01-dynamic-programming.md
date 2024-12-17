@@ -1901,3 +1901,30 @@ Therefore, the latter set of nested $\rm{for}$ loops has a running time of $O(n^
 As a final note, observe that a ***key component*** of this algorithm involved the use of ***substrings*** rather than ***prefixes*** (cf. Section 22), which was necessary to effectively define the sub-problem accordingly. Furthermore, populating the table was less straightforward here, requiring a more complex diagonal traversal (i.e., from the main diagonal towards the upper-right corner).
 
 ### 28. Addendum: Practice Problems
+
+<center>
+<img src="./assets/02-DP2-038.png" width="650">
+</center>
+
+At this point, you should be capable of approaching any problem from Chapter 6 in the course companion textbook *Algorithms* by Dasgupta et al.
+
+Furthermore, the instructor recommends the following practice problems from Chapter 6:
+  * 6.17, 6.18, 6.19 - making change from a given set of coins/denominations
+    * These are three variants of the *same* problem; the instructor recommends attempting all three
+  * 6.20 - an optimal binary search tree (BST)
+  * 6.7 - the longest palindromic subsequence
+    * The professor additionally recommends attempting the variant version, longest palindromic substring (i.e., a contiguous subsequence)
+
+Additionally, to summarize the technique for dynamic programming demonstrated throughout this lesson, when defining the ***sub-problem***, first attempt this with a prefix, and then (if necessary) with a substring. Note that if proceeding onto a substring-based approach yields a sufficient sub-problem definition, review the sub-problem to validate whether the substring was in fact necessary; at this point, it may still be possible that a prefix exists which may otherwise simplify the solution and/or improve its efficiency (however, it is still useful to find a valid/correct solution, first, nevertheless).
+
+The ***key*** to building proficiency in the dynamic programming algorithm technique is to attempt many such practice problems. In addition to those recommended here by the professor, also consult external sources as well (e.g., other textbooks, courses, websites, etc.).
+
+# Dynamic Programming 3: Shortest Paths
+
+## 1-2. Introduction
+
+### 1. Problem Setup
+
+### 2. Negative Weight Cycles
+
+## 3-7. Single-Source Shortest Path
