@@ -1836,6 +1836,68 @@ Next, we will detail the pseudocode for the corresponding dynamic programming al
 
 ##### Pseudocode
 
+Now, let us detail the pseudocode of the dynamic programming algorithm for the chain matrix multiplication problem, which computes the minimum cost of multiplying matrices $A_1 \times \cdots \times A_n$ .
+
+<center>
+<img src="./assets/02-DP2-035.png" width="650">
+</center>
+
+<center>
+<img src="./assets/02-DP2-036.png" width="650">
+</center>
+
+The corresponding pseudocode is given as follows:
+
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{ChainMultiply}}(m_0,m_1,\dots,m_n):}\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n:}\\
+\ \ \ \ \ \ \ \ {C(i,i) = 0}\\
+\ \ \ \ {{\rm{for\ }} s=1 \to n-1:}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} i=1 \to n-s:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{let\ }} j = i + s}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {C(i,j) = \infty}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{for\ }} \ell = i \to j-1:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{cur}} = m_{i-1}m_{\ell}m_j + C(i,\ell) + c(\ell + 1,j)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} C(i,j) > {\rm{cur\ then\ }} C(i,j) = {\rm{cur}}}\\
+\ \ \ \ {{\rm{return\ }} (C(1,n))}
+\end{array}
+}
+```
+
+Recall (cf. Section 20) that the ***input*** to the algorithm is the sizes of the respective constituent matrices, i.e., $m_0,m_1,\dots,m_n$ .
+
+The ***base case*** is simply the main diagonal entries, having general form $C(i,i) = 0$ (i.e., where $i = j$ ).
+
+The ***recursive cases*** involve the width parameter $s$ (cf. Section 26), which varies as $1 \to n-1$ (i.e., towards the upper-right corner). Furthermore, parameter $i$ represents the row, which is truncated in size with each iteration (as in the figure shown above, in green), with any given terminating in row $i-1$ relative to to the previous iteration $i$ (i.e., up to row $n-1$ in the first iteration, and proceeding in this manner until reaching the upper-right diagonal entry). Given $i$ and $j$ for a given iteration, this is sufficient to define $j$ as $j = i + s$ , i.e., the end of the corresponding substring.
+
+To compute entry $C(i,j)$ , we determine this minimum-cost value by varying $\ell$ over range $i \to j-1$ , keeping track of the current minimum $\rm{cur}$ accordingly during this process, with $C(i,j)$ initialized as $C(i,j) = \infty$ . For a given split point $\ell$ , the current minimum $\rm{cur}$ is defined as:
+
+```math
+m_{i-1}m_{\ell}m_j + C(i,\ell) + C(\ell + 1,j)
+```
+
+where recall (cf. Section 25) that $m_{i-1}m_{\ell}m_j$ is the cost of combining the subtrees, with the subtrees having respective costs $C(i,\ell)$ and $C(\ell + 1,j)$ .
+
+Furthermore, a comparison is made with respect to the current minimum $\rm{cur}$ , such that if $C(i,j) > {\rm{cur}}$ , then the value $C(i,j)$ is correspondingly replaced with this new minimum, $\rm{cur}$ .
+
+Finally, the algorithm returns value $C(1,n)$ , the upper-right corner value, which corresponds to the minimum-cost matrix multiplication for matrix product $A_1 \times \cdots \times A_n$ .
+
 ##### Running Time
+
+Given the dynamic programming algorithm, now consider its overall running time.
+
+<center>
+<img src="./assets/02-DP2-037.png" width="650">
+</center>
+
+The base case (which initializes the main diagonal) has a running time of $O(n)$ .
+
+Similarly, the subsequent set of outer nested $\rm{for}$ loops (corresponding to parameters $s$ and $i$ , respectively) each have a running time of $O(n)$ as well. Furthermore, the innermost $\rm{for}$ loop (corresponding to parameter $\ell$ ) also has a running time of $O(n)$ , with each loop iteration performing an operation (i.e., setting of values $\rm{cur}$ and $C(i,j)$ ) having a running time of $O(1)$ .
+
+Therefore, the latter set of nested $\rm{for}$ loops has a running time of $O(n^3)$ , which dominates the overall running time of the algorithm accordingly.
+
+As a final note, observe that a ***key component*** of this algorithm involved the use of ***substrings*** rather than ***prefixes*** (cf. Section 22), which was necessary to effectively define the sub-problem accordingly. Furthermore, populating the table was less straightforward here, requiring a more complex diagonal traversal (i.e., from the main diagonal towards the upper-right corner).
 
 ### 28. Addendum: Practice Problems
