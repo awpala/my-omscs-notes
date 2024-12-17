@@ -1816,6 +1816,22 @@ where additional term $+ m_{i-1}m_{\ell}m_j$ is incurred due to the cost for com
 
 ##### 26. Filling the Table
 
+Before detailing the pseudocode for the corresponding dynamic programming algorithm, let us examine the recurrence relation more carefully, with consideration for how the corresponding table is populated (which is less straightforward in this problem than as was encountered/performed previously).
+
+<center>
+<img src="./assets/02-DP2-034.png" width="650">
+</center>
+
+Given a two-dimensional table (i.e., matrix) $C$ , we are attempting to populate the upper-right region, relative to the main diagonal (as in the figure shown above), i.e., where $i \le j$ .
+
+Recall (cf. Section 23) that the base case $C(i,i) = 0$ (where $i = j$ ) is the main diagonal itself, which is populated first accordingly.
+
+The next set of entries are the subsequent diagonal (moving in the direction of the upper-right corner), having general form $C(i,i+1)$ , which is computed using $C(i,i)$ (direction $\leftarrow$ relative to $C(i,i+1)$ ) and $C(i+1,i+1)$ (direction $\downarrow$ relative to $C(i,i+1)$ ). Proceeding in this manner, eventually $C(1,n)$ is computed (the upper-right corner entry), corresponding to the minimum cost to compute the matrix product $A_1 \times \cdots \times A_n$ .
+
+To account for this "diagonal traversal," let us define width $s = j - i$ , where the main diagonal has value $s = 0$ , the next diagonal moving in the direction of the upper-right corner has value $s = 1$ , and so on. Correspondingly, the width $s$ is therefore varied as $0 \to n-1$ accordingly.
+
+Next, we will detail the pseudocode for the corresponding dynamic programming algorithm.
+
 #### 27. Dynamic Programming Algorithm
 
 ##### Pseudocode
