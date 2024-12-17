@@ -2066,6 +2066,28 @@ We will express $D(i,z)$ more formally taking this into account next.
 
 #### 5. Summary
 
+Let us now recap and summarize the recurrence.
+
+<center>
+<img src="./assets/03-DP3-007.png" width="650">
+</center>
+
+We are defining $D(i,z)$ , the shortest path $s \rightsquigarrow z$ using at most $i$ edges.
+
+In the ***base case***, $D(0,s) = 0$ and for all $z \ne s$ , $D(0,z) = \infty$ .
+
+For the ***recursive cases***, where $i \ge 1$ , $D(i,z)$ uses either at most $i$ edges (i.e., $\le i$ ) or exactly $i$ edges (i.e., $= i$ ), with the optimal being the shortest of the two. This can be stated more formally as follows:
+
+```math
+D(i,z) = \min \bigg\{ D(i-1,z) , \mathop {\min}\limits_{y:\vec{yz} \in E} \big\{ D(i-1,y) + w(y,z) \big\} \bigg\}
+```
+
+If the path requires $\le i$ edges, then the solution is simply $D(i-1,z)$ . Otherwise, if the path requires exactly $= i$ edges, then we check all possible choices for $y$ which minimize this penultimate path to $z$ . The optimal solution is then the shortest/minimum of these two.
+
+Observe that as defined here, $D(i,z)$ is expressed in terms of $D(i-1,\dots)$ , therefore, this appropriately generates the necessary table to satisfy the solution to the problem.
+
+Next, we will detail/define this algorithm more formally.
+
 ### 6. Dynamic Programming Algorithm
 
 #### Pseudocode
