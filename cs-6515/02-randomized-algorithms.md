@@ -90,6 +90,48 @@ This means that $\frac{x}{N}$ and $\frac{y}{N}$ have the *same* remainder.
 
 ### 5. Example: $\mod 3$
 
+To better understand the concept of modular arithmetic, let us consider another simple example, $\mod 3$ .
+
+<center>
+<img src="./assets/04-RA1-003.png" width="650">
+</center>
+
+When examining $\mod 3$ , there are three possible values:
+
+$$
+0, 1, 2
+$$
+
+Formally, this is defined as an **equivalence class**, i.e., $\mod 3$ has three such equivalence classes.
+
+We can further enumerate these three (distinct) equivalence classes for $\mod 3$ as follows:
+
+$$
+\begin{matrix}
+{\cdots}&{-9}&{-6}&{-3}&{0}&{3}&{6}&{9}&{\cdots}\\
+{\cdots}&{-8}&{-5}&{-2}&{1}&{4}&{7}&{10}&{\cdots}\\
+{\cdots}&{-7}&{-4}&{-1}&{2}&{5}&{8}&{11}&{\cdots}
+\end{matrix}
+$$
+
+The first row represents the equivalence class for $0$ , e.g., $3 \mod 3 = 0$ , $3 \mod 6 = 0$ , etc.
+
+Similarly, the second row represents the equivalence class for $1$ , e.g., $4 \mod 3 = 1$ , $7 \mod 3 = 1$ , etc.
+
+Furthermore, the third row represents the equivalence class for $2$ , e.g., $5 \mod 3 = 2$ , $8 \mod 3 = 2$ , etc.
+
+Note that these equivalence classes also extend into the negative integers as well. 
+
+These equivalence classes follow directly from the following definition:
+
+> $x \mod N = r$ if $x = qN + r$ for integers $q,r$
+
+where $q$ is the quotient and $r$ is the remainder.
+
+This means that there is some multiple $N$ for which $q$ such integer multiples added to $r$ reconstitutes the original number $x$ (e.g., $-2 \mod 3$ in this form is represented as $q = -1$ , $N = 3$ , and $r = 1$ which yields back $x = (-1)(3) + 1 = -2$ , with $r$ corresponding to the appropriate equivalence class $1$ and $q$ corresponding to the appropriate "offset from centerline" $-1$ in the row representation above).
+
+Therefore, within a given equivalence class (i.e., "row" in the representation above), are all the "same" (i.e., *congruent*) with respect to $\mod 3$ .
+
 ### 6. Basic Fact Quiz and Answers
 
 ## 7-9. Modular Exponentiation
