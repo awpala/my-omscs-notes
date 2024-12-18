@@ -2128,7 +2128,7 @@ Next, the vertices are iterated over the range $i = 1 \to n$ , initialized as $D
 Next, the directed edges $\vec {yz}$ are iterated over, to determine if $D(i,z)$ should be updated with respect to the last edge (i.e., the case of edge strictly equal $=i$ ). If this last-edge path is optimal relative to the current optimal solution, then $D(i,z)$ is updated accordingly.
   * ***N.B.*** At this step, to determine the edge *into* vertex $z$ (i.e., $\vec{yz}$ ), we examine the adjacency list for the *reverse* graph accordingly (i.e., by correspondingly "flipping" the edges of the graph in this manner, which requires $O(n + m)$ such operations given $n$ vertices and $m$ edges). In the "original" version of the graph, the edges are directed *out* of $z$ , thereby necessitating this reversal accordingly.
 
-Finally, the solution is returned as $D(n-1,\cdot)$ (where $n-1$ excludes source vertex $s$ ), via a two-dimensional table/array $D$ of size $(n-1) \times m$ (where the corresponding return value is the last row of this table). 
+Finally, the solution is returned as $D(n-1,\cdot)$ , via a two-dimensional table/array $D$ of size $(n-1) \times m$ (where the corresponding return value is the last row of this table). 
 
 #### Running Time
 
@@ -2145,3 +2145,72 @@ Observe that while this algorithm is slower than Dijkstra's algorithm (cf. Secti
 Next, let us determine how to explicitly detect such a negative weight cycle in the input graph.
 
 ### 7. Finding Negative Weight Cycle
+
+How do we determine whether the input graph contains a negative weight cycle?
+
+<center>
+<img src="./assets/03-DP3-010.png" width="650">
+</center>
+
+Recalling (cf. Section 2) our previous example, we enumerate the Bellman-Ford algorithm steps (cf. Section 6) as follows:
+
+| $i$ | $s$ | $a$ | $b$ | $c$ | $d$ | $e$ |
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+| $0$ | $0$ | $\infty$ | $\infty$ | $\infty$ | $\infty$ | $\infty$ |
+| $1$ | $0$ | $5$ | $\infty$ | $\infty$ | $\infty$ | $\infty$ |
+| $2$ | $0$ | $5$ | $8$ | $\infty$ | $\infty$ | $\infty$ |
+| $3$ | $0$ | $5$ | $8$ | $2$ | $12$ | $\infty$ |
+| $4$ | $0$ | $4$ | $8$ | $2$ | $12$ | $7$ |
+| $5$ | $0$ | $4$ | $7$ | $2$ | $12$ | $7$ |
+| $6$ | $0$ | $4$ | $7$ | $1$ | $11$ | $7$ |
+
+In iteration $i = 0$ , the base case initializes the vertices straightforwardly.
+
+In iteration $i = 1$ , the path $s \rightsquigarrow a$ is defined and updated accordingly, while all others are still inaccessible at this point.
+
+In iteration $i = 2$ , the path $s \rightsquigarrow b$ is defined and updated accordingly, while $s \rightsquigarrow a$ remains as before.
+
+In iteration $i = 3$ , the paths $s \rightsquigarrow c$ and $s \rightsquigarrow d$ are defined and updated accordingly, while $s \rightsquigarrow a$ and $s \rightsquigarrow b$ remain as before.
+
+In iteration $i = 4$ , the path $s \rightsquigarrow e$ is defined and updated accordingly. However, interestingly, at this point, there is now a shorter path for $s \rightsquigarrow a$ via $s \rightarrow a \rightarrow b \rightarrow c \rightarrow a$ (i.e., around the negative weight cycle), which reduces $D(s,a)$ from $5$ down to $4$ . (The remaining paths are the same as before.)
+
+In iteration $i = 5$ , with the reduction in $D(s,a)$ from the previous iteration, $D(s,b)$ is now correspondingly reduced from $8$ to $7$ accordingly. (The remaining paths are the same as before.)
+  * ***N.B.*** At this point (i.e., $i = n-1$ , where $n-1 = 5$ in this example), the algorithm would otherwise terminate in the absence of a negative weight cycle, and constitute the final solution for the algorithm accordingly.
+
+Examining a subsequent iteration (i.e., $i = 6$ ), the presence of the negative weight cycle similarly further reduces values, i.e., $D(s,c) = 1$ and $D(s,d) = 11$ in iteration $i = 6$ . More generally, with a negative weight cycle being present in the input graph, *every* row will continue to change with each iteration relative to the previous one (i.e., rather than converging on a solution at iteration $i = n - 1$ ). Correspondingly, such a ***check*** of row $n$ relative to $n-1$ (i.e., with respect to whether or not a change is observed) constitutes such a detection of a negative weight cycle within the input graph accordingly. More formally:
+
+> Check if $D(n,z) < D(n-1,z)$ for some $z \in V$
+
+Furthermore, the table can be used to explicitly identify this negative weight cycle (e.g., via changing values for vertices $a$ , $b$, and $c$ in this example).
+
+## 8-19. All-Pairs Shortest Path
+
+### 8. Introduction
+
+### 9. Naive Approach Quiz and Answers
+
+### 10. Sub-Problem
+
+### 11-16. Recurrence
+
+#### 11. Base Case Quiz and Answers
+
+#### 12-15. Recursive Cases
+
+##### 12. Introduction
+
+##### 13. Case: $i$ Not on Path Quiz and Answers
+
+##### 14-15. Case: $i$ Is on Path Quiz and Answers
+
+#### 16. Summary
+
+### 17-18. Dynamic Programming Algorithm
+
+#### 17. Pseudocode
+
+#### 18. Running Time
+
+## 20. Comparing Algorithms
+
+## 21. Addendum: Practice Problems
