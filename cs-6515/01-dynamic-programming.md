@@ -2263,7 +2263,47 @@ Similarly, here, the corresponding ***base case*** is $D(0,s,t)$ , corresponding
 
 ##### 12. Introduction
 
+<center>
+<img src="./assets/03-DP3-017.png" width="650">
+</center>
+
+Recalling (cf. Section 11) the ***base case***, we can further formalize its definition as follows:
+
+```math
+D(0,s,t) = 
+\begin{cases}
+  {w(s,t)}&{{\rm{if\ }} \vec{st} \in E}\\ 
+  {\infty}&{{\rm{otherwise}}} 
+\end{cases}
+```
+
+If there is a directed edge $\vec{st} \in E$ present, then $D(0,s,t)$ is exactly the length of this edge (i.e., $w(s,t)$ ). Otherwise, there is no such available path (i.e., no intermediate vertices available).
+
+Now, let us consider the ***recursive cases***. We can define the corresponding sub-problem as follows:
+
+> For $i \ge 1$ : Examine the shortest path $P \equiv s \rightsquigarrow t$ using vertices { $1, \dots, i$ }
+
+where this path $P$ is the solution to the sub-problem. If there are multiple such paths, than any of them can be chosen arbitrarily.
+
+Now, the ***goal*** is to determine $D(i,s,t)$ given this definition, i.e., define recursively in terms of $i-1$ . This gives rise to two potential cases with respect to vertex $i$ itself:
+  * 1 - $i \notin P$ ($i$ is *not* included in the prefix path)
+  * 2 - $i \in P$ ($i$ is *included* in the prefix path)
+
+The first case is more straightforward, so we shall examine it next.
+
 ##### 13. Case: $i$ Not on Path Quiz and Answers
+
+<center>
+<img src="./assets/03-DP3-019A.png" width="650">
+</center>
+
+If $i \notin P$ (i.e., vertex $i$ is not on the prefix path $P$ ), then the prefix path will only use the vertices { $1, \dots, i-1$ } as the intermediate vertices. Therefore, this gives rise to the straightforward recursive definition as follows:
+
+```math
+D(i,s,t) = D(i-1,s,t)
+```
+
+Next, let us consider the more complicated case wherein $i \in P$ .
 
 ##### 14-15. Case: $i$ Is on Path
 
