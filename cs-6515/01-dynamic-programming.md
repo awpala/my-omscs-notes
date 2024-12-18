@@ -2297,7 +2297,7 @@ The first case is more straightforward, so we shall examine it next.
 <img src="./assets/03-DP3-019A.png" width="650">
 </center>
 
-If $i \notin P$ (i.e., vertex $i$ is not on the prefix path $P$ ), then the prefix path will only use the vertices { $1, \dots, i-1$ } as the intermediate vertices. Therefore, this gives rise to the straightforward recursive definition as follows:
+If $i \notin P$ (i.e., vertex $i$ is *not* on the prefix path $P$ ), then the prefix path will only use the vertices { $1, \dots, i-1$ } as the intermediate vertices. Therefore, this gives rise to the straightforward recursive definition as follows:
 
 ```math
 D(i,s,t) = D(i-1,s,t)
@@ -2309,7 +2309,57 @@ Next, let us consider the more complicated case wherein $i \in P$ .
 
 ###### 14. Introduction
 
+Now, consider the recursive case where $i \in P$ (i.e., vertex $i$ *is* on the prefix path $P$ ).
+
+<center>
+<img src="./assets/03-DP3-020.png" width="650">
+</center>
+
+Consider the path $s \rightsquigarrow i \rightsquigarrow t$ (as in the figure shown above), where $i$ is some intermediate vertex between vertices $s$ and $t$ .
+
+In the first segment $s \rightsquigarrow i$ , the potential intermediate vertices are { $1, \dots, i-1$ } (in no particular order, and potentially even an empty subset).
+
+Conceptually, this overall path resembles something along the lines of $s \rightarrow$ { $1, \dots, i-1$ } $\rightarrow \cdots$ , where eventually the path terminates on vertex $i$ . From there, the path may further proceed as $i \rightarrow$ { $1, \dots, i-1$ } $\rightarrow \cdots$ , ultimately terminating on vertex $t$ .
+
+In summary:
+
+```math
+s \rightarrow \{ 1, \dots, i-1 \} \rightarrow \cdots i \rightarrow \{ 1, \dots, i-1 \} \rightarrow \cdots t
+```
+
+which comprises four distinct subsets of the overall prefix path (i.e., as delimited by respective arrows $\rightarrow$ in above), where in general { $1, \dots, i-1$ } denotes some subset of these vertices (including the empty subset).
+
+Now, the task at hand is to define $D(i,s,t)$ accordingly (i.e., expressed as smaller sub-problems) in this case, as discussed next.
+
 ###### 15. Quiz and Answers
+
+<center>
+<img src="./assets/03-DP3-023A.png" width="650">
+</center>
+
+To express the recurrence relation $D(i,s,t)$ in the case of $i \in P$ , we want to express this in terms of $i-1$ (i.e., a smaller sub-problem), for some pair of vertices $s$ and $t$ .
+
+Examining the path $s \rightarrow$ { $1, \dots, i-1$ } $\rightarrow \cdots \rightarrow i$ , we can express this directly as $D(i-1,s,i)$ .
+
+Similarly, the path $i \rightarrow$ { $1, \dots, i-1$ } $\rightarrow \cdots \rightarrow t$ , can express this directly as $D(i-1,i,t)$ .
+
+Therefore, the total length of this path is the sum of these two terms, i.e.,:
+
+```math
+D(i,s,t) = D(i-1,s,i) + D(i-1,i,t)
+```
+
+Now, given (cf. Section 13 for complementary case $i \notin P$ ) the full expression for the recursive relation as follows:
+
+```math
+D(i,s,t) = 
+\begin{cases}
+  {D(i-1,s,t)}&{i \notin P}\\ 
+  {D(i-1,s,i) + D(i-1,i,t)}&{i \in P}\\ 
+\end{cases}
+```
+
+we simply take the optimal (i.e., shortest) of these paths.
 
 ##### 16. Summary
 
