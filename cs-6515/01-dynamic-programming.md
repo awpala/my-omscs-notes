@@ -2432,8 +2432,42 @@ The first set of $\rm{for}$ loops perform an operation of running time $O(1)$ (i
 
 The next set of $\rm{for}$ loops (i.e., recursive cases) similarly perform an operation of running time $O(1)$ via $n^3$ such iterations, i.e., a corresponding running time of $O(n^3)$ . Furthermore, this set of operations is dominating, thereby constituting the overall running time of the algorithm accordingly.
 
-#### 19. Negative Weight Cycles
+#### 19-20. Negative Weight Cycles
 
-## 20. Comparing Algorithms
+##### 19. Introduction
+
+How does the presence of negative weight cycles (cf. Section 2) affect our algorithm for all-pairs shortest paths?
+
+<center>
+<img src="./assets/03-DP3-028.png" width="650">
+</center>
+
+As given (cf. Section 18), the algorithm assumes that ***no*** such negative weight cycles exist in the input graph (which is a separate/distinct assumption from the simple presence of negative-weight *edges* $w$ in the input graph). So, then, how to detect such a negative weight cycle?
+
+<center>
+<img src="./assets/03-DP3-029.png" width="650">
+</center>
+
+To get a better idea of how to detect negative weight cycles in the graph, consider the example as in the figure shown above, which contains such a negative weight cycle $a \rightarrow b \rightarrow c$ . How can we detect this negative weight cycle in the graph?
+
+Note that the final output of the algorithm is $D(n,s,t)$ for all vertex pairs $s,t$ . Consider vertex $a$ in this example, i.e.,:
+
+```math
+D(n,a,a) = -1
+```
+
+which is obtained by traversing the negative weight cycle with $s = a$ and $t = a$ .
+
+By similar reasoning, $D(n,b,b) = D(n,c,c) = -1$ as well.
+
+More generally, any such diagonal entry in the two-dimensional array/matrix $D(n,\cdot,\cdot)$ having a negative value indicates the presence of a negative weight cycle, i.e.,:
+
+> Check if $D(n,y,y) < 0 for some vertex $y \in V$
+
+where in general $D(n,y,y)$ is such a diagonal entry.
+
+Observe that now we have two algorithms (cf. Section 7 for analogous detection via the single-source shortest pair Bellman-Ford algorithm) for detecting such negative weight cycles. However, there are some important distinctions between their respective detection methods, as discussed next.
+
+##### 20. Comparing Algorithms
 
 ## 21. Addendum: Practice Problems
