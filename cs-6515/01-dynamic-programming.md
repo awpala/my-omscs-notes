@@ -2379,11 +2379,50 @@ Observe that in this expression, $D(i,s,t)$ is defined in terms of $D(i-1, \cdot
 
 Next, we consider the dynamic programming algorithm for this problem.
 
-### 17-18. Dynamic Programming Algorithm
+### 17-19. Dynamic Programming Algorithm
 
 #### 17. Pseudocode
 
-#### 18. Running Time
+Now, we can write the pseudocode for the all-pairs shortest path problem. The corresponding algorithm is called the **Floyd-Warshall algorithm**.
+
+<center>
+<img src="./assets/03-DP3-025.png" width="650">
+</center>
+
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{Floyd-Warshall}}(G,w):}\\
+\ \ \ \ {{\rm{for\ }} s = 1 \to n:}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} t = 1 \to n:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} \vec{st} \in E {\rm{\ then\ }} D(0,s,t) = w(s,t)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} D(0,s,t) = \infty}\\
+\ \ \ \ {{\rm{for\ }} i = 1 \to n:}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ }} s = 1 \to n:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{for\ }} t = 1 \to n:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {D(i,s,t) = \min \big\{ D(i-1,s,t), D(i-1,s,i) + D(i-1,i,t) \big\}}\\
+\ \ \ \ {{\rm{return\ }} (D(n,\cdot,\cdot))}
+\end{array}
+}
+```
+
+The ***inputs*** to the algorithm are directed graph $G$ and edge weights $w$ (where in general the weights can be either positive or negative).
+
+The initial pair of $\rm{for}$ loops constitute the ***base case***, i.e., populating $D(0,s,t)$ accordingly for all pairs. Recall (cf. Section 10) that the vertices are numbered $1, ..., n$ . If an edge exists between candidates $s$ and $t$ , then the corresponding weight $w(s,t)$ is populated accordingly; otherwise, if no such edge exists, then $D(0,s,t)$ is simply initialized as $\infty$ .
+
+Next, the more general ***recursive cases*** are handled accordingly, i.e., populating $D(i,s,t)$ for all intermediate vertices $i$ (where $i$ varies across $1 \to n$ ). Furthermore, this is similarly performed across all vertex pairs $s, t$ accordingly. The corresponding recurrence relation is as defined previously (cf. Section 16), i.e.,:
+
+```math
+D(i,s,t) = \min \big\{ D(i-1,s,t), D(i-1,s,i) + D(i-1,i,t) \big\}
+```
+
+where the two cases correspond to whether or not (respectively) $i$ is present in the prefix path.
+
+Finally, the algorithm ***returns*** the value $D(n,\cdot,\cdot)$ , which is a two-dimensional array/matrix containing all pairs shortest paths (i.e., having $n \times n$ such entries) corresponding to the last "slice" of the three-dimensional table $D$ .
+
+#### 18. Running Time Quiz and Answers
+
+#### 19. Negative Weight Cycles
 
 ## 20. Comparing Algorithms
 
