@@ -2092,6 +2092,56 @@ Next, we will detail/define this algorithm more formally.
 
 #### Pseudocode
 
+Let us now detail the pseudocode for the dynamic programming algorithm to solve the single-source shortest path problem.
+
+<center>
+<img src="./assets/03-DP3-008.png" width="650">
+</center>
+
+The corresponding algorithm called the **Bellman-Ford algorithm** is given as follows:
+
+```math
+\boxed{
+\begin{array}{l}
+{{\rm{Bellman-Ford}}(G,s,w):}\\
+\ \ \ \ {{\rm{for\ all\ }} z \in V:}\\
+\ \ \ \ \ \ \ \ {D(0,z) = \infty}\\
+\ \ \ \ {D(0,s) = 0}\\
+\ \ \ \ {{\rm{for\ }} i=1 \to n-1:}\\
+\ \ \ \ \ \ \ \ {{\rm{for\ all\ }} z \in V:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {D(i,z) = D(i-1,z)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{for\ all\ }} \vec{yz} \in E:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} D(i,z) > D(i-1,y) + w(y,z) {\rm{\ then\ }} D(i,z) = D(i-1,y) + w(y,z)}\\
+\ \ \ \ {{\rm{return\ }} (D(n-1,\cdot))}
+\end{array}
+}
+```
+
+***N.B.*** The namesake of the algorithm, Richard Bellman, originally developed the dynamic programming algorithmic technique in the 1940s.
+
+The ***inputs*** to the algorithm are the directed graph $G$ , source vertex $s$ , and the edge weights $w$ .
+
+First, $D(0,\cdots)$ is initialized for $s$ and all other vertices.
+
+Next, the vertices are iterated over the range $i = 1 \to n$ , initialized as $D(i,z) = D(i-1,z)$ (i.e., using at most $i-1$ edges).
+
+Next, the directed edges $\vec {yz}$ are iterated over, to determine if $D(i,z)$ should be updated with respect to the last edge (i.e., the case of edge strictly equal $=i$ ). If this last-edge path is optimal relative to the current optimal solution, then $D(i,z)$ is updated accordingly.
+  * ***N.B.*** At this step, to determine the edge *into* vertex $z$ (i.e., $\vec{yz}$ ), we examine the adjacency list for the *reverse* graph accordingly (i.e., by correspondingly "flipping" the edges of the graph in this manner, which requires $O(n + m)$ such operations given $n$ vertices and $m$ edges). In the "original" version of the graph, the edges are directed *out* of $z$ , thereby necessitating this reversal accordingly.
+
+Finally, the solution is returned as $D(n-1,\cdot)$ (where $n-1$ excludes source vertex $s$ ), via a two-dimensional table/array $D$ of size $(n-1) \times m$ (where the corresponding return value is the last row of this table). 
+
 #### Running Time
+
+Now, consider the overall running time for this algorithm.
+
+<center>
+<img src="./assets/03-DP3-009.png" width="650">
+</center>
+
+Examining the nested $\rm{for}$ loops (which, by inspection, dominate the overall algorithm running time), the outer loop requires $O(n)$ running time with respect to $n$ vertices. Furthermore, the innermost $\rm{for}$ loop is performed with respect to all $m$ edges of the graph (where the two inner loops together effectively iterate over every edge exactly once in the process of this), with each innermost loop performing an $O(1)$ operation (i.e., checking and setting $D(i,z)$ ). Therefore, the overall running time is $O(nm)$ .
+
+Observe that while this algorithm is slower than Dijkstra's algorithm (cf. Section 1, $O((m+n) \log (n))$ ), it nevertheless allows for negative weight edges to exist in the input graph. Furthermore, it is also generally able to identify negative weight cycles within the input graph (otherwise, if absent, then the algorithm will determine the shortest path from source vertex $s$ , which is generally well defined).
+
+Next, let us determine how to explicitly detect such a negative weight cycle in the input graph.
 
 ### 7. Finding Negative Weight Cycle
