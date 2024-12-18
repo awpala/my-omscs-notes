@@ -42,7 +42,7 @@ $$0, 1, 1, 2, 3, 5, 8, 13, 21, 34, \dots$$
 
 There is a simple recursive formula that defines the Fibonacci numbers as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {F_{0} = 0,\ F_{1} = 1}\\
@@ -50,7 +50,7 @@ There is a simple recursive formula that defines the Fibonacci numbers as follow
 \ \ \ \ {F_{n} = F_{n-1} + F_{n-2}}
 \end{array}
 }
-```
+$$
 
 Furthermore:
   * ***Input***: integer $n \ge 0$
@@ -78,7 +78,7 @@ $$
 
 The recursive algorithm (${\rm{Fib1}}(n)$ ) can be specified in more detail as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{Fib1}}(n):}\\
@@ -89,7 +89,7 @@ The recursive algorithm (${\rm{Fib1}}(n)$ ) can be specified in more detail as f
 \ \ \ \ {{\rm{return\ }} ({\rm{Fib1}}(n-1) + {\rm{Fib1}}(n-2))}
 \end{array}
 }
-```
+$$
 
 In the ***base cases***, the Fibonacci numbers $0$ and $1$ are simply returned.
 
@@ -185,7 +185,7 @@ Now, let us detail our dynamic programming algorithm for computing the $n$<sup>t
 
 The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</sup> Fibonacci number is as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{Fib2}}(n):}\\
@@ -196,7 +196,7 @@ The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</su
 \ \ \ \ {{\rm{return\ }} (F[n])}
 \end{array}
 }
-```
+$$
 
 Recall (cf. Section 4) that the array $F$ stores the Fibonacci numbers.
 
@@ -468,9 +468,9 @@ This highlights the recurrence for the solution of $L(i)$ in terms of smaller su
 
 Now, let us formally state the recurrence for $L(i)$ in terms of smaller sub-problems:
 
-```math
+$$
 L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}
-```
+$$
 
 The first term $1$ accounts for the fact that $a_i$ is *included* in the definition of $L(i)$ .
 
@@ -478,9 +478,9 @@ Furthermore, the second term $\mathop {\max }\limits_j$ { $\cdots$ } is the long
 
 This recurrence can also be re-expressed as follows:
 
-```math
+$$
 L(i) = 1 + \max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}} \big\{ L(j) \big\}
-```
+$$
 
 Here, the second term $\max\limits_{\underset{a_j < a_i}{1 \leq j \leq i - 1}}$ { $L(j)$ } considers some sequence $a_1, \ldots, a_j, a_i$ , where element $a_j$ is at some index $j$ occurring earlier than index $i$ of element $a_i$ (i.e., somewhere in the range $1, \ldots, j, \ldots, i-1$ , wherein strictly $j < i$ and $a_j < a_i$ ), which in turn contains the value $L(j)$ accordingly.
 
@@ -498,7 +498,7 @@ Next, we will define the dynamic programming algorithm corresponding to this def
 
 The pseudocode for the dynamic programming algorithm for the longest-increasing subsequence problem can be stated as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{LIS}}(a_1,\ldots,a_n):}\\
@@ -512,12 +512,12 @@ The pseudocode for the dynamic programming algorithm for the longest-increasing 
 \ \ \ \ {{\rm{return\ }} (L(\max))}
 \end{array}
 }
-```
+$$
 
 ***N.B.*** Recall (cf. Section 11) the definition for the recurrence as follows:
-```math
+$$
 L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}
-```
+$$
 
 The solution is expressed as a one-dimensional array, $L$ , which is filled in a "bottom-up" approach (i.e., starting from index $i = 1$ , and then proceeding up through index $i = n$ , as expressed by the outer $\rm{for}$ loop).
 
@@ -551,9 +551,9 @@ This completes the formulation of our dynamic programming algorithm and the anal
   * Next, the second step is to find a recurrence relation that the solution's sub-problems satisfy.
     * In the initial attempt (cf. Section 9), the resulting recurrence relation was inadequate. To rectify this, we returned to the first step and reformulated the sub-problem definition (cf. Section 10), wherein an extra condition was added which consequently yielded the corresponding recurrence for the sub-problems, defined there as:
 
-  ```math
+  $$
   L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}
-  ```
+  $$
 
 Furthermore, consider the ***intuition*** for why we wanted to strengthen the sub-problem definition.
   * Recall (cf. discrete mathematics prerequisite course, or equivalent) that when attempting to prove some statement by **induction**, you first begin by stating the inductive hypothesis (typically having the same form as the statement to be proved). 
@@ -742,9 +742,9 @@ Now, consider how we might express $L(i)$ for these three cases.
 
 In the case where neither $x_i$ nor $y_i$ are the last character, this simply omits the corresponding $1$ count in $L(i)$ relative to the corresponding expression for $x_i = y_i$ (cf. Section 18), since the character in question is not a contributor to the length, i.e.,:
 
-```math
+$$
 L(i) = \cancel{{1}}+L(i - 1)
-```
+$$
 
 <center>
 <img src="./assets/01-DP1-032.png" width="650">
@@ -841,9 +841,9 @@ Following this approach, the respective recurrence relations can be correspondin
 
 So, then, how to determine which of these is the most optimal of the two? This is simply follows directly from whichever of the two is *longer*, i.e.,:
 
-```math
+$$
 L(i,j) = \max \big\{ L(i-1,j), L(i, j-1) \big\}
-```
+$$
 
 This constitutes the recurrence relation for the case where $x_i \ne y_j$ . Next, we consider the case where $x_i = y_j$ .
 
@@ -891,9 +891,9 @@ Let us recap the case where $x_i = y_j$ .
 
 This case results in three possibilities (cf. Section 22), which can be expressed/consolidated as follows:
 
-```math
+$$
 L(i,j) = \max \big\{ L(i-1,j), L(i,j-1), 1 + L(i-1,j-1) \big\}
-```
+$$
 
 An astute observer will likely note that only the last case is relevant here, since it will necessarily be the longest of the three; therefore, this simplifies to:
 
@@ -929,13 +929,13 @@ Let us now summarize the recurrence relation for the longest-common subsequence 
 
 For the case of two non-empty input strings (i.e., $i \ge 1$ and $j \ge 1$ ), recurrence relation for the ***recursive cases*** is defined as follows:
 
-```math
+$$
 L(i,j) = 
 \begin{cases}
   {\max \big\{ {L(i - 1,j),L(i,j - 1)} \big\}}&{{\rm{if\ }}{x_i} \ne {y_j}}\\ 
   {1 + L(i - 1,j - 1)}&{{\rm{if\ }}{x_i} = {y_j}} 
 \end{cases}
-```
+$$
 
 In the case where $x_i = y_j$ (i.e., the *same* last character), the resulting length is simply the sum of $1$ (the last character in question) and the correspondingly reduced prefix strings (i.e., of lengths $-1$ ).
 
@@ -968,7 +968,7 @@ Now, we can finally state the dynamic programming algorithm, as will be done nex
 
 The pseudocode for the dynamic programming algorithm for the longest-common subsequence (LCS) problem is given as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{LCS}}(X,Y):}\\
@@ -981,7 +981,7 @@ The pseudocode for the dynamic programming algorithm for the longest-common subs
 \ \ \ \ {{\rm{return\ }} (L(n,n))}
 \end{array}
 }
-```
+$$
 
 Here, $X$ and $Y$ are the two input strings.
 
@@ -1132,9 +1132,9 @@ The ***recursive cases*** require use of $a_i$ in the definition of $S(i)$ (i.e.
 
 Summarizing these observations yields the following:
 
-```math
+$$
 S(i) = a_i + \max \big\{ 0, S(i-1) \big\}
-```
+$$
 
 ***N.B.*** As expressed here, if $S(i-1) < 0$ , then $\max$ { $\cdots$ } simply calculates $S(i)$ as $S(i) = a_i + 0 = a_i$ .
 
@@ -1142,9 +1142,9 @@ Given this definition, the corresponding ***table*** $S(i)$ can be readily popul
 
 The final ***output*** of the algorithm is not necessarily $S(n)$ (the longest max-sum substring which *includes* $a_n$ ), but rather we are looking for the max sum for *any* arbitrary substring (which may or may not include the last element, $a_n$ ). Therefore, this can be determined simply as follows:
 
-```math
+$$
 \mathop {\max }\limits_i \big\{ {S(i)} \big\}
-```
+$$
 
 To determine the ***running time*** for this algorithm, each entry into the table requires a running time of $O(1)$ (via corresponding comparison $\max$ { $0, S(i-1)$ }), and a maximum of $n$ such entries are performed; therefore, the overall running time is $O(n)$ .
 
@@ -1174,13 +1174,13 @@ The corresponding ***goal*** in this problem is to find subset $S$ among these o
 
 We can restate these goals in more mathematically precise terms as follows (respectively):
 
-```math
+$$
 \sum\limits_{i \in S} {\big[ {{w_i} \le B} \big]}
-```
+$$
 
-```math
+$$
 \max \big\{ {\sum\limits_{i \in S} {{v_i}} } \big\}
-```
+$$
 
 <center>
 <img src="./assets/02-DP2-002.png" width="650">
@@ -1356,9 +1356,9 @@ First, we must determine whether or not object $i$ even fits in the remaining ca
 
 Therefore, we take the corresponding maximum among these two possibilities, as follows:
 
-```math
+$$
 K(i,b) = \max \big\{ v_i + K(i-1,b-w_i), K(i-1, b) \big\}
-```
+$$
 
 Additionally, if $w_i > b$ (and therefore cannot be included in the knapsack in the first place), then similarly $K(i,b) = 0 + K(i-1,b) = K(i-1,b)$ .
 
@@ -1382,7 +1382,7 @@ Now, consider the pseudocode for implementing the dynamic programming algorithm 
 <img src="./assets/02-DP2-012.png" width="650">
 </center>
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{KnapsackNoRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
@@ -1395,7 +1395,7 @@ Now, consider the pseudocode for implementing the dynamic programming algorithm 
 \ \ \ \ {{\rm{return\ }} (K(n,B))}
 \end{array}
 }
-```
+$$
 
 The ***inputs*** to the algorithm are the weights of the objects $w_1, \dots, w_n$ , their corresponding values $v_1, \dots, v_n$ , and the total knapsack capacity $B$ .
 
@@ -1461,9 +1461,9 @@ Now, consider writing the recurrence relation for the sub-problem definition dev
 
 Here, we attempt to express $K(i,b)$ in terms of smaller sub-problems. Using the insight gained in the first variant of the knapsack problem (cf. Section 7), there are two possible scenarios: Object $i$ is either included or excluded in the knapsack (with the resulting higher value dictating the choice). This will yield the following general expression:
 
-```math
+$$
 K(i,b) = \max \big\{ \cdots \big\}
-```
+$$
 
 Furthermore, in this particular variant (i.e., *with* permissible repetition of object $i$ ), there are two additional decisions to make: Either include another copy of object $i$ or do not include any more copies of object $i$ (with the remaining elements being comprised of items $1, \dots, i-1$ and having remaining total capacity $b$ ). These are correspondingly expressed as follows:
   * Include another copy of object $i$ : $K(i,b) = v_i + K(i,b-w_i)$
@@ -1472,9 +1472,9 @@ Furthermore, in this particular variant (i.e., *with* permissible repetition of 
 
 Therefore, combining these observations yields the following:
 
-```math
+$$
 K(i,b) = \max \big\{ K(i-1,b), v_i + K(i,b-w_i) \big\}
-```
+$$
 
 <center>
 <img src="./assets/02-DP2-017.png" width="650">
@@ -1517,9 +1517,9 @@ In the updated version of the knapsack problem (cf. Section 12), we now have a s
 
 The corresponding recurrence relation does not make explicit consideration of object $i$ , but rather simply considers *all* possibilities for the last object to add to the prefix in the given current sub-problem. This is defined formally as follows:
 
-```math
+$$
 K(b) = \mathop{\max}\limits_i \big\{ v_i + K(b-w_i): 1 \le i \le n, w_i \le b \big\}
-```
+$$
 
 Here, the total weight of the optimal solution is reduced by $b-w_i$ , subject to the appropriate constraints of $1 \le i \le n$ (possible objects) and $w_i \le b$ (valid weights). The result of this overall simplification is a one-dimensional table, $K(b)$ , which is simply populated from $K(0), \dots, K(B)$ , where final entry $K(B)$ is the solution to the problem.
 
@@ -1535,7 +1535,7 @@ Now, consider the pseudocode for the updated algorithm (cf. Section 13).
 <img src="./assets/02-DP2-020.png" width="650">
 </center>
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
@@ -1546,7 +1546,7 @@ Now, consider the pseudocode for the updated algorithm (cf. Section 13).
 \ \ \ \ {{\rm{return\ }} (K(B))}
 \end{array}
 }
-```
+$$
 
 The ***inputs*** to the problem are the same as previously (cf. Section 8), i.e., the weights of the objects $w_1, \dots, w_n$ , their corresponding values $v_1, \dots, v_n$ , and the total knapsack capacity $B$ .
 
@@ -1577,7 +1577,7 @@ The outer $\rm{for}$ loop has a running time of $O(B)$ . Furthermore, the nested
 
 To output the actual multiset of the constituent objects corresponding to the solution, we must explicitly keep track of object $i$ used to obtain the currently optimal solution at sub-problem $k(b)$ . The following pseudocode contains the appropriate adjustments for this purpose:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
@@ -1589,7 +1589,7 @@ To output the actual multiset of the constituent objects corresponding to the so
 \ \ \ \ {{\rm{return\ }} (K(B))}
 \end{array}
 }
-```
+$$
 
 Here, we introduce an additional multiset $S$ which contains the corresponding objects (initialized as empty set $\emptyset$ ). Now, we can use this multiset $S$ to hold $i$ , and subsequently recurse on the sub-problem solution $K(b-w_i)$ . In this manner of backtracking, multiset $S$ is updated accordingly, ultimately producing the multiset containing the corresponding objects for the solution $K(B)$ on completion of running the algorithm.
   * ***N.B.*** The details of this backtracking are similar to what was done previously for the longest common subsequence (cf. Dynamic Programming 1, Section 27).
@@ -1621,7 +1621,7 @@ Let us further consider a more specific/concrete example, wherein these for matr
 
 Note that for matrix multiplication, in general the "inner dimensions" of the two operand matrices must match (e.g., $A \times B$ is a valid matrix multiplication by virtue of "matching" dimension $20$ , and so on), i.e.,:
 
-```math
+$$
 A \times B =
 \begin{bmatrix}
   {a_{1,1}}&{\cdots}&{a_{1,k}}&{\cdots}&{a_{1,p}}\\ 
@@ -1646,15 +1646,15 @@ A \times B =
   {\vdots}&{\ddots}&{\vdots}&{\ddots}&{\vdots}\\
   {\sum_{k=1}^p a_{m,k}b_{k,1}}&{\cdots}&{\sum_{k=1}^p a_{m,k}b_{k,j}}&{\cdots}&{\sum_{k=1}^p a_{m,k}b_{k,n}}
 \end{bmatrix}
-```
+$$
 
 where $A$ has dimensions $m \times p$ and $B$ has dimensions $p \times n$ with matching inner dimension $p$ , resulting in a product matrix of size $m \times n$ .
 
 As a representative example, the product of the first row of $A$ multiplied by the first column of $B$ yields the following element in the resulting product matrix (i.e., at position $1,1$ ):
 
-```math
+$$
 a_{1,1}b_{1,1} + \cdots + a_{1,k}b_{k,1} + \cdots + a_{1,p}b_{p,1} = \sum_{k=1}^p a_{1,k}b_{k,1}
-```
+$$
 
 And similarly for the remaining entries in the resulting product matrix.
 
@@ -1689,9 +1689,9 @@ Consider a matrix $W$ of six $a \times b$ and another matrix $Y$ of size $b \tim
 
 Now, consider an arbitrary element $z_{i,j}$ of the product matrix $Z$ . To determine this entry, this requires the following computation:
 
-```math
+$$
 z_{i,j} = w_{i,1}y_{1,j} + \cdots + w_{i,k}y_{k,j} + \cdots + w_{i,b}y_{b,j} = \sum_{k=1}^b w_{i,k}y_{k,j}
-```
+$$
 
 where each row-wise element of $W$ (i.e., of general form $w_{i,k}$ with respect to row $i$ in matrix $A$ ) is multiplied by each column-wise element of $Y$ (i.e., of general form $y_{k,j}$ with respect to column $j$ in matrix $B$ ), and the resulting product-matrix element $z_{i,j}$ is the sum of these sub-elements' inner products.
 
@@ -1790,9 +1790,9 @@ To determine this, consider the graphical representation of the problem (as in t
 
 These subtrees comprise a smaller substring, with the combined total cost of these comprising the corresponding cost of the parent. In the case of the left subtree, the root has cost $\times m_{\ell} \times m_j$ . Furthermore, the total cost for the left subtree (i.e., the left root along with its own constituent children subtrees) is thus as follows:
 
-```math
+$$
 (m_{i-1} \times m_{\ell} \times m_j) + C(i,\ell) + C(\ell + 1,j)
-```
+$$
 
 Furthermore, we will try all possibilities of $\ell$ , in order to determine which is cost-minimizing.
 
@@ -1808,9 +1808,9 @@ Let us now more formally define the recurrence relation for $C(i,j)$ , which cor
 
 Therefore, combining gives the following expression for the recurrence relation:
 
-```math
+$$
 C(i,j) = \mathop {\min }\limits_{\ell} \big\{ C(i,\ell) + C(\ell + 1,j) + m_{i-1}m_{\ell}m_j : i \le \ell \le j-1 \big\}
-```
+$$
 
 where additional term $+ m_{i-1}m_{\ell}m_j$ is incurred due to the cost for combining the subtrees.
 
@@ -1848,7 +1848,7 @@ Now, let us detail the pseudocode of the dynamic programming algorithm for the c
 
 The corresponding pseudocode is given as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{ChainMultiply}}(m_0,m_1,\dots,m_n):}\\
@@ -1864,7 +1864,7 @@ The corresponding pseudocode is given as follows:
 \ \ \ \ {{\rm{return\ }} (C(1,n))}
 \end{array}
 }
-```
+$$
 
 Recall (cf. Section 20) that the ***input*** to the algorithm is the sizes of the respective constituent matrices, i.e., $m_0,m_1,\dots,m_n$ .
 
@@ -1874,9 +1874,9 @@ The ***recursive cases*** involve the width parameter $s$ (cf. Section 26), whic
 
 To compute entry $C(i,j)$ , we determine this minimum-cost value by varying $\ell$ over range $i \to j-1$ , keeping track of the current minimum $\rm{cur}$ accordingly during this process, with $C(i,j)$ initialized as $C(i,j) = \infty$ . For a given split point $\ell$ , the current minimum $\rm{cur}$ is defined as:
 
-```math
+$$
 m_{i-1}m_{\ell}m_j + C(i,\ell) + C(\ell + 1,j)
-```
+$$
 
 where recall (cf. Section 25) that $m_{i-1}m_{\ell}m_j$ is the cost of combining the subtrees, with the subtrees having respective costs $C(i,\ell)$ and $C(\ell + 1,j)$ .
 
@@ -2048,17 +2048,17 @@ Now, consider the ***recursive cases***, for which $i \ge 1$ . Here, we examine 
 
 First, let us consider this latter case, i.e., $= i$ edges. In this case, to define a recurrence relation $D(i,z)$ , we will consider all possibilities for the penultimate vertex $y$ on the path, and taking the optimal (i.e., shortest) result among these accordingly. This gives rise to the following definition:
 
-```math
+$$
 D(i,z) = \mathop {\min}\limits_{y:\vec{yz} \in E} \big\{ D(i-1,y) + w(y,z) \big\}
-```
+$$
 
 where $y:\vec{yz} \in E$ is a directed edge, $D(i-1,y)$ represents the length of the path $s \rightsquigarrow y$ , and $w(y,z)$ is the weight of the last edge (i.e., $y \rightarrow z$ ); thus, the sum $D(i-1,y) + w(y,z)$ represents the total path length for $s \rightsquigarrow z$ , and we minimize this accordingly (with respect to directed edges $y$ ).
 
 This yields a valid recurrence for $D(i,z)$ in the case where it is true that there are exactly/strictly $= i$ edges, however, when attempting to determine the optimal value for $\rm{dist}(z)$ , in general $\le i$ may be true, i.e.,:
 
-```math
+$$
 {\rm{dist}}(z) = \mathop {\min}\limits_i \big\{ D(i,z) \big\}
-```
+$$
 
 Therefore, to conform to this original (more general) sub-problem definition, we additionally account for $D(i-1,z)$ , which stores the length of the shortest path from $s \rightsquigarrow z$ using at most $i-1$ edges, with the net result being a choice among these two cases (i.e., exactly $=i$ vs. $\le i$ prefix edges).
 
@@ -2078,9 +2078,9 @@ In the ***base case***, $D(0,s) = 0$ and for all $z \ne s$ , $D(0,z) = \infty$ .
 
 For the ***recursive cases***, where $i \ge 1$ , $D(i,z)$ uses either at most $i$ edges (i.e., $\le i$ ) or exactly $i$ edges (i.e., $= i$ ), with the optimal being the shortest of the two. This can be stated more formally as follows:
 
-```math
+$$
 D(i,z) = \min \bigg\{ D(i-1,z) , \mathop {\min}\limits_{y:\vec{yz} \in E} \big\{ D(i-1,y) + w(y,z) \big\} \bigg\}
-```
+$$
 
 If the path requires $\le i$ edges, then the solution is simply $D(i-1,z)$ . Otherwise, if the path requires exactly $= i$ edges, then we check all possible choices for $y$ which minimize this penultimate path to $z$ . The optimal solution is then the shortest/minimum of these two.
 
@@ -2100,7 +2100,7 @@ Let us now detail the pseudocode for the dynamic programming algorithm to solve 
 
 The corresponding algorithm called the **Bellman-Ford algorithm** is given as follows:
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{Bellman-Ford}}(G,s,w):}\\
@@ -2115,7 +2115,7 @@ The corresponding algorithm called the **Bellman-Ford algorithm** is given as fo
 \ \ \ \ {{\rm{return\ }} (D(n-1,\cdot))}
 \end{array}
 }
-```
+$$
 
 ***N.B.*** The namesake of the algorithm, Richard Bellman, originally developed the dynamic programming algorithmic technique in the 1940s.
 
@@ -2269,13 +2269,13 @@ Similarly, here, the corresponding ***base case*** is $D(0,s,t)$ , corresponding
 
 Recalling (cf. Section 11) the ***base case***, we can further formalize its definition as follows:
 
-```math
+$$
 D(0,s,t) = 
 \begin{cases}
   {w(s,t)}&{{\rm{if\ }} \vec{st} \in E}\\ 
   {\infty}&{{\rm{otherwise}}} 
 \end{cases}
-```
+$$
 
 If there is a directed edge $\vec{st} \in E$ present, then $D(0,s,t)$ is exactly the length of this edge (i.e., $w(s,t)$ ). Otherwise, there is no such available path (i.e., no intermediate vertices available).
 
@@ -2299,9 +2299,9 @@ The first case is more straightforward, so we shall examine it next.
 
 If $i \notin P$ (i.e., vertex $i$ is *not* on the prefix path $P$ ), then the prefix path will only use the vertices { $1, \dots, i-1$ } as the intermediate vertices. Therefore, this gives rise to the straightforward recursive definition as follows:
 
-```math
+$$
 D(i,s,t) = D(i-1,s,t)
-```
+$$
 
 Next, let us consider the more complicated case wherein $i \in P$ .
 
@@ -2323,9 +2323,9 @@ Conceptually, this overall path resembles something along the lines of $s \right
 
 In summary:
 
-```math
+$$
 s \rightarrow \{ 1, \dots, i-1 \} \rightarrow \cdots i \rightarrow \{ 1, \dots, i-1 \} \rightarrow \cdots t
-```
+$$
 
 which comprises four distinct subsets of the overall prefix path (i.e., as delimited by respective arrows $\rightarrow$ in above), where in general { $1, \dots, i-1$ } denotes some subset of these vertices (including the empty subset).
 
@@ -2345,19 +2345,19 @@ Similarly, the path $i \rightarrow$ { $1, \dots, i-1$ } $\rightarrow \cdots \rig
 
 Therefore, the total length of this path is the sum of these two terms, i.e.,:
 
-```math
+$$
 D(i,s,t) = D(i-1,s,i) + D(i-1,i,t)
-```
+$$
 
 Now, given (cf. Section 13 for complementary case $i \notin P$ ) the full expression for the recursive relation as follows:
 
-```math
+$$
 D(i,s,t) = 
 \begin{cases}
   {D(i-1,s,t)}&{i \notin P}\\ 
-  {D(i-1,s,i) + D(i-1,i,t)}&{i \in P}\\ 
+  {D(i-1,s,i) + D(i-1,i,t)}&{i \in P}
 \end{cases}
-```
+$$
 
 we simply take the optimal (i.e., shortest) of these paths.
 
@@ -2371,9 +2371,9 @@ Having now handled both cases $i \notin P$ and $i \in P$ for the recurrence rela
 
 Since we are attempting to find the optimal (i.e., shortest) path among these, we take the minimum as follows:
 
-```math
+$$
 D(i,s,t) = \min \big\{ D(i-1,s,t), D(i-1,s,i) + D(i-1,i,t) \big\}
-```
+$$
 
 Observe that in this expression, $D(i,s,t)$ is defined in terms of $D(i-1, \cdots)$ (i.e., smaller sub-problems), with vertex $i$ varying as $i = 0 \to n$ accordingly.
 
@@ -2389,7 +2389,7 @@ Now, we can write the pseudocode for the all-pairs shortest path problem. The co
 <img src="./assets/03-DP3-025.png" width="650">
 </center>
 
-```math
+$$
 \boxed{
 \begin{array}{l}
 {{\rm{Floyd-Warshall}}(G,w):}\\
@@ -2404,7 +2404,7 @@ Now, we can write the pseudocode for the all-pairs shortest path problem. The co
 \ \ \ \ {{\rm{return\ }} (D(n,\cdot,\cdot))}
 \end{array}
 }
-```
+$$
 
 The ***inputs*** to the algorithm are directed graph $G$ and edge weights $w$ (where in general the weights can be either positive or negative).
 
@@ -2412,9 +2412,9 @@ The initial pair of $\rm{for}$ loops constitute the ***base case***, i.e., popul
 
 Next, the more general ***recursive cases*** are handled accordingly, i.e., populating $D(i,s,t)$ for all intermediate vertices $i$ (where $i$ varies across $1 \to n$ ). Furthermore, this is similarly performed across all vertex pairs $s, t$ accordingly. The corresponding recurrence relation is as defined previously (cf. Section 16), i.e.,:
 
-```math
+$$
 D(i,s,t) = \min \big\{ D(i-1,s,t), D(i-1,s,i) + D(i-1,i,t) \big\}
-```
+$$
 
 where the two cases correspond to whether or not (respectively) $i$ is present in the prefix path.
 
@@ -2452,9 +2452,9 @@ To get a better idea of how to detect negative weight cycles in the graph, consi
 
 Note that the final output of the algorithm is $D(n,s,t)$ for all vertex pairs $s,t$ . Consider vertex $a$ in this example, i.e.,:
 
-```math
+$$
 D(n,a,a) = -1
-```
+$$
 
 which is obtained by traversing the negative weight cycle with $s = a$ and $t = a$ .
 
