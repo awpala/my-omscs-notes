@@ -2470,4 +2470,14 @@ Observe that now we have two algorithms (cf. Section 7 for analogous detection v
 
 ##### 20. Comparing Algorithms
 
+<center>
+<img src="./assets/03-DP3-030.png" width="650">
+</center>
+
+Consider a revision of the previous example (cf. Section 19), as in the figure shown above, whereby the direction of the edge $d \rightarrow b$ is now inverted to $b \rightarrow d$ . Let us now compared the two algorithms in question for detecting negative weight cycles, i.e., single-source shortest path via Bellman-Ford (cf. Section 7) and all-pairs shortest paths via Floyd-Warshall (cf. Section 19).
+
+In this updated example, consider running the Bellman-Ford algorithm starting with source vertex $d$ . Observe that with this source vertex selected, no other vertex is reachable, including those comprising the present negative weight cycle (i.e., vertices $a$, $b$, and $c$ ). Because of this inability to reach the negative weight cycle, the algorithm ***fails*** to detect it. Therefore, the Bellman-Ford algorithm ***only*** detects negative weight cycles which are ***reachable*** from source vertex $s$ .
+
+Conversely, the Floyd-Warshall algorithm is capable of generally detecting negative weight cycles in the input graph (i.e., those vertices present as negative values on its main diagonal in the output matrix), due to its more systematic examination of ***all*** vertex pairs in the input graph.
+
 ## 21. Addendum: Practice Problems
