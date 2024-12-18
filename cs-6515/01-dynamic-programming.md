@@ -2422,6 +2422,16 @@ Finally, the algorithm ***returns*** the value $D(n,\cdot,\cdot)$ , which is a t
 
 #### 18. Running Time Quiz and Answers
 
+<center>
+<img src="./assets/03-DP3-027A.png" width="650">
+</center>
+
+The running time for the Floyd-Warshall algorithm (cf. Section 17) is fairly straightforward to analyze.
+
+The first set of $\rm{for}$ loops perform an operation of running time $O(1)$ (i.e., initializing the base case) via $n^2$ such iterations, i.e., a corresponding running time of $O(n^2)$ .
+
+The next set of $\rm{for}$ loops (i.e., recursive cases) similarly perform an operation of running time $O(1)$ via $n^3$ such iterations, i.e., a corresponding running time of $O(n^3)$ . Furthermore, this set of operations is dominating, thereby constituting the overall running time of the algorithm accordingly.
+
 #### 19. Negative Weight Cycles
 
 ## 20. Comparing Algorithms
