@@ -2187,6 +2187,24 @@ Furthermore, the table can be used to explicitly identify this negative weight c
 
 ### 8. Introduction
 
+Let us now consider another variant of the shortest-path problem, which will give rise to a slightly different style of dynamic programming algorithm solution in the process of its examination.
+
+<center>
+<img src="./assets/03-DP3-011.png" width="650">
+</center>
+
+Recall (cf. Section 6) that in the Bellman-Ford algorithm, a *single* source vertex $s$ was examined for its path length to the other constituent vertices in the input graph. Now, we consider *all* pairs of such shortest paths (i.e., among the constituent vertices in the input graph).
+
+In this latter problem, we define it formally as follows:
+
+> Given direct graph $\vec G = (V,E)$ with edge weights $w(e)$ (where in general the edge weights can be either positive or negative), for all vertex pairs $y,z \in V$ , let ${\rm{dist}}(y,z)$ = length of the shortest path $y \rightsquigarrow z$
+
+***N.B.*** Previously (cf. Section 1), we only considered the path $s \rightsquigarrow z$ for the single-source vertex $s$ . Conversely, here in this all-pairs consideration, this will give rise to a corresponding $n \times n$ matrix/table accordingly.
+
+The ***goal*** is to find ${\rm{dist}}(y,z)$ for all vertex pairs $y,z \in V$ .
+
+The ***naive*** approach for solving the all-pairs version of the problem is to simply use the same Bellman-Ford algorithm from before (cf. Section 6) , performed $n$ times with respect to each vertex as the corresponding "source" vertex $s$ .
+
 ### 9. Naive Approach Quiz and Answers
 
 ### 10. Sub-Problem
