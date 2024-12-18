@@ -1768,7 +1768,7 @@ To further examine the suffix, let us expand the tree by another level (as in th
 
 The revised sub-problem definition involves two parameters, $i$ and $j$ (intermediate positions within substring $1, \dots, n$ ). The corresponding sub-problem definition is as follows:
 
-> For $i$ and $j$ where $1 \le i \le j \le n$ , let $C(i,j)$ = minimum cost for computing product matrix $A_i \times A_{i+1} \times \cdots A_j$
+> For $i$ and $j$ where $1 \le i \le j \le n$ , let $C(i,j)$ = minimum cost for computing product matrix $A_i \times A_{i+1} \times \cdots \times A_j$
 
 Now, let us attempt to define a recurrence relation for this sub-problem definition. The most straightforward case to compute is the ***base case*** when $i = j$ , which has corresponding cost $C(i,i) = 0$ . Furthermore, consider this base case more conceptually (as in the figure shown above): This corresponds to the main diagonal in the resulting product matrix.
 
