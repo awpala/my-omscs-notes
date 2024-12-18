@@ -2222,6 +2222,29 @@ Next, we will describe another algorithm called the **Floyd-Warshall** algorithm
 
 ### 10. Sub-Problem
 
+Let us now consider the basic idea for the dynamic programming algorithm for the all-pairs shortest paths problem.
+
+<center>
+<img src="./assets/03-DP3-014.png" width="650">
+</center>
+
+First, let us reconsider (cf. Section 6) the Bellman-Ford algorithm, which determined the single-source shortest path for some source vertex $s$ . In that case, the dynamic programming approach involved conditioning on the number of edges in the length of the path. However, is there something else that we can condition on as well?
+
+In the dynamic programming approach, we generally attempt to define a *prefix* of the input. Here, the prefix is the graph, and more specifically, the vertices of the input graph. We can formalize this notion of the graph's vertices as a prefix by letting $V =$ { $1,2,\dots,n$ }, where the vertices in $V$ are numbered and ordered (this allows to readily index the vertices accordingly). Now, we can examine a prefix of these vertices accordingly, i.e., solving the same all-pairs shortest paths sub-problem on a prefix of these vertices. Therefore, we can now condition on these intermediate vertices, using the corresponding prefix of $V$ accordingly.
+
+Let us now formalize this discussion with a sub-problem definition:
+
+> For $0 \le i \le n$ and $i \le s, t \le n$ , let $D(i,s,t)$ = length of the shortest path $s \rightsquigarrow t$ using a subset of { $1, \dots, i$ } as intermediate vertices
+
+where the three parameters are defined as follows:
+  * $i$ is the prefix of the vertex set $V$ which are allowable as intermediates on the prefix path of consideration
+  * $s$ is the start vertex
+  * $t$ is the end vertex
+
+Here, we have a three-dimensional table $D(i,s,t)$ , whose elements contains the lengths of the shortest path between vertices $s$ and $t$ .
+
+Next, we will define the recurrence relation for this sub-problem definition.
+
 ### 11-16. Recurrence
 
 #### 11. Base Case Quiz and Answers
