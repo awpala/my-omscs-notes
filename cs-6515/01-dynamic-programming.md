@@ -2249,15 +2249,29 @@ Next, we will define the recurrence relation for this sub-problem definition.
 
 #### 11. Base Case Quiz and Answers
 
+Let us now define the recurrence relation for the sub-problem defined previously (cf. Section 10) for the all-pairs shortest paths problem, starting with the base case.
+
+<center>
+<img src="./assets/03-DP3-016A.png" width="650">
+</center>
+
+For intuition for the base case, recall (cf. Section 4) the corresponding analog for the single-source shortest path problem via the Bellman-Ford algorithm.
+
+Similarly, here, the corresponding ***base case*** is $D(0,s,t)$ , corresponding to the empty set of intermediate vertices , i.e., directly from $s$ to $t$ without any intermediate vertices in between.
+
 #### 12-15. Recursive Cases
 
 ##### 12. Introduction
 
 ##### 13. Case: $i$ Not on Path Quiz and Answers
 
-##### 14-15. Case: $i$ Is on Path Quiz and Answers
+##### 14-15. Case: $i$ Is on Path
 
-#### 16. Summary
+###### 14. Introduction
+
+###### 15. Quiz and Answers
+
+##### 16. Summary
 
 ### 17-18. Dynamic Programming Algorithm
 
