@@ -14,6 +14,9 @@ Another useful application of randomized algorithms we will examine is **hashing
 
 ## Lecture Overview
 
+> [!NOTE]
+> ***Instructor's Note***: This topic is covered in [DPV] Chapter 1 (Algorithms with numbers), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-1/).
+
 <center>
 <img src="./assets/04-RA1-000-02.png" width="650">
 </center>
@@ -46,41 +49,76 @@ In cryptography, we typically work with $n$-bit numbers (e.g., $x$ , $y$ , and $
 
 Therefore, let us now review exactly how "expensive" such corresponding arithmetic operations are when dealing with these large-bit numbers.
 
-## 4-6. Modular Arithmetic
+## 4-6. Modular Arithmetic Overview
 
 ### 4. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2 (Modular arithmetic).
+
+Now, let us review **modular arithmetic**, the basic mathematics underlying the RSA algorithm.
+
+<center>
+<img src="./assets/04-RA1-002.png" width="650">
+</center>
+
+Consider the simple example $x \mod 2$ , where $x$ is an integer. $x \mod 2$ is the ***least-significant bit*** of $x$ , which in turn indicates whether $x$ is odd or even, i.e.,:
+
+$$
+x \mod 2 = 
+\begin{cases}
+  {1}&{{\text{if\ }} x {\text{\ is\ odd}}}\\ 
+  {0}&{{\text{if\ }} x {\text{\ is\ even}}}
+\end{cases}
+$$
+
+Another way to look at this is to divide $x$ by $2$ , and examining the resulting remainder (i.e., if divisible by $2$ then the remainder is $0$ , otherwise the remainder is $1$ ).
+
+Now, consider an arbitrary integer $N$ where $N \ge 1$ . The corresponding definition is:
+
+> $x \mod N$ = remainder when $x$ is divided by $N$
+
+Let us also consider some important ***notation*** for modular arithmetic. Suppose we have two numbers $x$ and $y$ , with both having the same/common $\mod N$ . These two numbers are *not* necessarily *equal*, however, they are ***congruent/equivalent***. We therefore denote this relationship as follows:
+
+$$
+x \equiv y \mod N
+$$
+
+where notation $\equiv$ is read as "is congruent to."
+
+This means that $\frac{x}{N}$ and $\frac{y}{N}$ have the *same* remainder.
 
 ### 5. Example: $\mod 3$
 
 ### 6. Basic Fact Quiz and Answers
 
-### 7-9. Modular Exponentiation
+## 7-9. Modular Exponentiation
 
-#### 7. Naive Quiz and Answers
+### 7. Naive Quiz and Answers
 
-#### 8. Fast Quiz and Answers
+### 8. Fast Quiz and Answers
 
-#### 9. Algorithm
+### 9. Algorithm
 
-### 10-15. Multiplicative Inverse
+## 10-15. Multiplicative Inverse
 
-#### 10. Introduction
+### 10. Introduction
 
-#### 11. Example
+### 11. Example
 
-#### 12. Existence
+### 12. Existence
 
-#### 13. Terminology
+### 13. Terminology
 
-#### 14. Unique
+### 14. Unique
 
-#### 15. Non-Existence
+### 15. Non-Existence
 
-### 16-19. Greatest Common Divisor (GCD)
+## 16-19. Greatest Common Divisor (GCD)
 
-#### 16. Euclid's Rule
+### 16. Euclid's Rule
 
-#### 17-19. Euclid's Algorithm
+### 17-19. Euclid's Algorithm
 
 #### 17. Pseudocode
 
@@ -88,10 +126,10 @@ Therefore, let us now review exactly how "expensive" such corresponding arithmet
 
 #### 19. Running Time
 
-### 20-21. Computing Inverses
+## 20-21. Computing Inverses
 
-#### 20. Introduction
+### 20. Introduction
 
-#### 21. Extended Euclid Algorithm Quiz and Answers
+### 21. Extended Euclid Algorithm Quiz and Answers
 
-### 22. Recap
+## 22. Recap
