@@ -2462,7 +2462,7 @@ By similar reasoning, $D(n,b,b) = D(n,c,c) = -1$ as well.
 
 More generally, any such diagonal entry in the two-dimensional array/matrix $D(n,\cdot,\cdot)$ having a negative value indicates the presence of a negative weight cycle, i.e.,:
 
-> Check if $D(n,y,y) < 0 for some vertex $y \in V$
+> Check if $D(n,y,y)$ < 0 for some vertex $y \in V$
 
 where in general $D(n,y,y)$ is such a diagonal entry.
 
