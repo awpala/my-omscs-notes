@@ -2207,6 +2207,19 @@ The ***naive*** approach for solving the all-pairs version of the problem is to 
 
 ### 9. Naive Approach Quiz and Answers
 
+<center>
+<img src="./assets/03-DP3-013A.png" width="650">
+</center>
+
+Using the naive approach (cf. Section 8) of running the Bellman-Ford algorithm $n$ times to determine the all-pairs shortest paths, what is the overall running time for this approach?
+
+Recall (cf. Section 6) that the Bellman-Ford algorithm has an overall running time of $O(nm)$ . Therefore, running this algorithm $n$ times yields a corresponding overall running time of $O(n^2m)$ accordingly.
+
+Next, we will describe another algorithm called the **Floyd-Warshall** algorithm, having a comparatively better running time of $O(n^3)$ .
+  * ***N.B.*** The reason for this "improvement" is that $m$ (the number of edges in the graph) can be up to $n^2$ , and if the graph is connected then there will be at least $n - 1$ edges (i.e., $n-1 \le m \le n^2$ per these constraints), giving a corresponding equivalent range of $O(n^3)$ to $O(n^4)$ via the naive approach using the Bellman-Ford algorithm.
+
+***N.B.*** In general, the specific names of the algorithms are not of particular concern, but rather the objective is to understand their respective approaches and to be able to reason about their running time from this basic high-level intuition.
+
 ### 10. Sub-Problem
 
 ### 11-16. Recurrence
