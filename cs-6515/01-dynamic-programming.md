@@ -2481,3 +2481,19 @@ In this updated example, consider running the Bellman-Ford algorithm starting wi
 Conversely, the Floyd-Warshall algorithm is capable of generally detecting negative weight cycles in the input graph (i.e., those vertices present as negative values on its main diagonal in the output matrix), due to its more systematic examination of ***all*** vertex pairs in the input graph.
 
 ## 21. Addendum: Practice Problems
+
+<center>
+<img src="./assets/03-DP3-031.png" width="650">
+</center>
+
+At the conclusion of the lesson on shortest paths, the professor recommends practice problem 4.21 from Chapter 4 in the course companion textbook *Algorithms* by Dasgupta et al.
+
+This problem deals with currency exchange, and the corresponding arbitrage problem. Starting with some currency (e.g., $1 USD), this is exchanged for another currency (e.g., yen), which is then exchanged for yet another currency (e.g., GB pounds), and then finally exchanged back to the original currency (i.e., USD). After this cycle concludes, we are looking to encounter a situation whereby the original value is *increased* on final conversion (in finance, such an anomaly is called an *arbitrage*).
+
+Although this problem is in the context of graphs (Chapter 4), in the present context, we can reduce this problem to the negative weight cycle detection problem. Recall (cf. Section 20) that we have two such algorithms readily available: single-pair shortest path via Bellman-Ford and all-pairs shortest paths via Floyd-Warshall.
+  * ***N.B.*** Rather than modifying these algorithms, we can use them here as "black boxes," i.e., subroutines, library code, or equivalent.
+
+Given a directed graph $\vec G$ as input, we obtain the negative weight cycle(s) in the graph (if present). With such a "black box" readily available, we further wish to construct an algorithm for this currency exchange problem, i.e., an algorithm to detect arbitrage. As input, this algorithm takes exchange rates $r()$ , which are converted into a graph via function $f$ (which reduces the currency exchange problem into a graph problem with negative weight cycle detection). The corresponding output from the "black box" is taken as the output of this algorithm. Therefore, the ***goal*** is to define $r()$ and $f$ accordingly for this algorithm.
+
+More generally, this process is called **reduction** (e.g., reducing the arbitrage problem to a graph problem).
+  * ***N.B.*** Such reductions will be an underlying theme in this course, where we first design efficient algorithms, and then later use them for solving other problems. Additionally, we will use such reductions to prove the property of "problem hardness" in the context of NP-completeness.
