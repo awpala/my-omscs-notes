@@ -46,7 +46,7 @@ $$
 \boxed{
 \begin{array}{l}
 {F_{0} = 0,\ F_{1} = 1}\\
-{{\rm{for\ }}n > 1:}\\
+{{\text{for\ }}n > 1:}\\
 \ \ \ \ {F_{n} = F_{n-1} + F_{n-2}}
 \end{array}
 }
@@ -73,20 +73,20 @@ Let us now examine the natural recursive algorithm for computing the $n$<sup>th<
 Recall (cf. Section 2) that the recursive formula for the $n$<sup>th</sup> Fibonacci number is the sum of the previous two Fibonacci numbers, i.e.,:
 
 $$
-{\rm{for\ }}n > 1:\ F_n = F_{n-1} + F_{n-2}
+{\text{for\ }}n > 1:\ F_n = F_{n-1} + F_{n-2}
 $$
 
-The recursive algorithm (${\rm{Fib1}}(n)$ ) can be specified in more detail as follows:
+The recursive algorithm (${\text{Fib1}}(n)$ ) can be specified in more detail as follows:
 
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{Fib1}}(n):}\\
-\ \ \ \ {{\rm{input:\ integer\ }} n \ge 0}\\
-\ \ \ \ {{\rm{output:\ }}{F_{n}}}\\
-\ \ \ \ {{\rm{if\ }}n = 0,\ {\rm{return\ }} (0)}\\
-\ \ \ \ {{\rm{if\ }}n = 1,\ {\rm{return\ }} (1)}\\
-\ \ \ \ {{\rm{return\ }} ({\rm{Fib1}}(n-1) + {\rm{Fib1}}(n-2))}
+{{\text{Fib1}}(n):}\\
+\ \ \ \ {{\text{input:\ integer\ }} n \ge 0}\\
+\ \ \ \ {{\text{output:\ }}{F_{n}}}\\
+\ \ \ \ {{\text{if\ }}n = 0,\ {\text{return\ }} (0)}\\
+\ \ \ \ {{\text{if\ }}n = 1,\ {\text{return\ }} (1)}\\
+\ \ \ \ {{\text{return\ }} ({\text{Fib1}}(n-1) + {\text{Fib1}}(n-2))}
 \end{array}
 }
 $$
@@ -105,7 +105,7 @@ Let us now consider the ***running time*** of this recursive algorithm.
 <img src="./assets/01-DP1-003.png" width="650">
 </center>
 
-To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., ${\rm{Fib1}}(n)$ ), given an input size of $n$ .
+To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., ${\text{Fib1}}(n)$ ), given an input size of $n$ .
 
 The two base cases each require $O(1)$ time.
 
@@ -129,16 +129,16 @@ $$
 Unfortunately, the Fibonacci numbers grow exponentially in $n$ , i.e.,:
 
 $$
-T(n) \ge F_{n} \approx {\phi^{n}  \over {\sqrt 5 }}
+T(n) \ge F_{n} \approx \frac{\phi^{n}}{\sqrt{5}}
 $$
 
 where the constant $\phi$ is called the **golden ratio**, defined as:
 
 $$
-\phi = {{1 + \sqrt{5}} \over {2}} \approx 1.618
+\phi = \frac{1 + \sqrt{5}}{2} \approx 1.618
 $$
 
-Therefore, since the running time grows ***exponentially*** in $n$ for this recursive algorithm ${\rm{Fib1}}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
+Therefore, since the running time grows ***exponentially*** in $n$ for this recursive algorithm ${\text{Fib1}}(n)$ , it is a *terrible* algorithm with respect to performance. Let us examine *why* the running time is so terrible next (which in turn will inform the design of a more efficient algorithm to rectify this).
 
 ### 4. Exponential Running Time
 
@@ -150,7 +150,7 @@ Let us now consider the ***recursive*** nature of this recursive algorithm.
 
 At the top level of the recursion, the $n$<sup>th</sup> Fibonacci number is computed. From there, recursive sub-calls are made to compute the $n-1$ and $n-2$ Fibonacci numbers. The recursive calls similarly proceed in this manner.
 
-Observe that several of the sub-calls are computed *multiple* times (e.g., ${\rm{Fib1}}(n-4)$ , as circled in the figure shown above). In fact, these "redundant sub-computations" increase exponentially with $n$ ; indeed, this is the root cause of the inefficiency in this recursive algorithm (i.e., repeated computation of the smaller sub-problems).
+Observe that several of the sub-calls are computed *multiple* times (e.g., ${\text{Fib1}}(n-4)$ , as circled in the figure shown above). In fact, these "redundant sub-computations" increase exponentially with $n$ ; indeed, this is the root cause of the inefficiency in this recursive algorithm (i.e., repeated computation of the smaller sub-problems).
 
 <center>
 <img src="./assets/01-DP1-005.png" width="650">
@@ -188,12 +188,12 @@ The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</su
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{Fib2}}(n):}\\
+{{\text{Fib2}}(n):}\\
 \ \ \ \ {F[0]=0}\\
 \ \ \ \ {F[1]=1}\\
-\ \ \ \ {{\rm{for\ }} i=2 \to n:}\\
+\ \ \ \ {{\text{for\ }} i=2 \to n:}\\
 \ \ \ \ \ \ \ \ {F[i] = F[i-1] + F[i-2]}\\
-\ \ \ \ {{\rm{return\ }} (F[n])}
+\ \ \ \ {{\text{return\ }} (F[n])}
 \end{array}
 }
 $$
@@ -202,16 +202,16 @@ Recall (cf. Section 4) that the array $F$ stores the Fibonacci numbers.
 
 At the first two indices (i.e., $0$ and $1$ ), the two **base cases** are stored (i.e., $0$ and $1$ , respectively).
 
-From there, the **subsequent iterations** are handled via corresponding $\rm{for}$ loop, which is the sum of the previous two array elements (which in turn are already stored in the array, and readily available, rather than requiring recomputation at this point).
+From there, the **subsequent iterations** are handled via corresponding $\text{for}$ loop, which is the sum of the previous two array elements (which in turn are already stored in the array, and readily available, rather than requiring recomputation at this point).
 
 Finally, the $n$<sup>th</sup> Fibonacci number is simply returned as the value $F[n]$ , the last index in the array.
 
 This completes the definition of the algorithm. Observe that there is ***no*** recursion present in this algorithm.
-  * ***N.B.*** A *recursive formula* is used to define $F[i]$ , however, there is *no* corresponding recursive call (i.e., to ${\rm{Fib2}}(i)$ itself) here.
+  * ***N.B.*** A *recursive formula* is used to define $F[i]$ , however, there is *no* corresponding recursive call (i.e., to ${\text{Fib2}}(i)$ itself) here.
 
 #### Analysis
 
-Let us now analyze the running time of this algorithm, ${\rm{Fib2}}(n)$ .
+Let us now analyze the running time of this algorithm, ${\text{Fib2}}(n)$ .
 
 <center>
 <img src="./assets/01-DP1-007.png" width="650">
@@ -219,7 +219,7 @@ Let us now analyze the running time of this algorithm, ${\rm{Fib2}}(n)$ .
 
 As before (cf. Section 3), the base cases have a running time of $O(1)$ apiece.
 
-With respect to the subsequent iterations, there is a $\rm{for}$ loop of size $O(n)$ , which in turn iterates on $O(1)$ steps. Correspondingly, the total running time for the $\rm{for}$ loop is $O(n)$ .
+With respect to the subsequent iterations, there is a $\text{for}$ loop of size $O(n)$ , which in turn iterates on $O(1)$ steps. Correspondingly, the total running time for the $\text{for}$ loop is $O(n)$ .
 
 Therefore, the total running time for this algorithm is $O(n)$ total time. This completes the algorithm, and gives a glimpse of a dynamic programming algorithm.
 
@@ -501,15 +501,15 @@ The pseudocode for the dynamic programming algorithm for the longest-increasing 
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{LIS}}(a_1,\ldots,a_n):}\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n:}\\
+{{\text{LIS}}(a_1,\ldots,a_n):}\\
+\ \ \ \ {{\text{for\ }} i=1 \to n:}\\
 \ \ \ \ \ \ \ \ {L(i) = 1}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} j=1 \to i-1:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} a_j < a_i {\rm{\ and\ }} L(i) < 1 + L(j) {\rm{\ then\ }} L(i) = 1 + L(j)}\\
+\ \ \ \ \ \ \ \ {{\text{for\ }} j=1 \to i-1:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} a_j < a_i {\text{\ and\ }} L(i) < 1 + L(j) {\text{\ then\ }} L(i) = 1 + L(j)}\\
 \ \ \ \ {\max = 1}\\
-\ \ \ \ {{\rm{for\ }} i=2 \to n:}\\
-\ \ \ \ \ \ \ \ {{\rm{if\ }} L(i) > L(\max) {\rm{\ then\ }} \max = i}\\
-\ \ \ \ {{\rm{return\ }} (L(\max))}
+\ \ \ \ {{\text{for\ }} i=2 \to n:}\\
+\ \ \ \ \ \ \ \ {{\text{if\ }} L(i) > L(\max) {\text{\ then\ }} \max = i}\\
+\ \ \ \ {{\text{return\ }} (L(\max))}
 \end{array}
 }
 $$
@@ -519,9 +519,9 @@ $$
 L(i) = 1 + \mathop {\max }\limits_j \big\{ {L(j):{a_j} < {a_i}{\text{ and }}j < i} \big\}
 $$
 
-The solution is expressed as a one-dimensional array, $L$ , which is filled in a "bottom-up" approach (i.e., starting from index $i = 1$ , and then proceeding up through index $i = n$ , as expressed by the outer $\rm{for}$ loop).
+The solution is expressed as a one-dimensional array, $L$ , which is filled in a "bottom-up" approach (i.e., starting from index $i = 1$ , and then proceeding up through index $i = n$ , as expressed by the outer $\text{for}$ loop).
 
-Since the sub-problem *includes* $a_i$ in the sub-problem, $L(i)$ is initialized to $L(i) = 1$ . The nested $\rm{for}$ loop then iterates over $j$ (ranging from $1$ to $i - j$ ), with corresponding check that strictly $a_j < a_i$ . If the solution obtained by appending $a_i$ onto the end of the solution ending at $a_j$ must be strictly longer than the current solution (i.e., $L(i) < 1 + L(j)$ ). If both of these conditions are satisfied, then $L(i)$ is updated to $L(i) = 1 + L(j)$ accordingly (i.e., the current best solution, obtained by appending $a_i$ to the end of $a_j$ ). This defines the table $L$ .
+Since the sub-problem *includes* $a_i$ in the sub-problem, $L(i)$ is initialized to $L(i) = 1$ . The nested $\text{for}$ loop then iterates over $j$ (ranging from $1$ to $i - j$ ), with corresponding check that strictly $a_j < a_i$ . If the solution obtained by appending $a_i$ onto the end of the solution ending at $a_j$ must be strictly longer than the current solution (i.e., $L(i) < 1 + L(j)$ ). If both of these conditions are satisfied, then $L(i)$ is updated to $L(i) = 1 + L(j)$ accordingly (i.e., the current best solution, obtained by appending $a_i$ to the end of $a_j$ ). This defines the table $L$ .
 
 Now, in order to obtain the actual solution (i.e., $L(\max)$ , the longest-increasing subsequence), we must obtain the corresponding output from the table (cf. the last element of the table generated for Fibonacci numbers, as per Section 5). In this case, the solution is the longest-increasing subsequence ending at some arbitrary position $i$ (in the range of $1, \ldots, n$ ). This is obtained straightforwardly by iterating over the entire array $L$ to determine $i$ such that $L(i) > L(\max)$ , and updating value $\max$ (initialized to value $1$ ) accordingly. This corresponding value is then consequently returned as $L(\max)$ accordingly, thereby completing the formulation of the dynamic programming algorithm.
 
@@ -533,11 +533,11 @@ Now, let us consider the running time of this algorithm.
 <img src="./assets/01-DP1-020A.png" width="650">
 </center>
 
-The outer $\rm{for}$ loop varies over $n$ elements with corresponding running time of $O(n)$ . Furthermore, the nested $\rm{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\rm{if\ }\ldots$ statement takes and order of $O(1)$ running time. Therefore, the overall running time of the nested $\rm{for}$ loops is $O(n^2)$ .
+The outer $\text{for}$ loop varies over $n$ elements with corresponding running time of $O(n)$ . Furthermore, the nested $\text{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\text{if\ }\ldots$ statement takes and order of $O(1)$ running time. Therefore, the overall running time of the nested $\text{for}$ loops is $O(n^2)$ .
 
-Furthermore, the subsequent $\rm{for}$ loop for determining $L(\max)$ has a running time of $O(n)$ .
+Furthermore, the subsequent $\text{for}$ loop for determining $L(\max)$ has a running time of $O(n)$ .
 
-Therefore, the overall running time is $O(n^2)$ , as dominated/determined by the first set of nested $\rm{for}$ loops.
+Therefore, the overall running time is $O(n^2)$ , as dominated/determined by the first set of nested $\text{for}$ loops.
 
 ### 14. Recap
 
@@ -932,8 +932,8 @@ For the case of two non-empty input strings (i.e., $i \ge 1$ and $j \ge 1$ ), re
 $$
 L(i,j) = 
 \begin{cases}
-  {\max \big\{ {L(i - 1,j),L(i,j - 1)} \big\}}&{{\rm{if\ }}{x_i} \ne {y_j}}\\ 
-  {1 + L(i - 1,j - 1)}&{{\rm{if\ }}{x_i} = {y_j}} 
+  {\max \big\{ {L(i - 1,j),L(i,j - 1)} \big\}}&{{\text{if\ }}{x_i} \ne {y_j}}\\ 
+  {1 + L(i - 1,j - 1)}&{{\text{if\ }}{x_i} = {y_j}} 
 \end{cases}
 $$
 
@@ -971,14 +971,14 @@ The pseudocode for the dynamic programming algorithm for the longest-common subs
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{LCS}}(X,Y):}\\
-\ \ \ \ {{\rm{for\ }} i=0 \to n},\ L(i,0)=0\\
-\ \ \ \ {{\rm{for\ }} j=0 \to n},\ L(0,j)=0\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} j=1 \to n}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} x_i = y_j {\rm{\ then\ }} L(i,j) = 1 + L(i-1,j-1)}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} L(i,j) = \max \big\{ L(i,j-1), L(i-1, j) \big\}}\\
-\ \ \ \ {{\rm{return\ }} (L(n,n))}
+{{\text{LCS}}(X,Y):}\\
+\ \ \ \ {{\text{for\ }} i=0 \to n},\ L(i,0)=0\\
+\ \ \ \ {{\text{for\ }} j=0 \to n},\ L(0,j)=0\\
+\ \ \ \ {{\text{for\ }} i=1 \to n}\\
+\ \ \ \ \ \ \ \ {{\text{for\ }} j=1 \to n}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} x_i = y_j {\text{\ then\ }} L(i,j) = 1 + L(i-1,j-1)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{else\ }} L(i,j) = \max \big\{ L(i,j-1), L(i-1, j) \big\}}\\
+\ \ \ \ {{\text{return\ }} (L(n,n))}
 \end{array}
 }
 $$
@@ -1001,9 +1001,9 @@ Finally, the optimal length is returned in the entry $L(n,n)$ , the bottom-right
 
 Consider the running time for the dynamic programming algorithm for the least-common subsequence (LCS) problem.
 
-Each initializing $\rm{for\ } \dots$ loop has a running time of $O(n)$ .
+Each initializing $\text{for\ } \dots$ loop has a running time of $O(n)$ .
 
-In the subsequently nested $\rm{for\ } \dots$ loops, each have a running time of $O(n)$ and perform an inner operation (i.e., update of $L(i,j)$ ) having a running time of $O(1)$ . Due to the nesting, this yields an overall running time of $O(n^2)$ for the nested $\rm{for\ } \dots$ loops. Furthermore, this running time dominates the algorithm, therefore comprising its overall total running time accordingly.
+In the subsequently nested $\text{for\ } \dots$ loops, each have a running time of $O(n)$ and perform an inner operation (i.e., update of $L(i,j)$ ) having a running time of $O(1)$ . Due to the nesting, this yields an overall running time of $O(n^2)$ for the nested $\text{for\ } \dots$ loops. Furthermore, this running time dominates the algorithm, therefore comprising its overall total running time accordingly.
 
 This concludes analysis of the longest-common subsequence (LCS) algorithm. This particular algorithm was interesting, due to its requirement of a two-dimensional table $L(i, j)$ , in order to accommodate the fact that in general the prefix strings at any given intermediate result may be of unequal length and/or having unequal last characters.
 
@@ -1385,14 +1385,14 @@ Now, consider the pseudocode for implementing the dynamic programming algorithm 
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{KnapsackNoRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
-\ \ \ \ {{\rm{for\ }} b=0 \to B:\ K(0,b)=0}\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n:\ K(i,0)=0}\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n:}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} b=1 \to B:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ then\ }} K(i,b) = \max \big\{ v_i + K(i-1,b-w_i), K(i-1, b) \big\}}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} K(i,b) = K(i-1,b)}\\
-\ \ \ \ {{\rm{return\ }} (K(n,B))}
+{{\text{KnapsackNoRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
+\ \ \ \ {{\text{for\ }} b=0 \to B:\ K(0,b)=0}\\
+\ \ \ \ {{\text{for\ }} i=1 \to n:\ K(i,0)=0}\\
+\ \ \ \ {{\text{for\ }} i=1 \to n:}\\
+\ \ \ \ \ \ \ \ {{\text{for\ }} b=1 \to B:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} w_i \le b {\text{\ then\ }} K(i,b) = \max \big\{ v_i + K(i-1,b-w_i), K(i-1, b) \big\}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{else\ }} K(i,b) = K(i-1,b)}\\
+\ \ \ \ {{\text{return\ }} (K(n,B))}
 \end{array}
 }
 $$
@@ -1411,7 +1411,7 @@ The ***running time*** of the algorithm can be determined readily/straightforwar
 
 The row-initializing and column-initializing loops have a running time of $O(B)$ and $O(n)$ (respectively).
 
-The nested $\rm{for}$ loops comprise an overall running time of $O(B) \times O(n) = O(nB)$ , with each operation itself (i.e., populating value $K(i,b)$ ) taking $O(1)$ . Furthermore, $O(nB)$ is the dominating operation of the algorithm, thereby constituting its overall running time accordingly.
+The nested $\text{for}$ loops comprise an overall running time of $O(B) \times O(n) = O(nB)$ , with each operation itself (i.e., populating value $K(i,b)$ ) taking $O(1)$ . Furthermore, $O(nB)$ is the dominating operation of the algorithm, thereby constituting its overall running time accordingly.
 
 ##### 9. Polynomial Time Quiz and Answers
 
@@ -1538,12 +1538,12 @@ Now, consider the pseudocode for the updated algorithm (cf. Section 13).
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
-\ \ \ \ {{\rm{for\ }} b=0 \to B}\\
+{{\text{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
+\ \ \ \ {{\text{for\ }} b=0 \to B}\\
 \ \ \ \ \ \ \ \ {K(b)=0}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} i=1 \to n}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ and\ }} K(b) < v_i + K(b-w_i) {\rm{\ then\ }} K(b) = v_i + K(b-w_i)}\\
-\ \ \ \ {{\rm{return\ }} (K(B))}
+\ \ \ \ \ \ \ \ {{\text{for\ }} i=1 \to n}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} w_i \le b {\text{\ and\ }} K(b) < v_i + K(b-w_i) {\text{\ then\ }} K(b) = v_i + K(b-w_i)}\\
+\ \ \ \ {{\text{return\ }} (K(B))}
 \end{array}
 }
 $$
@@ -1564,7 +1564,7 @@ Now, consider the running time for the algorithm (cf. Section 14).
 <img src="./assets/02-DP2-021.png" width="650">
 </center>
 
-The outer $\rm{for}$ loop has a running time of $O(B)$ . Furthermore, the nested $\rm{for}$ loop has a running time of $O(n)$ , with each operation (i.e., populating table value $K(b)$ ) requiring a running time of $O(1)$ . Therefore, the overall running time is $O(nB)$ , similarly to previously (cf. Section 11), however, it requires less space/memory and also constitutes a comparatively simpler solution (i.e., a one-dimensional table rather than a two-dimensional table).
+The outer $\text{for}$ loop has a running time of $O(B)$ . Furthermore, the nested $\text{for}$ loop has a running time of $O(n)$ , with each operation (i.e., populating table value $K(b)$ ) requiring a running time of $O(1)$ . Therefore, the overall running time is $O(nB)$ , similarly to previously (cf. Section 11), however, it requires less space/memory and also constitutes a comparatively simpler solution (i.e., a one-dimensional table rather than a two-dimensional table).
 
 ##### 16. Traceback
 
@@ -1580,13 +1580,13 @@ To output the actual multiset of the constituent objects corresponding to the so
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
-\ \ \ \ {{\rm{for\ }} b=0 \to B}\\
+{{\text{KnapsackRepeat}}(w_1,\dots,w_n,v_1,\dots,v_n,B):}\\
+\ \ \ \ {{\text{for\ }} b=0 \to B}\\
 \ \ \ \ \ \ \ \ {K(b)=0}\\
 \ \ \ \ \ \ \ \ {S(b)=\emptyset}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} i=1 \to n}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} w_i \le b {\rm{\ and\ }} K(b) < v_i + K(b-w_i) {\rm{\ then\ }} K(b) = v_i + K(b-w_i) {\rm{\ and\ }} S(b) = i}\\
-\ \ \ \ {{\rm{return\ }} (K(B))}
+\ \ \ \ \ \ \ \ {{\text{for\ }} i=1 \to n}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} w_i \le b {\text{\ and\ }} K(b) < v_i + K(b-w_i) {\text{\ then\ }} K(b) = v_i + K(b-w_i) {\text{\ and\ }} S(b) = i}\\
+\ \ \ \ {{\text{return\ }} (K(B))}
 \end{array}
 }
 $$
@@ -1851,17 +1851,17 @@ The corresponding pseudocode is given as follows:
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{ChainMultiply}}(m_0,m_1,\dots,m_n):}\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n:}\\
+{{\text{ChainMultiply}}(m_0,m_1,\dots,m_n):}\\
+\ \ \ \ {{\text{for\ }} i=1 \to n:}\\
 \ \ \ \ \ \ \ \ {C(i,i) = 0}\\
-\ \ \ \ {{\rm{for\ }} s=1 \to n-1:}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} i=1 \to n-s:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{let\ }} j = i + s}\\
+\ \ \ \ {{\text{for\ }} s=1 \to n-1:}\\
+\ \ \ \ \ \ \ \ {{\text{for\ }} i=1 \to n-s:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{let\ }} j = i + s}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {C(i,j) = \infty}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{for\ }} \ell = i \to j-1:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{cur}} = m_{i-1}m_{\ell}m_j + C(i,\ell) + c(\ell + 1,j)}\\
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} C(i,j) > {\rm{cur\ then\ }} C(i,j) = {\rm{cur}}}\\
-\ \ \ \ {{\rm{return\ }} (C(1,n))}
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{for\ }} \ell = i \to j-1:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\text{cur}} = m_{i-1}m_{\ell}m_j + C(i,\ell) + c(\ell + 1,j)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} C(i,j) > {\text{cur\ then\ }} C(i,j) = {\text{cur}}}\\
+\ \ \ \ {{\text{return\ }} (C(1,n))}
 \end{array}
 }
 $$
@@ -1872,7 +1872,7 @@ The ***base case*** is simply the main diagonal entries, having general form $C(
 
 The ***recursive cases*** involve the width parameter $s$ (cf. Section 26), which varies as $1 \to n-1$ (i.e., towards the upper-right corner). Furthermore, parameter $i$ represents the row, which is truncated in size with each iteration (as in the figure shown above, in green), with any given terminating in row $i-1$ relative to to the previous iteration $i$ (i.e., up to row $n-1$ in the first iteration, and proceeding in this manner until reaching the upper-right diagonal entry). Given $i$ and $j$ for a given iteration, this is sufficient to define $j$ as $j = i + s$ , i.e., the end of the corresponding substring.
 
-To compute entry $C(i,j)$ , we determine this minimum-cost value by varying $\ell$ over range $i \to j-1$ , keeping track of the current minimum $\rm{cur}$ accordingly during this process, with $C(i,j)$ initialized as $C(i,j) = \infty$ . For a given split point $\ell$ , the current minimum $\rm{cur}$ is defined as:
+To compute entry $C(i,j)$ , we determine this minimum-cost value by varying $\ell$ over range $i \to j-1$ , keeping track of the current minimum $\text{cur}$ accordingly during this process, with $C(i,j)$ initialized as $C(i,j) = \infty$ . For a given split point $\ell$ , the current minimum $\text{cur}$ is defined as:
 
 $$
 m_{i-1}m_{\ell}m_j + C(i,\ell) + C(\ell + 1,j)
@@ -1880,7 +1880,7 @@ $$
 
 where recall (cf. Section 25) that $m_{i-1}m_{\ell}m_j$ is the cost of combining the subtrees, with the subtrees having respective costs $C(i,\ell)$ and $C(\ell + 1,j)$ .
 
-Furthermore, a comparison is made with respect to the current minimum $\rm{cur}$ , such that if $C(i,j) > {\rm{cur}}$ , then the value $C(i,j)$ is correspondingly replaced with this new minimum, $\rm{cur}$ .
+Furthermore, a comparison is made with respect to the current minimum $\text{cur}$ , such that if $C(i,j) > {\text{cur}}$ , then the value $C(i,j)$ is correspondingly replaced with this new minimum, $\text{cur}$ .
 
 Finally, the algorithm returns value $C(1,n)$ , the upper-right corner value, which corresponds to the minimum-cost matrix multiplication for matrix product $A_1 \times \cdots \times A_n$ .
 
@@ -1894,9 +1894,9 @@ Given the dynamic programming algorithm, now consider its overall running time.
 
 The base case (which initializes the main diagonal) has a running time of $O(n)$ .
 
-Similarly, the subsequent set of outer nested $\rm{for}$ loops (corresponding to parameters $s$ and $i$ , respectively) each have a running time of $O(n)$ as well. Furthermore, the innermost $\rm{for}$ loop (corresponding to parameter $\ell$ ) also has a running time of $O(n)$ , with each loop iteration performing an operation (i.e., setting of values $\rm{cur}$ and $C(i,j)$ ) having a running time of $O(1)$ .
+Similarly, the subsequent set of outer nested $\text{for}$ loops (corresponding to parameters $s$ and $i$ , respectively) each have a running time of $O(n)$ as well. Furthermore, the innermost $\text{for}$ loop (corresponding to parameter $\ell$ ) also has a running time of $O(n)$ , with each loop iteration performing an operation (i.e., setting of values $\text{cur}$ and $C(i,j)$ ) having a running time of $O(1)$ .
 
-Therefore, the latter set of nested $\rm{for}$ loops has a running time of $O(n^3)$ , which dominates the overall running time of the algorithm accordingly.
+Therefore, the latter set of nested $\text{for}$ loops has a running time of $O(n^3)$ , which dominates the overall running time of the algorithm accordingly.
 
 As a final note, observe that a ***key component*** of this algorithm involved the use of ***substrings*** rather than ***prefixes*** (cf. Section 22), which was necessary to effectively define the sub-problem accordingly. Furthermore, populating the table was less straightforward here, requiring a more complex diagonal traversal (i.e., from the main diagonal towards the upper-right corner).
 
@@ -1940,17 +1940,17 @@ The context for these problems is based around the notion of a **directed graph*
 
 The figure shown above depicts such a representative directed graph, having six vertices and corresponding weighted edges. Furthermore, observe that *negative* weights are also permissible (e.g., $-2$ ), as well as anti-parallel edges (e.g., $a \rightarrow d$ and $a \leftarrow d$ , having different weights). Such anti-parallel edges are useful, because they allow to encode an otherwise undirected graph as a directed graph, by correspondingly replacing the (undirected) edge by an equivalent anti-parallel pair; in this manner, a directed graph gives rise to a more general problem than the undirected-graph counterpart.
 
-In the first problem, we have a designated/fixed ***starting vertex*** $s \in V$ , and attempt to determine the length of the ***shortest path*** from this starting vertex to every other vertex in the graph. To accomplish this, we define a function ${\rm{dist}}(z)$ as follows:
+In the first problem, we have a designated/fixed ***starting vertex*** $s \in V$ , and attempt to determine the length of the ***shortest path*** from this starting vertex to every other vertex in the graph. To accomplish this, we define a function ${\text{dist}}(z)$ as follows:
 
-> For $z \in V$ , ${\rm{dist}}(z)$ = length fo shortest path from $s$ to $z$
+> For $z \in V$ , ${\text{dist}}(z)$ = length fo shortest path from $s$ to $z$
 
 where $z$ denotes each vertex in the graph.
 
-${\rm{dist}}(z)$ is defined for every vertex in the graph, giving rise to a corresponding array of length $n$ (i.e., for $n$ total vertices in $V$ ). Therefore, the goal is to compute this array.
+${\text{dist}}(z)$ is defined for every vertex in the graph, giving rise to a corresponding array of length $n$ (i.e., for $n$ total vertices in $V$ ). Therefore, the goal is to compute this array.
 
 In this particular example, this can be determined by inspection as follows:
 
-| $z$ | ${\rm{dist}}(z)$ |
+| $z$ | ${\text{dist}}(z)$ |
 |:--:|:--:|
 | $s$ | $0$ |
 | $b$ | $5$ |
@@ -1967,9 +1967,9 @@ In this particular example, this can be determined by inspection as follows:
 
 The classical algorithm for this problem is **Dijkstra's algorithm**, which in its abbreviated form can be summarized as follows:
 
-> Given $\vec G$ and and $s \in V$ , finds ${\rm{dist}}(z)$ for all $z \in V$
+> Given $\vec G$ and and $s \in V$ , finds ${\text{dist}}(z)$ for all $z \in V$
 
-Dijkstra's algorithm works in a manner analogous to breadth-first search (BFS), exploring the graph in such a "layered" approach. Recall (cf. previous coursework) that breadth-first search (BFS), similarly to depth-first search (DFS), has a running time of $O(n+m)$ (linear) with respect to $n$ vertices and $m$ edges; however, due to weighting of the edges, Dijkstra's algorithm additionally requires a min-heap or priority queue data structure (with each requiring $O(\log (n))$ running time operations), therefore, with this added overhead, the total running time for Dijkstra's algorithm is $O((m+n) \log (n))$ in order to compute the resulting array for ${\rm{dist}}(z)$ .
+Dijkstra's algorithm works in a manner analogous to breadth-first search (BFS), exploring the graph in such a "layered" approach. Recall (cf. previous coursework) that breadth-first search (BFS), similarly to depth-first search (DFS), has a running time of $O(n+m)$ (linear) with respect to $n$ vertices and $m$ edges; however, due to weighting of the edges, Dijkstra's algorithm additionally requires a min-heap or priority queue data structure (with each requiring $O(\log (n))$ running time operations), therefore, with this added overhead, the total running time for Dijkstra's algorithm is $O((m+n) \log (n))$ in order to compute the resulting array for ${\text{dist}}(z)$ .
 
 There is a notable ***limitation*** in Dijkstra's algorithm: It is strictly necessary that $w(e) > 0$ in order to use this algorithm for a given input graph. This is due to the fact that negative edge weights do not guarantee to converge on a correct solution as certain paths "short-circuit" via negative weights towards "shorter" paths.
 
@@ -1992,16 +1992,16 @@ The first question is whether the problem is well defined. In this example, it i
 <img src="./assets/03-DP3-004.png" width="650">
 </center>
 
-However, let us now modify the graph to have a more extreme negative-weight value, as in the figure shown above (i.e., changing weight of edge $a \rightarrow e$ from $-2$ to $-6$ ). With this modification, what is ${\rm{dist}}(d)$ ?
+However, let us now modify the graph to have a more extreme negative-weight value, as in the figure shown above (i.e., changing weight of edge $a \rightarrow e$ from $-2$ to $-6$ ). With this modification, what is ${\text{dist}}(d)$ ?
 
-Recall (cf. Section 1) that before changing the weight, the shortest path ${\rm{dist}}(d)$ was $11$ . However, now, observe that the ***cycle*** $b \rightarrow a \rightarrow e \rightarrow b$ (denoted by goldenrod in the figure shown above) has length $-1$ . Therefore, an alternative route from $s$ to $d$ is now $s \rightarrow b \rightarrow a \rightarrow e \rightarrow b \rightarrow a \rightarrow d$ , which yields ${\rm{dist}}(d) = 10$ . Similarly, this cycle can be repeated several times, with each traversal decreasing ${\rm{dist}}(d)$ by $1$ accordingly; therefore, the "shortest" path would traverse this cycle infinitely many times.
+Recall (cf. Section 1) that before changing the weight, the shortest path ${\text{dist}}(d)$ was $11$ . However, now, observe that the ***cycle*** $b \rightarrow a \rightarrow e \rightarrow b$ (denoted by goldenrod in the figure shown above) has length $-1$ . Therefore, an alternative route from $s$ to $d$ is now $s \rightarrow b \rightarrow a \rightarrow e \rightarrow b \rightarrow a \rightarrow d$ , which yields ${\text{dist}}(d) = 10$ . Similarly, this cycle can be repeated several times, with each traversal decreasing ${\text{dist}}(d)$ by $1$ accordingly; therefore, the "shortest" path would traverse this cycle infinitely many times.
   * ***N.B.*** Such a cyclic traversal along the same/repeating vertices is called a "walk" rather than a "path."
 
 Such a cycle (e.g., $a \rightarrow e \rightarrow b \rightarrow a$ ) is called a ***negative weight cycle*** (i.e., having a net-negative sum in its edges' weights). When a graph contains such a negative weight cycle, the shortest path problem is no longer well defined. However, encountering such a negative weight cycle is nevertheless a useful observation/occurrence.
 
 Let us now consider a more general problem:
 
-> Given a directed graph $\vec G$ with edge weights $w(e)$ and starting vertex $s \in V$ , find negative weight cycles in the graph (if they exist at all) which is reachable from $s$ (otherwise, if such cycles are not reachable, then they are not considered). If no such negative weight cycles are found, then the shortest path problem is well defined, and in which case find ${\rm{dist}}(z)$ for all $z \in V$ .
+> Given a directed graph $\vec G$ with edge weights $w(e)$ and starting vertex $s \in V$ , find negative weight cycles in the graph (if they exist at all) which is reachable from $s$ (otherwise, if such cycles are not reachable, then they are not considered). If no such negative weight cycles are found, then the shortest path problem is well defined, and in which case find ${\text{dist}}(z)$ for all $z \in V$ .
 
 We we will next examine how to use dynamic programming to solve this problem.
 
@@ -2054,10 +2054,10 @@ $$
 
 where $y:\vec{yz} \in E$ is a directed edge, $D(i-1,y)$ represents the length of the path $s \rightsquigarrow y$ , and $w(y,z)$ is the weight of the last edge (i.e., $y \rightarrow z$ ); thus, the sum $D(i-1,y) + w(y,z)$ represents the total path length for $s \rightsquigarrow z$ , and we minimize this accordingly (with respect to directed edges $y$ ).
 
-This yields a valid recurrence for $D(i,z)$ in the case where it is true that there are exactly/strictly $= i$ edges, however, when attempting to determine the optimal value for $\rm{dist}(z)$ , in general $\le i$ may be true, i.e.,:
+This yields a valid recurrence for $D(i,z)$ in the case where it is true that there are exactly/strictly $= i$ edges, however, when attempting to determine the optimal value for $\text{dist}(z)$ , in general $\le i$ may be true, i.e.,:
 
 $$
-{\rm{dist}}(z) = \mathop {\min}\limits_i \big\{ D(i,z) \big\}
+{\text{dist}}(z) = \mathop {\min}\limits_i \big\{ D(i,z) \big\}
 $$
 
 Therefore, to conform to this original (more general) sub-problem definition, we additionally account for $D(i-1,z)$ , which stores the length of the shortest path from $s \rightsquigarrow z$ using at most $i-1$ edges, with the net result being a choice among these two cases (i.e., exactly $=i$ vs. $\le i$ prefix edges).
@@ -2103,16 +2103,16 @@ The corresponding algorithm called the **Bellman-Ford algorithm** is given as fo
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{Bellman-Ford}}(G,s,w):}\\
-\ \ \ \ {{\rm{for\ all\ }} z \in V:}\\
+{{\text{Bellman-Ford}}(G,s,w):}\\
+\ \ \ \ {{\text{for\ all\ }} z \in V:}\\
 \ \ \ \ \ \ \ \ {D(0,z) = \infty}\\
 \ \ \ \ {D(0,s) = 0}\\
-\ \ \ \ {{\rm{for\ }} i=1 \to n-1:}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ all\ }} z \in V:}\\
+\ \ \ \ {{\text{for\ }} i=1 \to n-1:}\\
+\ \ \ \ \ \ \ \ {{\text{for\ all\ }} z \in V:}\\
 \ \ \ \ \ \ \ \ \ \ \ \ {D(i,z) = D(i-1,z)}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{for\ all\ }} \vec{yz} \in E:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} D(i,z) > D(i-1,y) + w(y,z) {\rm{\ then\ }} D(i,z) = D(i-1,y) + w(y,z)}\\
-\ \ \ \ {{\rm{return\ }} (D(n-1,\cdot))}
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{for\ all\ }} \vec{yz} \in E:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} D(i,z) > D(i-1,y) + w(y,z) {\text{\ then\ }} D(i,z) = D(i-1,y) + w(y,z)}\\
+\ \ \ \ {{\text{return\ }} (D(n-1,\cdot))}
 \end{array}
 }
 $$
@@ -2138,7 +2138,7 @@ Now, consider the overall running time for this algorithm.
 <img src="./assets/03-DP3-009.png" width="650">
 </center>
 
-Examining the nested $\rm{for}$ loops (which, by inspection, dominate the overall algorithm running time), the outer loop requires $O(n)$ running time with respect to $n$ vertices. Furthermore, the innermost $\rm{for}$ loop is performed with respect to all $m$ edges of the graph (where the two inner loops together effectively iterate over every edge exactly once in the process of this), with each innermost loop performing an $O(1)$ operation (i.e., checking and setting $D(i,z)$ ). Therefore, the overall running time is $O(nm)$ .
+Examining the nested $\text{for}$ loops (which, by inspection, dominate the overall algorithm running time), the outer loop requires $O(n)$ running time with respect to $n$ vertices. Furthermore, the innermost $\text{for}$ loop is performed with respect to all $m$ edges of the graph (where the two inner loops together effectively iterate over every edge exactly once in the process of this), with each innermost loop performing an $O(1)$ operation (i.e., checking and setting $D(i,z)$ ). Therefore, the overall running time is $O(nm)$ .
 
 Observe that while this algorithm is slower than Dijkstra's algorithm (cf. Section 1, $O((m+n) \log (n))$ ), it nevertheless allows for negative weight edges to exist in the input graph. Furthermore, it is also generally able to identify negative weight cycles within the input graph (otherwise, if absent, then the algorithm will determine the shortest path from source vertex $s$ , which is generally well defined).
 
@@ -2197,11 +2197,11 @@ Recall (cf. Section 6) that in the Bellman-Ford algorithm, a *single* source ver
 
 In this latter problem, we define it formally as follows:
 
-> Given direct graph $\vec G = (V,E)$ with edge weights $w(e)$ (where in general the edge weights can be either positive or negative), for all vertex pairs $y,z \in V$ , let ${\rm{dist}}(y,z)$ = length of the shortest path $y \rightsquigarrow z$
+> Given direct graph $\vec G = (V,E)$ with edge weights $w(e)$ (where in general the edge weights can be either positive or negative), for all vertex pairs $y,z \in V$ , let ${\text{dist}}(y,z)$ = length of the shortest path $y \rightsquigarrow z$
 
 ***N.B.*** Previously (cf. Section 1), we only considered the path $s \rightsquigarrow z$ for the single-source vertex $s$ . Conversely, here in this all-pairs consideration, this will give rise to a corresponding $n \times n$ matrix/table accordingly.
 
-The ***goal*** is to find ${\rm{dist}}(y,z)$ for all vertex pairs $y,z \in V$ .
+The ***goal*** is to find ${\text{dist}}(y,z)$ for all vertex pairs $y,z \in V$ .
 
 The ***naive*** approach for solving the all-pairs version of the problem is to simply use the same Bellman-Ford algorithm from before (cf. Section 6) , performed $n$ times with respect to each vertex as the corresponding "source" vertex $s$ .
 
@@ -2272,8 +2272,8 @@ Recalling (cf. Section 11) the ***base case***, we can further formalize its def
 $$
 D(0,s,t) = 
 \begin{cases}
-  {w(s,t)}&{{\rm{if\ }} \vec{st} \in E}\\ 
-  {\infty}&{{\rm{otherwise}}} 
+  {w(s,t)}&{{\text{if\ }} \vec{st} \in E}\\ 
+  {\infty}&{{\text{otherwise}}} 
 \end{cases}
 $$
 
@@ -2392,23 +2392,23 @@ Now, we can write the pseudocode for the all-pairs shortest path problem. The co
 $$
 \boxed{
 \begin{array}{l}
-{{\rm{Floyd-Warshall}}(G,w):}\\
-\ \ \ \ {{\rm{for\ }} s = 1 \to n:}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} t = 1 \to n:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{if\ }} \vec{st} \in E {\rm{\ then\ }} D(0,s,t) = w(s,t)}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{else\ }} D(0,s,t) = \infty}\\
-\ \ \ \ {{\rm{for\ }} i = 1 \to n:}\\
-\ \ \ \ \ \ \ \ {{\rm{for\ }} s = 1 \to n:}\\
-\ \ \ \ \ \ \ \ \ \ \ \ {{\rm{for\ }} t = 1 \to n:}\\
+{{\text{Floyd-Warshall}}(G,w):}\\
+\ \ \ \ {{\text{for\ }} s = 1 \to n:}\\
+\ \ \ \ \ \ \ \ {{\text{for\ }} t = 1 \to n:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{if\ }} \vec{st} \in E {\text{\ then\ }} D(0,s,t) = w(s,t)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{else\ }} D(0,s,t) = \infty}\\
+\ \ \ \ {{\text{for\ }} i = 1 \to n:}\\
+\ \ \ \ \ \ \ \ {{\text{for\ }} s = 1 \to n:}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{for\ }} t = 1 \to n:}\\
 \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ {D(i,s,t) = \min \big\{ D(i-1,s,t), D(i-1,s,i) + D(i-1,i,t) \big\}}\\
-\ \ \ \ {{\rm{return\ }} (D(n,\cdot,\cdot))}
+\ \ \ \ {{\text{return\ }} (D(n,\cdot,\cdot))}
 \end{array}
 }
 $$
 
 The ***inputs*** to the algorithm are directed graph $G$ and edge weights $w$ (where in general the weights can be either positive or negative).
 
-The initial pair of $\rm{for}$ loops constitute the ***base case***, i.e., populating $D(0,s,t)$ accordingly for all pairs. Recall (cf. Section 10) that the vertices are numbered $1, ..., n$ . If an edge exists between candidates $s$ and $t$ , then the corresponding weight $w(s,t)$ is populated accordingly; otherwise, if no such edge exists, then $D(0,s,t)$ is simply initialized as $\infty$ .
+The initial pair of $\text{for}$ loops constitute the ***base case***, i.e., populating $D(0,s,t)$ accordingly for all pairs. Recall (cf. Section 10) that the vertices are numbered $1, ..., n$ . If an edge exists between candidates $s$ and $t$ , then the corresponding weight $w(s,t)$ is populated accordingly; otherwise, if no such edge exists, then $D(0,s,t)$ is simply initialized as $\infty$ .
 
 Next, the more general ***recursive cases*** are handled accordingly, i.e., populating $D(i,s,t)$ for all intermediate vertices $i$ (where $i$ varies across $1 \to n$ ). Furthermore, this is similarly performed across all vertex pairs $s, t$ accordingly. The corresponding recurrence relation is as defined previously (cf. Section 16), i.e.,:
 
@@ -2428,9 +2428,9 @@ Finally, the algorithm ***returns*** the value $D(n,\cdot,\cdot)$ , which is a t
 
 The running time for the Floyd-Warshall algorithm (cf. Section 17) is fairly straightforward to analyze.
 
-The first set of $\rm{for}$ loops perform an operation of running time $O(1)$ (i.e., initializing the base case) via $n^2$ such iterations, i.e., a corresponding running time of $O(n^2)$ .
+The first set of $\text{for}$ loops perform an operation of running time $O(1)$ (i.e., initializing the base case) via $n^2$ such iterations, i.e., a corresponding running time of $O(n^2)$ .
 
-The next set of $\rm{for}$ loops (i.e., recursive cases) similarly perform an operation of running time $O(1)$ via $n^3$ such iterations, i.e., a corresponding running time of $O(n^3)$ . Furthermore, this set of operations is dominating, thereby constituting the overall running time of the algorithm accordingly.
+The next set of $\text{for}$ loops (i.e., recursive cases) similarly perform an operation of running time $O(1)$ via $n^3$ such iterations, i.e., a corresponding running time of $O(n^3)$ . Furthermore, this set of operations is dominating, thereby constituting the overall running time of the algorithm accordingly.
 
 #### 19-20. Negative Weight Cycles
 
