@@ -34,7 +34,7 @@ The ***outline*** for this section is as follows:
 <img src="./assets/01-DP1-001.png" width="650">
 </center>
 
-Given an integer $n$, we wil look at an algorithm for generating the corresponding $n$<sup>th</sup> Fibonacci number. This is a very simple algorithm, but it will illustrate the idea of dynamic programming; later we will examine dynamic programming more generally (i.e., techniques for designing a dynamic programming algorithm, as well as more sophisticated examples).
+Given an integer $n$ , we wil look at an algorithm for generating the corresponding $n$<sup>th</sup> Fibonacci number. This is a very simple algorithm, but it will illustrate the idea of dynamic programming; later we will examine dynamic programming more generally (i.e., techniques for designing a dynamic programming algorithm, as well as more sophisticated examples).
 
 Recall that the Fibonacci numbers are the following sequence:
 
@@ -2181,7 +2181,7 @@ Examining a subsequent iteration (i.e., $i = 6$ ), the presence of the negative 
 
 > Check if $D(n,z) < D(n-1,z)$ for some $z \in V$
 
-Furthermore, the table can be used to explicitly identify this negative weight cycle (e.g., via changing values for vertices $a$ , $b$, and $c$ in this example).
+Furthermore, the table can be used to explicitly identify this negative weight cycle (e.g., via changing values for vertices $a$ , $b$ , and $c$ in this example).
 
 ## 8-19. All-Pairs Shortest Path
 
@@ -2362,6 +2362,22 @@ D(i,s,t) =
 we simply take the optimal (i.e., shortest) of these paths.
 
 ##### 16. Summary
+
+Having now handled both cases $i \notin P$ and $i \in P$ for the recurrence relation (cf. Section 15), let us now summarize the recurrence relation $D(i,s,t)$ .
+
+<center>
+<img src="./assets/03-DP3-024.png" width="650">
+</center>
+
+Since we are attempting to find the optimal (i.e., shortest) path among these, we take the minimum as follows:
+
+```math
+D(i,s,t) = \min \big\{ D(i-1,s,t), D(i-1,s,i) + D(i-1,i,t) \big\}
+```
+
+Observe that in this expression, $D(i,s,t)$ is defined in terms of $D(i-1, \cdots)$ (i.e., smaller sub-problems), with vertex $i$ varying as $i = 0 \to n$ accordingly.
+
+Next, we consider the dynamic programming algorithm for this problem.
 
 ### 17-18. Dynamic Programming Algorithm
 
