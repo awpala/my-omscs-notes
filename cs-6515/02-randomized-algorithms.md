@@ -353,6 +353,34 @@ Next, we examine a specific example to solidify understanding of this concept of
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
 
+<center>
+<img src="./assets/04-RA1-013.png" width="650">
+</center>
+
+Consider the example of $N = 14$ . Let us examine the multiplicative inverses $1 \mod 14, 2 \mod 14, \dots, 13 \mod 14$ , as follows:
+
+| $x$ | $x^{-1} \mod N$ | Comment |
+|:--:|:--:|:--:|
+| $1$ | $1^{-1} \equiv 1 \mod 14$ | This is a trivial case (i.e., $1$ is always its own inverse) |
+| $2$ | $2^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $3$ | $3^{-1} \equiv 5 \mod 14$ | |
+| $4$ | $4^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $5$ | $5^{-1} \equiv 3 \mod 14$ | Complementary to case $x = 3$ |
+| $6$ | $6^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $7$ | $7^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $8$ | $8^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $9$ | $9^{-1} \equiv 11 \mod 14$ | |
+| $10$ | $10^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $11$ | $11^{-1} \equiv 9 \mod 14$ | Complementary case to $x = 9$ |
+| $12$ | $12^{-1} \equiv \_ \mod 14$ | Does not exist |
+| $13$ | $13^{-1} \equiv 13 \mod 14$ | |
+
+So, then, when exactly does the multiplicative inverse exist? Note the following observations:
+  * $2$ , $4$ , $6$ , $8$, $10$ , and $14$ are all even numbers, sharing the common divisor $2$ .
+  * Similarly, $7$ shares a common divisor with $14$ (i.e., itself, $7$ ).
+
+Therefore, if there is ***no*** common divisor with $N$ (i.e., only non-integer-multiple primes relative to $N$ itself), then a multiplicative inverse ***exists***.
+
 ### 12. Existence
 
 ### 13. Terminology
