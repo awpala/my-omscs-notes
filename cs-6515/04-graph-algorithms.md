@@ -41,7 +41,7 @@
 
 ## 13. Outline Review
 
-## 14. COnnectivity in Directed Graphs
+## 14. Connectivity in Directed Graphs
 
 ## 15-23. Strongly Connected Components (SCC)
 
@@ -68,7 +68,7 @@
 
 ##### Running Time Quiz and Answers
 
-### 22-23. Proof of Key Strongly Connected COmponent (SCC) Fact
+### 22-23. Proof of Key Strongly Connected Component (SCC) Fact
 
 #### 22. Introduction
 
