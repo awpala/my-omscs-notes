@@ -383,11 +383,31 @@ Therefore, if there is ***no*** common divisor with $N$ (i.e., only non-integer-
 
 ### 12. Existence
 
-### 13. Terminology
+So, then, more formally, when exactly does a multiplicative inverse exist?
 
-### 14. Unique
+<center>
+<img src="./assets/04-RA1-014.png" width="650">
+</center>
 
-### 15. Non-Existence
+The general theorem which addresses this question is stated as follows:
+
+> $x^-1 \mod N$ exists iff ${\text{gcd}}(x,N)=1$
+
+where ${\text{gcd}}$ is the **greatest common divisor**.
+
+Here, ${\text{gcd}}(x,N)=1$ implies that $x$ and $N$ have ***no*** common divisor. In this case, it said that $x$ and $N$ are **relatively prime**.
+
+As an example, if $x$ and $N$ are both even, then ${\text{gcd}}(x,N)=2$ , and therefore they are *not* relatively prime accordingly.
+
+Before we formally examine why two numbers' relative primality implies their multiplicative inverse, we will consider some more useful terminology.
+
+### 13-15. Terminology
+
+#### 13. Introduction
+
+#### 14. Unique
+
+#### 15. Non-Existence
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
