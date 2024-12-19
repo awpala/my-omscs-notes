@@ -160,10 +160,10 @@ Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 
 ### 7. Naive Quiz and Answers
 
+#### Introduction
+
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.2 (Modular exponentiation).
-
-#### Introduction
 
 Having seen basic modular arithmetic (cf. Section 4), we now shift focus to the **modular exponentiation** operation, which will be ubiquitously used in subsequent discussion.
 
@@ -297,8 +297,7 @@ $$
 \ \ \ \ {{\text{if\ }} y = 0 {\text{\ then\ }} {\text{return\ }} (1)}\\
 \ \ \ \ {z = {\text{Mod-Exp}}(x, \lfloor \frac{y}{2} \rfloor, N)}\\
 \ \ \ \ {{\text{if\ }} y {\text{\ is\ even\ then\ }} {\text{return\ }} (z^2 \mod N)}\\
-\ \ \ \ {{\text{else\ }} {\text{return\ }} (xz^2 \mod N)}\\
-
+\ \ \ \ {{\text{else\ }} {\text{return\ }} (xz^2 \mod N)}
 \end{array}
 }
 $$
@@ -391,7 +390,7 @@ So, then, more formally, when exactly does a multiplicative inverse exist?
 
 The general theorem which addresses this question is stated as follows:
 
-> $x^-1 \mod N$ exists iff ${\text{gcd}}(x,N)=1$
+> $x^{-1} \mod N$ exists iff ${\text{gcd}}(x,N)=1$
 
 where ${\text{gcd}}$ is the **greatest common divisor**.
 
@@ -476,6 +475,34 @@ Next, we will prove that if $x$ and $N$ have a common factor (i.e., ${\text{gcd}
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
+
+Let us now consider the case where multiplicative inverses do *not* exist, and why they do not exist.
+
+<center>
+<img src="./assets/04-RA1-017.png" width="650">
+</center>
+
+Recall (cf. Section 12) the following theorem:
+
+> $x^{-1} \mod N$ exists iff ${\text{gcd}}(x,N)=1$
+
+By corollary, if ${\text{gcd}}(x,N) > 1$ , then $x^{-1} \mod N$ does not exist. But why is this the case?
+
+For some intuition behind the proof of this, consider the case where $x$ and $N$ are both even, and therefore ${\text{gcd}}(x,N) = 2 > 1$ . By understanding this case, it will provide a more general understanding as well.
+
+Suppose that $z$ were a multiplicative inverse of $x$ , i.e., $z \equiv x^{-1} \mod N$ . This further implies that $xz \equiv 1 \mod N$ . More generally:
+
+$$
+xz = N + 1 = 2N + 1 = 3N + 1 = \cdots = qN + 1 
+$$
+
+where $q$ is some integer multiple.
+
+Given that we assume that $x$ is even, then in general $xz$ should also be even (i.e., an even number times any other number yields an even product). Furthermore, this also implies that the product $qN$ is also even; however, this also means that $qN + 1$ is odd, which invalidates the general statement above. Therefore, there is *no* such multiplicative inverse $z$ of $x$ .
+
+Furthermore, more generally, if $x$ and $N$ share a common divisor, then the corresponding proof follows directly from this same reasoning.
+
+Returning to the original theorem, if $x$ and $N$ are relatively prime, i.e., ${\text{gcd}}(x,N)=1$ , then $x^{-1} \mod N$ exists. Why is this the case? We prove this by detailing an algorithm which is capable of *finding* this multiplicative inverse, thereby proving its existence accordingly. The algorithm in question involves Euclid's algorithm for finding the greatest common divisor (i.e., ${\text{gcd}}$ ), which is further extended/modified to find $x^{-1} \mod N$ on the condition that ${\text{gcd}}(x,N)=1$ . We detail this algorithm next.
 
 ## 16-19. Greatest Common Divisor (GCD)
 
