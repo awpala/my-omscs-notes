@@ -430,6 +430,48 @@ All of these numbers are multiplicative inverses of general form $x^{-1} \mod 11
 
 #### 14. Unique
 
+<center>
+<img src="./assets/04-RA1-016.png" width="650">
+</center>
+
+Let us now return to the previous matter of uniqueness (cf. Section 13): Suppose that $x^{-1} \mod N$ exists (i.e., $x$ has a multiplicative inverse). If the inverse exists, *how many* such multiplicative inverses exist (i.e., is there only *one* unique such inverse, or are there many)?
+
+We shall now prove that if an inverse does in fact exist, then it ***is*** unique (i.e., strictly $\le 1$ such existing multiplicative inverses, where $x^{-1}$ exists somewhere in the range $0, ..., N-1$ ). We prove this via contradiction.
+
+Suppose that $x$ has *two* multiplicative inverses $z$ and $y$ , i.e.,:
+
+$$
+z \equiv x^{-1} \mod N
+$$
+
+$$
+y \equiv x^{-1} \mod N
+$$
+
+Furthermore, suppose that are "different/distinct" such that $y \not\equiv z \mod N$ , i.e., $0 \le y \ne z \le N - 1$ .
+
+Since $z \equiv x^{-1} \mod N$ , then $xz \equiv 1 \mod N$ (cf. Section 10). Similarly, since $y \equiv x^{-1} \mod N$ , then $yz \equiv 1 \mod N$ . Therefore:
+
+$$
+xy \equiv xz \equiv 1 \mod N
+$$
+
+Since we assume $x^{-1}$ exists, we can multiply as follows:
+
+$$
+\begin{array}{c}
+(\bcancel{{{x^{-1}}x}})y \equiv (\bcancel{{{x^{-1}}x}})z \equiv 1 \mod N\\
+y \equiv z \mod N
+\end{array}
+$$
+
+However, this latter expression $y \equiv z \mod N$ directly contradicts our previous assumption that $y \not\equiv z \mod N$ .
+
+Therefore, we conclude that if a multiplicative inverse *exists*, then it is *unique*.
+  * ***N.B.*** Later, we will prove that if $x$ and $N$ are relatively prime (i.e., ${\text{gcd}}(x,N)=1$ ), then $x^{-1} \mod N$ exists. We will prove this by using the extended Euclid algorithm to find this corresponding multiplicative inverse.
+
+Next, we will prove that if $x$ and $N$ have a common factor (i.e., ${\text{gcd}}(x,N)>1$), then no such multiplicative inverse exists.
+
 #### 15. Non-Existence
 
 > [!NOTE]
