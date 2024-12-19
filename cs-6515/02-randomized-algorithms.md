@@ -183,13 +183,13 @@ As before (cf. Section 3), we are given $n$-bit numbers $x$ , $y$ , and $N$ whic
 First, consider a simple ***algorithm*** to perform this multiplication, outlined as follows:
 
 $$
-\begin{matrix}
+\begin{array}{l}
 {x \mod N = a_1}\\
 {x^2 \equiv a_1x \mod N = a_2}\\
 {x^3 \equiv a_2x \mod N = a_3}\\
 {\vdots}\\
 {x^y \equiv a_{y-1}x \mod N}
-\end{matrix}
+\end{array}
 $$
 
 Starting with $x \mod N = a_1$ , the result $a_1$ is then propagated forward to compute $x^2$ via $x^2 \equiv a_1x \mod N = a_2$ , which in turn is propagated forward to compute $x^3$ , and so on, until finally the target quantity $x^y$ is computed.
@@ -236,13 +236,13 @@ Therefore, the expression evaluates to $17$ .
 In the ***algorithm*** involving repeated squaring, we proceed similarly to before (cf. Section 7), however, with intermediate squaring across rounds, as follows:
 
 $$
-\begin{matrix}
+\begin{array}{l}
 {x \mod N = a_1}\\
 {x^2 \equiv a_1^2 \mod N = a_2}\\
 {x^4 \equiv (a_2)^2 \mod N = a_4}\\
 {x^8 \equiv (a_4)^2 \mod N = a_8}\\
 {\vdots}
-\end{matrix}
+\end{array}
 $$
 
 This results in $x^y$ where $y$ is a power of $2$ . We then examine the binary representation of $y$ to determine $x^y mod N$ via appropriate power of $2$ accordingly.
@@ -404,6 +404,29 @@ Before we formally examine why two numbers' relative primality implies their mul
 ### 13-15. Terminology
 
 #### 13. Introduction
+
+<center>
+<img src="./assets/04-RA1-015.png" width="650">
+</center>
+
+Suppose that $x^{-1} \mod N$ exists (i.e., $x$ has a multiplicative inverse). Let us now prove that if this inverse (if it exists) is **unique**. But what does "unique" mean in this context?
+
+Consider a specific example of $x = 3$ and $N = 11$ . By inspection:
+
+$$
+3^{-1} \equiv 4 \mod 11
+$$
+
+i.e., $3 \times 4 \equiv 12 \equiv 1 \mod 11$ .
+
+Now, consider $x = 4$ and $N = 11$ . Here, there are infinite possibilities with respect to $4 \mod 11$ , i.e.,:
+
+$$
+4 \equiv 15 \equiv 26 \equiv -7  \equiv \cdots
+$$
+
+All of these numbers are multiplicative inverses of general form $x^{-1} \mod 11$ , however, by ***convention***, we will generally report $x^{-1} \mod N$ as the smallest non-negative integer (i.e., in $0, 1, \dots, N-1$ ), provided that it exists. Otherwise, we simply report "does not exist" accordingly.
+  * ***N.B.*** Later, we will learn how to determine the multiplicative inverse if it exists, using the extended Euclid algorithm. The algorithm often returns the *negative* number, which requires a corresponding simple calculation to convert to a form which conforms to this convention.
 
 #### 14. Unique
 
