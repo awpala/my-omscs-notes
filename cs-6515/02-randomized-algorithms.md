@@ -128,11 +128,27 @@ These equivalence classes follow directly from the following definition:
 
 where $q$ is the quotient and $r$ is the remainder.
 
-This means that there is some multiple $N$ for which $q$ such integer multiples added to $r$ reconstitutes the original number $x$ (e.g., $-2 \mod 3$ in this form is represented as $q = -1$ , $N = 3$ , and $r = 1$ which yields back $x = (-1)(3) + 1 = -2$ , with $r$ corresponding to the appropriate equivalence class $1$ and $q$ corresponding to the appropriate "offset from centerline" $-1$ in the row representation above).
+This means that there is some multiple $N$ for which $q$ such integer multiples added to $r$ reconstitutes the original number $x$ (e.g., $-2 \mod 3$ in this form is represented as $q = -1$ , $N = 3$ , and $r = 1$ which yields back $x = (-1)(3) + 1 = -2$ , with $r$ corresponding to the appropriate equivalence class $1$ and $q$ corresponding to the appropriate "offset" [from position $0$ at the centerline] $-1$ in the row representation above).
 
 Therefore, within a given equivalence class (i.e., "row" in the representation above), are all the "same" (i.e., *congruent*) with respect to $\mod 3$ .
 
 ### 6. Basic Fact Quiz and Answers
+
+<center>
+<img src="./assets/04-RA1-004Q.png" width="650">
+</center>
+
+A basic fact that we will use repeatedly is given as follows:
+
+> If $x \equiv y \mod N$ and $a \equiv b \mod N$ , then $x + a \equiv y + b \mod N$ and $xa \equiv yb \mod N$
+
+In this formalism, both $x$ and $y$ are congruent with each other, as are $a$ and $b$ . Furthermore, observe the "replacement/substitution" property exhibited in the latter expressions by virtue of this congruence.
+
+To illustrate the utility of this fact, consider the expression $321 \times 17 \mod 320$ . We can use the given fact to simplify this computation as follows:
+  * Note that $321 \equiv 1 \mod 320$
+  * Hence, $321 \times 17 \equiv 1 \times 17 \equiv 17 \mod 320$
+
+Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 
 ## 7-9. Modular Exponentiation
 
