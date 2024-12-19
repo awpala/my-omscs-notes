@@ -160,7 +160,13 @@ Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 
 ### 7. Naive Quiz and Answers
 
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.2 (Modular exponentiation).
+
 ### 8. Fast Quiz and Answers
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.2 (Modular exponentiation).
 
 ### 9. Algorithm
 
@@ -168,7 +174,13 @@ Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 
 ### 10. Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
+
 ### 11. Example
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
 
 ### 12. Existence
 
@@ -178,22 +190,226 @@ Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 
 ### 15. Non-Existence
 
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
+
 ## 16-19. Greatest Common Divisor (GCD)
 
 ### 16. Euclid's Rule
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.3 (Euclid's algorithm for greatest common divisor).
 
 ### 17-19. Euclid's Algorithm
 
 #### 17. Pseudocode
 
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.3 (Euclid's algorithm for greatest common divisor).
+
 #### 18. Base Case
 
 #### 19. Running Time
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.3 (Euclid's algorithm for greatest common divisor).
 
 ## 20-21. Computing Inverses
 
 ### 20. Introduction
 
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
+
 ### 21. Extended Euclid Algorithm Quiz and Answers
 
+> [!NOTE]
+> ***Instructor's Note***: See [DPV] Chapter 1.2.4 (An extension of Euclid's algorithm) for the detailed proof of correctness.
+
 ## 22. Recap
+
+> [!NOTE]
+> ***Instructor's Note***: This topic is covered in [DPV] Chapter 1 (Algorithms with numbers), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-1/).
+
+# Randomized Algorithms 2: RSA
+
+## 1-5. Fermat's Little Theorem
+
+### 1. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: This topic is covered in [DPV] Chapter 1.3 (Primality testing), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-1/).
+
+### 2-4. Proof
+
+#### 2. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 3. Key Lemma
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 4. Finishing Up
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+## 5-7. Euler's Theorem
+
+### 5. Introduction
+
+### 6. Euler's Totient Function Quiz and Answers
+
+### 7. Euler's Theorem for $N = pq$
+
+## 8. RSA Algorithm Idea
+
+## 9. Cryptography Setting
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.4 (Cryptography).
+
+## 10-14. RSA Protocol
+
+### 10. Keys
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.4.2 (RSA).
+
+### 11. Encrypting
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.4.2 (RSA).
+
+### 12. Pitfalls
+
+### 13-14. Recap
+
+#### 13. Part 1
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.4.2 (RSA).
+
+#### 14. Part 2
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.4.2 (RSA).
+
+## 15. RSA Exercise
+
+## 16. Random Primes
+
+> [!NOTE]
+> ***Instructor's Note***: This topic is covered in [DPV] Chapter 1.3.1 (Generating random primes), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-ii/).
+
+## 17-24. Primality
+
+### 17-21. Fermat's Test
+
+#### 17. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 18. Trivial Witness
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 19. Non-Trivial Witnesses
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 20. No Non-Trivial Witnesses?
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 21. Many Witnesses
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+### 22-23. Simple Primarily Test
+
+#### 22. Introduction
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+#### 23. Analysis
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+### 24. Better Primality test
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+## 25. Addendum: Pseudoprimes
+
+> [!NOTE]
+> ***Instructor's Note***: In [DPV] see the text box titled "Carmichael numbers" in Section 1.3 (p. 28 of print edition).
+
+# Randomized Algorithms 3: Bloom Filters
+
+## 1. Hashing Outline
+
+> [!NOTE]
+> ***Instructor's Note***: For Eric's notes, see [here](https://cs6505.wordpress.com/bloom-filters/).
+
+## 2-9. Balls into Bins
+
+### 2. Introduction
+
+### 3. Probability Quiz and Answers
+
+### 4. Analysis Setup
+
+### 5. Max Load Quiz and Answers
+
+### 6. Max Load Analysis
+
+### 7-8. Best of Two Scheme
+
+#### 7. Introduction
+
+#### 8. Power of Two Choices
+
+### 9. Hashing Setup
+
+## 10. Chain Hashing
+
+## 11. Power of Two Choices for Hashing Quiz and Answers
+
+> [!NOTE]
+> ***Instructor's Note***: Please do this on your own and watch the solution to see if you're correct.
+
+## 12-22. Bloom Filters
+
+### 12. Outline
+
+### 13. Motivation
+
+### 14. Operations
+
+### 15. Bloom Filters
+
+### 16. Robust Scheme
+
+### 17. Correctness
+
+### 18. Analysis Setup
+
+### 19. False Positive Probability
+
+### 20. Optimal $k$
+
+### 21. Looking at False Positive Rate
+
+### 22. Summary
