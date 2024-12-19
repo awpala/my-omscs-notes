@@ -62,7 +62,7 @@ Now, let us review **modular arithmetic**, the basic mathematics underlying the 
 <img src="./assets/04-RA1-002.png" width="650">
 </center>
 
-Consider the simple example $x \mod 2$ , where $x$ is an integer. $x \mod 2$ is the ***least-significant bit*** of $x$ , which in turn indicates whether $x$ is odd or even, i.e.,:
+Consider the simple example $x \mod 2$ , where $x$ is an integer and $\text{mod}$ denotes the "modulo" operator. $x \mod 2$ is the ***least-significant bit*** of $x$ , which in turn indicates whether $x$ is odd or even, i.e.,:
 
 $$
 x \mod 2 = 
@@ -163,12 +163,123 @@ Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.2 (Modular exponentiation).
 
+#### Introduction
+
+Having seen basic modular arithmetic (cf. Section 4), we now shift focus to the **modular exponentiation** operation, which will be ubiquitously used in subsequent discussion.
+
+<center>
+<img src="./assets/04-RA1-006Q.png" width="650">
+</center>
+
+As before (cf. Section 3), we are given $n$-bit numbers $x$ , $y$ , and $N$ which are *huge* (i.e., with the constituent $n$ bits comprising $1024$ or $2048$ bits, correspondingly representing numbers/integers on the order of $O(2^{2^{10}}) \approx O(10^{308})$ or $O(2^{2^{11}}) \approx O(10^{616})$ , respectively). The ***goal*** is to compute the quantity $x^y /\mod N$ in an ***efficient*** manner, i.e., of order polynomial in the input size $n$ .
+  * ***N.B.*** Notably, we do *not* simply require polynomial in the input numbers $x$ , $y$ , and $N$ , because these numbers are already intrinsically exponential in $n$ , giving rise to unfathomably slow running times in practice.
+
+#### Algorithm
+
+<center>
+<img src="./assets/04-RA1-007Q.png" width="650">
+</center>
+
+First, consider a simple ***algorithm*** to perform this multiplication, outlined as follows:
+
+$$
+\begin{matrix}
+{x \mod N = a_1}\\
+{x^2 \equiv a_1x \mod N = a_2}\\
+{x^3 \equiv a_2x \mod N = a_3}\\
+{\vdots}\\
+{x^y \equiv a_{y-1}x \mod N}
+\end{matrix}
+$$
+
+Starting with $x \mod N = a_1$ , the result $a_1$ is then propagated forward to compute $x^2$ via $x^2 \equiv a_1x \mod N = a_2$ , which in turn is propagated forward to compute $x^3$ , and so on, until finally the target quantity $x^y$ is computed.
+
+So, then, what is the ***running time*** for this algorithm?
+
+In a given round, the result denoted as $a_i$ is an $n$-bit number (i.e., at most $N-1$ , as per corresponding operation $\mod N$ ), and similarly $x$ itself is also an $n$-bit number. Multiplying two such $n$-bit numbers together can be accomplished straightforwardly with basic arithmetic, correspondingly requiring $O(n^2)$ running time accordingly. Furthermore, taking $\mod N$ of this product (i.e., dividing by $N$ and taking the remainder as the result) also requires $O(n^2)$ time by similar rationale. Therefore, one such "round" requires overall $O(n^2)$ running time.
+
+Furthermore, there are $y$ such rounds performed overall, where $y$ is at most $2^n$ bits in size (i.e., $y \le 2^n$ ).
+
+Therefore, the overall running time is $O(n^2y) = O(n^22^n)$ , which is exponential in the input size $n$ . This is a very inefficient algorithm accordingly (i.e., even an input as small as $n = 30$ or so would fail to converge on a solution in any reasonable time).
+
+To improve this solution, we will next utilize a technique of repeated squaring.
+
+#### Example Quiz and Answers
+
+As an exercise, compute the quantity $7^5 \mod 23$ using this simple/naive algorithm.
+
+This can be accomplished as follows:
+
+$$
+\begin{matrix}
+{7^1}&{\equiv}&{7}&{}&{}&{\equiv}&{7 \mod 23}\\
+{7^2}&{\equiv}&{7 \times 7}&{}&{}&{\equiv}&{3 \mod 23}\\
+{7^3}&{\equiv}&{3 \times 7}&{}&{}&{\equiv}&{21 \mod 23}\\
+{7^4}&{\equiv}&{21 \times 7}&{\equiv}&{147}&{\equiv}&{9 \mod 23}\\
+{7^5}&{\equiv}&{9 \times 7}&{\equiv}&{63}&{\equiv}&{17 \mod 23}
+\end{matrix}
+$$
+
+Therefore, the expression evaluates to $17$ .
+
 ### 8. Fast Quiz and Answers
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.2 (Modular exponentiation).
 
+#### Algorithm
+
+<center>
+<img src="./assets/04-RA1-009Q.png" width="650">
+</center>
+
+In the ***algorithm*** involving repeated squaring, we proceed similarly to before (cf. Section 7), however, with intermediate squaring across rounds, as follows:
+
+$$
+\begin{matrix}
+{x \mod N = a_1}\\
+{x^2 \equiv a_1^2 \mod N = a_2}\\
+{x^4 \equiv (a_2)^2 \mod N = a_4}\\
+{x^8 \equiv (a_4)^2 \mod N = a_8}\\
+{\vdots}
+\end{matrix}
+$$
+
+This results in $x^y$ where $y$ is a power of $2$ . We then examine the binary representation of $y$ to determine $x^y mod N$ via appropriate power of $2$ accordingly.
+
+#### Example Quiz and Answers
+
+<center>
+<img src="./assets/04-RA1-010A.png" width="650">
+</center>
+
+As an exercise, compute the quantity $7^25 \mod 23$ using this fast algorithm via repeated squaring.
+
+This can be accomplished as follows:
+
+$$
+\begin{matrix}
+{7^1}&{\equiv}&{7}&{}&{}&{\equiv}&{7 \mod 23}\\
+{7^2}&{\equiv}&{7^2}&{}&{}&{\equiv}&{3 \mod 23}\\
+{7^4}&{\equiv}&{3^2}&{}&{}&{\equiv}&{9 \mod 23}\\
+{7^8}&{\equiv}&{9^2}&{\equiv}&{81}&{\equiv}&{12 \mod 23}\\
+{7^{16}}&{\equiv}&{12^2}&{\equiv}&{144}&{\equiv}&{6 \mod 23}
+\end{matrix}
+$$
+
+Since $25$ in binary form is $11001_2$ (i.e., relevant factors per corresponding $1$ bits are $7^{16}$ , $7^8$ , and $7^1$ ), this gives:
+
+$$
+7^{25} \equiv 7^{16} \times 7^8 \times 7^1 \equiv 6 \times 12 \times 7 \equiv 72 \times 7 \equiv 3 \times 7 \equiv 21 \mod 23
+$$
+
+Therefore, using corresponding squares, the expression evaluates to $21$ .
+
 ### 9. Algorithm
+
+<center>
+<img src="./assets/04-RA1-011.png" width="650">
+</center>
 
 ## 10-15. Multiplicative Inverse
 
