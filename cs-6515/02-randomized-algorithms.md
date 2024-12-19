@@ -90,6 +90,9 @@ This means that $\frac{x}{N}$ and $\frac{y}{N}$ have the *same* remainder.
 
 ### 5. Example: $\mod 3$
 
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2 (Modular arithmetic).
+
 To better understand the concept of modular arithmetic, let us consider another simple example, $\mod 3$ .
 
 <center>
@@ -130,9 +133,12 @@ where $q$ is the quotient and $r$ is the remainder.
 
 This means that there is some multiple $N$ for which $q$ such integer multiples added to $r$ reconstitutes the original number $x$ (e.g., $-2 \mod 3$ in this form is represented as $q = -1$ , $N = 3$ , and $r = 1$ which yields back $x = (-1)(3) + 1 = -2$ , with $r$ corresponding to the appropriate equivalence class $1$ and $q$ corresponding to the appropriate "offset" [from position $0$ at the centerline] $-1$ in the row representation above).
 
-Therefore, within a given equivalence class (i.e., "row" in the representation above), are all the "same" (i.e., *congruent*) with respect to $\mod 3$ .
+Therefore, within a given equivalence class (i.e., "row" in the representation above), the corresponding numbers are all the "same" (i.e., *congruent*) with respect to $\mod 3$ .
 
 ### 6. Basic Fact Quiz and Answers
+
+> [!NOTE]
+> ***Instructor's Note***: See also [DPV] Chapter 1.2 (Modular arithmetic): the substitution rule.
 
 <center>
 <img src="./assets/04-RA1-004Q.png" width="650">
