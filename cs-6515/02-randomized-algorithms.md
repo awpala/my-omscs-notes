@@ -316,6 +316,38 @@ In the general ***recursive cases***, we utilize the aforementioned key facts to
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
 
+A key concept we will require for the RSA algorithm is **multiplicative inverses**. This concept is somewhat subtly different from the previously seen modular arithmetic (cf. Section 4).
+
+<center>
+<img src="./assets/04-RA1-012.png" width="650">
+</center>
+
+Let us examine normal real numbers to understand multiplicative inverses better in that context.
+
+For example, the number $3$ has multiplicative inverse $\frac{1}{3}$ , i.e., $3 \times \frac{1}{3} = 1$ . More generally, given a number $a$ , its multiplicative inverse $\frac{1}{a}$ similarly yields $a \times \frac{1}{a} = 1$ .
+
+Now, consider number $z$ . What is $\frac{1}{z} \mod N$ , i.e., $\mod N$ of its multiplicative inverse?
+
+We define this as follows:
+
+> $x$ is the multiplicative inverse of $z \mod N$ if $xz \equiv 1 \mod N$ 
+
+This is essentially equivalent to the notion of $z \times \frac{1}{z} = 1$ .
+
+Furthermore, note the following corresponding ***notation***:
+
+$$
+x \equiv z^{-1} \mod N
+$$
+
+$$
+z \equiv x^{-1} \mod N
+$$
+
+where in the latter form, $z$ is analogously the multiplicative inverse of $x$ as well.
+
+Next, we examine a specific example to solidify understanding of this concept of multiplicative inverse.
+
 ### 11. Example
 
 > [!NOTE]
