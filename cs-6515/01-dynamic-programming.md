@@ -84,6 +84,7 @@ $$
 {{\text{Fib1}}(n):}\\
 \ \ \ \ {{\text{input:\ integer\ }} n \ge 0}\\
 \ \ \ \ {{\text{output:\ }}{F_{n}}}\\
+\\
 \ \ \ \ {{\text{if\ }}n = 0,\ {\text{return\ }} (0)}\\
 \ \ \ \ {{\text{if\ }}n = 1,\ {\text{return\ }} (1)}\\
 \ \ \ \ {{\text{return\ }} ({\text{Fib1}}(n-1) + {\text{Fib1}}(n-2))}

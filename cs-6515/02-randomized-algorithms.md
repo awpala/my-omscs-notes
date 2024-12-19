@@ -281,6 +281,34 @@ Therefore, using corresponding squares, the expression evaluates to $21$ .
 <img src="./assets/04-RA1-011.png" width="650">
 </center>
 
+To define the algorithm for modular exponentiation, we will use a couple of ***key facts***, given as follows (where $x$ and $y$ are both integers):
+  * For even $y$ , $x^y = (x^{y/2})^2$
+  * For odd $y$ , $x^y = x(x^{\lfloor {y/2} \rfloor})^2$
+
+We can therefore define a divide and conquer algorithm for modular exponentiation as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Mod-Exp}}(x,y,N):}\\
+\ \ \ \ {{\text{input:\ }} n {\text{-bit\ integers\ }} x,y,N \ge 0}\\
+\ \ \ \ {{\text{output:\ }} x^y \mod N}\\
+\\
+\ \ \ \ {{\text{if\ }} y = 0 {\text{\ then\ }} {\text{return\ }} (1)}\\
+\ \ \ \ {z = {\text{Mod-Exp}}(x, \lfloor \frac{y}{2} \rfloor, N)}\\
+\ \ \ \ {{\text{if\ }} y {\text{\ is\ even\ then\ }} {\text{return\ }} (z^2 \mod N)}\\
+\ \ \ \ {{\text{else\ }} {\text{return\ }} (xz^2 \mod N)}\\
+
+\end{array}
+}
+$$
+
+The ***inputs*** are non-negative integers $x$ , $y$ , and $N$ , all of size $n$-bits.
+
+Since the algorithm is recursive, we begin with the ***base case***. The exponent decreases with each iteration, therefore, in the base case, we have the trivial solution of $y^0 = 1$ (furthermore, we assume $N \ge 0$ to ensure this).
+
+In the general ***recursive cases***, we utilize the aforementioned key facts to reduce the exponent iteratively, examining the respective cases of even and odd $y$ . In either case, we first compute $z$ (i.e., the corresponding quantity $(\cdots)$ in expressions $x^y = (\cdots)^2$ and $x^y = x(\cdots)^2$ ), and then correspondingly returning the respective results accordingly (i.e., even vs. odd).
+
 ## 10-15. Multiplicative Inverse
 
 ### 10. Introduction
