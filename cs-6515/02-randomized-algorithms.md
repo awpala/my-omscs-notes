@@ -902,6 +902,44 @@ Next, we will examine the proof of Fermat's little theorem. In this process, sev
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
 
+![](./assets/05-RA2-002.png){ width=650px }
+
+Recall (cf. Section 1), which states the following:
+
+> If $p$ is prime, then for every $1 \le z \le p-1$ , $z^{p-1} \equiv 1 \mod p$
+
+To prove this theorem, let us first consider the possible values for $z$ . We define such a set $S$ as follows:
+
+$$
+S = \{ 1, 2, \dots, p-1 \}
+$$
+
+Now, consider another set $S'$ , defined as follows:
+
+$$
+S' = zS \mod p = \big\{ 1 \times z \mod p, 2 \times z \mod p, \dots, (p-1) \times z \mod p \big\}
+$$
+
+To illustrate, consider a simple example of $p = 7$ and $z = 4$ , i.e.,:
+
+$$
+S = \{ 1, 2, \dots, 6 \}
+$$
+
+and
+
+$$
+S' = \big\{ (1 \times 4) \mod 7, (2 \times 4) \mod 7, \dots \big\} = \{ 4, 1, 5, 2, 6, 3 \}
+$$
+
+Observe that $S'$ is the same set as $S$ , but simply reordered (i.e., a permutation). Therefore, the key observation here is that the sets are related as:
+
+$$
+S = S'
+$$
+
+Next, we will prove this relationship between the sets more formally. This in turn will allow to prove Fermat's little theorem.
+
 #### 3. Key Lemma
 
 > [!NOTE]
