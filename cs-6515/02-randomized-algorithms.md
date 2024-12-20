@@ -747,7 +747,105 @@ $$
 
 #### Pseudocode
 
+Let us know detail the **extended Euclid algorithm**.
+
+![](./assets/04-RA1-026.png){ width=650px }
+
+The pseudocode for the algorithm is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Ext-Euclid}}(x,y):}\\
+\ \ \ \ {{\text{input:\ integers }} x,y {\text{\ where\ }} x \ge y \ge 0}\\
+\ \ \ \ {{\text{output:\ integers }} d,\alpha,\beta {\text{\ where\ }} d = {\text{gcd}}(x,y) {\text{\ and\ }} d = x\alpha + y\beta}\\
+\\
+\ \ \ \ {{\text{if\ }} y = 0 {\text{\ then\ }} {\text{return\ }} (x,1,0)}\\
+\ \ \ \ {(d,\alpha',\beta') = {\text{Ext-Euclid}}(y,x \mod y)}\\
+\ \ \ \ {{\text{return\ }} (d,\beta',\alpha' - \big\lfloor \frac{x}{y} \big\rfloor \beta')}
+\end{array}
+}
+$$
+
+As before (cf. Section 19), the algorithm takes as ***inputs*** the integer $x$ and $y$ , similarly defined as:
+
+> integers $x,y$ where $x \ge y \ge 0$
+
+where (as before) $x$ and $y$ are ordered.
+
+Furthermore, the ***output*** of this algorithm is three integer parameters $d$ , $\alpha$ , and $\beta$ (cf. Section 20).
+
+In the ***base case*** where $y = 0$ , the algorithm returns the following:
+
+$$
+(x,1,0)
+$$
+
+Here, the first parameter is the simplification ${\text{gcd}}(x,0) = x$ as before (cf. Section 18). Furthermore, in this case (i.e., $y = 0$ ), we can satisfy the relationship $d = x\alpha + y\beta$ by inspection via $\alpha = 1$ and $\beta = 0$ (i.e., the corresponding other two parameters).
+
+For the general ***recursive cases***, we use Euclid's rule (cf. 16), i.e.,:
+
+$$
+{\text{gcd}}(x,y) = {\text{gcd}}(x \mod y,y)
+$$
+
+The corresponding recursive relation is therefore:
+
+$$
+(d,\alpha',\beta') = {\text{Ext-Euclid}}(y,x \mod y)
+$$
+
+Finally, we must manipulate these returned parameters $d$ , $\alpha'$ , and $\beta'$ to obtain the desired output for $x$ and $y$ .
+
+$d$ remains unchanged, since $d = {\text{gcd}}(x,y) = {\text{gcd}}(y,x \mod y)$ (i.e., as per Euclid's rule). Furthermore, given the relationship/constraint $d = x\alpha + y\beta$ , we set the corresponding parameters as follows:
+
+$$
+\alpha = \beta'
+$$
+
+$$
+\beta = \alpha' - \bigg\lfloor \frac{x}{y} \bigg\rfloor \beta'
+$$
+
+***N.B.*** cf. proof of correctness (e.g., textbook or equivalent resource) to better understand the derivation of the expression for the latter (i.e., $\beta$ ) as given here.
+
+#### Running Time
+
+What is the running time for the extended Euclid algorithm?
+
+Similarly to Euclid's algorithm (cf. Section 19), the overall running time for this algorithm is $O(n^3)$ .
+  * ***N.B.*** As before, the main "bottlenecking" operation is $x \mod y$ , which is performed in every round of recursion. Furthermore, This "bottleneck" also correspondingly exists in the computation of expression $\beta = \alpha' - \big\lfloor \frac{x}{y} \big\rfloor \beta'$ by similar rationale.
+
 #### Example Quiz and Answers
+
+As an example, use the algorithm $\text{Ext-Euclid}$ to compute the expression $7^{-1} \mod 360$ (i.e., $\text{Ext-Euclid}(360,7)$ ).
+
+To accomplish this, let us first examine $(x,y)$ in the recursive sub-problems, i.e.,:
+
+$$
+(360,7) \rightarrow (7,3) \rightarrow (3,1) \rightarrow (1,0)
+$$
+
+***N.B.*** This is the same sequence of sub-problems encountered in Euclid's algorithm (cf. Section 17) as well.
+
+Now, let us examine the pair $(\alpha, \beta)$ returned in turn for these inputs:
+
+| $(x,y)$ | $(\alpha, \beta)$ |
+|:--:|:--:|
+| $(1,0)$ | $(1,0)$ |
+| $(3,1)$ | $(0,1)$ |
+| $(7,3)$ | $(1,-2)$ |
+| $(360,7)$ | $(-2,103)$ |
+
+Therefore:
+
+$$
+7^{-1} \equiv 103 \mod 360
+$$
+
+which gives the final result of $103$.
+
+***N.B.*** We also get that $360^{-1} \equiv -2 \mod 7$ . Simplifying, we have $360 \equiv 3 \mod 7$ and $-2 \equiv 5 \mod 7$ . Therefore, $3^{-1} \equiv 5 \mod 7$ .
 
 ## 22. Recap
 
