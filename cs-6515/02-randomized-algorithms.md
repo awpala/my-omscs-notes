@@ -477,6 +477,57 @@ Returning to the original theorem, if $x$ and $N$ are relatively prime, i.e., ${
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.3 (Euclid's algorithm for greatest common divisor).
 
+Before proceeding onto Euclid's algorithm, let us first discuss **Euclid's rule**, the basis for the recursive Euclid's algorithm.
+
+![](./assets/04-RA1-018.png){ width=650px }
+
+Consider integers $x$ and $y$ , for which we are interested in computing their greatest common divisor (i.e., ${\text{gcd}}(x,y)$ ). Furthermore, let us assume that $x \ge y > 0$ .
+
+A basic fact is the following:
+
+$$
+{\text{gcd}}(x,y) = {\text{gcd}}(x \mod y,y)
+$$
+
+***N.B.*** Since $x \ge y$ , here we use expression $x \mod y$ accordingly.
+
+Therefore, in order to compute ${\text{gcd}}(x,y)$ and we can use this fact accordingly (which in turns gives rise a natural recursive definition). However, first, let us consider the basic proof for why this fact holds.
+
+The proof relies on the following simple fact, which we further denote as $*$ :
+
+$$
+{\text{gcd}}(x,y) = {\text{gcd}}(x - y,y)
+$$
+
+Observe that if $*$ is applied repeatedly, it eventually converges on the equivalent expression ${\text{gcd}}(x \mod y,y)$ from the initial fact.
+
+Furthermore, to express $x \mod y$ , ths can be accomplished as follows:
+
+$$
+x \mod y = x - qy
+$$
+
+where $q$ is an integer. Therefore, correspondingly $q$ such subtractions eventually yields the remainder (i.e., $y$ such that $x \ge y$ ) accordingly.
+
+Therefore, proof of the latter fact in turns proves the initial fact accordingly.
+
+![](./assets/04-RA1-019.png){ width=650px }
+
+So, then, why is statement/fact $*$ necessarily true (i.e., proof that the statement holds)? This can be thought of as an iff statement (i.e., $\iff$ ), comprised of the following complementary statements/components:
+  * (*forward direction*) if $d$ divides $x$ and $y$ then $d$ divides $x-y$
+    * in other words, if $d$ factors out of $x$ and $y$, then it also factors out of the quantity $x-y$
+  * (*reverse direction*) if $d$ divides $x-y$ and $y$ then $d$ divides $x$
+
+![](./assets/04-RA1-020.png){ width=650px }
+
+With this proof formalized, to summarize, **Euclid's rule** (i.e., the "initial fact") is therefore stated as follows:
+
+$$
+{\text{gcd}}(x,y) = {\text{gcd}}(x \mod y,y)
+$$
+
+Next, we will use this fact to design a recursive algorithm for computing ${\text{gcd}}(x,y)$ .
+
 ### 17-19. Euclid's Algorithm
 
 #### 17. Pseudocode
