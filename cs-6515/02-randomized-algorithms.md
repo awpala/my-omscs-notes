@@ -547,7 +547,7 @@ $$
 \ \ \ \ {{\text{output:\ }} {\text{gcd}}(x,y)}\\
 \\
 \ \ \ \ {{\text{if\ }} y = 0 {\text{\ then\ }} {\text{return\ }} (x)}\\
-\ \ \ \ {{\text{else\ }} {\text{return\ }} {\text{Euclid}}(y,x \mod y)}
+\ \ \ \ {{\text{else\ }} {\text{return\ }} ({\text{Euclid}}(y,x \mod y))}
 \end{array}
 }
 $$
@@ -573,6 +573,24 @@ $$
 ***N.B.*** Here, we invert the order of the inputs/parameters as $(y, x \mod y)$ , since we assume that $x \ge y \ge 0$ .
 
 #### 18. Base Case
+
+Let us now further consider the base case in Euclid's algorithm.
+
+![](./assets/04-RA1-022.png){ width=450px }
+
+Recall (cf. Section 17) that the base case is defined as follows:
+
+$$
+{\text{gcd}}(x,0) = x
+$$
+
+But what are the divisors of $0$ , exactly?
+
+First, consider how we arrive at this base case: We take ${\text{gcd}}(kx,x)$ , where $k$ is some integer multiple. Then, by making the recursive call on this expression as ${\text{Euclid}}(x, kx \mod x)$ (where in general $kx \mod x = 0$ for any integer multiple $k$ ), this reduces simply to:
+
+$$
+{\text{gcd}}(x,0) = {\text{gcd}}(kx,x) = x
+$$
 
 #### 19. Running Time
 
