@@ -3,9 +3,7 @@
 > [!NOTE]
 > ***Instructor's Note***: See [DPV] Chapter 6 (Dynamic Programming).
 
-<center>
-<img src="./assets/01-DP1-000.png" width="300">
-</center>
+![](./assets/01-DP1-000.png){ width=300px }
 
 **Dynamic programming** (**DP**) is an extremely useful technique.
   * ***N.B.*** Students often have trouble with this topic, however, with sufficient practice, it will become more intuitive and familiar. The lectures will also demonstrate illustrative examples for this purpose.
@@ -30,9 +28,7 @@ The ***outline*** for this section is as follows:
 > [!NOTE]
 > ***Instructor's Note***: Notes [DP Part 1](https://cs6505.wordpress.com/schedule/dp-1/)
 
-<center>
-<img src="./assets/01-DP1-001.png" width="650">
-</center>
+![](./assets/01-DP1-001.png){ width=650px }
 
 Given an integer $n$ , we wil look at an algorithm for generating the corresponding $n$<sup>th</sup> Fibonacci number. This is a very simple algorithm, but it will illustrate the idea of dynamic programming; later we will examine dynamic programming more generally (i.e., techniques for designing a dynamic programming algorithm, as well as more sophisticated examples).
 
@@ -66,9 +62,7 @@ Since the Fibonacci numbers are defined by this simple recursive formula, we mig
 
 Let us now examine the natural recursive algorithm for computing the $n$<sup>th</sup> Fibonacci number.
 
-<center>
-<img src="./assets/01-DP1-002.png" width="650">
-</center>
+![](./assets/01-DP1-002.png){ width=650px }
 
 Recall (cf. Section 2) that the recursive formula for the $n$<sup>th</sup> Fibonacci number is the sum of the previous two Fibonacci numbers, i.e.,:
 
@@ -102,9 +96,7 @@ This completes the definition of the recursive algorithm.
 
 Let us now consider the ***running time*** of this recursive algorithm.
 
-<center>
-<img src="./assets/01-DP1-003.png" width="650">
-</center>
+![](./assets/01-DP1-003.png){ width=650px }
 
 To analyze this algorithm, let us create a function $T(n)$ which denotes the number of steps in the algorithm (i.e., ${\text{Fib1}}(n)$ ), given an input size of $n$ .
 
@@ -145,17 +137,13 @@ Therefore, since the running time grows ***exponentially*** in $n$ for this recu
 
 Let us now consider the ***recursive*** nature of this recursive algorithm.
 
-<center>
-<img src="./assets/01-DP1-004.png" width="650">
-</center>
+![](./assets/01-DP1-004.png){ width=650px }
 
 At the top level of the recursion, the $n$<sup>th</sup> Fibonacci number is computed. From there, recursive sub-calls are made to compute the $n-1$ and $n-2$ Fibonacci numbers. The recursive calls similarly proceed in this manner.
 
 Observe that several of the sub-calls are computed *multiple* times (e.g., ${\text{Fib1}}(n-4)$ , as circled in the figure shown above). In fact, these "redundant sub-computations" increase exponentially with $n$ ; indeed, this is the root cause of the inefficiency in this recursive algorithm (i.e., repeated computation of the smaller sub-problems).
 
-<center>
-<img src="./assets/01-DP1-005.png" width="650">
-</center>
+![](./assets/01-DP1-005.png){ width=650px }
 
 To resolve this inefficiency (i.e., redundant computations), the algorithm will be "flipped on its head": We will compute the *smallest* sub-problems *first*, and then proceed in this manner up to the larger sub-problems (until reaching $n$ ).
 
@@ -180,9 +168,7 @@ This constitutes the corresponding ***dynamic programming algorithm*** in questi
 
 Now, let us detail our dynamic programming algorithm for computing the $n$<sup>th</sup> Fibonacci number.
 
-<center>
-<img src="./assets/01-DP1-006.png" width="650">
-</center>
+![](./assets/01-DP1-006.png){ width=650px }
 
 The second attempt (cf. Section 3 for the first) at computing the $n$<sup>th</sup> Fibonacci number is as follows:
 
@@ -214,9 +200,7 @@ This completes the definition of the algorithm. Observe that there is ***no*** r
 
 Let us now analyze the running time of this algorithm, ${\text{Fib2}}(n)$ .
 
-<center>
-<img src="./assets/01-DP1-007.png" width="650">
-</center>
+![](./assets/01-DP1-007.png){ width=650px }
 
 As before (cf. Section 3), the base cases have a running time of $O(1)$ apiece.
 
@@ -226,9 +210,7 @@ Therefore, the total running time for this algorithm is $O(n)$ total time. This 
 
 ### 6. Dynamic Programming Recap
 
-<center>
-<img src="./assets/01-DP1-008.png" width="650">
-</center>
+![](./assets/01-DP1-008.png){ width=650px }
 
 Before moving onto a more sophisticated example, let us recap a few ***key issues***.
 
@@ -248,9 +230,7 @@ Dynamic programming is widely used. At first, students often find it challenging
 
 Let us now consider a more sophisticated example of dynamic programming. The problem we will consider is the **longest increasing subsequence** (**LIS**) problem.
 
-<center>
-<img src="./assets/01-DP1-009.png" width="650">
-</center>
+![](./assets/01-DP1-009.png){ width=650px }
 
 In the longest increasing subsequence (LIS) problem, the ***input*** is $n$ numbers, denoted as follows:
 
@@ -314,9 +294,7 @@ having a length of $6$ , with this length being the corresponding output of the 
 
 Now, consider a "recipe" for designing such a dynamic programming algorithm.
 
-<center>
-<img src="./assets/01-DP1-010.png" width="650">
-</center>
+![](./assets/01-DP1-010.png){ width=650px }
 
 The first step is to define the **sub-problem** in words.
   * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is defined as the $i$<sup>th</sup> Fibonacci number.
@@ -324,9 +302,7 @@ The first step is to define the **sub-problem** in words.
 The second step is to state the **recursive relation**. Here, we want to express the solution to the $i$<sup>th</sup> sub-problem in terms of smaller sub-problems.
   * Recalling (cf. Section 5) the example of Fibonacci numbers, $F[i]$ is expressed in terms of $F[1], \dots, F[i-1]$ , where $i - 1 < i$ . In this particular algorithm, these values are stored in the corresponding array $F$ for subsequent use in computing $F[i]$ accordingly, i.e., $F[i] = F[i-1] + F[i-2]$ can be readily computed in this manner.
 
-<center>
-<img src="./assets/01-DP1-011.png" width="650">
-</center>
+![](./assets/01-DP1-011.png){ width=650px }
 
 Now, let us consider how to follow this recipe for the longest increasing subsequence (LIS) problem:
   * In the first step, let function $L(i) =$ length of longest increasing subsequence (LIS) on $a_1, a_2, \dots, a_i$ .
@@ -340,9 +316,7 @@ Now, let us consider how to follow this recipe for the longest increasing subseq
 
 Recall (cf. Section 8) that our sub-problem definition is: Let function $L(i) =$ length of longest increasing subsequence (LIS) on input array $a_1, a_2, \dots, a_i$ . The goal is then to express $L(i)$ in terms of $L(i)$ in terms of $L(1), \dots, L(i-1)$ (the solutions of smaller sub-problems).
 
-<center>
-<img src="./assets/01-DP1-012.png" width="650">
-</center>
+![](./assets/01-DP1-012.png){ width=650px }
 
 Recall (cf. Section 7) the earlier example input array as follows (with $n = 12$ ):
 
@@ -376,23 +350,17 @@ So, then, suppose we did keep track of the current solution; in that case, what 
 
 Therefore, in this case, in order to compute $L(9)$ using $L(0), \dots, L(8)$ , we need to keep track of the longest increasing subsequence solution with the minimum ending element (e.g., $5$ , which consequently allows to append $8$ to the end of the subsequence, thereby increasing the corresponding solution length from $4$ to $5$ accordingly).
 
-<center>
-<img src="./assets/01-DP1-013.png" width="650">
-</center>
+![](./assets/01-DP1-013.png){ width=650px }
 
 Let us return to $i = 8$ and see the subsequent complication in ths solution. At this point, our previous solution was $5, 7, 9, 10$ . However, with our *new* formulation, we want to maintain $-3, 1, 4, 5$ , since it is also of length $4$ while additionally ending in a smaller element (i.e., $5 < 10$ ).
 
-<center>
-<img src="./assets/01-DP1-014.png" width="650">
-</center>
+![](./assets/01-DP1-014.png){ width=650px }
 
 Similarly, let us now return to $i = 7$ . At this point, the longest increasing subsequence is $5, 7, 9, 10$ . However, note that at this point, we need to have sequence $-3, 1, 4$ , which at this point is sub-optimal, but nevertheless we need to maintain it in order to later obtain the solution $-3, 1, 4, 5$ of length $4$ .
 
 So, then, how do we maintain such a "sub-optimal" solution? The ***key*** is that for every possible ending element (e.g., $10$ in subsequence $5, 7, 9, 10$ , and $4$ in subsequence $-3, 1, 4$ ), we want to maintain the longest increasing solution with that particular ending element.
 
-<center>
-<img src="./assets/01-DP1-015.png" width="650">
-</center>
+![](./assets/01-DP1-015.png){ width=650px }
 
 Therefore, we need to know the length fo the longest increasing subsequence for every possible ending element. If we know every possible ending element, then upon examining a new element (e.g., $5$ ) we can correspondingly match this against the previous ending elements to determine the appropriate current solution accordingly.
 
@@ -409,9 +377,7 @@ We will next formulate this restated sub-problem more precisely, and then subseq
 
 #### 10. Sub-Problem
 
-<center>
-<img src="./assets/01-DP1-016.png" width="650">
-</center>
+![](./assets/01-DP1-016.png){ width=650px }
 
 We now have a new sub-problem formulation:
 
@@ -436,9 +402,7 @@ Let us return to the previous example (cf. Section 7). The correspondingly more 
 Observe that a difference/divergence begins to occurs starting with $i = 3$ , wherein $L(i) = 1$ (via corresponding LIS of $4$ ).
   * ***N.B.*** In the previous definition of $L(i)$ (cf. Section 8), the corresponding value was $L(i) = 2$ for $i = 3$ (note that the previous example started from index $0$ rather than $1$ ).
 
-<center>
-<img src="./assets/01-DP1-017.png" width="650">
-</center>
+![](./assets/01-DP1-017.png){ width=650px }
 
 Finally, consider the case of $i = 10$ (as in the figure shown above), the case which caused problems in the previous definition of $L(i)$ (cf. Section 9).
 
@@ -463,9 +427,7 @@ This highlights the recurrence for the solution of $L(i)$ in terms of smaller su
 
 #### 11. Recurrence
 
-<center>
-<img src="./assets/01-DP1-018.png" width="650">
-</center>
+![](./assets/01-DP1-018.png){ width=650px }
 
 Now, let us formally state the recurrence for $L(i)$ in terms of smaller sub-problems:
 
@@ -493,9 +455,7 @@ Next, we will define the dynamic programming algorithm corresponding to this def
 
 #### 12. Pseudocode
 
-<center>
-<img src="./assets/01-DP1-019.png" width="650">
-</center>
+![](./assets/01-DP1-019.png){ width=650px }
 
 The pseudocode for the dynamic programming algorithm for the longest-increasing subsequence problem can be stated as follows:
 
@@ -530,9 +490,7 @@ Now, let us consider the running time of this algorithm.
 
 #### 13. Running Time Quiz and Answers
 
-<center>
-<img src="./assets/01-DP1-020A.png" width="650">
-</center>
+![](./assets/01-DP1-020A.png){ width=650px }
 
 The outer $\text{for}$ loop varies over $n$ elements with corresponding running time of $O(n)$ . Furthermore, the nested $\text{for}$ loop similarly varies over at most $O(n)$ elements. Within the nested for loop, each $\text{if\ }\ldots$ statement takes and order of $O(1)$ running time. Therefore, the overall running time of the nested $\text{for}$ loops is $O(n^2)$ .
 
@@ -542,9 +500,7 @@ Therefore, the overall running time is $O(n^2)$ , as dominated/determined by the
 
 ### 14. Recap
 
-<center>
-<img src="./assets/01-DP1-021.png" width="650">
-</center>
+![](./assets/01-DP1-021.png){ width=650px }
 
 This completes the formulation of our dynamic programming algorithm and the analysis of its running time. Now, let us consider/review some ***important aspects*** of the algorithm design.
   * The first step of the algorithm design process was to define the algorithm in words, i.e., expressing $L(i)$ in terms of words.
@@ -571,9 +527,7 @@ Therefore, a lot of the intuition for dynamic programming originates from ideas 
 > [!NOTE]
 > ***Instructor's Note***: Notes [DP Part 1](https://cs6505.wordpress.com/schedule/dp-1/)
 
-<center>
-<img src="./assets/01-DP1-022.png" width="650">
-</center>
+![](./assets/01-DP1-022.png){ width=650px }
 
 The next dynamic programming example is the **longest common subsequence** (**LCS**) problem.
 
@@ -589,9 +543,7 @@ The ***goal*** is to find the *length* of the longest string which is a subseque
 
 Consider an example of the longest-common subsequence problem, in order to become more familiarized with the corresponding terminology.
 
-<center>
-<img src="./assets/01-DP1-024A.png" width="650">
-</center>
+![](./assets/01-DP1-024A.png){ width=650px }
 
 Consider the following two strings, both of length $7$ :
 
@@ -615,9 +567,7 @@ The main motivation of this example is to demonstrate another variation of the d
 
 Let us consider again the two-step process for defining the dynamic programming algorithm for this problem, the longest-common subsequence (LCS).
 
-<center>
-<img src="./assets/01-DP1-025.png" width="650">
-</center>
+![](./assets/01-DP1-025.png){ width=650px }
 
 The first step is to define the ***sub-problem***, in words (cf. Sections 5 and 8). Generally, the first attempt is to always try to devise the sub-problem as the *same* problem on a ***prefix*** of the input. Therefore, the ***key*** is to perform the *identical* problem, but only on a prefix of it (i.e., from length $n$ reduced to some smaller, intermediate length $i$ ). Formally, this can be stated as:
 
@@ -627,9 +577,7 @@ The second step is to define the ***recurrence***. We want to express $L(i)$ in 
 
 #### 18. Recurrence
 
-<center>
-<img src="./assets/01-DP1-026.png" width="650">
-</center>
+![](./assets/01-DP1-026.png){ width=650px }
 
 Let us detail the sub-problem definition proposed previously (cf. Section 17):
 
@@ -661,9 +609,7 @@ $$
 
 Given these last characters, we will examine how $x_i$ and $y_i$ (respectively) are used in the solution of $L(i)$ , and then we can use the solution to the subproblem of size $i-1$ (i.e., $L(i-1)$ ). We then take the optimal solution for the subproblem of size $i-1$ and then we append on the solution for $x_i$ and $y_i$ .
 
-<center>
-<img src="./assets/01-DP1-027.png" width="650">
-</center>
+![](./assets/01-DP1-027.png){ width=650px }
 
 Proceeding in this manner, there are ***two cases*** two consider:
   * 1 - The last characters are the *same* (i.e., $x_i = y_i$ )
@@ -711,25 +657,19 @@ In this particular example, there are three possibilities for the last character
 
 ##### Case A: The last character is $x_i$
 
-<center>
-<img src="./assets/01-DP1-028.png" width="650">
-</center>
+![](./assets/01-DP1-028.png){ width=650px }
 
 Suppose the first case holds, whereby the last character is $A$ (i.e., $x_i$ ). In string $Y$ , the last character $B$ is eliminated by default, since its matches in $X$ have been exhausted by that point.
 
 ##### Case B: The last character is $y_i$
 
-<center>
-<img src="./assets/01-DP1-029.png" width="650">
-</center>
+![](./assets/01-DP1-029.png){ width=650px }
 
 By similar rationale, in the second case, wherein the last character is $B$ (i.e., $y_i$ ), then in string $X$ , the last character $A$ (as well as the other preceding characters back to the last-occurring $B$ in string $X$ ) is eliminated by default, due to exhaustion of corresponding matches in $X$ .
 
 ##### Case C: The last character is neither $x_i$ nor $y_i$
 
-<center>
-<img src="./assets/01-DP1-030.png" width="650">
-</center>
+![](./assets/01-DP1-030.png){ width=650px }
 
 Finally, in the third/final case, wherein the last character matches neither $A$ nor $B$ (i.e., neither $x_i$ nor $y_i$ , respectively).
 
@@ -737,9 +677,7 @@ Finally, in the third/final case, wherein the last character matches neither $A$
 
 Now, consider how we might express $L(i)$ for these three cases.
 
-<center>
-<img src="./assets/01-DP1-031.png" width="650">
-</center>
+![](./assets/01-DP1-031.png){ width=650px }
 
 In the case where neither $x_i$ nor $y_i$ are the last character, this simply omits the corresponding $1$ count in $L(i)$ relative to the corresponding expression for $x_i = y_i$ (cf. Section 18), since the character in question is not a contributor to the length, i.e.,:
 
@@ -747,23 +685,17 @@ $$
 L(i) = \cancel{{1}}+L(i - 1)
 $$
 
-<center>
-<img src="./assets/01-DP1-032.png" width="650">
-</center>
+![](./assets/01-DP1-032.png){ width=650px }
 
 In the case where $y_i$ is the last character (i.e., $x_i$ is dropped), an ***ambiguity*** arises: $X$ now has a prefix length of $i-1$ , whereas $Y$ has a prefix length of $i$ . Therefore, there is no (unambiguous) way to find the corresponding value in table $L(i)$ , i.e., the solution does not exist there, because the candidates prefix strings $X$ and $Y$ are of *different* lengths.
 
 Furthermore, even if the length were determinate in terms of how the last characters in the resulting prefix strings matched (e.g., $B$ of $y_i$ matching with the fourth character $B$ in $x_i$ in this particular example), this would still result in inconsistent prefix lengths (i.e., length $3$ for prefix $X$ vs. length $7$ for prefix $Y$ via match on character $B$ ).
 
-<center>
-<img src="./assets/01-DP1-033.png" width="650">
-</center>
+![](./assets/01-DP1-033.png){ width=650px }
 
 By symmetrical reasoning, with $x_i$ as the last character (and $y_i$ correspondingly dropped), this similarly yields unequal lengths in the resulting prefix strings (i.e., $7$ and $6$ for $X$ and $Y$ , respectively, if matching on last character $A$ ), giving rise to an ambiguous match in the table $L(i)$ accordingly. Therefore, in this case, a corresponding lookup would require searching for the longest-common subsequence (LCS) in $x_1 \cdots x_i$ and separately in $y_1 \cdots y_{i-1}$ accordingly. Proceeding in this manner will also yield further asymmetries in the resulting prefix strings.
 
-<center>
-<img src="./assets/01-DP1-034.png" width="650">
-</center>
+![](./assets/01-DP1-034.png){ width=650px }
 
 Therefore, for the sub-problem definition given as follows (cf. Section 18):
 
@@ -781,9 +713,7 @@ Here, the single parameter $i$ is now expanded to parameters $i$ and $j$ , and c
 
 #### 20. Sub-Problem
 
-<center>
-<img src="./assets/01-DP1-035.png" width="650">
-</center>
+![](./assets/01-DP1-035.png){ width=650px }
 
 Let us now revise our sub-problem definitions with the insight from the first attempt; recall (cf. Section 19) that these insights were as follows:
   * The two prefix strings are independently indexed as $i$ (prefix in string $X$ ) and $j$ (prefix in string $Y$ )
@@ -808,9 +738,7 @@ Next, we will consider the ***recursive cases***.
 
 Given the new sub-problem definition (cf. Section 20), now consider defining the corresponding recurrence relation, starting with the case of unequal last characters in the respective prefix strings (i.e., $x_i \ne y_j$ ).
 
-<center>
-<img src="./assets/01-DP1-036.png" width="650">
-</center>
+![](./assets/01-DP1-036.png){ width=650px }
 
 For this purpose, we return to the example from previously (cf. Section 19):
 
@@ -828,17 +756,13 @@ The ***key insight*** is that if the last characters are unequal, then the last 
   * If neither, then the respective last characters can be dropped from both prefix strings. 
   * Therefore, there are only two additional cases to consider: Dropping either $x_i$ *or* $y_j$ , and consequently taking one of these results as the optimal one.
 
-<center>
-<img src="./assets/01-DP1-037.png" width="650">
-</center>
+![](./assets/01-DP1-037.png){ width=650px }
 
 Following this approach, the respective recurrence relations can be correspondingly defined as follows:
   * If dropping $x_i$ , then $L(i, j) = L(i-1, j)$
   * If dropping $y_j$ , then $L(i, j) = L(i, j-1)$
 
-<center>
-<img src="./assets/01-DP1-038.png" width="650">
-</center>
+![](./assets/01-DP1-038.png){ width=650px }
 
 So, then, how to determine which of these is the most optimal of the two? This is simply follows directly from whichever of the two is *longer*, i.e.,:
 
@@ -854,9 +778,7 @@ This constitutes the recurrence relation for the case where $x_i \ne y_j$ . Next
 
 Now consider defining the recurrence relation for the case of equal last characters in the respective prefix strings (i.e., $x_i = y_j$ ).
 
-<center>
-<img src="./assets/01-DP1-039.png" width="650">
-</center>
+![](./assets/01-DP1-039.png){ width=650px }
 
 For this purpose, we return to the example from previously (cf. Section 19):
 
@@ -886,9 +808,7 @@ Proceeding similarly to before as in the case of $x_i \ne y_j$ (cf. Section 21),
 
 Let us recap the case where $x_i = y_j$ .
 
-<center>
-<img src="./assets/01-DP1-040.png" width="650">
-</center>
+![](./assets/01-DP1-040.png){ width=650px }
 
 This case results in three possibilities (cf. Section 22), which can be expressed/consolidated as follows:
 
@@ -914,9 +834,7 @@ $$
 
 If the optimal solution does not contain this last character (i.e., $A$ ), then it could otherwise be appended to the longest-common subsequence (LCS), thereby yielding a longer prefix (and thus the candidate in question was sub-optimal to begin with). Therefore, it is necessarily true that the longest-common subsequence (LCS) must include either $x_i$ or $y_j$ (but *not* neither).
 
-<center>
-<img src="./assets/01-DP1-041.png" width="650">
-</center>
+![](./assets/01-DP1-041.png){ width=650px }
 
 It may also be the case that $x_i$ matches with some earlier/non-last occurrence of the character in string $Y$ (e.g., $A$ of $x_i$ matching $y_1$ in the figure shown above). However, any case in which the last character matches an earlier occurrence of the character in the other candidate string would still otherwise be consistent with matching the same-occurring last character (i.e., any such subsequence occurs in the larger subsequence with the longest-matching last character regardless). Consequently, the expression $L(i-1,j-1)$ is comprehensively encompassing of these potential "shorter" (i.e., "earlier-matching") subsequences.
 
@@ -924,9 +842,7 @@ It may also be the case that $x_i$ matches with some earlier/non-last occurrence
 
 Let us now summarize the recurrence relation for the longest-common subsequence (LCS) problem.
 
-<center>
-<img src="./assets/01-DP1-042.png" width="650">
-</center>
+![](./assets/01-DP1-042.png){ width=650px }
 
 For the case of two non-empty input strings (i.e., $i \ge 1$ and $j \ge 1$ ), recurrence relation for the ***recursive cases*** is defined as follows:
 
@@ -963,9 +879,7 @@ Now, we can finally state the dynamic programming algorithm, as will be done nex
 
 #### Pseudocode
 
-<center>
-<img src="./assets/01-DP1-043.png" width="650">
-</center>
+![](./assets/01-DP1-043.png){ width=650px }
 
 The pseudocode for the dynamic programming algorithm for the longest-common subsequence (LCS) problem is given as follows:
 
@@ -996,9 +910,7 @@ Finally, the optimal length is returned in the entry $L(n,n)$ , the bottom-right
 
 #### Running Time Quiz and Answers
 
-<center>
-<img src="./assets/01-DP1-044.png" width="650">
-</center>
+![](./assets/01-DP1-044.png){ width=650px }
 
 Consider the running time for the dynamic programming algorithm for the least-common subsequence (LCS) problem.
 
@@ -1012,9 +924,7 @@ This concludes analysis of the longest-common subsequence (LCS) algorithm. This 
 
 #### 26. Dynamic Programming Table Quiz and Answers
 
-<center>
-<img src="./assets/01-DP1-045Q.png" width="350">
-</center>
+![](./assets/01-DP1-045Q.png){ width=350px }
 
 Given the dynamic programming algorithm for the longest-common subsequence (LCS) problem, consider the corresponding (partially filled) ***table*** as in the figure shown above, for the previous example (cf. Section 22) having the following input strings:
 
@@ -1028,9 +938,7 @@ $$
 
 Complete the rest of the table accordingly.
 
-<center>
-<img src="./assets/01-DP1-046A.png" width="350">
-</center>
+![](./assets/01-DP1-046A.png){ width=350px }
 
 The figure shown above is the resulting completed table.
 
@@ -1041,9 +949,7 @@ As the table indicates, the longest-common subsequence (LCS) has length $4$ (per
 Given the completed dynamic programming table (cf. Section 26), now consider how to extract the corresponding longest-common subsequence (LCS).
   * ***N.B.*** As a hint, start with the last matching cell.
 
-<center>
-<img src="./assets/01-DP1-047A.png" width="650">
-</center>
+![](./assets/01-DP1-047A.png){ width=650px }
 
 As in the figure shown above, tracing back from the last matching cell, this yields the corresponding longest-common subsequence $BCBA$ for this example.
 
@@ -1053,9 +959,7 @@ As in the figure shown above, tracing back from the last matching cell, this yie
 
 At this point, it is advisable to perform some practice problems in dynamic programming.
 
-<center>
-<img src="./assets/01-DP1-048.png" width="650">
-</center>
+![](./assets/01-DP1-048.png){ width=650px }
 
 The instructor recommends the following practice problems from the course companion textbook *Algorithms* by Dasgupta et al.:
   * 6.1 - find the contiguous subsequence of maximum sum
@@ -1068,9 +972,7 @@ The instructor recommends the following practice problems from the course compan
 
 ***N.B.*** In general, the suggested practice problems in the lectures will be accompanied by a short descriptor, in order to disambiguate among potential numbering discrepancies across textbook versions.
 
-<center>
-<img src="./assets/01-DP1-049.png" width="650">
-</center>
+![](./assets/01-DP1-049.png){ width=650px }
 
 Now, consider a summary of the general ***approach*** when solving dynamic programming algorithm problems.
 
@@ -1089,9 +991,7 @@ Let us now demonstrate this via Dasgupta Practice Problem 6.1 accordingly.
 
 ##### 29. Problem
 
-<center>
-<img src="./assets/01-DP1-050.png" width="650">
-</center>
+![](./assets/01-DP1-050.png){ width=650px }
 
 The ***input*** to this problem is the numeric sequence $a_1, \dots, a_n$ .
 
@@ -1111,9 +1011,7 @@ Given that the substring must be contiguous, it is indeterminate a priori whethe
 
 ##### 30. Solution
 
-<center>
-<img src="./assets/01-DP1-051.png" width="650">
-</center>
+![](./assets/01-DP1-051.png){ width=650px }
 
 To solve Practice Problem 6.1, let us reformulate the sub-problem per the insight gained in defining the initial approach (cf. Section 29). We correspondingly redefine the (stronger) sub-problem with an extra restriction as follows:
 
@@ -1123,9 +1021,7 @@ Now, we can express the recurrence for $S(i)$ accordingly.
 
 The ***base case*** is simply $S(0) = 0$ , the trivial result for an empty input string.
 
-<center>
-<img src="./assets/01-DP1-052.png" width="650">
-</center>
+![](./assets/01-DP1-052.png){ width=650px }
 
 The ***recursive cases*** require use of $a_i$ in the definition of $S(i)$ (i.e., $S(i) = a_i + \cdots$ ), as we determined. Furthermore, appended to this are two possibilities:  
   * $a_i$ by itself, or
@@ -1160,9 +1056,7 @@ To determine the ***running time*** for this algorithm, each entry into the tabl
 
 The next problem under consideration is the knapsack problem.
 
-<center>
-<img src="./assets/02-DP2-001.png" width="650">
-</center>
+![](./assets/02-DP2-001.png){ width=650px }
 
 In the knapsack problem, the ***input*** is $n$ objects, each characterized by the following (integer) values:
   * integer weights: $w_1, \dots, w_n$
@@ -1183,9 +1077,7 @@ $$
 \max \big\{ {\sum\limits_{i \in S} {{v_i}} } \big\}
 $$
 
-<center>
-<img src="./assets/02-DP2-002.png" width="650">
-</center>
+![](./assets/02-DP2-002.png){ width=650px }
 
 Let us further summarize the problem to reinforce understanding of it. Given (integer) inputs for weights $w_i, \dots, w_n$ , values $v_i, \dots, v_n$ , and total knapsack capacity $B$ , the corresponding goal is to find a subset of objects (i.e., among those given from $i$ to $n$ ) such that this subset fits in the knapsack (i.e., relative to its total capacity $B$ ), in such a manner that the corresponding value of this subset of objects is maximized (i.e., per corresponding total value of constituent values $v_i, \dots, v_n$ ).
 
@@ -1193,9 +1085,7 @@ Let us further summarize the problem to reinforce understanding of it. Given (in
 
 ### 2. Problem Variants
 
-<center>
-<img src="./assets/02-DP2-003.png" width="650">
-</center>
+![](./assets/02-DP2-003.png){ width=650px }
 
 There are two natural variants of the knapsack problem, with each having a corresponding dynamic programming solution (and thus it is useful to examine both accordingly):
  * 1 - In the first version, there is *one* copy of each object, i.e., determining the corresponding solution comprised of object subsets *without* repetition
@@ -1209,9 +1099,7 @@ Our discussion will begin with the first version, and then proceed onto the othe
 
 To motivate discussion of the dynamic programming solution, first consider a greedy algorithm approach to this problem (which yields a corresponding pitfall, as will be demonstrated shortly). 
 
-<center>
-<img src="./assets/02-DP2-004Q.png" width="650">
-</center>
+![](./assets/02-DP2-004Q.png){ width=650px }
 
 Consider the inputs comprised of the following:
 
@@ -1226,9 +1114,7 @@ Furthermore, the total weight capacity of the knapsack is $B = 22$ .
 
 Now, consider how to achieve the optimal solution using a greedy approach.
 
-<center>
-<img src="./assets/02-DP2-005A.png" width="650">
-</center>
+![](./assets/02-DP2-005A.png){ width=650px }
 
 By inspection, the maximum value obtained is $18$ via objects subset { $2, 3$ }.
 
@@ -1243,9 +1129,7 @@ In a greedy approach, we start with the most valuable object, and proceed accord
 
 Therefore, here, $r_1 > r_2 > r_3 > r_4$ .
 
-<center>
-<img src="./assets/02-DP2-006A.png" width="650">
-</center>
+![](./assets/02-DP2-006A.png){ width=650px }
 
 However, following this greedy approach, the corresponding (sub-optimal) solution yields objects subset { $1, 4$ } having total value $16$ (obtained by starting with the "most valuable" object $1$ having weight $15$ , which then leaves a remaining capacity of $22 - 15 = 7$ in the knapsack, satisfied by the next-most-valuable object subject to these constraints, object $4$ having weight $5$ ), which is less than the maximum-possible total value for this example (cf. $18$ ).
 
@@ -1262,9 +1146,7 @@ We will now proceed onto devising a more optimal dynamic programming solution.
 
 Recall (cf. Dynamic Programming 1, Section 8) the basic process for devising a dynamic programming algorithm.
 
-<center>
-<img src="./assets/02-DP2-007.png" width="650">
-</center>
+![](./assets/02-DP2-007.png){ width=650px }
 
 First, we define the sub-problem in words. The first attempt typically involves defining the *same* problem on a *prefix* of the input. Therefore:
 
@@ -1276,9 +1158,7 @@ The next step is to find a recursive relation which expresses the $i$<sup>th</su
 
 ##### 5. Recurrence
 
-<center>
-<img src="./assets/02-DP2-008.png" width="650">
-</center>
+![](./assets/02-DP2-008.png){ width=650px }
 
 To summarize the first attempt of the dynamic programming algorithm (cf. Section 4), we define the following sub-problem:
 
@@ -1319,9 +1199,7 @@ Therefore, to resolve this issue with the sub-problem definition, we must additi
 
 Now, let us revise our sub-problem definition, based on insight gained from the first attempt (cf. Section 5).
 
-<center>
-<img src="./assets/02-DP2-009.png" width="650">
-</center>
+![](./assets/02-DP2-009.png){ width=650px }
 
 Our initial definition of the sub-problem was as follows:
 
@@ -1331,9 +1209,7 @@ However, this is an insufficient definition, because it does not allow use of $K
 
 Therefore, we redefine the sub-problem as having two parameters $i$ (the object) and $b$ (the total weight available for object $i$ ), correspondingly giving rise to a two-dimensional table accordingly. 
 
-<center>
-<img src="./assets/02-DP2-010.png" width="650">
-</center>
+![](./assets/02-DP2-010.png){ width=650px }
 
 This updated sub-problem can now be formally redefined as follows:
 
@@ -1345,9 +1221,7 @@ Now, the ***goal*** is to compute entry $K(n, B)$ (i.e., bottom-right corner ent
 
 Now, let us consider the recurrence relation.
 
-<center>
-<img src="./assets/02-DP2-011.png" width="650">
-</center>
+![](./assets/02-DP2-011.png){ width=650px }
 
 In general, the recurrence relation will involve two potential scenarios: Object $i$ is either included or omitted.
 
@@ -1379,9 +1253,7 @@ Following this definition, the table $K(i, b)$ is therefore correspondingly popu
 
 Now, consider the pseudocode for implementing the dynamic programming algorithm to solve the knapsack problem with *no* repetition of candidate objects in the subset (i.e., any given object can only be used *once* at most).
 
-<center>
-<img src="./assets/02-DP2-012.png" width="650">
-</center>
+![](./assets/02-DP2-012.png){ width=650px }
 
 $$
 \boxed{
@@ -1418,9 +1290,7 @@ The nested $\text{for}$ loops comprise an overall running time of $O(B) \times O
 
 Recall (cf. Section 8) that the running time of the dynamic programming algorithm just described is $O(nB)$ . Is this an ***efficient*** algorithm? More precisely, is the running time at worst ***polynomial*** in the input size?
 
-<center>
-<img src="./assets/02-DP2-014A.png" width="650">
-</center>
+![](./assets/02-DP2-014A.png){ width=650px }
 
 This algorithm is ***not*** polynomial in the input size. While $nB$ is indeed a polynomial expression (i.e., with respect to the running time), the corresponding ***input size*** is nevertheless not polynomial.
 
@@ -1440,9 +1310,7 @@ As it turns out, this form of knapsack problem is **NP-complete**, meaning that 
 
 Now, consider the second variant of the knapsack problem, wherein each candidate object can be included multiplicatively (cf. strictly only *one* inclusion of each object in the first variant, as discussed previously in this section).
 
-<center>
-<img src="./assets/02-DP2-015.png" width="650">
-</center>
+![](./assets/02-DP2-015.png){ width=650px }
 
 To design a dynamic programming algorithm, recall (cf. Dynamic Programming 1, Section 8) that the first step is to define a sub-problem. For this, let us repurpose the corresponding definition (cf. Section 6) from the first variant, i.e.,:
 
@@ -1456,9 +1324,7 @@ Since this variant of the problem allows multiple inclusions of the *same* objec
 
 Now, consider writing the recurrence relation for the sub-problem definition devised previously (cf. Section 10).
 
-<center>
-<img src="./assets/02-DP2-016.png" width="650">
-</center>
+![](./assets/02-DP2-016.png){ width=650px }
 
 Here, we attempt to express $K(i,b)$ in terms of smaller sub-problems. Using the insight gained in the first variant of the knapsack problem (cf. Section 7), there are two possible scenarios: Object $i$ is either included or excluded in the knapsack (with the resulting higher value dictating the choice). This will yield the following general expression:
 
@@ -1477,9 +1343,7 @@ $$
 K(i,b) = \max \big\{ K(i-1,b), v_i + K(i,b-w_i) \big\}
 $$
 
-<center>
-<img src="./assets/02-DP2-017.png" width="650">
-</center>
+![](./assets/02-DP2-017.png){ width=650px }
 
 Let us now consider whether or not this is a valid recurrence (i.e., is $K(i,b)$ expressed in terms of smaller sub-problems?). Previously, when expressing the current entry, we did so with respect to entries in previous rows of the table. However, this expression includes a reference to the current row (i.e., expression $K(i,b-w_i)$ via $K(i,\dots)$ ).
 
@@ -1494,9 +1358,7 @@ Furthermore, given a table of dimension $n \times B$ , with each entry requiring
 
 ##### 12. Recap
 
-<center>
-<img src="./assets/02-DP2-018.png" width="650">
-</center>
+![](./assets/02-DP2-018.png){ width=650px }
 
 Let us examine the algorithm devised previously (cf. Section 11). Oftentimes, when generating a solution involving a two- or three-dimensional table, it is useful to critically examine the solution in order to determine if a smaller table could otherwise be used instead (or otherwise a solution that is faster, has a smaller space/memory requirement, is simpler, etc.).
 
@@ -1506,9 +1368,7 @@ Therefore, let us now rewrite the sub-problem in such a manner which eliminates 
 
 ##### 13. Simpler Sub-Problem
 
-<center>
-<img src="./assets/02-DP2-019.png" width="650">
-</center>
+![](./assets/02-DP2-019.png){ width=650px }
 
 In the updated version of the knapsack problem (cf. Section 12), we now have a single parameter $b$ , giving rise to the following redefinition of the sub-problem accordingly:
 
@@ -1532,9 +1392,7 @@ Next, we will create the appropriate pseudocode for this simplified algorithm.
 
 Now, consider the pseudocode for the updated algorithm (cf. Section 13).
 
-<center>
-<img src="./assets/02-DP2-020.png" width="650">
-</center>
+![](./assets/02-DP2-020.png){ width=650px }
 
 $$
 \boxed{
@@ -1561,9 +1419,7 @@ Finally, the solution to the problem is returned as the last entry in the table,
 
 Now, consider the running time for the algorithm (cf. Section 14).
 
-<center>
-<img src="./assets/02-DP2-021.png" width="650">
-</center>
+![](./assets/02-DP2-021.png){ width=650px }
 
 The outer $\text{for}$ loop has a running time of $O(B)$ . Furthermore, the nested $\text{for}$ loop has a running time of $O(n)$ , with each operation (i.e., populating table value $K(b)$ ) requiring a running time of $O(1)$ . Therefore, the overall running time is $O(nB)$ , similarly to previously (cf. Section 11), however, it requires less space/memory and also constitutes a comparatively simpler solution (i.e., a one-dimensional table rather than a two-dimensional table).
 
@@ -1572,9 +1428,7 @@ The outer $\text{for}$ loop has a running time of $O(B)$ . Furthermore, the nest
 > [!NOTE]
 > ***Instructor's Note***: For further discussion, see the illustration in Lecture DP1: LCS: Extract Sequence. In addition, see [DPV] Chapter 6.2 (which points back to the analogous use of the prev[] array in Dijkstra's algorithm), and also try problem 6.4(b) which partitions a string into a sequence of words.
 
-<center>
-<img src="./assets/02-DP2-022.png" width="650">
-</center>
+![](./assets/02-DP2-022.png){ width=650px }
 
 To output the actual multiset of the constituent objects corresponding to the solution, we must explicitly keep track of object $i$ used to obtain the currently optimal solution at sub-problem $k(b)$ . The following pseudocode contains the appropriate adjustments for this purpose:
 
@@ -1608,9 +1462,7 @@ The next dynamic programming problem under consideration is Chain Matrix Multipl
 
 Let us now consider a more specific example to motivate this problem accordingly, and then we will later return to defining the more general problem.
 
-<center>
-<img src="./assets/02-DP2-023.png" width="650">
-</center>
+![](./assets/02-DP2-023.png){ width=650px }
 
 Consider four matrices $A$ , $B$ , $C$ , and $D$ having integer-value entries. The ***goal*** is to compute the product of these four matrices, i.e., $A \times B \times C \times D$ . Furthermore, this multiplication should be performed in the ***most efficient*** manner possible. But what do we mean by "most efficient" in this context?
 
@@ -1661,9 +1513,7 @@ And similarly for the remaining entries in the resulting product matrix.
 
 #### 18. Order of Operation
 
-<center>
-<img src="./assets/02-DP2-024.png" width="650">
-</center>
+![](./assets/02-DP2-024.png){ width=650px }
 
 Recall (cf. Section 17) that the goal is to compute the matrix product $A \times B \times C \times D$ . Matrix multiplication is an ***associative*** operation, and therefore there are many ways to determine this target matrix product accordingly.
 
@@ -1678,15 +1528,11 @@ So, then, which of these is the best? And what is the corresponding cost of this
 
 #### 19. Cost for Matrix Multiply
 
-<center>
-<img src="./assets/02-DP2-025.png" width="650">
-</center>
+![](./assets/02-DP2-025.png){ width=650px }
 
 Consider a matrix $W$ of six $a \times b$ and another matrix $Y$ of size $b \times c$ . Furthermore, consider the product $Z$ of these matrices, i.e., $Z = W \times Y$ , having corresponding size $a \times c$ .
 
-<center>
-<img src="./assets/02-DP2-026.png" width="650">
-</center>
+![](./assets/02-DP2-026.png){ width=650px }
 
 Now, consider an arbitrary element $z_{i,j}$ of the product matrix $Z$ . To determine this entry, this requires the following computation:
 
@@ -1706,9 +1552,7 @@ Therefore, to compute *one* such element in product matrix $Z$ , this requires c
 > [!NOTE]
 > ***Instructor's Note***: See [DPV] Chapter 6.6 (Chain Matrix Multiplication) and Eric's notes [DP Part 2](https://cs6505.wordpress.com/schedule/dp-part-ii/)
 
-<center>
-<img src="./assets/02-DP2-027.png" width="650">
-</center>
+![](./assets/02-DP2-027.png){ width=650px }
 
 In the general problem, there are $n$ matrices $A_1, A_2, \dots, A_n$ as inputs, where each matrix $A_i$ has corresponding size $m_{i-1} \times m_i$ (i.e., matrices $A_1, A_2, \dots, A_n$ having corresponding sizes $m_0 \times m_1$ , $m_1 \times m_2$ , $\dots$ , $m_{n-1} \times m_n$ , respectively, whereby each inner dimension is correspondingly matching).
   * ***N.B.*** For purposes of this problem, only the *size* of the corresponding input matrices must be known, but otherwise the (identify of the) constituent elements can be regarded as arbitrary/insignificant.
@@ -1721,9 +1565,7 @@ The ***goal*** is to compute the corresponding product matrix $A_1 \times A_2 \t
 
 To gain some additional intuition for the problem of matrix multiplication, consider an alternative representation: Rather than considering this as a parenthesization, instead let us represent the problem as a binary tree.
 
-<center>
-<img src="./assets/02-DP2-028.png" width="650">
-</center>
+![](./assets/02-DP2-028.png){ width=650px }
 
 Recall (cf. Section 18) the product of matrices $A \times B \times C \times D$ , with the standard computation method being $((A \times B) \times C) \times D$ , where $A \times B$ . To represent this parenthesization as a binary tree (cf. left side of the figure shown above), the leaves of the tree will represent the constituent matrices, and the internal nodes will represent intermediate computations, i.e.,:
   * The root of the tree represents the final computation $((A \times B) \times C) \times D$ , where $A \times B$ .
@@ -1741,9 +1583,7 @@ Conversely, in the case of parenthesization $((A \times B) \times C) \times D$ ,
 
 Now, let us attempt to devise the the dynamic programming algorithm for the matrix multiplication problem.
 
-<center>
-<img src="./assets/02-DP2-029.png" width="650">
-</center>
+![](./assets/02-DP2-029.png){ width=650px }
 
 The first step is to define the sub-problem in words. Here, we have:
 
@@ -1755,17 +1595,13 @@ Furthermore, let us attempt to define a recurrence relation for this sub-problem
 
 Given this "split point" $i$ , we will examine all possibilities recursively in the resulting subtree, and so on. However, given that we are generally attempting to examine *prefixes* (i.e., decreasing the problem size with each recursive level), note that the "right" subtree results in a *suffix*; so, then, should we proceed similarly with the suffix?
 
-<center>
-<img src="./assets/02-DP2-030.png" width="650">
-</center>
+![](./assets/02-DP2-030.png){ width=650px }
 
 To further examine the suffix, let us expand the tree by another level (as in the figure shown above), having corresponding "split point" $j$ , yielding subtrees $A_{i+1} \times \cdots \times A_j$ (left) and $A_{j+1} \times \cdots \times A_n$ (right) accordingly. Proceeding as before, we attempt to examine the respective costs of these sub-trees in the table accordingly. However, observe that subtree $A_{i+1} \times \cdots \times A_j$ (left) is neither a prefix nor a suffix, but rather it is a ***substring***. This turns out to be a useful intermediate result/computation which is sufficient for devising the solution; however, we will need to revise our sub-problem definition accordingly (i.e., to consider substrings rather than prefixes), as discussed next.
 
 ##### 23. Substrings
 
-<center>
-<img src="./assets/02-DP2-031.png" width="650">
-</center>
+![](./assets/02-DP2-031.png){ width=650px }
 
 The revised sub-problem definition involves two parameters, $i$ and $j$ (intermediate positions within substring $1, \dots, n$ ). The corresponding sub-problem definition is as follows:
 
@@ -1779,9 +1615,7 @@ For the remaining ***recursive cases***, we are attempting to compute the upper-
 
 ##### 24. Introduction
 
-<center>
-<img src="./assets/02-DP2-032.png" width="650">
-</center>
+![](./assets/02-DP2-032.png){ width=650px }
 
 Now, consider the more general recurrence relation for arbitrary element $C(i,j)$ in the product matrix, which corresponds to the product of the matrices defined by the substring $i \cdots j$ .
 
@@ -1799,9 +1633,7 @@ Furthermore, we will try all possibilities of $\ell$ , in order to determine whi
 
 ##### 25. Summary
 
-<center>
-<img src="./assets/02-DP2-033.png" width="650">
-</center>
+![](./assets/02-DP2-033.png){ width=650px }
 
 Let us now more formally define the recurrence relation for $C(i,j)$ , which corresponds to the computation at the "root" of the left subtree of intermediate computation $A_i \times A_{i+1} \times \cdots \times A_{\ell} \times \cdots \times A_j$ (relative to "split" point $\ell$ ), where $i \le \ell < j$ and the corresponding subtrees are as follows:
   * left subtree $A_i \times \cdots \times A_{\ell}$ of size $m_{i-1} \times m_{\ell}$ and cost $C(i,\ell)$ , and
@@ -1819,9 +1651,7 @@ where additional term $+ m_{i-1}m_{\ell}m_j$ is incurred due to the cost for com
 
 Before detailing the pseudocode for the corresponding dynamic programming algorithm, let us examine the recurrence relation more carefully, with consideration for how the corresponding table is populated (which is less straightforward in this problem than as was encountered/performed previously).
 
-<center>
-<img src="./assets/02-DP2-034.png" width="650">
-</center>
+![](./assets/02-DP2-034.png){ width=650px }
 
 Given a two-dimensional table (i.e., matrix) $C$ , we are attempting to populate the upper-right region, relative to the main diagonal (as in the figure shown above), i.e., where $i \le j$ .
 
@@ -1839,13 +1669,9 @@ Next, we will detail the pseudocode for the corresponding dynamic programming al
 
 Now, let us detail the pseudocode of the dynamic programming algorithm for the chain matrix multiplication problem, which computes the minimum cost of multiplying matrices $A_1 \times \cdots \times A_n$ .
 
-<center>
-<img src="./assets/02-DP2-035.png" width="650">
-</center>
+![](./assets/02-DP2-035.png){ width=650px }
 
-<center>
-<img src="./assets/02-DP2-036.png" width="650">
-</center>
+![](./assets/02-DP2-036.png){ width=650px }
 
 The corresponding pseudocode is given as follows:
 
@@ -1889,9 +1715,7 @@ Finally, the algorithm returns value $C(1,n)$ , the upper-right corner value, wh
 
 Given the dynamic programming algorithm, now consider its overall running time.
 
-<center>
-<img src="./assets/02-DP2-037.png" width="650">
-</center>
+![](./assets/02-DP2-037.png){ width=650px }
 
 The base case (which initializes the main diagonal) has a running time of $O(n)$ .
 
@@ -1903,9 +1727,7 @@ As a final note, observe that a ***key component*** of this algorithm involved t
 
 ### 28. Addendum: Practice Problems
 
-<center>
-<img src="./assets/02-DP2-038.png" width="650">
-</center>
+![](./assets/02-DP2-038.png){ width=650px }
 
 At this point, you should be capable of approaching any problem from Chapter 6 in the course companion textbook *Algorithms* by Dasgupta et al.
 
@@ -1933,9 +1755,7 @@ The ***key*** to building proficiency in the dynamic programming algorithm techn
 
 This lesson will focus on several shortest-path problems, utilizing dynamic programming techniques to design fast/efficient algorithms for these problems. 
 
-<center>
-<img src="./assets/03-DP3-001.png" width="650">
-</center>
+![](./assets/03-DP3-001.png){ width=650px }
 
 The context for these problems is based around the notion of a **directed graph** $\vec G = (V,E)$ (where the arrow denotes a *directed* graph), having **edge weights** $w(e)$ .
 
@@ -1962,9 +1782,7 @@ In this particular example, this can be determined by inspection as follows:
 
 #### Dijkstra's Algorithm
 
-<center>
-<img src="./assets/03-DP3-002.png" width="650">
-</center>
+![](./assets/03-DP3-002.png){ width=650px }
 
 The classical algorithm for this problem is **Dijkstra's algorithm**, which in its abbreviated form can be summarized as follows:
 
@@ -1981,17 +1799,13 @@ We wil next examine the more general problem which *does* allow for such negativ
 > [!NOTE]
 > ***Instructor's Note***: Typo: The path length of $s \rightarrow b \rightarrow a \rightarrow d$ is $12$ (not $11$ as I said in the video).
 
-<center>
-<img src="./assets/03-DP3-003.png" width="300">
-</center>
+![](./assets/03-DP3-003.png){ width=300px }
 
 Recall (cf. Section 1) the directed graph from previously, as in the figure shown above. Negative edge weights are present/permissible, and the goal is to find the shortest path from source vertex $s$ to all other vertices in the graph.
 
 The first question is whether the problem is well defined. In this example, it is: We have already previously determined by inspection (cf. Section 1) the shortest paths in this graph.
 
-<center>
-<img src="./assets/03-DP3-004.png" width="650">
-</center>
+![](./assets/03-DP3-004.png){ width=650px }
 
 However, let us now modify the graph to have a more extreme negative-weight value, as in the figure shown above (i.e., changing weight of edge $a \rightarrow e$ from $-2$ to $-6$ ). With this modification, what is ${\text{dist}}(d)$ ?
 
@@ -2012,9 +1826,7 @@ We we will next examine how to use dynamic programming to solve this problem.
 
 Let us now design an algorithm for the single-source shortest path problem.
 
-<center>
-<img src="./assets/03-DP3-005.png" width="650">
-</center>
+![](./assets/03-DP3-005.png){ width=650px }
 
 Given directed graph $\vec G$ with edge weights (which in general can be positive or negative) and some start/source vertex $s \in V$ , the ***goal*** is to find the shortest path from $s$ to every other vertex in the graph. For now, let us ***assume*** that there are *no* negative weight cycles present in the graph, thereby guaranteeing a well defined path from $s$ to every other vertex in the graph (i.e., wherein each intermediate vertex along the path is only visited strictly *once*).
   * ***N.B.*** Later, we will relax this assumption, and correspondingly modify the algorithm to detect the presence of negative weight cycles.
@@ -2035,9 +1847,7 @@ Next, we will express the recurrence relation for $D(i,z)$ , with the goal being
 
 #### 4. Introduction
 
-<center>
-<img src="./assets/03-DP3-006.png" width="650">
-</center>
+![](./assets/03-DP3-006.png){ width=650px }
 
 Recall (cf. Section 3) the definition of the sub-problem, as follows:
 
@@ -2069,9 +1879,7 @@ We will express $D(i,z)$ more formally taking this into account next.
 
 Let us now recap and summarize the recurrence.
 
-<center>
-<img src="./assets/03-DP3-007.png" width="650">
-</center>
+![](./assets/03-DP3-007.png){ width=650px }
 
 We are defining $D(i,z)$ , the shortest path $s \rightsquigarrow z$ using at most $i$ edges.
 
@@ -2095,9 +1903,7 @@ Next, we will detail/define this algorithm more formally.
 
 Let us now detail the pseudocode for the dynamic programming algorithm to solve the single-source shortest path problem.
 
-<center>
-<img src="./assets/03-DP3-008.png" width="650">
-</center>
+![](./assets/03-DP3-008.png){ width=650px }
 
 The corresponding algorithm called the **Bellman-Ford algorithm** is given as follows:
 
@@ -2135,9 +1941,7 @@ Finally, the solution is returned as $D(n-1,\cdot)$ , via a two-dimensional tabl
 
 Now, consider the overall running time for this algorithm.
 
-<center>
-<img src="./assets/03-DP3-009.png" width="650">
-</center>
+![](./assets/03-DP3-009.png){ width=650px }
 
 Examining the nested $\text{for}$ loops (which, by inspection, dominate the overall algorithm running time), the outer loop requires $O(n)$ running time with respect to $n$ vertices. Furthermore, the innermost $\text{for}$ loop is performed with respect to all $m$ edges of the graph (where the two inner loops together effectively iterate over every edge exactly once in the process of this), with each innermost loop performing an $O(1)$ operation (i.e., checking and setting $D(i,z)$ ). Therefore, the overall running time is $O(nm)$ .
 
@@ -2149,9 +1953,7 @@ Next, let us determine how to explicitly detect such a negative weight cycle in 
 
 How do we determine whether the input graph contains a negative weight cycle?
 
-<center>
-<img src="./assets/03-DP3-010.png" width="650">
-</center>
+![](./assets/03-DP3-010.png){ width=650px }
 
 Recalling (cf. Section 2) our previous example, we enumerate the Bellman-Ford algorithm steps (cf. Section 6) as follows:
 
@@ -2190,9 +1992,7 @@ Furthermore, the table can be used to explicitly identify this negative weight c
 
 Let us now consider another variant of the shortest-path problem, which will give rise to a slightly different style of dynamic programming algorithm solution in the process of its examination.
 
-<center>
-<img src="./assets/03-DP3-011.png" width="650">
-</center>
+![](./assets/03-DP3-011.png){ width=650px }
 
 Recall (cf. Section 6) that in the Bellman-Ford algorithm, a *single* source vertex $s$ was examined for its path length to the other constituent vertices in the input graph. Now, we consider *all* pairs of such shortest paths (i.e., among the constituent vertices in the input graph).
 
@@ -2208,9 +2008,7 @@ The ***naive*** approach for solving the all-pairs version of the problem is to 
 
 ### 9. Naive Approach Quiz and Answers
 
-<center>
-<img src="./assets/03-DP3-013A.png" width="650">
-</center>
+![](./assets/03-DP3-013A.png){ width=650px }
 
 Using the naive approach (cf. Section 8) of running the Bellman-Ford algorithm $n$ times to determine the all-pairs shortest paths, what is the overall running time for this approach?
 
@@ -2225,9 +2023,7 @@ Next, we will describe another algorithm called the **Floyd-Warshall** algorithm
 
 Let us now consider the basic idea for the dynamic programming algorithm for the all-pairs shortest paths problem.
 
-<center>
-<img src="./assets/03-DP3-014.png" width="650">
-</center>
+![](./assets/03-DP3-014.png){ width=650px }
 
 First, let us reconsider (cf. Section 6) the Bellman-Ford algorithm, which determined the single-source shortest path for some source vertex $s$ . In that case, the dynamic programming approach involved conditioning on the number of edges in the length of the path. However, is there something else that we can condition on as well?
 
@@ -2252,9 +2048,7 @@ Next, we will define the recurrence relation for this sub-problem definition.
 
 Let us now define the recurrence relation for the sub-problem defined previously (cf. Section 10) for the all-pairs shortest paths problem, starting with the base case.
 
-<center>
-<img src="./assets/03-DP3-016A.png" width="650">
-</center>
+![](./assets/03-DP3-016A.png){ width=650px }
 
 For intuition for the base case, recall (cf. Section 4) the corresponding analog for the single-source shortest path problem via the Bellman-Ford algorithm.
 
@@ -2264,9 +2058,7 @@ Similarly, here, the corresponding ***base case*** is $D(0,s,t)$ , corresponding
 
 ##### 12. Introduction
 
-<center>
-<img src="./assets/03-DP3-017.png" width="650">
-</center>
+![](./assets/03-DP3-017.png){ width=650px }
 
 Recalling (cf. Section 11) the ***base case***, we can further formalize its definition as follows:
 
@@ -2294,9 +2086,7 @@ The first case is more straightforward, so we shall examine it next.
 
 ##### 13. Case: $i$ Not on Path Quiz and Answers
 
-<center>
-<img src="./assets/03-DP3-019A.png" width="650">
-</center>
+![](./assets/03-DP3-019A.png){ width=650px }
 
 If $i \notin P$ (i.e., vertex $i$ is *not* on the prefix path $P$ ), then the prefix path will only use the vertices { $1, \dots, i-1$ } as the intermediate vertices. Therefore, this gives rise to the straightforward recursive definition as follows:
 
@@ -2312,9 +2102,7 @@ Next, let us consider the more complicated case wherein $i \in P$ .
 
 Now, consider the recursive case where $i \in P$ (i.e., vertex $i$ *is* on the prefix path $P$ ).
 
-<center>
-<img src="./assets/03-DP3-020.png" width="650">
-</center>
+![](./assets/03-DP3-020.png){ width=650px }
 
 Consider the path $s \rightsquigarrow i \rightsquigarrow t$ (as in the figure shown above), where $i$ is some intermediate vertex between vertices $s$ and $t$ .
 
@@ -2334,9 +2122,7 @@ Now, the task at hand is to define $D(i,s,t)$ accordingly (i.e., expressed as sm
 
 ###### 15. Quiz and Answers
 
-<center>
-<img src="./assets/03-DP3-023A.png" width="650">
-</center>
+![](./assets/03-DP3-023A.png){ width=650px }
 
 To express the recurrence relation $D(i,s,t)$ in the case of $i \in P$ , we want to express this in terms of $i-1$ (i.e., a smaller sub-problem), for some pair of vertices $s$ and $t$ .
 
@@ -2366,9 +2152,7 @@ we simply take the optimal (i.e., shortest) of these paths.
 
 Having now handled both cases $i \notin P$ and $i \in P$ for the recurrence relation (cf. Section 15), let us now summarize the recurrence relation $D(i,s,t)$ .
 
-<center>
-<img src="./assets/03-DP3-024.png" width="650">
-</center>
+![](./assets/03-DP3-024.png){ width=650px }
 
 Since we are attempting to find the optimal (i.e., shortest) path among these, we take the minimum as follows:
 
@@ -2386,9 +2170,7 @@ Next, we consider the dynamic programming algorithm for this problem.
 
 Now, we can write the pseudocode for the all-pairs shortest path problem. The corresponding algorithm is called the **Floyd-Warshall algorithm**.
 
-<center>
-<img src="./assets/03-DP3-025.png" width="650">
-</center>
+![](./assets/03-DP3-025.png){ width=650px }
 
 $$
 \boxed{
@@ -2423,9 +2205,7 @@ Finally, the algorithm ***returns*** the value $D(n,\cdot,\cdot)$ , which is a t
 
 #### 18. Running Time Quiz and Answers
 
-<center>
-<img src="./assets/03-DP3-027A.png" width="650">
-</center>
+![](./assets/03-DP3-027A.png){ width=650px }
 
 The running time for the Floyd-Warshall algorithm (cf. Section 17) is fairly straightforward to analyze.
 
@@ -2439,15 +2219,11 @@ The next set of $\text{for}$ loops (i.e., recursive cases) similarly perform an 
 
 How does the presence of negative weight cycles (cf. Section 2) affect our algorithm for all-pairs shortest paths?
 
-<center>
-<img src="./assets/03-DP3-028.png" width="650">
-</center>
+![](./assets/03-DP3-028.png){ width=650px }
 
 As given (cf. Section 18), the algorithm assumes that ***no*** such negative weight cycles exist in the input graph (which is a separate/distinct assumption from the simple presence of negative-weight *edges* $w$ in the input graph). So, then, how to detect such a negative weight cycle?
 
-<center>
-<img src="./assets/03-DP3-029.png" width="650">
-</center>
+![](./assets/03-DP3-029.png){ width=650px }
 
 To get a better idea of how to detect negative weight cycles in the graph, consider the example as in the figure shown above, which contains such a negative weight cycle $a \rightarrow b \rightarrow c$ . How can we detect this negative weight cycle in the graph?
 
@@ -2471,9 +2247,7 @@ Observe that now we have two algorithms (cf. Section 7 for analogous detection v
 
 ##### 20. Comparing Algorithms
 
-<center>
-<img src="./assets/03-DP3-030.png" width="650">
-</center>
+![](./assets/03-DP3-030.png){ width=650px }
 
 Consider a revision of the previous example (cf. Section 19), as in the figure shown above, whereby the direction of the edge $d \rightarrow b$ is now inverted to $b \rightarrow d$ . Let us now compared the two algorithms in question for detecting negative weight cycles, i.e., single-source shortest path via Bellman-Ford (cf. Section 7) and all-pairs shortest paths via Floyd-Warshall (cf. Section 19).
 
@@ -2483,9 +2257,7 @@ Conversely, the Floyd-Warshall algorithm is capable of generally detecting negat
 
 ## 21. Addendum: Practice Problems
 
-<center>
-<img src="./assets/03-DP3-031.png" width="650">
-</center>
+![](./assets/03-DP3-031.png){ width=650px }
 
 At the conclusion of the lesson on shortest paths, the professor recommends practice problem 4.21 from Chapter 4 in the course companion textbook *Algorithms* by Dasgupta et al.
 

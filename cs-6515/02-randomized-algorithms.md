@@ -2,9 +2,7 @@
 
 ## Introduction
 
-<center>
-<img src="./assets/04-RA1-000-01.png" width="300">
-</center>
+![](./assets/04-RA1-000-01.png){ width=300px }
 
 In this lecture, we will dive into **randomized algorithms**. Hopefully by the end, the student will appreciate the beauty and power of this algorithmic tool.
 
@@ -17,9 +15,7 @@ Another useful application of randomized algorithms we will examine is **hashing
 > [!NOTE]
 > ***Instructor's Note***: This topic is covered in [DPV] Chapter 1 (Algorithms with numbers), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-1/).
 
-<center>
-<img src="./assets/04-RA1-000-02.png" width="650">
-</center>
+![](./assets/04-RA1-000-02.png){ width=650px }
 
 Now, consider an ***outline*** of the topics we will study in this lecture.
 
@@ -41,9 +37,7 @@ We therefore next shall commence with discussion of these algorithms pertaining 
 
 Let us first consider the context for the RSA algorithm.
 
-<center>
-<img src="./assets/04-RA1-001.png" width="650">
-</center>
+![](./assets/04-RA1-001.png){ width=650px }
 
 In cryptography, we typically work with $n$-bit numbers (e.g., $x$ , $y$ , and $N$ ), where the size of constituent bits in these numbers is *huge* (i.e., with $n$ being on the order of $1024$ or $2048$ bits, representing correspondingly $2^{1024} - 1$ or $2^{2048} - 1$ distinct integers, respectively, including integer $0$ in both cases). While we typically consider arithmetic operations on hardware as $O(1)$ "fast" operations, in practice, this is only strictly the case for $n$ being a $32$- or $64$-bit number.
 
@@ -58,9 +52,7 @@ Therefore, let us now review exactly how "expensive" such corresponding arithmet
 
 Now, let us review **modular arithmetic**, the basic mathematics underlying the RSA algorithm.
 
-<center>
-<img src="./assets/04-RA1-002.png" width="650">
-</center>
+![](./assets/04-RA1-002.png){ width=650px }
 
 Consider the simple example $x \mod 2$ , where $x$ is an integer and $\text{mod}$ denotes the "modulo" operator. $x \mod 2$ is the ***least-significant bit*** of $x$ , which in turn indicates whether $x$ is odd or even, i.e.,:
 
@@ -95,9 +87,7 @@ This means that $\frac{x}{N}$ and $\frac{y}{N}$ have the *same* remainder.
 
 To better understand the concept of modular arithmetic, let us consider another simple example, $\mod 3$ .
 
-<center>
-<img src="./assets/04-RA1-003.png" width="650">
-</center>
+![](./assets/04-RA1-003.png){ width=650px }
 
 When examining $\mod 3$ , there are three possible values:
 
@@ -140,9 +130,7 @@ Therefore, within a given equivalence class (i.e., "row" in the representation a
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2 (Modular arithmetic): the substitution rule.
 
-<center>
-<img src="./assets/04-RA1-004Q.png" width="650">
-</center>
+![](./assets/04-RA1-004Q.png){ width=650px }
 
 A basic fact that we will use repeatedly is given as follows:
 
@@ -167,18 +155,14 @@ Therefore, the expression  $321 \times 17 \mod 320$ simply evaluates to $17$ .
 
 Having seen basic modular arithmetic (cf. Section 4), we now shift focus to the **modular exponentiation** operation, which will be ubiquitously used in subsequent discussion.
 
-<center>
-<img src="./assets/04-RA1-006Q.png" width="650">
-</center>
+![](./assets/04-RA1-006Q.png){ width=650px }
 
 As before (cf. Section 3), we are given $n$-bit numbers $x$ , $y$ , and $N$ which are *huge* (i.e., with the constituent $n$ bits comprising $1024$ or $2048$ bits, correspondingly representing numbers/integers on the order of $O(2^{2^{10}}) \approx O(10^{308})$ or $O(2^{2^{11}}) \approx O(10^{616})$ , respectively). The ***goal*** is to compute the quantity $x^y /\mod N$ in an ***efficient*** manner, i.e., of order polynomial in the input size $n$ .
   * ***N.B.*** Notably, we do *not* simply require polynomial in the input numbers $x$ , $y$ , and $N$ , because these numbers are already intrinsically exponential in $n$ , giving rise to unfathomably slow running times in practice.
 
 #### Algorithm
 
-<center>
-<img src="./assets/04-RA1-007Q.png" width="650">
-</center>
+![](./assets/04-RA1-007Q.png){ width=650px }
 
 First, consider a simple ***algorithm*** to perform this multiplication, outlined as follows:
 
@@ -229,9 +213,7 @@ Therefore, the expression evaluates to $17$ .
 
 #### Algorithm
 
-<center>
-<img src="./assets/04-RA1-009Q.png" width="650">
-</center>
+![](./assets/04-RA1-009Q.png){ width=650px }
 
 In the ***algorithm*** involving repeated squaring, we proceed similarly to before (cf. Section 7), however, with intermediate squaring across rounds, as follows:
 
@@ -249,9 +231,7 @@ This results in $x^y$ where $y$ is a power of $2$ . We then examine the binary r
 
 #### Example Quiz and Answers
 
-<center>
-<img src="./assets/04-RA1-010A.png" width="650">
-</center>
+![](./assets/04-RA1-010A.png){ width=650px }
 
 As an exercise, compute the quantity $7^25 \mod 23$ using this fast algorithm via repeated squaring.
 
@@ -277,9 +257,7 @@ Therefore, using corresponding squares, the expression evaluates to $21$ .
 
 ### 9. Algorithm
 
-<center>
-<img src="./assets/04-RA1-011.png" width="650">
-</center>
+![](./assets/04-RA1-011.png){ width=650px }
 
 To define the algorithm for modular exponentiation, we will use a couple of ***key facts***, given as follows (where $x$ and $y$ are both integers):
   * For even $y$ , $x^y = (x^{y/2})^2$
@@ -317,9 +295,7 @@ In the general ***recursive cases***, we utilize the aforementioned key facts to
 
 A key concept we will require for the RSA algorithm is **multiplicative inverses**. This concept is somewhat subtly different from the previously seen modular arithmetic (cf. Section 4).
 
-<center>
-<img src="./assets/04-RA1-012.png" width="650">
-</center>
+![](./assets/04-RA1-012.png){ width=650px }
 
 Let us examine normal real numbers to understand multiplicative inverses better in that context.
 
@@ -352,9 +328,7 @@ Next, we examine a specific example to solidify understanding of this concept of
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
 
-<center>
-<img src="./assets/04-RA1-013.png" width="650">
-</center>
+![](./assets/04-RA1-013.png){ width=650px }
 
 Consider the example of $N = 14$ . Let us examine the multiplicative inverses $1 \mod 14, 2 \mod 14, \dots, 13 \mod 14$ , as follows:
 
@@ -384,9 +358,7 @@ Therefore, if there is ***no*** common divisor with $N$ (i.e., only non-integer-
 
 So, then, more formally, when exactly does a multiplicative inverse exist?
 
-<center>
-<img src="./assets/04-RA1-014.png" width="650">
-</center>
+![](./assets/04-RA1-014.png){ width=650px }
 
 The general theorem which addresses this question is stated as follows:
 
@@ -404,9 +376,7 @@ Before we formally examine why two numbers' relative primality implies their mul
 
 #### 13. Introduction
 
-<center>
-<img src="./assets/04-RA1-015.png" width="650">
-</center>
+![](./assets/04-RA1-015.png){ width=650px }
 
 Suppose that $x^{-1} \mod N$ exists (i.e., $x$ has a multiplicative inverse). Let us now prove that if this inverse (if it exists) is **unique**. But what does "unique" mean in this context?
 
@@ -429,9 +399,7 @@ All of these numbers are multiplicative inverses of general form $x^{-1} \mod 11
 
 #### 14. Unique
 
-<center>
-<img src="./assets/04-RA1-016.png" width="650">
-</center>
+![](./assets/04-RA1-016.png){ width=650px }
 
 Let us now return to the previous matter of uniqueness (cf. Section 13): Suppose that $x^{-1} \mod N$ exists (i.e., $x$ has a multiplicative inverse). If the inverse exists, *how many* such multiplicative inverses exist (i.e., is there only *one* unique such inverse, or are there many)?
 
@@ -478,9 +446,7 @@ Next, we will prove that if $x$ and $N$ have a common factor (i.e., ${\text{gcd}
 
 Let us now consider the case where multiplicative inverses do *not* exist, and why they do not exist.
 
-<center>
-<img src="./assets/04-RA1-017.png" width="650">
-</center>
+![](./assets/04-RA1-017.png){ width=650px }
 
 Recall (cf. Section 12) the following theorem:
 

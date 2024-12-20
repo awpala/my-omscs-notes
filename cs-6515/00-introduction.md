@@ -1,8 +1,6 @@
 # Course Introduction
 
-<center>
-<img src="./assets/00-intro-000.png" width="300">
-</center>
+![](./assets/00-intro-000.png){ width=300px }
 
 This course, **Graduate Algorithms**, is a theory course. As such, it is heavily mathematical in nature.
 
