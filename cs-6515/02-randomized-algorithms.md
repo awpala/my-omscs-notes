@@ -820,6 +820,8 @@ Similarly to Euclid's algorithm (cf. Section 19), the overall running time for t
 
 As an example, use the algorithm $\text{Ext-Euclid}$ to compute the expression $7^{-1} \mod 360$ (i.e., $\text{Ext-Euclid}(360,7)$ ).
 
+![](./assets/04-RA1-027A.png){ width=650px }
+
 To accomplish this, let us first examine $(x,y)$ in the recursive sub-problems, i.e.,:
 
 $$
@@ -851,6 +853,20 @@ which gives the final result of $103$.
 
 > [!NOTE]
 > ***Instructor's Note***: This topic is covered in [DPV] Chapter 1 (Algorithms with numbers), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-1/).
+
+Let us now recap what we have seen so far with respect to randomized algorithms.
+
+![](./assets/04-RA1-028.png){ width=350px }
+
+We began with basic modular arithmetic definitions (cf. Section 4).
+
+Furthermore, the first non-trivial algorithm that we encountered (cf. 8) was computing modular exponentiation of general form $x^y \mod N$ using the idea of repeated squaring. This algorithm has a running time of $O(n^2)$ with respect to $n$-bit integer inputs $x$ and $y$ . Furthermore, this algorithm will be a key component in the RSA algorithm.
+
+![](./assets/04-RA1-029.png){ width=350px }
+
+The other key concept that we examined was multiplicative inverses, i.e., expressions of the form $x^{-1} \mod N$ . We noted that this inverse exists *only* iff ${\text{gcd}}(x,N) = 1$ (i.e., $x$ and $N$ are relatively prime). To check for this existence, we compute ${\text{gcd}}$ directly via Euclid's algorithm (cf. Section 17). If they do exist, then computing the corresponding (unique) multiplicative inverse follows directly from the extended Euclid algorithm (cf. Section 21).
+
+The aforementioned algorithms highlighted here will be used extensively in the RSA cryptosystem, as discussed in the next section.
 
 # Randomized Algorithms 2: RSA
 
