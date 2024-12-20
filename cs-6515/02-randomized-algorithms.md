@@ -940,10 +940,92 @@ $$
 
 Next, we will prove this relationship between the sets more formally. This in turn will allow to prove Fermat's little theorem.
 
-#### 3. Key Lemma
+#### 3. Proof of Key Lemma
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
+
+##### Introduction
+
+Let us now prove that the sets are equivalent, i.e., $S = S'$ .
+
+![](./assets/05-RA2-003.png){ width=650px }
+
+Recall (cf. Section 3) the definitions of the respective sets as follows:
+
+$$
+S = \{ 1, 2, \dots, p-1 \}
+$$
+
+$$
+S' = zS \mod p = \big\{ 1 \times z \mod p, 2 \times z \mod p, \dots, (p-1) \times z \mod p \big\}
+$$
+
+where $p$ is a prime number.
+
+To prove that $S = S'$ , we will show that the elements of $S'$ are distinct and non-zero.
+
+What are the possible values of $S'$ ? Per operation $\mod p$ , it is necessarily true that the set members only have possible values of $\{0, 1, \dots, p - 1\}$ . Furthermore, if we demonstrate that these values are non-zero, then the possible values are $\{ 1, 2, \dots, p-1 \}$ , as expected (i.e., equivalent to $S$ ).
+
+Set $S'$ contains $p - 1$ elements, i.e.,:
+
+$$
+|S'| = p - 1
+$$
+
+But if all of these elements are necessarily distinct, then the only potential values are indeed $\{ 1, 2, \dots, p-1 \}$ , as expected. Therefore, once we show that these elements are indeed distinct and non-zero, then that concludes the proof.
+
+##### Proof of Distinct Elements
+
+To prove that the elements of set $S'$ are distinct, we do so via contradiction.
+
+Suppose that for some element $i \ne j$ , their corresponding values are the same, i.e.,:
+
+$$
+iz \equiv jz \mod p
+$$
+
+Given that $p$ is prime, we know that every element in $S$ has an inverse $z$ , i.e., prime $p$ implies that $z^{-1} \mod p$ exists. Therefore, let us multiply the respective sides of the congruence by this inverse accordingly as follows:
+
+$$
+iz(z^{-1}) \equiv jz(z^{-1}) \mod p
+$$
+
+This simplifies via $z(z^{-1}) = 1$ accordingly to:
+
+$$
+i \equiv j \mod p
+$$
+
+However, this implies that $i$ and $j$ *are* in fact the *same* (i.e.,rather than distinct) index in the set $S'$ . Therefore, a contradiction exists in the claim that $i \ne j$ . This in turn proves that the elements in set $S'$ are distinct.
+
+##### Proof of Non-Zero Elements
+
+To prove that the elements of $S'$ are non-zero, we can similarly prove this via contradiction.
+
+![](./assets/05-RA2-004.png){ width=650px }
+
+Suppose that one of the elements is $0$ , i.e., the $i$<sup>th</sup> element is assumed to be $0$ . This implies that:
+
+$$
+iz \equiv 0 \mod p
+$$
+
+As before, if $p$ is prime, then this implies the existence of multiplicative inverse $z^{-1} \mod p$ . Therefore, multiplying accordingly:
+
+$$
+iz(z^{-1}) \equiv 0(z^{-1}) \mod p
+$$
+
+which further simplifies to:
+
+$$
+i \equiv 0 \mod p
+$$
+
+However, $0$ is not a valid/present index in set $S'$ , which has indices $\{ 1, 2, \dots, p-1 \}$ . Therefore, the elements of $S'$ are strictly non-zero via this contradiction.
+
+We have therefore now proven that the elements of $S'$ are *both* distinct *and* non-zero (and correspondingly that $S = S'$ accordingly).
 
 #### 4. Finishing Up
 
