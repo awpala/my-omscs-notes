@@ -877,6 +877,24 @@ The aforementioned algorithms highlighted here will be used extensively in the R
 > [!NOTE]
 > ***Instructor's Note***: This topic is covered in [DPV] Chapter 1.3 (Primality testing), and we closely follow their presentation. For Eric's notes see [here](https://cs6505.wordpress.com/rsa-1/).
 
+Before discussing the RSA cryptosystem, we will first examine the mathematical basis for the entire cryptosystem.
+
+![](./assets/05-RA2-001.png){ width=350px }
+
+The relevant key concept is called **Fermat's little theorem**, which states the following:
+
+> If $p$ is prime, then for every $1 \le z \le p-1$ , $z^{p-1} \equiv 1 \mod p$
+
+i.e., for any $z$ which is relatively prime to $p$ , which can be equivalently stated as ${\text{gcd}}(z,p) = 1$ , $z^{p-1} \equiv 1 \mod p$ .
+
+This fact forms the basis of the following:
+  * the RSA algorithm
+  * primality test (i.e., test if number $x$ is prime)
+
+Next, we will examine the proof of Fermat's little theorem. In this process, several interesting insights emerge, such as how relationship between the prime $p$ and $z$ gives rise to multiplicative inverses.
+
+***N.B.*** On a historical note, this is "Fermat's *little* theorem," rather "Fermat's *last* theorem." Regarding the latter, Fermat claimed that the proof could not be fit within the margin of the pertinent document; this proof was (much) later (300+ years!) proved by Andrew Wiles in 1994, after much effort. Fermat's *last* theorem is the subject of a homework problem (but is not otherwise pertinent to the present discussion).
+
 ### 2-4. Proof
 
 #### 2. Introduction
