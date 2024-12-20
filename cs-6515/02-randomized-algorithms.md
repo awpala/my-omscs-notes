@@ -532,10 +532,14 @@ Returning to the original theorem, if $x$ and $N$ are relatively prime, i.e., ${
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
 
-### 21. Extended Euclid Algorithm Quiz and Answers
+### 21. Extended Euclid Algorithm
 
 > [!NOTE]
 > ***Instructor's Note***: See [DPV] Chapter 1.2.4 (An extension of Euclid's algorithm) for the detailed proof of correctness.
+
+#### Pseudocode
+
+#### Example Quiz and Answers
 
 ## 22. Recap
 
