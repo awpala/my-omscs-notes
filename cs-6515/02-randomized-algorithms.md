@@ -597,6 +597,78 @@ $$
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.3 (Euclid's algorithm for greatest common divisor).
 
+##### Analysis
+
+Let us now consider the running time of Euclid's algorithm.
+
+![](./assets/04-RA1-023.png){ width=450px }
+
+The only non-trivial step in each recursive round/iteration is the computation of expression $x \mod y$ . This involves division of $x$ by $y$ , which correspondingly requires $O(n^2)$ operations with respect to inputs of size $n$ bits.
+
+So, then, how to determine the total number of such rounds required in this algorithm? This can be determined using the following key ***lemma***:
+
+> If $x \ge y$ , then $x \mod y < \frac{x}{2}$
+
+Therefore, in general $x \mod y$ is always reducing by a factor of two (i.e., halving) in each round.
+
+To illustrate this, consider the following sequence of the algorithm (i.e., successive recursive calls):
+
+$$
+(x,y) \rightarrow (y, x \mod y) \rightarrow \big( x \mod y, y \mod (x \mod y) \big) \rightarrow \cdots
+$$
+
+Since the lemma states that $x \mod y < \frac{x}{2}$ , then after the first two rounds, the first parameter $x$ has been reduced in size by at least a factor of two (i.e., $< \frac{x}{2}$ ). Therefore, the algorithm will take at most $2n$ rounds (i.e., $\le 2n$ ), since this halving will occur in every other round of recursion.
+
+Therefore, the overall running time for the algorithm is $O(n^2 \times 2n) = O(n^3)$ .
+
+##### Proof of Lemma
+
+Let us further prove this lemma.
+
+![](./assets/04-RA1-024.png){ width=450px }
+
+The lemma is restated as follows:
+
+> If $x \ge y$ , then $x \mod y < \frac{x}{2}$
+
+We will break up this proof into the appropriate cases (based on size of $y$ ), from which the proof will immediately follow.
+
+First, consider the case of $y \le \frac{x}{2}$ (i.e., small relative to $\frac{x}{2}$ ). In this case:
+
+> If $y \le \frac{x}{2}$ , then $x \mod y \le y - 1 < y \le \frac{x}{2}$
+
+Therefore, it is strictly the case that $x \mod y < \frac{x}{2}$ .
+
+Next, we consider the case of $y > \frac{x}{2}$ (i.e., large relative to $\frac{x}{2}$ ). In this case, the following is generally true:
+
+$$
+\bigg\lfloor \frac{x}{y} \bigg\rfloor = 1
+$$
+
+i.e., $y$ goes into $x$ at most one time.
+
+So, then, what does this imply about $x \mod y$ (i.e., the corresponding remainder)? This implies the following:
+
+$$
+x \mod y = x - y
+$$
+
+i.e., it is only necessary to subtract $x$ *once* in order to arrive at the corresponding remainder.
+
+However, since $y > \frac{x}{2}$ , this implies the following:
+
+$$
+x \mod y = x - y < x - \frac{x}{2}
+$$
+
+and furthermore:
+
+$$
+x \mod y = x - y < x - \frac{x}{2} \le \frac{x}{2}
+$$
+
+Therefore, it is again strictly the case that $x \mod y < \frac{x}{2}$ .
+
 ## 20-21. Computing Inverses
 
 ### 20. Introduction
