@@ -518,7 +518,7 @@ So, then, why is statement/fact $*$ necessarily true (i.e., proof that the state
     * in other words, if $d$ factors out of $x$ and $y$, then it also factors out of the quantity $x-y$
   * (*reverse direction*) if $d$ divides $x-y$ and $y$ then $d$ divides $x$
 
-![](./assets/04-RA1-020.png){ width=650px }
+![](./assets/04-RA1-020.png){ width=450px }
 
 With this proof formalized, to summarize, **Euclid's rule** (i.e., the "initial fact") is therefore stated as follows:
 
@@ -534,6 +534,43 @@ Next, we will use this fact to design a recursive algorithm for computing ${\tex
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.3 (Euclid's algorithm for greatest common divisor).
+
+![](./assets/04-RA1-021.png){ width=450px }
+
+Having now seen Euclid's rule (cf. Section 16), this leads to the following naturally recursive algorithm called **Euclid's algorithm**:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Euclid}}(x,y):}\\
+\ \ \ \ {{\text{input:\ integers }} x,y {\text{\ where\ }} x \ge y \ge 0}\\
+\ \ \ \ {{\text{output:\ }} {\text{gcd}}(x,y)}\\
+\\
+\ \ \ \ {{\text{if\ }} y = 0 {\text{\ then\ }} {\text{return\ }} (x)}\\
+\ \ \ \ {{\text{else\ }} {\text{return\ }} {\text{Euclid}}(y,x \mod y)}
+\end{array}
+}
+$$
+
+The ***inputs*** to the algorithm are integers $x$ and $y$ , which are assumed to be ordered and non-negative (i.e., $x \ge y \ge 0$ ).
+
+The corresponding ***output*** of the algorithm is ${\text{gcd}}(x,y)$ .
+
+Since this is a recursive algorithm, we first consider the ***base case***, given as:
+
+$$
+{\text{gcd}}(x,0) = x
+$$
+
+***N.B.*** This base case is not necessarily immediately intuitive, so we will further discuss it next.
+
+Otherwise, in the more general ***recursive cases***, we use Euclid's rule (cf. Section 16) recursively, i.e.,:
+
+$$
+{\text{Euclid}}(y,x \mod y)
+$$
+
+***N.B.*** Here, we invert the order of the inputs/parameters as $(y, x \mod y)$ , since we assume that $x \ge y \ge 0$ .
 
 #### 18. Base Case
 
