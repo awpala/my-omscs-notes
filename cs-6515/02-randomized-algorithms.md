@@ -676,6 +676,70 @@ Therefore, it is again strictly the case that $x \mod y < \frac{x}{2}$ .
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.2.5 (Modular division).
 
+Now, let us consider how to compute multiplicative inverses using Euclid's algorithm (cf. Section 19) via corresponding **extended Euclid algorithm**.
+
+![](./assets/04-RA1-025.png){ width=650px }
+
+To accomplish this, the algorithm takes as ***inputs*** the integer $x$ and $y$ as before, similarly defined as:
+
+> integers $x,y$ where $x \ge y \ge 0$
+
+where (as before) $x$ and $y$ are ordered.
+
+However, the ***output*** of this algorithm is three integer parameters $d$ , $\alpha$ , and $\beta$ , defined as:
+
+> integers $d$ , $\alpha$ , and $\beta$ , where $d = {\text{gcd}}(x,y)$ and $d = x\alpha + y\beta$
+
+Therefore, $d$ has the equivalent output as before in Euclid's algorithm. However, the additional parameters $\alpha$ and $\beta$ satisfy the additional constraint/relationship $d = x\alpha + y\beta$ .
+
+So, then, what is the purpose of $\alpha$ and $\beta$ ?
+
+Recall that the objective of this algorithm is to compute multiplicative inverses, i.e., running algorithm ${\text{Ext-Euclid}}(x,N)$ . However, first we must determine whether $x^{-1} \mod N$ even exists.
+
+To determine this, we see if $x$ and $N$ are relatively prime (cf. Section 12) via ${\text{gcd}}(x,N) = 1$ , which in turn implies the existence of $x^{-1} \mod N$ accordingly.
+
+Correspondingly, $d$ contains the result of ${\text{gcd}}(x,N)$ . Therefore, if $d = 1$ , then the following relationship holds:
+
+$$
+d = 1 = x\alpha + N\beta
+$$
+
+Furthermore, if we take ${\text{mod}}$ of both sides, this gives congruence:
+
+$$
+1 \equiv x\alpha + N\beta \mod N
+$$
+
+Per the second term on the right-hand side $N\beta$ reduces to $0$ , i.e.,:
+
+$$
+1 \equiv x\alpha + 0\beta \mod N
+$$
+
+This in turn simplifies to:
+
+$$
+1 \equiv x\alpha \mod N
+$$
+
+which is simply the definition of the multiplicative inverse (cf. Section 10), i.e., $\alpha$ and $x \mod N$ are multiplicative inverses. This relationship can be further re-expressed equivalently as follows:
+
+$$
+x^{-1} \equiv \alpha \mod N
+$$
+
+By similar rationale, in the case where $d = 1$ , $\beta$ and $N \mod x$ are also multiplicative inverses.
+
+Therefore, if $x$ and $y$ are relatively prime (i.e., $d = {\text{gcd}}(x,y) = 1$ ), then $\alpha$ and $\beta$ correspondingly represent the following:
+
+$$
+\alpha \equiv x^{-1} \mod y
+$$
+
+$$
+\beta \equiv y^{-1} \mod x
+$$
+
 ### 21. Extended Euclid Algorithm
 
 > [!NOTE]
