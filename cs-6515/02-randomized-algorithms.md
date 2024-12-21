@@ -1120,6 +1120,42 @@ Therefore, Euler's theorem is a generalization of Fermat's little theorem to arb
 
 ### 6. Euler's Totient Function Quiz and Answers
 
+Recalling (cf. Section 5) Euler's theorem, consider the case of a pair of prime numbers $p$ and $q$ , which have the relationship $N = pq$ . What is $\phi(N)$ in this case (i.e., what is the total count of relative primes in $1, \dots, pq$ )?
+
+![](./assets/05-RA2-010A.png){ width=650px }
+
+To determine $\phi(N) = \phi(pq)$ , let us first enumerate the possible numbers as follows:
+
+$$
+1, 2, 3, \dots, pq
+$$
+
+i.e., a possible total of $pq$ numbers.
+
+How many of these numbers are integer multiples of $p$ (i.e., of general form $p, 2p, \dots, qp$ , where $q$ is an integer)? By inspection, there are $q$ such numbers. Similarly, there are $p$ such numbers in $q, 2q, \dots, pq$ . Therefore, since $p$ and $q$ are the common divisors (respectively) in these sets, they can be excluded from the total count as follows:
+
+$$
+pq - q - p
+$$
+
+Furthermore, since $qp$ and $pq$ qre equivalent, then to avoid "double-counting" we add $1$ , i.e.,:
+
+$$
+pq - q - p + 1
+$$
+
+This simplifies via factorization to the following:
+
+$$
+(p-1)(q-1)
+$$
+
+Therefore, we have determined:
+
+$$
+\phi(N) = \phi(pq) = (p-1)(q-1)
+$$
+
 ### 7. Euler's Theorem for $N = pq$
 
 ## 8. RSA Algorithm Idea
