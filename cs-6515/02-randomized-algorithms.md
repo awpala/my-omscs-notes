@@ -1032,6 +1032,54 @@ We have therefore now proven that the elements of $S'$ are *both* distinct *and*
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.3 (Primality testing).
 
+Let us recap the proof of the key lemma (cf. Section 3).
+
+![](./assets/05-RA2-005.png){ width=650px }
+
+The goal is to demonstrate the following:
+
+$$
+z^{p-1} \equiv 1 \mod p
+$$
+
+where $p$ is a prime number.
+
+Furthermore we have demonstrated that the sets $S$ and $S'$ are the same/equivalent, defined as follows (respectively):
+
+$$
+S = \{ 1, 2, \dots, p-1 \}
+$$
+
+$$
+S' = zS \mod p = \big\{ 1 \times z \mod p, 2 \times z \mod p, \dots, (p-1) \times z \mod p \big\}
+$$
+
+We can now use the fact that $S = S'$ to prove the previous statement.
+
+To accomplish this, we multiply all of the elements in the respective sets as follows:
+
+$$
+1 \times 2 \times \cdots \times \ (p-1) \equiv \big[ (1 \times z) \times (2 \times z) \times \cdots \times (p-1) \times z \big] \mod p
+$$
+
+Per corresponding definition of the factorial, we can simplify both sides as follows:
+
+$$
+(p-1)! \equiv z^{p-1} (p-1)! \mod p
+$$
+
+Since $p$ is a prime, this implies that the following inverses *exist* (i.e., are relatively prime to $p$ itself):
+
+$$
+1^{-1} \mod p, 2^{-1} \mod p, \dots, (p-1)^{-1} \mod p
+$$
+
+Therefore, this effectively "cancels" the factor $(p-1)!$ on both sides of the congruence, yielding the following final result as desired:
+
+$$
+1 \equiv z^{p-1} \mod p
+$$
+
 ## 5-7. Euler's Theorem
 
 ### 5. Introduction
