@@ -1176,6 +1176,95 @@ We will discuss this in more depth next.
 
 ## 8. RSA Algorithm Idea
 
+Now, we have sufficient background to understand the basic idea of the **RSA algorithm**.
+
+![](./assets/05-RA2-012.png){ width=650px }
+
+First, consider **Fermat's theorem**, which is described as follows.
+
+For prime $p$ , take $b,c$ where $bc \equiv 1 \mod p-1$ , where $p-1$ derives from Euler's totient function (cf. Section 5). This relationship can be expressed equivalently as follows:
+
+$$
+bc = 1 + k(p-1)
+$$
+
+for some integer $k$ , i.e., $\frac{bc}{p-1}$ yields a remainder of $1$ .
+
+Now, let us consider $z$ where $1 \le z \le (p-1)$ and take the following:
+
+$$
+z^{bc} \equiv [1 + k(p-1)] \mod p
+$$
+
+Furthermore, we can express this as:
+
+$$
+z^{bc} \equiv z \times {(z^{p-1})}^{k} \mod p
+$$
+
+Additionally, via Fermat's little theorem, we can simplify the following factor:
+
+$$
+(z^{p-1}) \equiv 1 \mod p
+$$
+
+Therefore:
+
+$$
+z^{bc} \equiv z \times (1)^{k} \mod p \equiv z \mod p
+$$
+
+i.e., $z^{bc}$ simply yields back $z$ itself.
+
+This now gives an intuition for the RSA algorithm: Given a message $z$ , we take $z^b$ to encrypt this message, and then later ${z^b}^c$ to decrypt the message (i.e., ${(z^b)}^c = z^{bc}$ simply yields the original message $z$ itself).
+
+However, $p$ must still be broadcasted "publicly" to perform the corresponding operation (i.e., $z \mod p$ ). If $p$ is known, then $p-1$ is trivially determinate, and $c$ is therefore derived from $bc \equiv 1 \mod p-1$ via $b$ (i.e., $b$ and $c$ are multiplicative inverses with respect to $\mod p-1$ ).
+
+![](./assets/05-RA2-013.png){ width=650px }
+
+Therefore, in order to "conceal" the identity/value of target $p-1$ , we use Euler's theorem (cf. Section 5) as follows.
+
+Given primes $p$ and $q$ , let $N = pq$ . Now, take a pair of numbers $d,e$ where:
+
+$$
+de \equiv 1 \mod (p-1)(q-1)
+$$
+
+Proceeding similarly as before, we examine:
+
+$$
+z^{de} \equiv [1 + k(p-1)(q-1)] \mod pq
+$$
+
+Furthermore, we can express this as:
+
+$$
+z^{de} \equiv z \times {(z^{(p-1)(q-1)})}^{k} \mod N
+$$
+
+If $z$ is relatively prime to $N$ , then per Euler's theorem:
+
+$$
+(z^{(p-1)(q-1)}) \equiv 1 \mod N
+$$
+
+Therefore:
+
+$$
+z^{de} \equiv z \times (1)^{k} \mod N \equiv z \mod N
+$$
+
+Correspondingly, these two numbers $d$ and $e$ represent "decryption" and "encryption" (respectively), i.e.,:
+  * given message $z$ , encrypt as $z^{e} \mod N$ and send this encrypted message
+  * on receipt of the encrypted message, compute $d$ via $de \equiv 1 \mod (p-1)(q-1)$ (i.e., using the extended Euclid algorithm to determine $e^{-1} \mod (p-1)(q-1)$ , cf. Randomized Algorithms, Section 21)
+  * finally, to decrypt the message, take ${(z^{e})}^d$ , which simply yields the original message $z$ itself (i.e., ${(z^{e})}^d = z^{de} \equiv z \mod N$ )
+
+This encryption/decryption key therefore works by virtue of the following:
+  * The sender (and public) knows/sees $N = pq$ (but not $p$ and $q$ individually) and $e$
+  * The receiver knows these prime factors $p$ and $q$ (i.e., *only* the receiver knows these), which are used to determine $d$
+
+Next, we detail the RSA algorithm more elaborately.
+
 ## 9. Cryptography Setting
 
 > [!NOTE]
