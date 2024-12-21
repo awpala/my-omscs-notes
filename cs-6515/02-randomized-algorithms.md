@@ -1084,6 +1084,40 @@ $$
 
 ### 5. Introduction
 
+Now, we will use a generalization from Fermat's little theorem called Euler's theorem.
+
+![](./assets/05-RA2-006.png){ width=650px }
+
+Recall (cf. Section 1) that Fermat's little theorem states the following:
+
+> If $p$ is prime, then for every $1 \le z \le p-1$ , $z^{p-1} \equiv 1 \mod p$
+
+**Euler's theorem** generalizes this to any number $N$ (rather than strictly the prime number $p$ ) as follows:
+
+> For any numbers $N$ and $z$ , if ${\text{gcd}}(z,N) = 1$ , then $z^{\phi(N)} \equiv 1 \mod N$
+
+where:
+
+$$
+\phi(N) = \big| \{ x: 1 \le x \le N, {\text{gcd}}(z,N) = 1 \} \big|
+$$
+
+Here, $N$ and $z$ are relatively prime (via corresponding relationship ${\text{gcd}}(z,N) = 1$ ), and $\phi(N)$ represents the number/cardinality of the set of integers between $1$ and $N$ which are relatively prime to $N$ .
+
+$\phi(N)$ is called **Euler's totient function**.
+
+![](./assets/05-RA2-007.png){ width=650px }
+
+In this formulation, if $N = p$ is prime, then $\phi(p) = p - 1$ (i.e., $| \{ 1, 2, \dots, p-1 \} |$ ) and Euler's theorem yields:
+
+$$
+z^{p-1} \equiv 1 \mod p
+$$
+
+which corresponds exactly to the result in Fermat's little theorem.
+
+Therefore, Euler's theorem is a generalization of Fermat's little theorem to arbitrary $N$ accordingly.
+
 ### 6. Euler's Totient Function Quiz and Answers
 
 ### 7. Euler's Theorem for $N = pq$
