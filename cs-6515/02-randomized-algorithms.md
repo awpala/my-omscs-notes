@@ -1158,6 +1158,22 @@ $$
 
 ### 7. Euler's Theorem for $N = pq$
 
+What does Euler's theorem indicate when $N = pq$ , where $p$ and $q$ are both primes?
+
+![](./assets/05-RA2-011.png){ width=650px }
+
+For any $z$ where ${\text{gcd}(z,N)=1}$ , then given (cf. Section 6) that $\phi(N) = \phi(pq) = (p-1)(q-1)$ , Euler's theorem yields the following:
+
+$$
+z^{(p-1)(q-1)} \equiv 1 \mod pq
+$$
+
+This fact is the basis for the RSA algorithm:
+  * We generate a pair of primes $p$ and $q$ , yielding corresponding product $pq$
+  * We then use $(p-1)(q-1)$ to generate an encryption key and decryption key (respectively) to transmit a message accordingly
+
+We will discuss this in more depth next.
+
 ## 8. RSA Algorithm Idea
 
 ## 9. Cryptography Setting
