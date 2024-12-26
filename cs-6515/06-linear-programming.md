@@ -34,7 +34,7 @@
 
 ### 13. Introduction
 
-### 14. Linear Algebra View
+### 14. Linear Algebra View Quiz and Answers
 
 ### 15. Converting to Standard Form Quiz and Answers
 
