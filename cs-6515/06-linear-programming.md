@@ -36,7 +36,15 @@
 
 ### 14. Linear Algebra View Quiz and Answers
 
+#### Introduction
+
+#### Quiz and Answers
+
 ### 15. Converting to Standard Form Quiz and Answers
+
+#### Introduction
+
+#### Quiz and Answers
 
 ### 16. General Geometric View
 
