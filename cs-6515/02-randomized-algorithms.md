@@ -783,7 +783,7 @@ $$
 
 Here, the first parameter is the simplification ${\text{gcd}}(x,0) = x$ as before (cf. Section 18). Furthermore, in this case (i.e., $y = 0$ ), we can satisfy the relationship $d = x\alpha + y\beta$ by inspection via $\alpha = 1$ and $\beta = 0$ (i.e., the corresponding other two parameters).
 
-For the general ***recursive cases***, we use Euclid's rule (cf. 16), i.e.,:
+For the general ***recursive cases***, we use Euclid's rule (cf. Section 16), i.e.,:
 
 $$
 {\text{gcd}}(x,y) = {\text{gcd}}(x \mod y,y)
@@ -1269,6 +1269,24 @@ Next, we detail the RSA algorithm more elaborately.
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.4 (Cryptography).
+
+![](./assets/05-RA2-014.png){ width=650px }
+
+In the general cryptographic setting, there are two correspondents, Alice and Bob. Alice would like to send message $m$ to Bob over a common communication line. However, this communication line is susceptible to eavesdropping (i.e., by Eve).
+
+Therefore, rather than transmitting message $m$ directly/plainly over this communication line, instead, Alice must send the message in encrypted form, $e(m)$ (i.e., as generated via the encryption scheme, $e()$ ). 
+
+On receipt by Bob, the encrypted message $e(m)$ is decrypted via decryption scheme $d()$ , thereby reconstituting the original message, $m$ , on Bob's end. Note that in this process, Eve only has visibility to the *encrypted* message $e(m)$ , but *not* the original message $m$ . Furthermore, Eve has no awareness of the decryption scheme $d()$ (i.e., only Bob has access to this).
+
+Collectively, this constitutes a **public-key cryptosystem**. Here, "public" refers to the notion that no communication is necessary between Alice and Bob over a private channel, but rather it can occur "publicly" (i.e., with potential eavesdroppers observing the encrypted messages over the channel). 
+
+This is accomplished by the fact that recipient Bob is able to independently reconstitute the message, using the following:
+  * **public key** $(N, e)$ , where $N$ is the product of two primes (i.e., $N = pq$ ) and $e$ is relatively prime to quantity $(p-1)(q-1)$
+    * Bob broadcasts this public key to any potential senders (e.g., Alice). The sender then uses $N$ and $e$ to encrypt the message $m$ accordingly. However, only Bob is capable of decrypting the message.
+  * **private key** $d$ , where $d \equiv e^{-1} \mod (p-1)(q-1)$
+    * Since only Bob knows $p$ and $q$ , he can readily compute $d$ accordingly. With this, he can therefore reconstitute the original message $m$ as ${(m^{e})}^d = m^{de} \equiv m \mod N$ . Otherwise, however, no other coordination is required between Alice and Bob in order to transmit the message over the public channel.
+
+Next, we will detail this scheme, known as the RSA protocol.
 
 ## 10-14. RSA Protocol
 
