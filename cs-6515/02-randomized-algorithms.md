@@ -1256,7 +1256,7 @@ $$
 
 Correspondingly, these two numbers $d$ and $e$ represent "decryption" and "encryption" (respectively), i.e.,:
   * given message $z$ , encrypt as $z^{e} \mod N$ and send this encrypted message
-  * on receipt of the encrypted message, compute $d$ via $de \equiv 1 \mod (p-1)(q-1)$ (i.e., using the extended Euclid algorithm to determine $e^{-1} \mod (p-1)(q-1)$ , cf. Randomized Algorithms, Section 21)
+  * on receipt of the encrypted message, compute $d$ via $de \equiv 1 \mod (p-1)(q-1)$ (i.e., using the extended Euclid algorithm to determine $e^{-1} \mod (p-1)(q-1)$ , cf. Randomized Algorithms 1, Section 21)
   * finally, to decrypt the message, take ${(z^{e})}^d$ , which simply yields the original message $z$ itself (i.e., ${(z^{e})}^d = z^{de} \equiv z \mod N$ )
 
 This encryption/decryption key therefore works by virtue of the following:
@@ -1295,10 +1295,123 @@ Next, we will detail this scheme, known as the RSA protocol.
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.4.2 (RSA).
 
+We begin discussion of the RSA protocol with the receiver, Bob.
+
+![](./assets/05-RA2-015.png){ width=650px }
+
+Broadly, Bob must compute his public key and private key, and broadcast the public key in order to receive encrypted messages.
+
+The first step to accomplish this involves selection of two randomly selected $n$-bit primes $p$ and $q$ .
+  * ***N.B.*** For now, we will assume this as a given, with specific details of this deferred until the full protocol has been described. This will also involve an efficient primality test to ensure that $p$ and $q$ are indeed relatively prime (i.e., if not so, then generate another pair, until this requirement is satisfied). Furthermore, we will see how randomly generated numbers can indeed be selected in such a relatively prime manner with reasonable certainty.
+
+In the next step, Bob selects $e$ such that it is relatively prime to quantity $(p-1)(q-1)$ . This is accomplished by starting with $e = 3$ and running Euclid's algorithm (cf. Randomized Algorithms 1, Section 17), i.e., ${\text{gcd}}(e,(p-1)(q-1))$ . This process is repeated iteratively for candidate primes $e = 5$ , $e = 7$ , $e = 11$ , etc. until appropriate $e$ is identified accordingly.
+  * ***N.B.*** If a relatively small value for $e$ is not identified, typically we return to the previous step and identify a new pair of primes $p$ and $q$ . Such a relatively small value for $e$ facilitates easier encryption of the message accordingly.
+
+Now, we can readily define $N = pq$ .
+
+In the next step, Bob publishes his key as $(N, e)$ , where $N$ is the *product* $pq$ (but *not* the individual primes $p$ and $q$ themselves) and $e$ is relatively prime to quantity $(p-1)(q-1)$ .
+
+In the final step, Bob computes his private key $d$ as follows:
+
+$$
+d \equiv e^{-1} \mod (p-1)(q-1)
+$$
+
+Here, we know that $d$ exists, because $e$ is relatively prime to quantity $(p-1)(q-1)$ . Therefore, the corresponding multiplicative inverse follows directly from the extended Euclid's algorithm (cf. Randomized Algorithms 1, Section 21).
+
+Therefore, with this private key readily available, Bob can appropriately decrypt a received encrypted message.
+
 ### 11. Encrypting
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 1.4.2 (RSA).
+
+#### Alice Sends Encrypted Message
+
+Now, consider the other end of the RSA protocol via the sender, Alice.
+
+![](./assets/05-RA2-016.png){ width=650px }
+
+Alice has a message $m$ which she wants to send to Bob.
+
+In the first step, Alice finds Bob's public key $(N, e)$ (cf. Section 10).
+
+In the next step, Alice must encrypt message $m$ using Bob's public key. This is accomplished as follows:
+
+$$
+y \equiv m^e \mod N
+$$
+
+Note that the quantity $m^e$ is generally large; therefore, in order to compute this, Alice uses the fast modular exponentiation algorithm (cf. Randomized Algorithms 1, Section 9).
+
+Finally, the resulting encrypted message $y$ is then broadcasted over the public channel.
+
+#### Bob Receives Encrypted Message
+
+![](./assets/05-RA2-017.png){ width=650px }
+
+In the final sequence of the protocol, Bob receives the encrypted message $y$ from Alice.
+
+In order to decrypt $y$ to reconstitute original message $m$ , Bob computes the following:
+
+$$
+y^d \mod N = m
+$$
+
+To further understand how this yields the original message $m$ , recall (cf. Section 10) the selection of $d$ as follows:
+
+$$
+d \equiv e^{-1} \mod (p-1)(q-1)
+$$
+
+This implies that:
+
+$$
+de = 1 + k(p-1)(q-1)
+$$
+
+where $k$ is some integer multiple.
+
+Initially, it is given that:
+
+$$
+y \equiv m^e \mod N
+$$
+
+where $N = pq$ .
+
+On receipt of message $m$ , Bob therefore performs the following via $d$ :
+
+$$
+y^d \equiv {(m^e)}^d \mod N
+$$
+
+Furthermore, since $de = 1 + k(p-1)(q-1)$ , then this implies:
+
+$$
+y^d \equiv {(m^e)}^d \equiv m^{ed} \equiv m \times {(m^{(p-1)(q-1)})}^k \mod N
+$$
+
+However, if $m$ is relatively prime to $N$ , then Euler's theorem (cf. Section 5) implies:
+
+$$
+{(m^{(p-1)(q-1)})}^k = 1
+$$
+
+And therefore simply:
+
+$$
+y^d \equiv {(m^e)}^d \equiv m^{ed} \equiv m \mod N
+$$
+
+This is general true when $m$ and $N$ are relatively prime, as well as when $m$ and $N$ have a common factor (i.e., $p$ or $q$ ).
+  * ***N.B.*** Proving the latter requires use of the Chinese Remainder Theorem.
+
+This essentially covers the RSA protocol. However, an open question (cf. Section 10) still remains: How do we generate random primes $p$ and $q$ (as well as ensure that they are indeed primes)?
+
+However, before detailing this, we will next examine some issues/pitfalls which may arise in the RSA protocol.
+
+As a final note, given that $e$ is relatively small (cf. Section 11), which allows for easy computation of the encrypted message as $m^e \mod N$ , this results in more computational work on the decryption side (i.e., $d$ is correspondingly a large number). Therefore, in order to compute $y^d \mod N = m$ effectively, this requires use of the fast modular exponentiation algorithm (cf. Randomized Algorithms 1, Section 9). Otherwise, use of a naive algorithm to accomplish this would require exponential time.
 
 ### 12. Pitfalls
 
