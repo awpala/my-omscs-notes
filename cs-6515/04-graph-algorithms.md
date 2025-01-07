@@ -99,7 +99,7 @@
 
 ### 4. $k$-SAT
 
-## 5. Simplifying INput
+## 5. Simplifying Input
 
 ## 6. Graph of Implications
 
