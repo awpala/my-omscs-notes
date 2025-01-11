@@ -108,6 +108,51 @@ So, then, is is possible to reduce the amount of these multiplication operations
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
+![](./assets/07-DC1-002.png){ width=450px }
+
+To recap (cf. Section 3), we are given two complex numbers $a + bi$ and $c + di$ , with the goal of computing their product using the minimum-possible multiplication operations. Furthermore, the naive approach requires *four* such multiplications, for constituent real-numbers products $ac$ , $bd$ , $bc$ , and $ad$ .
+
+However, in order to reduce this to only *three* multiplication operations, we will compute the expression $bc + ad$ directly (i.e., *without* otherwise computing constituent products $bc$ and $ad$ individually).
+
+![](./assets/07-DC1-003.png){ width=650px }
+
+In order to accomplish this reduced multiplication, observe that expression $bc + ad$ has a cross-product-like nature via constituents $a$ , $b$ , $c$ , and $d$ , i.e.,:
+
+$$
+(a + b)(c + d) = ac + bd + (bc + ad)
+$$
+
+Observe that the term $(bc + ad)$ is the target expression in question. Furthermore, $ac$ and $bd$ are also familiar from previously (however, here, $bd$ is added rather than subtracted).
+
+Algebraically rearranging the previous expression yields the following:
+
+$$
+(bc + ad) = (a + b)(c + d) - ac - bd
+$$
+
+With this rearrangement, observe that there are now *three* distinct multiplication operations:
+  * $ac$
+  * $bd$
+  * $(a + b)(c + d)$
+
+From this, we can therefore reconstitute the equivalent overall product as follows:
+
+$$
+(a + bi)(c + di) = ac - bd + (bc + ad)i = ac - bd + [(a + b)(c + d) - ac - bd]i
+$$
+
+where the three distinct products are used, along with correspondingly "increased" addition/subtraction operations as necessary (which, again, is a "useful" tradeoff/concession here accordingly, since multiplication operations are comparatively much more expensive).
+
+As a representative example, given complex numbers $5 + 3i$ and $7 - 6i$ , the corresponding "third product" term is:
+
+$$
+(5 + 3)(7 - 1) = 8 \times 1 = 8
+$$
+
+***N.B.*** Observe that this is indeed a clever reduction, and perhaps not immediately obvious/intuitive (and hence one of many demonstrations of Gauss' brilliance accordingly)!
+
+Next, we will utilize this idea in order to compute the product of two $n-bit$ integers with a running time which is *faster* than $O(n^2)$ (i.e., via equivalent naive approach).
+
 ## 5-8. Divide and Conquer: Naive Approach
 
 ### 5. Introduction
