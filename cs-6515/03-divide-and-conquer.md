@@ -160,6 +160,53 @@ Next, we will utilize this idea in order to compute the product of two $n-bit$ i
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
+Returning to the original problem of multiplying two $n$-bit numbers (cf. Section 3), let us first consider the straightforward divide and conquer approach for this problem.
+
+![](./assets/07-DC1-004.png){ width=650px }
+
+The ***input*** to the problem is two $n$-bit integers $x$ and $y$ , which we assume for simplicity that $n$ is a power of $2$ for both integer inputs.
+  * ***N.B.*** This is a ***common assumption*** for divide and conquer algorithms, which allows to eliminate floors and ceilings in descriptions of the resulting algorithms and their corresponding running time analysis.
+
+The ***goal*** is to compute the product $z = xy$ , with the corresponding running time expressed in terms of $n$ (i.e., bits, the corresponding memory/space required to hold these respective integers).
+
+Here, a standard "divide and conquer idea" (cf. mergesort) is to split the input into two halves. From there, we recursively solve the problem on the two halves until eventually converging on the base case, and then correspondingly combining/merging the results to yield the overall solution.
+
+In this particular problem, we can split both $x$ and $y$ individually into two halves (i.e., with respect to their constituent $n$ bits), which we denote as follows:
+  * $x$ is split into halves $x_L$ and $x_R$ , where each half is of size $\frac{n}{2}$ bits
+  * similarly, $y$ is split into halves $y_L$ and $y_R$ , where each half is of size $\frac{n}{2}$ bits
+
+![](./assets/07-DC1-005.png){ width=650px }
+
+Let us consider a specific example to examine such partitions. The decimal number (subscript $_{10}$ ) $182_{10}$ can be represented in binary (subscript $_2$ ) as follows:
+
+$$
+x = 182_{10} = 10110110_2
+$$
+
+Therefore, we can designate the respective halves as follows:
+
+$$
+x_L = 1011_2 = 11_{10}
+$$
+
+$$
+x_R = 0110_2 = 6_{10}
+$$
+
+Furthermore, note the relationship among these as follows:
+
+$$
+182_{10} = 11_{10} \times {2_{10}}^4 + 6_{10}
+$$
+
+More generally, this relationship can be described by the following:
+
+$$
+x = x_L \times 2^{n/2} + x_R
+$$
+
+where $2^{n/2}$ is effectively a bit-shift operation (i.e., shifting the bit positions over by $\frac{n}{2}$ bits, which is typically an $O(1)$ operation on modern hardware).
+
 ### 6. Recursive Idea
 
 > [!NOTE]
