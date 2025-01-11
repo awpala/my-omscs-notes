@@ -56,6 +56,53 @@ Finally, we will examine the fast Fourier transform (FFT).
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
+Before considering the example of multiplying two $n$-bit integers, we begin with a brief digression into a clever idea from Gauss. At the outset, its utility may not be immediately apparently, however, we will later see how it *is* indeed useful in the context of such $n$-bit integer multiplication.
+
+![](./assets/07-DC1-001.png){ width=650px }
+
+Consider the general setting/context here with respect to the constituent operations:
+  * Multiplication is relatively ***expensive*** (i.e., goal is to minimize these operations), i.e., $O(n^2)$ for $n$-bit input integers
+  * Addition/subtraction relatively ***cheap***, i.e., $O(1)$ for $n$-bit input integers
+
+Therefore, it stands to reason that increasing addition/subtraction operations are a worthwhile "concession" in order to correspondingly reduce multiplication operations.
+  * ***N.B.*** This characterization is generally true, including in the case of multiplying two $n$-bit integers.
+
+Now, consider **complex numbers**, which have two components, real and imaginary. Two such complex numbers are:
+
+$$
+a + bi
+$$
+
+$$
+c + di
+$$
+
+where the real components are $a$ and $c$ (respectively) and the imaginary components are $b$ and $d$ (respectively).
+
+The goal is therefore to compute the corresponding product, i.e.,:
+
+$$
+(a + bi)(c + di)
+$$
+
+To accomplish this, we can distribute the factors (i.e., via FOIL method or equivalent) to yield the following general expression:
+
+$$
+ac - bd + (bc + ad)i
+$$
+
+Therefore, in order to compute this product, this requires computing the following ***four*** factors (along with corresponding three addition/subtraction operations):
+  * $ac$
+  * $bd$
+  * $bc$
+  * $ad$
+
+where each factor corresponds to a real number multiplication.
+
+However, given that multiplication operations are relatively expensive, we would like to minimize these operations accordingly, even if this comes at the "expense" of performing additional (comparatively cheaper) addition/subtraction operations.
+
+So, then, is is possible to reduce the amount of these multiplication operations? Indeed, this *is* possible: We can reduce this down to ***three*** multiplication operations by computing the expression $bc + ad$ directly (i.e., rather than the individual factors $bc$ and $ad$ ). We discuss this improvement next.
+
 ### 4. Improved Approach
 
 > [!NOTE]
