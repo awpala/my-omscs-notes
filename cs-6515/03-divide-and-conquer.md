@@ -212,6 +212,38 @@ where $2^{n/2}$ is effectively a bit-shift operation (i.e., shifting the bit pos
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
+Now, let us outline the recursive idea for the algorithm.
+
+![](./assets/07-DC1-006.png){ width=650px }
+
+Recall (cf. Section 5) that the idea is to split the input integers $x$ and $y$ of size $n$ bits into two halves (i.e., paired halves $x_L$ and $x_R$ , and $y_L$ and $y_R$ , respectively), each of corresponding size $\frac{n}{2}$ bits.
+
+Furthermore, recall (cf. Section 5) the corresponding relationships between these paired halves as follows:
+
+$$
+x = x_L \times 2^{n/2} + x_R
+$$
+
+$$
+y = y_L \times 2^{n/2} + y_R
+$$
+
+where factor $2^{n/2}$ corresponds to an equivalent bit-shifting operation (i.e., by $\frac{n}{2}$ bit positions).
+
+Therefore, with the goal of computing product $xy$ , this yields the following:
+
+$$
+xy = (x_L \times 2^{n/2} + x_R)(y_L \times 2^{n/2} + y_R) = 2^nx_Ly_L + 2^{n/2}(x_Ly_R + x_Ry_L) + x_Ry_R
+$$
+
+This gives rise to a naturally recursive algorithm, i.e., computation of the corresponding $\frac{n}{2}$-bit products in the right-hand expression:
+  * $x_Ly_L$
+  * $x_Ly_R$
+  * $x_Ry_L$
+  * $x_Ry_R$
+
+Next, we will detail this algorithm more formally.
+
 ### 7-8. Algorithm
 
 #### 7. Pseudocode
