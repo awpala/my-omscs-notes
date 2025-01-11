@@ -251,12 +251,106 @@ Next, we will detail this algorithm more formally.
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
+![](./assets/07-DC1-007.png){ width=650px }
+
+The pseudocode for the algorithm is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{EasyMultiply}}(x,y):}\\
+\ \ \ \ {{\text{input:\ }} n{\text{-bit\ integers\ }} x {\text{\ and\ }} y {\text{,\ where\ }} n = 2^k}\\
+\ \ \ \ {{\text{output:\ }} z = xy}\\
+\\
+\ \ \ \ {x_L = {\text{first\ }} \frac{n}{2} {\text{bits\ of\ }} x {\text{,\ }} x_R = {\text{last\ }} \frac{n}{2} {\text{bits\ of\ }} x}\\
+\ \ \ \ {y_L = {\text{first\ }} \frac{n}{2} {\text{bits\ of\ }} y {\text{,\ }} y_R = {\text{last\ }} \frac{n}{2} {\text{bits\ of\ }} y}\\
+\ \ \ \ {A = {\text{EasyMultiply}}(x_L, y_L)}\\
+\ \ \ \ {B = {\text{EasyMultiply}}(x_R, y_R)}\\
+\ \ \ \ {C = {\text{EasyMultiply}}(x_L, y_R)}\\
+\ \ \ \ {D = {\text{EasyMultiply}}(x_R, y_L)}\\
+\ \ \ \ {z = 2^n \times A + 2^{n/2}(C + D) + B}\\
+\ \ \ \ {{\text{return\ }} (z)}
+\end{array}
+}
+$$
+
+The ***input*** to the algorithm is the two $n$-bit integers $x$ and $y$ , where $n = 2^k$ is assumed (i.e., $n$ is a power of $2$ ) for some non-negative integer $k$ .
+
+The ***output*** is the product of these integers, $z = xy$ .
+
+First, the algorithm splits the input integers $x$ and $y$ into constituent halves/pairs $x_L$ and $x_R$ and $y_L$ and $y_R$ (respectively), where each half is of size $\frac{n}{2}$ . Furthermore, since $n$ is a power of $2$ , these pairs generally divide evenly (thereby obviating the need to include floors and/or ceilings in the representation of the terms accordingly).
+
+Next, we compute the products of these $\frac{n}{2}$-bit pairs recursively, with these corresponding products represented respectively as $A$ , $B$ , $C$ , and $D$ .
+
+Now, given these product quantities, we can compute the overall product $z$ as follows:
+
+$$
+z = 2^n \times A + 2^{n/2}(C + D) + B
+$$
+
+***N.B.*** cf. Section 7 for the derivation of the right-hand expression.
+
+Furthermore, this product is the correspondingly ***returned*** value/output from the algorithm.
+
+Next, we consider the running time for this algorithm.
+
 #### 8. Running Time Quiz and Answers
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 >
 > See a primer on solving recurrences, see Lecture DC3: Solving Recurrences and also [DPV] Chapter 2.2 (Recurrence relations).
+
+Which of the following is the running time for the algorithm $\text{EasyMultiply}$ (cf. Section 7)?
+  * $O(n)$
+  * $O(n \log n)$
+  * $O(n^{3/2})$
+  * $O(n^2)$
+  * $O(n^3)$
+
+![](./assets/07-DC1-008A.png){ width=650px }
+
+The initial partitioning steps to generate halves $x_L$ , $x_R$ , $y_L$ , and $y_R$ require a running time of $O(n)$ (for each of $x$ and $y$ in turn).
+
+In the subsequent recursive calls to $\text{EasyMultiply}$ , if we let $T(n)$ denote the worst-case running time in the worst case scenario of an input of size $n$ bits , then *each* recursive call requires a running time of $T(\frac{n}{2})$ , or equivalently as follows:
+
+$$
+4T\bigg(\frac{n}{2}\bigg)
+$$
+
+Finally, to compute the final product given as follows :
+
+$$
+z = 2^n \times A + 2^{n/2}(C + D) + B
+$$
+
+this correspondingly requires $O(n)$ running time, since each single-bit-shift operation can be performed in $O(1)$ running time, i.e., this is equivalent to straightforward $n$-bit multiplication by a power of $2$ (via corresponding factors $2^n$ and $2^{n/2}$ , in order to shift $A$ by $n$ bit positions and $(C + D)$ by $\frac{n}{2}$ bit positions, respectively, with the former dominating the running time in this operation).
+
+Therefore, the overall running time for this algorithm is:
+
+$$
+O(n) + 4T\bigg(\frac{n}{2}\bigg) + O(n)
+$$
+
+![](./assets/07-DC1-009A.png){ width=650px }
+
+Furthermore, let $T(n)$ denote the worst-case running time of $\text{EasyMultiply}$ on an input of size $n$ bits. This gives:
+
+$$
+T(n) = 4T\bigg(\frac{n}{2}\bigg) + O(n)
+$$
+
+We can solve this recurrence to give the following:
+
+$$
+T(n) = O(n^2)
+$$
+
+***N.B.*** Solving recurrences should be familiar from previously; this result follows from direct application of the Master Theorem. Furthermore, it is also covered/reviewed later in this lecture (cf. Divide and Conquer 3).
+
+Therefore, the running time of this algorithm is the *same* as the naive/straightforward multiplication algorithm (cf. Section 3).
+
+Can we improve this approach (e.g., reducing from $4$ recursive operations down to $3$ )? We explore this next, revisiting Gauss's idea/improvement (cf. Section 4) in the process.
 
 ## 9-12. Divide and Conquer: Improved Approach
 
