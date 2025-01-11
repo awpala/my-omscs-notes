@@ -5,12 +5,47 @@
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2 (Divide-and-conquer algorithms).
 
+![](./assets/07-DC1-000-01.png){ width=650px }
+
+**Divide and conquer algorithms** (or **recursive algorithms**) are one of the first algorithmic tools that have been likely encountered (e.g., via binary search, mergesort, and similar).
+
+To see the power of divide and conquer, we will first examine a fundamental problem: **multiplying** two $n$-bit numbers, where the operands are assumed to be very large (i.e., $n$ on the order of $10^3$ ), as utilized in algorithms such as RSA (cf. Topic 2, Randomized Algorithms).
+  * Since these $n$-bit numbers are so large, we can no longer rely on the corresponding hardware implementation (i.e., for trivial $O(1)$ multiplication operations).
+
+Next, we will examine a clever divide and conquer algorithm which is ***faster*** than the standard approach to multiplication.
+
+Another fundamental problem we will examine is given $n$ numbers, determine the **median** element.
+  * The given numbers are *unsorted* (i.e., in arbitrary order). This corresponding divide and conquer technique cleverly determines this *without* otherwise requiring to first sort the list (and incurring the corresponding running time penalty accordingly).
+
+Finally, we will examine the **fast Fourier transform** (**FFT**) algorithm, which occurs ubiquitously in many fields (e.g., signal processing) and constitutes a "masterpiece" demonstration of the divide and conquer technique.
+  * The FFT algorithm was deemed "the most important numerical algorithm of our lifetime" as of 1994.
+  * An understanding of the FFT algorithm will require some additional background in **complex numbers**, which in turn will inform the **recursive approach** of the FFT algorithm itself.
+
 ## Overview
 
 > [!NOTE]
 > ***Instructor's Note***: We closely follow the presentation in [DPV] Chapter 2.1 (Multiplication). For Eric's notes, see[here](https://cs6505.wordpress.com/fast-multiplication/).
 > 
 > Review topics: for a discussion on the MergeSort algorithm see [DPV] Chapter 2.3 (Mergesort). For a primer on solving recurrences, see Lecture DC3: Solving Recurrences and also [DPV] Chapter 2.2 (Recurrence relations).
+
+![](./assets/07-DC1-000-02.png){ width=650px }
+
+We have previously seen simple applications of the divide and conquer technique, as follows:
+  * fast modular exponentiation algorithm, utilizing the notion of "repeated squaring" (cf. Topic 2, Randomized Algorithms)
+  * Euclid's greatest common divisor algorithm (cf. Topic 2, Randomized Algorithms)
+
+In the opening of this topic, we will examine more sophisticated divide and conquer algorithms, starting with multiplication of $n$-bit integers.
+  * This multiplication technique is particularly useful in the RSA algorithm (cf. Topic 2, Randomized Algorithms), where $n$ is typically $1024$ or $2048$ bits (i.e., beyond the straightforward capabilities of typical modern hardware).
+
+In the multiplication of $n$-bit integers, we are ***given*** two $n$-bit integers $x$ and $y$ as inputs, with the ***goal*** of computing their product $z = xy$ . Furthermore, we analyze the corresponding running time of the algorithm as a function of the $n$-bit inputs.
+
+Recall (cf. Topic 2, Randomized Algorithms) that the naive algorithm for computing this product $z = xy$ has a running time of $O(n^2)$ . Now, the objective is to ***improve*** this running time performance (i.e., a running time which is ***faster*** than $O(n^2)$ ), using a more sophisticated divide and conquer scheme.
+
+Next, we will examine how to compute the median of (unsorted) $n$ input integers in *linear* time (i.e., $O(n)$ for $n$ such inputs).
+
+Finally, we will examine the fast Fourier transform (FFT).
+
+***N.B.*** It is assumed that divide and conquer is already familiar from previously (i.e., course prerequisites), via representative examples including mergesort (which sorts $n$ integers with running time $O(n \log n)$ ). Furthermore, it is assumed that solving recurrences is a familiar technique as well. For additional reference, the course textbook *Algorithms* by Dasgupta et al. discusses these topics as well.
 
 # Divide and Conquer 1: Fast Integer Multiplication
 
