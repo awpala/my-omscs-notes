@@ -505,7 +505,6 @@ $$
 O \bigg( n \times \bigg(\frac{3}{2}\bigg)^{\log _2 n} \bigg) = O(3^{\log _2 n}) = O(n^{\log _2 3})
 $$
 
-
 ***N.B.*** In the first simplification/arrangement, $2^{\log _2 n} = n$ . Furthermore, the second simplification/rearrangement follows directly from rules of logarithms (i.e., $3 = 2^{\log_2 3} \implies 3^{\log _2 n} = (2^{log _2 3})^{\log_2 n} = (2^{log _2 n})^{\log_2 3} = n^{\log_2 3}$ ).
 
 ![](./assets/07-DC1-014A.png){ width=650px }
@@ -515,6 +514,45 @@ Note that the constant value $\log _2 3 \approx 1.59$ , which is indeed an impro
 Furthermore, we can improve this factor to approach arbitrarily close to $1$ , however, there is a corresponding cost for this: The *constant factor* which is omitted in the big-O notation grows as the exponent (i.e., $\log _2 3$ ) decreases (i.e., rather than splitting into only two halves, there is increasingly such splitting, which correspondingly requires additional work to later recombine into the resulting overall product).
 
 ### 12. Summary
+
+This concludes the description of the multiplication algorithm.
+
+![](./assets/07-DC1-015.png){ width=650px }
+
+Before proceeding, let us highlight the cleverness of the described approach. Consider the following input integers:
+
+$$
+x = 182_{10} = 10110110_2
+$$
+
+$$
+y = 154_{10} = 10011010_2
+$$
+
+Our approach begins by splitting these inputs into their constituent $\frac{n}{2}$ halves, i.e.,:
+  * $x_L = 1011_2 = 11_{10}$
+  * $x_R = 0110_2 = 6_{10}$
+  * $y_L = 1001_2 = 9_{10}$
+  * $y_R = 1010_2 = 10_{10}$
+
+Correspondingly, the algorithm (cf. Section 10) first computes the following three products:
+  * $11_{10} \times 9_{10} = 99_{10}$
+  * $6_{10} \times 10_{10} = 60_{10}$
+  * $(11_{10} + 6_{10}) \times (9_{10} + 10_{10}) = 323_{10}$
+
+We then compute the overall product as follows:
+
+$$
+182_{10} \times 154_{10} = 99_{10} \times 256_{10} + (323_{10} - 99_{10} -60_{10}) \times 16_{10} + 60_{10} = 28,028_{10}
+$$
+
+***N.B.*** The final result here is calculated directly (i.e., via calculator or equivalent).
+
+It is indeed quite fascinating (and perhaps non-intuitive) that eventually proceeding in this manner converges on the correct result!
+
+***N.B.*** A similar idea exists for matrix multiplication, via an analogous technique called **Strassen's algorithm**. Consult the course textbook *Algorithms* by Dasgupta et al. (or equivalent sources) for additional information.
+
+Next, we examine the linear-time median, another clever divide and conquer approach.
 
 # Divide and Conquer 2: Linear-Time Median
 
