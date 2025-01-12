@@ -683,7 +683,7 @@ Which of the following does the recurrence $T(n) = T(\frac{n}{2}) + O(n)$ solve 
 
 ***Answer***: This recurrence solves to $O(n)$ .
 
-***N.B.*** This is the recurrence (and corresponding running time) for the algorithm $\text{Select}$ (cf. Section 4). This will be demonstrated more formally in subsequent sections/discussions.
+***N.B.*** This is the recurrence (and corresponding running time) for the algorithm $\text{Select}$ (cf. Section 4), where running time $O(n)$ is required to create the partitions on $A$ (i.e., Step 2 per the pseudocode in Section 4), and recursive term $T(\frac{n}{2})$ represents the corresponding recursive steps (i.e., Step 3 per the pseudocode in Section 4). This will be demonstrated more formally in subsequent sections/discussions.
 
 ## 6-11. Divide and Conquer High-Level Idea
 
@@ -720,6 +720,26 @@ The ***key*** here is that the constant term of the recurrence (i.e., $\frac{3}{
 Therefore, we define a "good" pivot as one which exists in this "intermediate-range" band. Furthermore, we will attempt to satisfy the band $[\frac{n}{4}, \frac{3n}{4}]$ , with some extra "slack" contributed by the latter band, $[\frac{n}{100}, \frac{99n}{100}]$ (which ultimately satisfies the recurrence relation in running time $O(n)$ , as desired). 
 
 ### 7. Goal: Good Pivot
+
+![](./assets/08-DC2-007.png){ width=650px }
+
+More formally, we define a "good" pivot $p$ if it satisfies the following constraints:
+
+> $|A_{<p}| \le \frac{3n}{4}$ and $|A_{>p}| \le \frac{3n}{4}$
+
+Given this definition, the corresponding ***goal*** is stated as follows:
+
+> Find this "good" pivot in a running time of $O(n)$
+
+Recall (cf. Section 6) that this goal implies a recurrence relation as follows:
+
+$$
+T(n) = T\bigg( \frac{3}{4}n \bigg) + O(n)
+$$
+
+Furthermore, recall (cf. Section 6) that indeed this recurrence relation solves to overall running time $O(n)$ , as desired.
+
+Now, the question remains: How to determine such a "good" pivot? Next, we examine some schemes intended for this exact purpose.
 
 ### 8. Random Pivot
 
