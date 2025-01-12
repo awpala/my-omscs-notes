@@ -588,6 +588,25 @@ However, is it possible to achieve a better running time, by obviating the need 
 
 ## 2. Basic Approach
 
+![](./assets/08-DC2-003.png){ width=650px }
+
+The basic approach for finding the $k$<sup>th</sup> smallest element in unsorted array $A$ is a divide and conquer technique which is reminiscent of the quicksort algorithm.
+
+Let us first review the quicksort algorithm, and make appropriate modifications to highlight the corresponding approach.
+
+When running quicksort on a list of numbers $A$ , the following steps are performed:
+  * 1 - Choose a pivot $p$
+  * 2 - Partition $A$ into $A < p$ , $A = p$ , and $A < p$
+  * 3 - Recursively sort via quicksort on partitions $A < p$ and $A > p$
+
+Proceeding in this manner, the final output is the sorted list comprised of the "smallest" elements, followed by the "equal" elements, and then finally followed by the "largest" elements (respectively).
+
+The ***key challenge*** in quicksort is judicious selection of an effective pivot $p$ . For example, selection of the largest element as the pivot makes a trivial reduction in the subproblem by only one element, thereby degenerating the overall running time for sorting to $O(n^2)$ .
+
+So, then, what constitutes such an "effective" pivot? This is accomplished via the ***median*** element (or within this vicinity). This pivot selection in turn is relevant to the current problem at hand (i.e., linear-time median computation). Furthermore, while quicksort has a running time of $O(n \log n)$ , while our target algorithm has a running time of $O(n)$ . However, the key distinction in the latter is the fact that we do *not* have to consider both cases $A < p$ *and* $A > p$ , but rather it is only strictly necessarily to reduce to a search subproblem comprised of only *one* of these sub-lists.
+
+Next, we will demonstrate an example of this search process.
+
 ## 3. Search Example
 
 ## 4. QuickSelect
