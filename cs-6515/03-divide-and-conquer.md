@@ -359,10 +359,83 @@ Can we improve this approach (e.g., reducing from $4$ recursive operations down 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
+Now, consider an improvement to the multiplication (i.e., relative to a running time of $O(n^2)$ with respect to $n-bit integer inputs).
+
+![](./assets/07-DC1-010.png){ width=650px }
+
+Recall (cf. Section 6) the following key expression:
+
+$$
+xy = 2^nx_Ly_L + 2^{n/2}(x_Ly_R + x_Ry_L) + x_Ry_R
+$$
+
+Furthermore, recall (cf. Section 7) that the straightforward divide and conquer approach computes the following four products in this expression:
+  * $x_Ly_L$
+  * $x_Ly_R$
+  * $x_Ry_L$
+  * $x_Ry_R$
+
+This in turn gives rise to an overall running time of $O(n^2)$ (cf. Section 8).
+
+Now, the objective is to reduce the number of subproblems from $4$ to $3$ . Recalling (cf. Section 4) Gauss's idea, we can correspondingly compute the expression $x_Ly_R + x_Ry_L$ without computing the individual products as follows (i.e., via analogous cross-multiplication-form as before):
+
+$$
+x_Ly_R + x_Ry_L = (x_L + x_R)(y_L + y_R) - x_Ly_L - x_Ry_R
+$$
+
+Analogously to before (cf. Section 4), with this rearrangement, observe that there are now *three* distinct multiplication operations:
+  * $x_Ly_L$
+  * $x_Ry_R$
+  * $(x_L + x_R)(y_L + y_R)$
+
+Furthermore, recall (cf. Section 7) that the first two of these products were represented as quantities $A$ and $B$ (respectively). Similarly, we can designate the third product as $C$ (which in turn supplants the previous *distinct* products $C$ and $D$ ).
+
+Therefore, the corresponding equivalent product now becomes:
+
+$$
+xy = 2^nA + 2^{n/2}(C - A - B) + B
+$$
+
+where we have now (as before) net decreased by one multiplication operation, while incurring some net-increased addition/subtraction operations (a useful tradeoff here nonetheless). Correspondingly, we have now reduced the subproblems from $4$ to $3$ accordingly.
+
+Next, we detail this algorithm more formally.
+
 ### 10. Pseudocode
 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
+
+![](./assets/07-DC1-011.png){ width=650px }
+
+![](./assets/07-DC1-012.png){ width=650px }
+
+The pseudocode for the improved algorithm is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{FastMultiply}}(x,y):}\\
+\ \ \ \ {{\text{input:\ }} n{\text{-bit\ integers\ }} x {\text{\ and\ }} y {\text{,\ where\ }} n = 2^k}\\
+\ \ \ \ {{\text{output:\ }} z = xy}\\
+\\
+\ \ \ \ {x_L = {\text{first\ }} \frac{n}{2} {\text{bits\ of\ }} x {\text{,\ }} x_R = {\text{last\ }} \frac{n}{2} {\text{bits\ of\ }} x}\\
+\ \ \ \ {y_L = {\text{first\ }} \frac{n}{2} {\text{bits\ of\ }} y {\text{,\ }} y_R = {\text{last\ }} \frac{n}{2} {\text{bits\ of\ }} y}\\
+\ \ \ \ {A = {\text{FastMultiply}}(x_L, y_L)}\\
+\ \ \ \ {B = {\text{FastMultiply}}(x_R, y_R)}\\
+\ \ \ \ {C = {\text{FastMultiply}}(x_L + x_R, y_L + y_R)}\\
+\ \ \ \ {z = 2^n \times A + 2^{n/2}(C - A - B) + B}\\
+\ \ \ \ {{\text{return\ }} (z)}
+\end{array}
+}
+$$
+
+This algorithm is similar to the straightforward divide and conquer algorithm $\text{EasyMultiply}$ (cf. Section 7), however, after partitioning $x$ and $y$ , here, we have now reduced to $3$ recursive subproblems (cf. $4$ previously).
+
+Furthermore, with these updated subproblems, the corresponding overall product is now computed as follows:
+
+$$
+z = 2^n \times A + 2^{n/2}(C - A - B) + B
+$$
 
 ### 11. Running Time Quiz and Answers
 
@@ -370,6 +443,76 @@ Can we improve this approach (e.g., reducing from $4$ recursive operations down 
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 >
 > For a primer on solving recurrences, see Lecture DC3: Solving Recurrences and also [DPV] Chapter 2.2 (Recurrence relations).
+
+Which of the following is the running time for the algorithm $\text{FastMultiply}$ (cf. Section 10)?
+  * $O(n)$
+  * $O(n \log n)$
+  * $O(n^{3/2})$
+  * $O(n^{\log _3 2})$
+  * $O(n^{\log _2 3})$
+  * $O(n^2)$
+
+![](./assets/07-DC1-013A.png){ width=650px }
+
+In the improved algorithm (cf. Section 10), we now have only $3$ recursive subproblems giving rise to analogous (cf. 8) recurrence relation as follows:
+
+$$
+T(n) = 3T\bigg(\frac{n}{2}\bigg) + O(n)
+$$
+
+where (as before) $T(n)$ denotes the worst-case running time of $\text{FastMultiply}$ on an input of size $n$ bits.
+
+To solve this recurrence, we first upper-bound via $cn$ as follows:
+
+$$
+3T\bigg(\frac{n}{2}\bigg) + O(n) \le cn + 3T\bigg(\frac{n}{2}\bigg)
+$$
+
+Furthermore, we can substitute for $T(\frac{n}{2})$ on the right-hand side as follows:
+
+$$
+3T\bigg(\frac{n}{2}\bigg) + O(n) \le cn + 3T\bigg( c \frac{n}{2} + 3T\bigg( \frac{n}{2^2} \bigg) \bigg)
+$$
+
+Simplifying algebraically on the right-hand side and simultaneously similarly substituting further yields:
+
+$$
+3T\bigg(\frac{n}{2}\bigg) + O(n) \le cn \bigg( 1 + \frac{3}{2} \bigg) + 3^2 T\bigg( \frac{cn}{2^2} + 3T\bigg( \frac{n}{2^3} \bigg) \bigg)
+$$
+
+Expanding the right-hand side in this manner yields the following:
+
+$$
+3T\bigg(\frac{n}{2}\bigg) + O(n) \le cn \bigg[ 1 + \frac{3}{2} + \bigg({\frac{3}{2}}\bigg)^2 + \bigg({\frac{3}{2}}\bigg)^3 + \cdots + \bigg({\frac{3}{2}}\bigg)^{\log _2 n} \bigg]
+$$
+
+where the expansion proceeds accordingly until the final term (i.e., of general form $T(\frac{n}{2^k})$ ) is eventually a constant.
+
+In the resulting geometric series, we consider the following cases:
+  * the terms are equal $\rightarrow$ no
+  * the series is decreasing (i.e., first term dominates) $\rightarrow$ no
+  * the series is increasing (i.e., last term dominates, via $\frac{3}{2} > 1$ ) $\rightarrow$ yes
+
+Therefore, since the last term dominates (and with $n$ such terms in the worst case), the overall running time is characterized as:
+
+$$
+T(n) \le O \bigg( n \times \bigg(\frac{3}{2}\bigg)^{\log _2 n} \bigg)
+$$
+
+Furthermore, simplifying algebraically yields the following:
+
+$$
+O \bigg( n \times \bigg(\frac{3}{2}\bigg)^{\log _2 n} \bigg) = O(3^{\log _2 n}) = O(n^{\log _2 3})
+$$
+
+
+***N.B.*** In the first simplification/arrangement, $2^{\log _2 n} = n$ . Furthermore, the second simplification/rearrangement follows directly from rules of logarithms (i.e., $3 = 2^{\log_2 3} \implies 3^{\log _2 n} = (2^{log _2 3})^{\log_2 n} = (2^{log _2 n})^{\log_2 3} = n^{\log_2 3}$ ).
+
+![](./assets/07-DC1-014A.png){ width=650px }
+
+Note that the constant value $\log _2 3 \approx 1.59$ , which is indeed an improvement over factor $2$ (i.e., $\log _2 3 \approx 1.59 < 2$ ).
+
+Furthermore, we can improve this factor to approach arbitrarily close to $1$ , however, there is a corresponding cost for this: The *constant factor* which is omitted in the big-O notation grows as the exponent (i.e., $\log _2 3$ ) decreases (i.e., rather than splitting into only two halves, there is increasingly such splitting, which correspondingly requires additional work to later recombine into the resulting overall product).
 
 ### 12. Summary
 
