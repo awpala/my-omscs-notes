@@ -609,6 +609,40 @@ Next, we will demonstrate an example of this search process.
 
 ## 3. Search Example
 
+![](./assets/08-DC2-004.png){ width=650px }
+
+Consider the following array $A$ :
+
+$$
+A = [5, 2, 20, 17, 11, 13, 8, 9, 11]
+$$
+
+Furthermore, let pivot $p = 11$ .
+
+Now, we can define partitions with respect to pivot $p$ as follows:
+
+$$
+A_{<p} = [5, 2, 8, 9]
+$$
+
+$$
+A_{=p} = [11, 11]
+$$
+
+$$
+A_{>p} = [20, 17, 13]
+$$
+
+Note that the $k$<sup>th</sup> smallest element exists in one of these partitions. Furthermore, the corresponding search is dictated by $k$ as follows:
+  * if $k \le 4$ , then the $k$<sup>th</sup> smallest element is present in partition $A_{<p}$
+  * if $4 < k \le 6$ , then the $k$<sup>th</sup> smallest element is readily obtained as $11$ (i.e., via partition $A_{=p}$ )
+  * if $k > 6$ , then the $(k-6)$<sup>th</sup> smallest element is present in partition $A_{>p}$
+
+Therefore, in general, recursive search (if necessary) is *only* performed in *one* of the two  partitions $A_{<p}$ *or* $A_{>p}$ (but *not* both).
+  * ***N.B.*** cf. In quicksort, it is generally necessary to perform *both* recursions in order to arrive at the overall result (i.e., a sorted list).
+
+Next, we will detail the algorithm for this general-case solution (i.e., finding the $k$<sup>th</sup> smallest element in list $A$ ).
+
 ## 4. QuickSelect
 
 ## 5. Simple Recurrence Quiz and Answers
