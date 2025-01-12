@@ -819,7 +819,73 @@ However, a question still remains: How to ***choose*** such a subset $S$ of $A$ 
 
 #### 10. Representative Sample
 
+First, we consider a simple/naive idea for selecting the subset $S$ of $A$ .
+
+![](./assets/08-DC2-011.png){ width=650px }
+
+One such simple/naive idea is the following:
+
+> Let $S = [a_1, \dots, a_{\frac{n}{5}}]$ = the first $\frac{n}{5}$ elements of $A$
+
+Furthermore, set the pivot to the following:
+
+$$
+p = {\text{Median}}(S)
+$$
+
+How, then, does this pivot $p$ perform? It turns out that this is ***not*** a "good" pivot. Let us consider why this is the case.
+
+Suppose that $A$ is sorted. In this case, if $S$ is comprised of the $\frac{n}{5}$ smallest elements of $A$ , then ${\text{Median}}(S)$ gives rise to the following pivot:
+
+$$
+p = {\bigg( \frac{n}{10} \bigg)}^{{\text{th}}}{\text{\ smallest\ element\ of A}}
+$$
+
+This consequently implies the following largest-elements partition of $A$:
+
+$$
+|A_{>p}| \le \frac{9}{10}n
+$$
+
+Correspondingly, this increases the term of the recurrence relation (cf. Section 9) from $T(\frac{3}{4}n)$ to $T(\frac{9}{10}n)$ , which is a net degradation in the overall running time of the algorithm (i.e., this largest partition becomes "too large" in the worst case).
+
+So, then, is there a "better" choice for $S$ ? Next, we consider how we can derive subset $S$ more effectively from $A$ by examining $A$ itself.
+
 #### 11. Recursive Representative Sample
+
+To goal now is to select subset $S$ such that it is "representative" of array $A$ .
+
+![](./assets/08-DC2-012.png){ width=650px }
+
+By "representative," this means that ${\text{Median}}(S)$ is a reasonable approximation of ${\text{Median}}(A)$ itself (where ${\text{Median}}(A)$ subdivides $A$ into *exactly* smaller and larger halves, i.e., at relative proportions of $\frac{1}{2}$ apiece).
+
+More formally, we can define this property as follows:
+
+> For each element $x \in S$ , a few elements of $A$ are $\le x$ and a few elements are $\ge x$
+
+With respect to "few" in this characterization, first consider the case of $2$ such elements, giving rise to a total of $5$ elements (including $x$ itself as the fifth). Therefore, we consider sets of $5$ elements, where $x$ itself is "representative" of each such set.
+
+To accomplish this, we split $A$ into $\frac{n}{5}$ groups of $5$ elements apiece. For simplicity, we assume that $n$ is a power of $5$ in order to perform such splitting "cleanly."
+
+In order to derive $S$ from each such group, we select one "representative" element $x$ from each group. This element $x$ "represents" the corresponding set in the sense that at least two elements of $A$ are at most $x$ (i.e., $\le x$ ) and at least two elements of $A$ are at least $x$ (i.e., $\ge x$ ), as per the correspondingly defined property.
+
+As an example, consider the following group $G$ :
+
+$$
+G = \{ x_1, x_2, x_3, x_4, x_5 \}
+$$
+
+Furthermore, let us sort this group, such that the following relationship holds:
+
+$$
+x_1 \le x_2 \le x_3 \le x_4 \le x_5
+$$
+
+Therefore, with this sorting/ordering given, then the "representative" of this group is $x_3$ , the median element. Observe that this element provides the key property as desired (i.e., $x_1$ and $x_2$ are both at most $x_3$ , and similarly $x_4$ and $x_5$ are at least $x_3$ ). Furthermore, in this manner, the median element $x_3$ represents a distinct five-element group of subset $S$ (i.e., all five elements simultaneously this key property), with $S$ thereby collectively constituting a "representative" sample of $A$ accordingly.
+
+Now, we have a better idea for finding a "good" pivot: Break $A$ into $k$ such groups (e.g., $k = 5$ in this example), individually sort the elements of the groups, and then select the median element of the group as the "representative" element of the group, thereby constituting the (reduced-size, i.e., $\frac{n}{k}$ ) subset $S$ of $A$ accordingly. Furthermore, note that since the size of the individual groups is ***constant*** (i.e., $k$ elements), then the corresponding sorting operation only requires a trivial running time of $O(1)$ (i.e., even if given a worst-case sorting algorithm having an abysmal exponential running time time $O(n^n)$ , sorting on a fixed-size group is still nevertheless effectively $O(1)$ on a fixed-size input).
+
+Next, we will formalize this procedure, as well as prove that the "good" pivot $p$ selected in this manner (i.e., via ${\text{Median}}(S)$ , with subset $S$ appropriately defined as described here) is indeed a "good" pivot.
 
 ## 12-14. Median
 
