@@ -743,6 +743,30 @@ Now, the question remains: How to determine such a "good" pivot? Next, we examin
 
 ### 8. Random Pivot
 
+First, consider what constitutes an "easy" scheme for determining a "good" pivot.
+
+![](./assets/08-DC2-008.png){ width=650px }
+
+In the absence of a better idea, random selection is one such potential scheme/strategy. Here, the idea is to let $p$ be a random element of array $A$ .
+
+However, upon making such a random selection, what is the probability that $p$ is actually "good"?
+
+Consider again (cf. Section 6) a *sorted* version of array $A$ . As before (cf. Section 7), a "good" pivot exists within the "intermediate-range" band $[\frac{n}{4}, \frac{3n}{4}]$ . So, then, what is the probability that a random element is a "good" pivot?
+
+The ordering within "intermediate-range" band are irrelevant with respect to the probability of the "good" pivot existing here in itself. Therefore, the probability is the proportion of these potential "good" pivot candidates ($\frac{n}{2}$ ) relative to the total potential candidates ($n$ ), i.e.,:
+
+$$
+{\text{Pr}}({\text{random\ element\ is\ a\ "good"\ pivot}}) = \frac{n/2}{n} = \frac{1}{2}
+$$
+
+Now, given a proposed candidate for a "good" pivot, how to check/verify this? This can be accomplished straightforwardly by partitioning $A$ into $A_{<p}$ , $A_{=p}$ , and $A_{>p}$ (with corresponding running time of $O(n)$ to perform this partitioning). Furthermore, by tracking the sizes of the partitions, then by proceeding in this manner, it can be readily determined whether pivot $p$ is "good" (with a corresponding running time of $O(n)$ to perform this check via the various partitions).
+
+If the check determines that the randomly selected pivot $p$ is *not* "good," then this sequence can be simply repeated with a new randomly selected candidate pivot $p$ . This process is repeated in this manner until a "good" pivot is finally identified. Probabilistically speaking, the ***expected*** value for the total repeats/counts of running this sequence is the aforementioned $\frac{1}{2}$ (somewhat analogously to a coin flip, in this case, the probability of identifying a "good" pivot in any given run of the sequence is 50%, as per the specified "intermediate-range" band).
+
+Therefore, the overall ***expected*** running time for this pivot-selection algorithm is $O(n)$ (i.e., $O(C \times n) = O(n)$ , where $C$ is the probability factor for re-running the search sequence).
+
+While this is a reasonable algorithm, we will next examine an algorithm whose ***worst*** case running time is $O(n)$ (i.e., rather than only on an "expected/probabilistic" basis).
+
 ### 9. Recursive Pivot
 
 ### 10. Representative Sample
