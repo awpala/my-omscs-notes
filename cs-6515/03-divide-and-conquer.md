@@ -645,7 +645,45 @@ Next, we will detail the algorithm for this general-case solution (i.e., finding
 
 ## 4. QuickSelect
 
+![](./assets/08-DC2-005.png){ width=650px }
+
+The pseudocode for the algorithm to find the $k$<sup>th</sup> smallest element in list $A$ is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Select}}(A,k):}\\
+\ \ \ \ {{\text{1.\ }} {\text{Choose\ a\ pivot\ }} p}\\
+\ \ \ \ {{\text{2.\ }} {\text{Partition\ }} A {\text{\ into\ }} A_{<p}, A_{=p}, A_{>p}}\\
+\ \ \ \ {{\text{3A.\ }} {\text{If\ }} k \le |A_{<p}| {\text{,\ then\ }} {\text{return\ }} ({\text{Select}}(A_{<p}, k))}\\
+\ \ \ \ {{\text{3B.\ }} {\text{If\ }} |A_{<p}| < k \le |A_{<p}| + |A_{=p}| {\text{,\ then\ }} {\text{return\ }} (p)}\\
+\ \ \ \ {{\text{3C.\ }} {\text{If\ }} k > |A_{<p}| + |A_{=p}| {\text{,\ then\ }} {\text{return\ }} ({\text{Select}}(A_{>p}, k - |A_{<p}| - |A_{=p}|))}
+\end{array}
+}
+$$
+
+First, we determine the pivot $p$ .
+  * ***N.B.*** The exact procedure for this will be described later.
+
+Next, after selecting pivot $p$ , we partition $A$ into sub-arrays $A_{<p}, A_{=p}, A_{>p}$ .
+
+Finally, we recursively search in these partitions/sub-arrays based on their respective sizes and input $k$ .
+  * If $k \le |A_{<p}|$ , then the target element is recursively searched in partition $A_{<p}$ .
+  * If $|A_{<p}| < k \le |A_{<p}| + |A_{=p}|$ , then the target element is found directly in partition $A_{=p}$ (i.e., the target element is the pivot itself, $p$ ).
+  * If $k > |A_{<p}| + |A_{=p}|$ , then the target element is recursively searched in partition $A_{>p}$ . Furthermore, we reduce the size of the effective parameter via $k - |A_{<p}| - |A_{=p}|$ (i.e., discard elements which are too small relative to the elements in $A_{>p}$ itself).
+
+However, the question still remains: How do we determine the pivot? And, furthermore, what constitutes a "good/effective" pivot? Next, we will first address the latter question, before finally demonstrating how to determine this pivot.
+
 ## 5. Simple Recurrence Quiz and Answers
+
+Which of the following does the recurrence $T(n) = T(\frac{n}{2}) + O(n)$ solve to?
+  * $T(n) = O(\log n)$
+  * $T(n) = O(n)$
+  * $T(n) = O(n \log n)$
+
+***Answer***: This recurrence solves to $O(n)$ .
+
+***N.B.*** This is the recurrence (and corresponding running time) for the algorithm $\text{Select}$ (cf. Section 4). This will be demonstrated more formally in subsequent sections/discussions.
 
 ## 6-11. Divide and Conquer High-Level Idea
 
