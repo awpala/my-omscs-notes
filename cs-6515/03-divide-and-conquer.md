@@ -765,13 +765,61 @@ If the check determines that the randomly selected pivot $p$ is *not* "good," th
 
 Therefore, the overall ***expected*** running time for this pivot-selection algorithm is $O(n)$ (i.e., $O(C \times n) = O(n)$ , where $C$ is the probability factor for re-running the search sequence).
 
-While this is a reasonable algorithm, we will next examine an algorithm whose ***worst*** case running time is $O(n)$ (i.e., rather than only on an "expected/probabilistic" basis).
+While this is a reasonable algorithm, we will next examine an algorithm whose ***worst*** case overall running time is $O(n)$ (i.e., rather than only on an "expected/probabilistic" basis).
 
-### 9. Recursive Pivot
+### 9-11. Recursive Pivot
 
-### 10. Representative Sample
+#### 9. Introduction
 
-### 11. Recursive Representative Sample
+As before (cf. Section 7), the aim is to find a "good" pivot in an overall *worst* case running time of $O(n)$ .
+
+![](./assets/08-DC2-009.png){ width=650px }
+
+Recall (cf. Section 7) that if such a "good" pivot is identified, then the overall running time will satisfy the following recurrence relation:
+
+$$
+T(n) = T\bigg( \frac{3}{4}n \bigg) + O(n)
+$$
+
+where $T(\frac{3}{4}n)$ represents the reduced size of the resulting subproblems (once a "good" pivot has been identified), and $O(n)$ represents the running time required to find the "good" pivot as well as to perform the corresponding partitioning of $A$ (i.e., this term $O(n)$ therefore represents $O(2 \times n) = O(n)$ accordingly).
+
+Furthermore, recall (cf. Section 6) that this recurrence relation solves to an overall running time of $O(n)$ .
+
+Recall (cf. Section 6) that there is also inherent "slack" in the constant factor (i.e., $\frac{3}{4}$ ), which (strictly speaking) must only be $<1$ in order to be effective. Correspondingly, we will exploit this "slack" to provide "extra/additional" time for finding the pivot.
+
+For example, consider a representative factor of $0.24$ instead. This gives rise to the following recurrence relation for the running time:
+
+$$
+T(n) = T\bigg( \frac{3}{4}n \bigg) + T\bigg( \frac{1}{5}n \bigg) + O(n)
+$$
+
+where (as before) $T(\frac{3}{4}n)$ represents the reduced size of the resulting subproblems (once a "good" pivot has been identified), and $T(\frac{1}{5}n) + O(n)$ represents the collective time required to identify such a "good" pivot.
+
+A key fact for why this is an actual improvement is due to the following:
+
+$$
+\frac{3}{4} + \frac{1}{5} < 1
+$$
+
+Therefore, the resulting recurrence relation still yields an overall worst case running time of $O(n)$ for identifying a "good" pivot.
+
+![](./assets/08-DC2-010.png){ width=650px }
+
+Let us further consider exactly *how* we utilize this "slack" factor $T(\frac{1}{5}n)$ in order to find a "good" pivot.
+
+To accomplish this, we choose a subset $S$ of $A$ such that:
+
+$$
+|S| = \frac{n}{5}
+$$
+
+From there, we run the recursive median algorithm on this subset $S$ , where we set the pivot as $p = {\text{Median}}(S)$ accordingly. Furthermore, the running time to identify the median via ${\text{Median}}(S)$ is $T(\frac{1}{5}n)$ , since $|S| = \frac{n}{5}$ .
+
+However, a question still remains: How to ***choose*** such a subset $S$ of $A$ , such that $S$ is a "good" representative sample of $A$ ? To examine this question, we will first consider a naive choice of $S$ ; by analyzing the consequent failure, this will provide insight into devising a better choice for subset $S$ .
+
+#### 10. Representative Sample
+
+#### 11. Recursive Representative Sample
 
 ## 12-14. Median
 
