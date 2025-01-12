@@ -936,6 +936,43 @@ This completes the pseudocode for the algorithm. Next, we examine its overall ru
 
 ### 13. Running Time
 
+Now, consider the overall running time for algorithm $\text{FastSelect}$ (cf. Section 12).
+
+![](./assets/08-DC2-016.png){ width=650px }
+
+For now, we assume that $p$ is indeed a good pivot. (In the next section, we further prove/substantiate this claim more formally.)
+
+Step $1$ requires a running time of $O(n)$ , in order to split $A$ into corresponding groups via appropriate full traversal.
+
+In Step $2$ , since each sorting operation requires a running time of $O(1)$ , and there are $\frac{n}{5}$ such groups, then the overall running time for this step is $O(n)$ .
+  * ***N.B.*** If we were to use a very slow/suboptimal sorting algorithm, given $5!$ possible permutations for the ordering of the five elements in each group, then even naively checking each of these $5!$ permutations individually in order to identify the correctly sorted permutation will nevertheless still only require a running time of $O(5!)=O(1)$ (i.e., constant), by virtue of the fact that this group size is ***constant*** (i.e., as $A$ increases in size, the number of groups $G_i$ correspondingly increases, however, the size of the individual groups nevertheless remains constant).
+
+Step $3$ is a simple definition, requiring a running time of $O(1)$ .
+
+In Step $4$ , the recursive call ${\text{FastSelect}}(S, \frac{n}{10})$ (where $|S| = \frac{n}{5}$ ) has a corresponding running time of $T(\frac{n}{5})$ .
+
+Step $5$ (similarly to Step $1$ ) requires a running time of $O(n)$ in order to traverse the array and create the corresponding partitions $A_{<p}, A_{=p}, A_{>p}$ .
+
+Finally, in Step $6$ , since $p$ is guaranteed/assumed to be a "good" pivot, then as before (cf. Section 6), the running time for this step is $T(\frac{3}{4}n)$ , i.e., the recursive subproblems are of size at most $\frac{3}{4}n$ .
+
+Therefore, combining these steps, the overall running time satisfies the following recurrence:
+
+$$
+T(n) = T \bigg( \frac{3}{4}n \bigg) + T \bigg( \frac{1}{5}n \bigg) + O(n)
+$$
+
+where the last term $O(n)$ encompasses multiple steps as described.
+
+As before (cf. Section 9), the key fact for why this is an actual improvement is due to the following:
+
+$$
+\frac{3}{4} + \frac{1}{5} < 1
+$$
+
+By virtue of this *strict* improvement (i.e., relative to constant factor $1$ ), this recurrence relation solves to an overall running time of $O(n)$ .
+
+However, it still remains to prove the claim that $p$ is indeed a "good" pivot (i.e., and thereby proving correctness of the algorithm accordingly); this matter is addressed in the next section.
+
 ### 14. Linear-Time Correctness
 
 ## 15. Addendum: Homework Question
