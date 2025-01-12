@@ -561,6 +561,31 @@ Next, we examine the linear-time median, another clever divide and conquer appro
 > [!NOTE]
 > ***Instructor's Note***: For the randomized approach see [DPV] Chapter 2.4 (Medians). The deterministic approach is not covered in [DPV], you can instead look at Eric's [notes](https://cs6505.wordpress.com/schedule/median/).
 
+Consider another example of a divide and conquer algorithm, which entails finding the median of $n$ numbers.
+
+![](./assets/08-DC2-001.png){ width=650px }
+
+In this algorithm, the ***input*** is an *unsorted* list/array $A = [a_1, \dots, a_n]$ of $n$ numbers.
+
+The ***goal*** is to determine the *median* of $A$ (i.e., the middle element in equivalent-sorted order).
+
+More formally, we can define the median as the $\lfloor \frac{n}{2} \rfloor$<sup>th</sup> smallest element in $A$ . For odd $n$ , $n = 2 \ell + 1$ (with respect to length/size $\ell$ of $A$ ), and therefore the median is the $(\ell + 1)$<sup>st</sup> element in $A$ .
+
+![](./assets/08-DC2-002.png){ width=650px }
+
+It is also useful to solve a more general problem: Find the $k$<sup>th</sup> element of an input list $A$ .
+
+More specifically, we can define this more general problem as follows:
+
+> Given unsorted $A$ and integer $k$ where $1 \le k \le n$ , find the $k$<sup>th</sup> smallest element of $A$
+
+where $k = \frac{n}{2}$ is the special case of the median.
+
+If we ***sort*** the list, then this gives rise to a relatively trivial algorithm: Given unsorted $A$ , we sort $A$ and then simply output the $k$<sup>th</sup> element directly.
+  * Using mergesort, this sorting has an overall running time of $O(n \log n)$ . Furthermore, this also generally the fastest possible sort if using similar comparison sorts.
+
+However, is it possible to achieve a better running time, by obviating the need to first sort $A$ ? Indeed, this is possible, and we will examine the corresponding algorithm having overall running time $O(n)$ (i.e., linear) next. This is a clever divide and conquer algorithm, devised in 1973 by Blum, Floyd, Pratt, Rivest, and Tarjan.
+
 ## 2. Basic Approach
 
 ## 3. Search Example
