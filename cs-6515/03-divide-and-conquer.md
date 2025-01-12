@@ -891,6 +891,49 @@ Next, we will formalize this procedure, as well as prove that the "good" pivot $
 
 ### 12. Pseudocode
 
+![](./assets/08-DC2-013.png){ width=650px }
+
+![](./assets/08-DC2-014.png){ width=650px }
+
+![](./assets/08-DC2-015.png){ width=650px }
+
+The pseudocode for the algorithm to find the $k$<sup>th</sup> smallest element in list $A$ via subset $S$ is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{FastSelect}}(A,k):}\\
+\ \ \ \ {{\text{input:\ }} {\text{unsorted\ array\ }} A {\text{\ of\ size\ }} n {\text{\ and\ integer\ }} k {\text{\ where\ }} 1 \le k \le n}\\
+\ \ \ \ {{\text{output:\ }} k^{\text{th}}{\text{\ smallest\ element\ of\ }} A}\\
+\\
+\ \ \ \ {{\text{1.\ }} {\text{Split\ }} A {\text{\ into\ }} \frac{n}{5} {\text{\ groups,\ }} G_1, G_2, \dots, G_{\frac{n}{5}}}\\
+\ \ \ \ {{\text{2.\ }} {\text{for\ }} i = 1 \to 5:}\\
+\ \ \ \ \ \ \ \ {{\text{sort\ }} G_i {\text{\ and\ let\ }} m_i = {\text{Median}}(G_i)}\\
+\ \ \ \ {{\text{3.\ }} {\text{Let\ }} S = \{ m_1, m_2, \dots, m_{\frac{n}{5}} \}}\\
+\ \ \ \ {{\text{4.\ }} p = {\text{FastSelect}}\bigg(S, \frac{n}{10} \bigg) }\\
+\ \ \ \ {{\text{5.\ }} {\text{Partition\ }} A {\text{\ into\ }} A_{<p}, A_{=p}, A_{>p}}\\
+\ \ \ \ {{\text{6.\ }} {\text{Recurse\ on\ }} A_{<p} {\text{\ or\ }} A_{>p} {\text{,\ or\ output}} A_{=p} {\text{\ as\ follows:}}}\\
+\ \ \ \ \ \ \ \ {{\text{6A.\ }} {\text{if\ }} k \le |A_{<p}| {\text{,\ then\ }} {\text{return}}({\text{FastSelect}}(A_{<p}, k))}\\
+\ \ \ \ \ \ \ \ {{\text{6B.\ }} {\text{if\ }} k > |A_{<p}| + |A_{=p}| {\text{,\ then\ }} {\text{return}}({\text{FastSelect}}(A_{>p}, k - |A_{<p}| - |A_{=p}|))}\\
+\ \ \ \ \ \ \ \ {{\text{6C.\ }} {\text{else\ output\ }} p}
+\end{array}
+}
+$$
+
+First, we identify a "good" pivot as follows:
+  * In step $1$ , we split $A$ into $\frac{n}{5}$ groups $G_1, G_2, \dots, G_{\frac{n}{5}}$ , with each group having a size of $5$ elements.
+    * ***N.B.*** More precisely, this should be defined as $\lceil \frac{n}{5} \rceil$ , since in general $n$ may not be an integer multiple of $5$ . However, there is an implicit simplifying assumption here as specified here in the pseudocode that $n$ is indeed an integer multiple of $5$ .
+    * This splitting can be done in any arbitrary manner. The most straightforward manner is to simply assign these groups sequentially within $A$ (i.e., first five elements in $G_1$ , the next five elements in $G_2$ , and so on).
+  * In step $2$ , we identify a "representative" element of each group, by iterating over all $\frac{n}{5}$ groups. For any given group $G_i$ (i.e., of size $5$ elements), we sort this group and then we readily determine the median of this (sorted) group as ${\text{Median}}(G_i)$ (i.e., the "middle" element of this sorted group), which is correspondingly set to $m_i$ for the group $G_i$ .
+  * In step $3$ , we define the subset $S$ as the collection of these "representative" median elements, i.e., $S = \{ m_1, m_2, \dots, m_{\frac{n}{5}} \}$ .
+  * In step $4$ , we finally determine the "good" pivot $p$ by recursively calling ${\text{FastSelect}}(S, \frac{n}{10})$ , where here $k' = \frac{n}{10}$ (second argument) now comprises the median of the subset $S$ (i.e., a "median of medians").
+
+With the "good" pivot now identified, in step $5$ we partition $A$ into $A_{<p}, A_{=p}, A_{>p}$ as before (cf. Section 4). This can be readily accomplished with one full pass of array $A$ .
+
+Finally, in step $6$ , analogously to before in ${\text{QuickSelect}}$ (cf. Section 4), based on the respective sizes of the resulting partitions, we either recurse into the smallest or largest partitions (i.e., $A_{<p} or A_{>p}$ , respectively), or otherwise output $p$ directly (i.e., via partition $A_{=p}$ ).
+
+This completes the pseudocode for the algorithm. Next, we examine its overall running time, assuming that $p$ is indeed a "good" pivot.
+
 ### 13. Running Time
 
 ### 14. Linear-Time Correctness
