@@ -1044,15 +1044,45 @@ As an additional "exercise/assignment," consider such groups of size $3$ and $7$
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.2 (Recurrence relations).
 
+Divide and Conquer 3 is a brief "refresher" on solving **recurrences**, with a focus on the types of recurrences which typically arise in divide and conquer algorithms.
+
+![](./assets/09-DC3-001.png){ width=650px }
+
+A classical recurrence algorithm is that for mergesort, which is characterized by the following recurrence relation:
+
+$$
+T(n) = 2T \bigg( \frac{n}{2} \bigg) + O(n)
+$$
+
+where the input list is partitioned into halves (i.e., $T(\frac{n}{2})$ , comprising the first $\frac{n}{2}$ elements and the last $\frac{n}{2}$ elements), with exactly $2$ such halves, and a corresponding running time of $O(n)$ is required to merge/combine the fully sorted list.
+
+As may already be familiar (cf. prerequisites or equivalent), this recurrence relation correspondingly solves to the following overall running time:
+
+$$
+T(n) = O(n \log n)
+$$
+
+Additionally, we have seen other examples of divide and conquer, summarized as follows:
+
+| Algorithm | Reference | Description | Recurrence Relation | Solved Running Time |
+|:--:|:--:|:--:|:--:|:--:|
+| ${\text{EasyMultiply}}$ | Divide and Conquer 1, Section 7 | naive algorithm for integer multiplication | $T(n) = 4T(\frac{n}{2}) + O(n)$ | $O(n^2)$ |
+| ${\text{FastMultiply}}$ | Divide and Conquer 1, Section 10 | improved algorithm for integer multiplication | $T(n) = 3T(\frac{n}{2}) + O(n)$ | $O(n^{\log _2 3}) \approx O(n^{1.59})$ |
+| ${\text{FastSelect}}$ | Divide and Conquer 2, Section 12 | finding the median in an unsorted array | $T(n) = T(\frac{3}{4}n) + O(n)$ | $O(n)$ |
+
+We will now formally solve these recurrences in turn, starting with algorithm ${\text{EasyMultiply}}$ , followed by ${\text{FastMultiply}}$ . Subsequently thereafter, we will examine a more general solution for recurrence relations of this general form.
+
 ## 2-3. Example 1
 
 ### 2. Introduction
 
 ### 3. Expanding Out
 
-## 4. Geometric Series
+## 4-5. Mathematical Techniques
 
-## 5. Manipulating Polynomials
+### 4. Geometric Series
+
+### 5. Manipulating Polynomials
 
 ## 6. Example 2
 
