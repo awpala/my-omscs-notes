@@ -975,6 +975,60 @@ However, it still remains to prove the claim that $p$ is indeed a "good" pivot (
 
 ### 14. Linear-Time Correctness
 
+Finally, let us now demonstrate that $p$ as selected (cf. Section 12) is indeed a "good" pivot (i.e., as formally defined in Section 7).
+
+![](./assets/08-DC2-017.png){ width=650px }
+
+In order to find the "good" pivot $p$ , we create groups $G_1, \dots, G_{\frac{n}{5}}$ (with each group $G_i$ having a size of $5$ elements), and then create a subset $S$ comprised of the medians of the medians for these groups, resulting in such a smaller subset $S$ of size $\frac{n}{5}$ elements (relative to size $n$ in original array $A$ ).
+
+In order to determine the group-wise medians, it is also necessary to ***sort*** these groups $G_1, \dots, G_{\frac{n}{5}}$ by their respective medians (i.e, $G_1$ has the smallest median, $G_2$ has the next-smallest median, and so on), correspondingly defined and ordered as follows:
+
+$$
+m_1 \le m_2 \le \cdots \le m_{\frac{n}{5}}
+$$
+
+Consider the full set $A$ pictorially (as in the figure shown above), divided into these corresponding groups $G_i$ . Furthermore, consider the middle group of these groups ($G_{\frac{n}{10}}$ ), i.e.,:
+
+$$
+G_1, G_2, \dots, G_{\frac{n}{10}}, \dots, G_{\frac{n}{5}}
+$$
+
+Furthermore, consider these groups with their constituent five elements in sorted order (in the figure above, this is depicted with the smallest element at the top down to the largest element at the bottom of each group), where the middle element is the corresponding median of a given group.
+
+Correspondingly, the subset $S$ is comprised of these median elements from each group (denoted by purple in the figure shown above). Furthermore, here, the pivot $p$ is the median element of the "middle" group $G_{\frac{n}{10}}$ (i.e., the median of medians).
+
+![](./assets/08-DC2-018.png){ width=650px }
+
+Now, it remains to prove that $p$ is in fact a "good" pivot.
+
+To accomplish this, we must first examine which elements in $S$ are strictly $\le p$ . Among the elements in $S$ , the medians from the lower-valued groups (i.e., based on sorted ordering of the groups) constitute such elements (as depicted in teal shading in the figure shown above). Furthermore, within any given group among these (including $G_{\frac{n}{10}}$ itself), there are at least two additional elements (i.e., those which are strictly less than or equal to their respective group medians) which also fall into this characterization. Cumulatively, the total count for these elements which are strictly $\le p$ is therefore:
+
+$$
+3 \times \frac{n}{10} = \frac{3n}{10}
+$$
+
+where there are $\frac{n}{10}$ total subgroups with each of size at least $3$ elements (including the respective groups' medians).
+
+Therefore, this guarantees that there are at least $\ge \frac{3n}{10}$ elements which are at most $\le p$ .
+
+Now, we consider the partitions of $A$ into $A_{<p}, A_{=p}, A_{>p}$ , with particular focus on partition $A_{>p}$ (i.e., elements which are strictly larger than pivot $p$ , which in turn *excludes* the complementary elements that are $\le p$ ). Given that we have excluded at least $\ge \frac{3n}{10}$ such complementary elements, then the corresponding constraint on the size of $A_{>p}$ is therefore:
+
+$$
+|A_{>p}| \le \frac{7n}{10}
+$$
+
+Recall (cf. Section 7) that a "good" pivot is defined as one which is at most $\frac{3}{4}n$ ; indeed, $|A_{>p}| \le \frac{7n}{10}$ does in fact satisfy this requirement (i.e., $\frac{7}{10} < \frac{3}{4} \implies 0.7 < 0.75$ is strictly true).
+
+Furthermore, similarly, examining the total count of elements of size at least $p$ (i.e., $\ge p$ ), by symmetry, this yields:
+
+$$
+|A_{<p}| \le \frac{7n}{10}
+$$
+
+where the corresponding (as denoted in purple shading in the figure shown above) complementary set of elements $\ge p$ (where $p$ is the median of medians) is similarly of size at most $\frac{3n}{10}$.
+
+Therefore, this concludes the proof for the claim that $p$ is indeed a "good" pivot.
+
 ## 15. Addendum: Homework Question
 
 # Divide and Conquer 3: Solving Recurrences
