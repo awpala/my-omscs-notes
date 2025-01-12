@@ -1031,6 +1031,12 @@ Therefore, this concludes the proof for the claim that $p$ is indeed a "good" pi
 
 ## 15. Addendum: Homework Question
 
+![](./assets/08-DC2-019.png){ width=650px }
+
+In the preceding discussion of the algorithm ${\text{FastSelect}}$ (cf. Section 12), a natural question arises: Why split input array $A$ into groups of $5$ elements, rather than groups of size, say, $3$ or $7$ instead?
+
+As an additional "exercise/assignment," consider such groups of size $3$ and $7$ , and performing the corresponding algorithm analysis on these two modified versions of the algorithm. Write out the resulting recurrence relations, and determine whether or not these recurrence relations solve to $O(n)$ as desired. This will consequently inform the decision for selecting a group size of $5$ elements accordingly.
+
 # Divide and Conquer 3: Solving Recurrences
 
 ## 1. Solving Recurrences
