@@ -689,6 +689,36 @@ Which of the following does the recurrence $T(n) = T(\frac{n}{2}) + O(n)$ solve 
 
 ### 6. Introduction
 
+![](./assets/08-DC2-006.png){ width=650px }
+
+We are aiming for a running time of $O(n)$ for finding the $k$<sup>th</sup>$ smallest element in array $A$ , using the divide and conquer technique. Let us now consider the recurrences which yield such a solution having a running time of $O(n)$ , which in turn will inform the basic approach for the algorithm itself.
+
+Recall (cf. Section 5) that the recurrence $T(n) = T(\frac{n}{2}) + O(n)$ solves to running time $O(n)$ . To accomplish this, we require $1$ subproblem of size at most $\frac{n}{2}$ . Recall (cf. Section 4) that the subproblem-size constraint can be achieved by recursing on *either* partition $A_{<p}$ *or* $A_{>p}$ (but not *both* simultaneously) for pivot $p$ . Furthermore, to ensure that this subproblem size is strictly of size $\le \frac{n}{2}$ , it is strictly necessary that the pivot $p$ is the ***median*** of (unsorted) input list $A$ , which in turn ensures that $A_{<p}$ and $A_{>p}$ are both of size $\le \frac{n}{2}$ .
+
+However, if we cannot determine this median value a priori, what is a possible scheme for ***approximating*** the median (i.e., within the vicinity of the median, but not necessarily exactly the median value itself)?
+
+To reason about this approximation, first consider a *sorted* input list $A$ . Furthermore, consider the $\frac{n}{4}$ smallest through the $\frac{3n}{4}$ smallest elements (a range which in turn encompasses the median itself, i.e., the element at position $\frac{2n}{4} = \frac{n}{2}$ ). Rather than the median itself, consider if we are given this range of elements instead.
+
+Now, suppose that we can find a pivot which satisfies this "intermediate-range" band. What does this imply about the running time of the algorithm? The worst-case size of the subproblems implies the following recurrence relation:
+
+$$
+T(n) = T\bigg( \frac{3}{4}n \bigg) + O(n)
+$$
+
+This recurrence relation solves to $O(n)$ for the overall running time.
+
+Furthermore, we can relax this assumption, and expand the "intermediate-range" band to include elements $[\frac{n}{100}, \frac{99n}{100}]$ (i.e., the "middle 98%" values, rather than the "middle 50%" values from before), which similarly yields the following recurrence relation:
+
+$$
+T(n) = T\bigg( \frac{99}{100}n \bigg) + O(n)
+$$
+
+This recurrence relation similarly solves to $O(n)$ for the overall running time.
+
+The ***key*** here is that the constant term of the recurrence (i.e., $\frac{3}{4}$ , $\frac{99}{100}$ , etc.) must be strictly less than $1$ (i.e., a *constant* fraction of the outer-band range is truncated, or equivalently a reduction of the "tail-ends" elements by 50%, 2%, etc.).
+
+Therefore, we define a "good" pivot as one which exists in this "intermediate-range" band. Furthermore, we will attempt to satisfy the band $[\frac{n}{4}, \frac{3n}{4}]$ , with some extra "slack" contributed by the latter band, $[\frac{n}{100}, \frac{99n}{100}]$ (which ultimately satisfies the recurrence relation in running time $O(n)$ , as desired). 
+
 ### 7. Goal: Good Pivot
 
 ### 8. Random Pivot
