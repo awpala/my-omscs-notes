@@ -1335,6 +1335,66 @@ where the final result is in polynomial form (i.e., of general form $n^c$ , wher
 > [!NOTE]
 > ***Instructor's Note***: See [DPV] Chapter 2.2 (Recurrence relations) for the more general form of the Master Theorem.
 
+Finally, let us now consider a more **general form** for recurrence relations.
+
+![](./assets/09-DC3-011.png){ width=650px }
+
+Given positive constants $a > 0$ and $b > 1$ , consider the following general form for the recurrence relation:
+
+$$
+T(n) = aT \bigg( \frac{n}{b} \bigg) + O(n)
+$$
+
+
+Recall (cf. Section 1) the following correspondence to this form in the previously analyzed algorithms:
+
+| Algorithm | Reference | Description | Recurrence Relation | Solved Running Time | Constants |
+|:--:|:--:|:--:|:--:|:--:|:--:|
+| ${\text{Mergesort}}$ | (Prerequisites) | sort a list of numbers | $T(n) = 2T(\frac{n}{2}) + O(n)$ | $O(n \log n)$ | $a = 2, b = 2$ |
+| ${\text{EasyMultiply}}$ | Divide and Conquer 1, Section 7 | naive algorithm for integer multiplication | $T(n) = 4T(\frac{n}{2}) + O(n)$ | $O(n^2)$ | $a = 4, b = 2$ |
+| ${\text{FastMultiply}}$ | Divide and Conquer 1, Section 10 | improved algorithm for integer multiplication | $T(n) = 3T(\frac{n}{2}) + O(n)$ | $O(n^{\log _2 3}) \approx O(n^{1.59})$ | $a = 3, b = 2$ |
+| ${\text{FastSelect}}$ | Divide and Conquer 2, Section 12 | finding the median in an unsorted array | $T(n) = T(\frac{3}{4}n) + O(n)$ | $O(n)$ | $a = 1, b = \frac{4}{3}$ |
+
+Furthermore, expanding this recurrence relation yields the following:
+
+$$
+T(n) = cn \bigg[ 1 + \bigg( \frac{a}{b} \bigg) + \bigg( \frac{a}{b} \bigg)^{2} + \cdots + \bigg( \frac{a}{b} \bigg)^{\log _b n - 1} \bigg] + a^{\log _b n}T(1)
+$$
+
+***N.B.*** Here, the factor $cn$ arises from the term $+ O(n)$ in the general form. Furthermore, the expansion stop within $n$ finite terms, via the base case $T(1)$ .
+
+Now, examining the geometric-expression represented by $[\cdots]$ , as before (cf. Section), this gives rise to three possible cases:
+  * the terms are decreasing, and therefore the first term dominates ($\frac{a}{b} < 1$ )
+  * the terms are increasing, and therefore the last term dominates ($\frac{a}{b} > 1$ )
+  * all terms are equal ($\frac{a}{b} = 1$ )
+
+Therefore, we represent these three cases as follows:
+
+$$
+T(n) =
+\begin{cases}
+  {O(n^{\log _b a})}&{{\text{if\ }} a > b}\\ 
+  {O(n \log n)}&{{\text{if\ }} a = b}\\
+  {O(n)}&{{\text{if\ }} a < b}
+\end{cases}
+$$
+
+For additional reference, the corresponding simplifications are as follows (respectively):
+
+$$
+O(n) \times \bigg[ O\bigg( \frac{a}{b} \bigg)^{\log _b n} \bigg] + O(1) = O(n^{\log _b a})
+$$
+
+$$
+O(n) \times [O(\log n)] + O(1) = O(n \log n)
+$$
+
+$$
+O(n) \times [O(1)] + O(1) = O(n)
+$$
+
+***N.B.*** There are also even more general form for recurrence relations, such as the **Master Theorem**, which generalizes the second term from simple $O(n)$ to the more general $O(n^d)$ , where $d$ is a constant. Consult the course textbook *Algorithms* by Dasgupta et al. for further discussion of the Master Theorem.
+
 # Divide and Conquer 4: Fast Fourier Transform (FFT) - Part 1
 
 ## 1-3. Polynomial Multiplication
