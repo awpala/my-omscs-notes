@@ -1171,7 +1171,7 @@ $$
 Given that $T(1)$ is upper-bounded by $c$ , we can therefore express the closed-form solution as follows:
 
 $$
-T(n) \le O(n) \times \bigg[ \bigg( \frac{4}{2} \bigg)^{\log _2 n} \bigg] + c \times O(n^2)
+T(n) \le O(n) \times \bigg[ O \bigg( \bigg( \frac{4}{2} \bigg)^{\log _2 n} \bigg) \bigg] + c \times O(n^2)
 $$
 
 Here, in the geometric series represented by the expression $[\cdots]$ , since the series is ***increasing*** (i.e., $\frac{4}{2} > 1$ ), the last term dominates, thereby giving rise to a running time of $O((\frac{4}{2})^{\log _2 n})$ . Furthermore, this expression simplifies to $O((\frac{4}{2})^{\log _2 n}) = O(\frac{n^2}{n}) = O(n)$ .
@@ -1311,7 +1311,7 @@ $$
 Furthermore, we can now solve the right-side expression to the following:
 
 $$
-T(n) \le O(n) \times \bigg[ \bigg( \frac{3}{2} \bigg)^{\log _2 n} \bigg] + c \times O(3^{\log _2 n})
+T(n) \le O(n) \times \bigg[ O \bigg( \bigg( \frac{3}{2} \bigg)^{\log _2 n} \bigg) \bigg] + c \times O(3^{\log _2 n})
 $$
 
 Here, in the geometric series represented by the expression $[\cdots]$ , since the series is ***increasing*** (i.e., $\alpha = \frac{3}{2} > 1$ ), the last term dominates, thereby giving rise to a running time of $O((\frac{3}{2})^{\log _2 n})$ . Furthermore, this expression simplifies to $O((\frac{3}{2})^{\log _2 n}) = O(\frac{3^{\log _2 n}}{n})$ .
