@@ -24,7 +24,7 @@ Finally, we will examine the **fast Fourier transform** (**FFT**) algorithm, whi
 ## Overview
 
 > [!NOTE]
-> ***Instructor's Note***: We closely follow the presentation in [DPV] Chapter 2.1 (Multiplication). For Eric's notes, see[here](https://cs6505.wordpress.com/fast-multiplication/).
+> ***Instructor's Note***: We closely follow the presentation in [DPV] Chapter 2.1 (Multiplication). For Eric's notes, see [here](https://cs6505.wordpress.com/fast-multiplication/).
 > 
 > Review topics: for a discussion on the MergeSort algorithm see [DPV] Chapter 2.3 (Mergesort). For a primer on solving recurrences, see Lecture DC3: Solving Recurrences and also [DPV] Chapter 2.2 (Recurrence relations).
 
