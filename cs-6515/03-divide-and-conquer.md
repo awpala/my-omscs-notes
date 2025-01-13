@@ -359,7 +359,7 @@ Can we improve this approach (e.g., reducing from $4$ recursive operations down 
 > [!NOTE]
 > ***Instructor's Note***: See also [DPV] Chapter 2.1 (Multiplication).
 
-Now, consider an improvement to the multiplication (i.e., relative to a running time of $O(n^2)$ with respect to $n-bit integer inputs).
+Now, consider an improvement to the multiplication (i.e., relative to a running time of $O(n^2)$ with respect to $n$-bit integer inputs).
 
 ![](./assets/07-DC1-010.png){ width=650px }
 
@@ -691,7 +691,7 @@ Which of the following does the recurrence $T(n) = T(\frac{n}{2}) + O(n)$ solve 
 
 ![](./assets/08-DC2-006.png){ width=650px }
 
-We are aiming for a running time of $O(n)$ for finding the $k$<sup>th</sup>$ smallest element in array $A$ , using the divide and conquer technique. Let us now consider the recurrences which yield such a solution having a running time of $O(n)$ , which in turn will inform the basic approach for the algorithm itself.
+We are aiming for a running time of $O(n)$ for finding the $k$<sup>th</sup> smallest element in array $A$ , using the divide and conquer technique. Let us now consider the recurrences which yield such a solution having a running time of $O(n)$ , which in turn will inform the basic approach for the algorithm itself.
 
 Recall (cf. Section 5) that the recurrence $T(n) = T(\frac{n}{2}) + O(n)$ solves to running time $O(n)$ . To accomplish this, we require $1$ subproblem of size at most $\frac{n}{2}$ . Recall (cf. Section 4) that the subproblem-size constraint can be achieved by recursing on *either* partition $A_{<p}$ *or* $A_{>p}$ (but not *both* simultaneously) for pivot $p$ . Furthermore, to ensure that this subproblem size is strictly of size $\le \frac{n}{2}$ , it is strictly necessary that the pivot $p$ is the ***median*** of (unsorted) input list $A$ , which in turn ensures that $A_{<p}$ and $A_{>p}$ are both of size $\le \frac{n}{2}$ .
 
