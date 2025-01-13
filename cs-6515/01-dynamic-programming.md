@@ -1581,7 +1581,7 @@ Conversely, in the case of parenthesization $((A \times B) \times C) \times D$ ,
 
 ##### 22. Attempt 1
 
-Now, let us attempt to devise the the dynamic programming algorithm for the matrix multiplication problem.
+Now, let us attempt to devise the dynamic programming algorithm for the matrix multiplication problem.
 
 ![](./assets/02-DP2-029.png){ width=650px }
 

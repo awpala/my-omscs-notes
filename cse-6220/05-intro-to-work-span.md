@@ -846,7 +846,7 @@ Next, there is the conditional test $n \ge 2$ (as in the figure shown above), wh
 <img src="./assets/05-062.png" width="650">
 </center>
 
-On encountering the $\rm{spawn}$ (as in the figure shown above), the the $\rm{spawn}$ creates a ***new branch*** in the DAG, since the $\rm{spawn}$ essentially signals tha there is a new independent unit of work that is ready to execute (i.e., $\rm{reduce}(A[0:1])$ ), thereby creating a corresponding new path in the DAG.
+On encountering the $\rm{spawn}$ (as in the figure shown above), the $\rm{spawn}$ creates a ***new branch*** in the DAG, since the $\rm{spawn}$ essentially signals tha there is a new independent unit of work that is ready to execute (i.e., $\rm{reduce}(A[0:1])$ ), thereby creating a corresponding new path in the DAG.
 
 In the meantime, the current path proceeds as usual; therefore, the $\rm{spawn}$ creates two ***independent*** paths in this manner, with one carrying the new work and the other continuing execution immediately following the point of $\rm{spawn}$ .
 
