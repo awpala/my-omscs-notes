@@ -1228,7 +1228,7 @@ $$
 
 ***N.B.*** In the case $\alpha = 1$ , the resulting sum is simply $1 + 1 + \cdots + 1 = k \times 1 = k$ .
 
-Therefore, in the previous example (cf. Section 3), with $\alpha = \frac{4}{2} > 1$ , and therefore the last term dominates in the corresponding geometric series. Conversely, in mergesort (cf. Section 1), $\alpha = \frac{2}{2} = 1$ . The algorithm for finding a median (cf. Section 1) is an example of the case $\alpha = \frac{3}{4} < 1$ .
+Therefore, in the previous example (cf. Section 3), $\alpha = \frac{4}{2} > 1$ , and therefore the last term dominates in the corresponding geometric series. Conversely, in mergesort (cf. Section 1), $\alpha = \frac{2}{2} = 1$ . The algorithm for finding a median (cf. Section 1) is an example of the case $\alpha = \frac{3}{4} < 1$ .
 
 ### 5. Manipulating Polynomials
 
