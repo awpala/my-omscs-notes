@@ -1194,7 +1194,83 @@ Observe that the key element of the recurrence relation is the geometric series 
 
 ### 4. Geometric Series
 
+![](./assets/09-DC3-004.png){ width=500px }
+
+Given constant $\alpha > 0$ (e.g., $\alpha = \frac{4}{2}$ in the previous example, cf. Section 3), consider the corresponding **geometric series** defined as follows:
+
+$$
+\sum\limits_{j = 0}^k {{\alpha ^j}}  = 1 + \alpha + \alpha^{2} + \cdots + \alpha^{j}
+$$
+
+![](./assets/09-DC3-005.png){ width=500px }
+
+Furthermore, since we are solving the recurrence relation using big-O notation, we do not need to solve this geometric series exactly (i.e., for infinite terms), but rather we can solve it for finite terms within a constant factor $k$ , i.e.,:
+
+$$
+\sum\limits_{j = 0}^k {{\alpha ^j}}  = 1 + \alpha + \alpha^{2} + \cdots + \alpha^{k}
+$$
+
+The ***key*** for solving such a geometric series is to determine which term dominates (as dictated by $\alpha$ ), yielding the following three possibilities:
+  * the terms are decreasing, and therefore the first term dominates ($\alpha < 1$ )
+  * the terms are increasing, and therefore the last term dominates ($\alpha > 1$ )
+  * all terms are equal ($\alpha = 1$ )
+
+Formally, we can express this as follows:
+
+$$
+\sum\limits_{j = 0}^k {{\alpha ^j}}  = 1 + \alpha + \alpha^{2} + \cdots + \alpha^{k} =
+\begin{cases}
+  {O(\alpha^{k})}&{{\text{if\ }} \alpha > 1}\\ 
+  {O(k)}&{{\text{if\ }} \alpha = 1}\\
+  {O(1)}&{{\text{if\ }} \alpha < 1}
+\end{cases}
+$$
+
+***N.B.*** In the case $\alpha = 1$ , the resulting sum is simply $1 + 1 + \cdots + 1 = k \times 1 = k$ .
+
+Therefore, in the previous example (cf. Section 3), with $\alpha = \frac{4}{2} > 1$ , and therefore the last term dominates in the corresponding geometric series. Conversely, in mergesort (cf. Section 1), $\alpha = \frac{2}{2} = 1$ . The algorithm for finding a median (cf. Section 1) is an example of the case $\alpha = \frac{3}{4} < 1$ .
+
 ### 5. Manipulating Polynomials
+
+The final mathematical technique required for analyzing algorithms with respect to their recurrence relations is the manipulation of polynomials.
+
+![](./assets/09-DC3-006.png){ width=650px }
+
+Recall (cf. Section 3) the following expression from the previous example:
+
+$$
+4^{\log _2 n}
+$$
+
+This expression further simplifies as follows:
+
+$$
+4^{\log _2 n} = (2^2)^{\log _2 n} = (2^{\log _2 n})^{2} = n^2
+$$
+
+Furthermore, similar expressions may arise such as the following:
+
+$$
+3^{\log _2 n} = n^c
+$$
+
+for some constant $c$ .
+
+To solve for $c$ , we can change the base of the left-side expression as follows:
+
+$$
+3 = 2^{\log _2 3}
+$$
+
+which in turn provides the following simplification:
+
+$$
+3^{\log _2 n} = (2^{\log _2 3})^{\log _2 n} = 2^{\log _2 3 \times \log _2 n} = (2^{\log _2 n})^{\log _2 3} = n^{\log _2 3}
+$$
+
+where now we have the final target/result in the form $n^c$ , with $c = \log _2 3$ .
+
+More generally, these types of algebraic manipulations (e.g., applications of rules of logarithms) are essential for performing analysis in this manner.
 
 ## 6. Example 2
 
