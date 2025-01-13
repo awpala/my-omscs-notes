@@ -151,7 +151,7 @@ $$
 
 ***N.B.*** Observe that this is indeed a clever reduction, and perhaps not immediately obvious/intuitive (and hence one of many demonstrations of Gauss' brilliance accordingly)!
 
-Next, we will utilize this idea in order to compute the product of two $n-bit$ integers with a running time which is *faster* than $O(n^2)$ (i.e., via equivalent naive approach).
+Next, we will utilize this idea in order to compute the product of two $n$-bit integers with a running time which is *faster* than $O(n^2)$ (i.e., via equivalent naive approach).
 
 ## 5-8. Divide and Conquer: Naive Approach
 
