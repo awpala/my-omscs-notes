@@ -1076,7 +1076,119 @@ We will now formally solve these recurrences in turn, starting with algorithm ${
 
 ### 2. Introduction
 
+We first consider the recurrence relation for algorithm ${\text{EasyMultiply}}$ (cf. Divide and Conquer 1, Section 7).
+
+![](./assets/09-DC3-002.png){ width=650px }
+
+The corresponding recurrence relation is given as follows:
+
+$$
+T(n) = 4T \bigg( \frac{n}{2} \bigg) + O(n)
+$$
+
+We can replace $O(n)$ in this expression and restate it as follows:
+
+$$
+T(n) \le 4T \bigg( \frac{n}{2} \bigg) + cn
+$$
+
+where $c$ is some constant such that $c > 0$ .
+
+Furthermore, the base case is given simply as follows:
+
+$$
+T(1) \le c
+$$
+
+Note that the same constant $c$ can be used for both the base case and the recursive case (i.e., the maximum of these two otherwise-distinct constants for the worst-case performance).
+
+Therefore, to solve for a closed-form solution to $T(n)$ (i.e., $T(n) \le f(n)$ ), we can express this recurrence relation as follows:
+
+$$
+T(n) \le cn + 4T \bigg( \frac{n}{2} \bigg)
+$$
+
+Next, we expand by substituting the expression $T(\frac{n}{2})$ as follows:
+
+$$
+T(n) \le cn + 4 \bigg[ 4T \bigg( \frac{n}{2^2} \bigg) + c \frac{n}{2} \bigg]
+$$
+
+Collecting common terms, we rewrite the right-hand expression as follows:
+
+$$
+T(n) \le cn \bigg( 1 + \frac{4}{2} \bigg) + 4^2 T \bigg( \frac{n}{2^2} \bigg)
+$$
+
+We repeat this process once again as follows:
+
+$$
+T(n) \le cn \bigg( 1 + \frac{4}{2} \bigg) + 4^2 \bigg[ 4T \bigg( \frac{n}{2^3} \bigg) + c \frac{n}{2^2} \bigg]
+$$
+
+$$
+T(n) \le cn \bigg[ 1 + \bigg( \frac{4}{2} \bigg) + \bigg( \frac{4}{2} \bigg)^{2} \bigg] + 4^3 T \bigg( \frac{n}{2^3} \bigg)
+$$
+
+Observe that these successive expansions are forming a **geometric series**. Next, we will expand this out more comprehensively.
+
 ### 3. Expanding Out
+
+![](./assets/09-DC3-003.png){ width=650px }
+
+Recall (cf. Section 2) that for the following recurrence relation:
+
+$$
+T(n) = 4T \bigg( \frac{n}{2} \bigg) + O(n)
+$$
+
+this correspondingly gives rise to the following partially expanded recurrence relation:
+
+$$
+T(n) \le cn \bigg[ 1 + \bigg( \frac{4}{2} \bigg) + \bigg( \frac{4}{2} \bigg)^{2} \bigg] + 4^3 T \bigg( \frac{n}{2^3} \bigg)
+$$
+
+***N.B.*** As written here, we deliberately use the form $(\frac{4}{2})$ (i.e., rather than $(2)$ ) in order to highlight the geometric series which will eventually result from this successive expansion of right-hand-side recursive expressions. Here, the $4$ and $2$ derive directly from the original recurrence relation (cf. term $4T(\frac{n}{2})$ ).
+
+Now, rather than substituting an additional time, consider an analogous expansion up to the $i$<sup>th</sup> expansion, as follows:
+
+$$
+T(n) \le cn \bigg[ 1 + \bigg( \frac{4}{2} \bigg) + \bigg( \frac{4}{2} \bigg)^{2} + \cdots + \bigg( \frac{4}{2} \bigg)^{i-1} \bigg] + 4^i T \bigg( \frac{n}{2^i} \bigg)
+$$
+
+Proceeding in this manner, when exactly does the expansion terminate? This occurs when the base case is reached, which in turn occurs when the following holds:
+
+$$
+\frac{n}{2^i} = 1 \implies T \bigg( \frac{n}{2^i} \bigg) = T(1)
+$$
+
+Therefore, letting $i = \log _2 n$ , appropriate substitution yields the following:
+
+$$
+T(n) \le cn \bigg[ 1 + \bigg( \frac{4}{2} \bigg) + \bigg( \frac{4}{2} \bigg)^{2} + \cdots + \bigg( \frac{4}{2} \bigg)^{\log _2 n -1} \bigg] + 4^{\log _2 n} T(1)
+$$
+
+Given that $T(1)$ is upper-bounded by $c$ , we can therefore express the closed-form solution as follows:
+
+$$
+T(n) \le O(n) \times \bigg[ \bigg( \frac{4}{2} \bigg)^{\log _2 n} \bigg] + c \times O(n^2)
+$$
+
+Here, in the geometric series represented by the expression $[\cdots]$ , since the series is ***increasing*** (i.e., $\frac{4}{2} > 1$ ), the last term dominates, thereby giving rise to a running time of $O((\frac{4}{2})^{\log _2 n})$ . Furthermore, this expression simplifies to $O((\frac{4}{2})^{\log _2 n}) = O(\frac{n^2}{n}) = O(n)$ .
+
+Lastly, we can further simplify the right-hand expression as follows:
+
+$$
+O(n) \times O(n) + O(n^2) = O(n^2)
+$$
+
+Therefore, the recurrence relation solves to the following:
+
+$$
+T(n) \le O(n^2)
+$$
+
+Observe that the key element of the recurrence relation is the geometric series which arises. Next, we will examine these mathematical techniques for handling such geometric series when they do arise.
 
 ## 4-5. Mathematical Techniques
 
