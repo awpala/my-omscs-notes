@@ -1274,6 +1274,62 @@ More generally, these types of algebraic manipulations (e.g., applications of ru
 
 ## 6. Example 2
 
+![](./assets/09-DC3-007.png){ width=650px }
+
+Now, consider the following recurrence relation:
+
+$$
+T(n) = 3T \bigg( \frac{n}{2} \bigg) + O(n) \le cn + 3T \bigg( \frac{n}{2} \bigg)
+$$
+
+where, as before (cf. Section 2), the right-side expression is rewritten to eliminate big-O notation via equivalent term $cn$ corresponding to $O(n)$ .
+
+***N.B.*** Recall (cf. Section 1) that this arose in the algorithm ${\text{FastMultiply}}$ .
+
+As before (cf. Section 3), repeated substitutions for the recursive term in the right-side expression yields the following expression for the $i$<sup>th</sup> such iteration:
+
+$$
+T(n) \le cn \bigg[ 1 + \bigg( \frac{3}{2} \bigg) + \bigg( \frac{3}{2} \bigg)^2 + \cdots + \bigg( \frac{3}{2} \bigg)^{i-1} \bigg] + 3^i T \bigg( \frac{n}{2^i} \bigg)
+$$
+
+Observe that here, the geometric series is characterized by $\alpha = \frac{3}{2}$ , which derives directly from the original recurrence relation (cf. term $3T(\frac{n}{2})$ ).
+
+Furthermore, as before (cf. Section 3), expansion terminates upon reaching the base case, which occurs at the following condition:
+
+$$
+\frac{n}{2^i} = 1 \implies T \bigg( \frac{n}{2^i} \bigg) = T(1)
+$$
+
+Therefore, letting $i = \log _2 n$ , this yields:
+
+$$
+T(n) \le cn \bigg[ 1 + \bigg( \frac{3}{2} \bigg) + \bigg( \frac{3}{2} \bigg)^2 + \cdots + \bigg( \frac{3}{2} \bigg)^{\log _2 n - 1} \bigg] + 3^{\log _2 n} T(1)
+$$
+
+***N.B.*** Here, we set $i = \log _2 n$ correspondingly to the expression $\frac{n}{2^i}$ . Similarly, if instead the expression were $\frac{n}{3^i}$ , then we would correspondingly set $i = \log _3 n$ accordingly; and so on.
+
+Furthermore, we can now solve the right-side expression to the following:
+
+$$
+T(n) \le O(n) \times \bigg[ \bigg( \frac{3}{2} \bigg)^{\log _2 n} \bigg] + c \times O(3^{\log _2 n})
+$$
+
+Here, in the geometric series represented by the expression $[\cdots]$ , since the series is ***increasing*** (i.e., $\alpha = \frac{3}{2} > 1$ ), the last term dominates, thereby giving rise to a running time of $O((\frac{3}{2})^{\log _2 n})$ . Furthermore, this expression simplifies to $O((\frac{3}{2})^{\log _2 n}) = O(\frac{3^{\log _2 n}}{n})$ .
+
+Lastly, we can further simplify the right-hand expression as follows:
+
+$$
+O(n) \times O \bigg( \frac{3^{\log _2 n}}{n} \bigg) + O(3^{\log _2 n}) = O(3^{\log _2 n}) = O(n^{\log _2 3})
+$$
+
+Therefore, the recurrence relation solves to the following:
+
+$$
+T(n) \le O(n^{\log _2 3}) \approx O(n^{1.59})
+$$
+
+where the final result is in polynomial form (i.e., of general form $n^c$ , where $c > 0$ is a constant).
+
 ## 7. General Recurrence
 
 > [!NOTE]
