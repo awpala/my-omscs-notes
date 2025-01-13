@@ -45,7 +45,7 @@ Therefore, the corresponding trade-offs are with respect to speed and simplicity
   * SRAM is more expensive and more complex to implement, but provides better speed
   * DRAM is less expensive and simpler to implement, but is slower
 
-Next, we wil consider what ***one*** memory bit looks like in the context of these respective memory types.
+Next, we will consider what ***one*** memory bit looks like in the context of these respective memory types.
 
 ### 4. One Memory Bit: SRAM
 

@@ -180,7 +180,7 @@ $$
 
 Furthermore, a more complete definition of **bitonic** additionally stipulates that these inequalities hold not only for the original sequence, but ***also*** after performing some arbitrary circular shift on the sequence.
 
-The subsequent section wil further demonstrate bitonic sequences by way of example.
+The subsequent section will further demonstrate bitonic sequences by way of example.
 
 ## 5. Bitonic Sequences Quiz and Answers
 
@@ -218,7 +218,7 @@ Conversely, in the sequence $4$ , $7$ , $2$ , $0$ , $5$ , the increases ("+") an
 <img src="./assets/06-025.png" width="650">
 </center>
 
-Recall (cf. Section 4) the definition for a **bitonic** sequence. Additionally, consider the following claim: Once a sequence is bitonic, it can be sorted trivially/easily. This claim wil be further substantiated in this section.
+Recall (cf. Section 4) the definition for a **bitonic** sequence. Additionally, consider the following claim: Once a sequence is bitonic, it can be sorted trivially/easily. This claim will be further substantiated in this section.
 
 <center>
 <img src="./assets/06-026.png" width="650">
@@ -503,7 +503,7 @@ Proceeding in this manner, the two sets of four elements are similarly halved in
 <img src="./assets/06-057Q.png" width="650">
 </center>
 
-Given a bitonic input sequence, recall (cf. Section 10) that a network such as that in the figure shown above wil sort it accordingly.
+Given a bitonic input sequence, recall (cf. Section 10) that a network such as that in the figure shown above will sort it accordingly.
 
 However, given an ***arbitrary*** input, how is such a bitonic-sequence input generated from it in the first place?
 

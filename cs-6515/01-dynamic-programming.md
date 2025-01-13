@@ -30,7 +30,7 @@ The ***outline*** for this section is as follows:
 
 ![](./assets/01-DP1-001.png){ width=650px }
 
-Given an integer $n$ , we wil look at an algorithm for generating the corresponding $n$<sup>th</sup> Fibonacci number. This is a very simple algorithm, but it will illustrate the idea of dynamic programming; later we will examine dynamic programming more generally (i.e., techniques for designing a dynamic programming algorithm, as well as more sophisticated examples).
+Given an integer $n$ , we will look at an algorithm for generating the corresponding $n$<sup>th</sup> Fibonacci number. This is a very simple algorithm, but it will illustrate the idea of dynamic programming; later we will examine dynamic programming more generally (i.e., techniques for designing a dynamic programming algorithm, as well as more sophisticated examples).
 
 Recall that the Fibonacci numbers are the following sequence:
 
@@ -1792,7 +1792,7 @@ Dijkstra's algorithm works in a manner analogous to breadth-first search (BFS), 
 
 There is a notable ***limitation*** in Dijkstra's algorithm: It is strictly necessary that $w(e) > 0$ in order to use this algorithm for a given input graph. This is due to the fact that negative edge weights do not guarantee to converge on a correct solution as certain paths "short-circuit" via negative weights towards "shorter" paths.
 
-We wil next examine the more general problem which *does* allow for such negative weights to be present in the input graph.
+We will next examine the more general problem which *does* allow for such negative weights to be present in the input graph.
 
 ### 2. Negative Weight Cycles
 
