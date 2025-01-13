@@ -1363,7 +1363,7 @@ $$
 
 ***N.B.*** Here, the factor $cn$ arises from the term $+ O(n)$ in the general form. Furthermore, the expansion stop within $n$ finite terms, via the base case $T(1)$ .
 
-Now, examining the geometric-expression represented by $[\cdots]$ , as before (cf. Section), this gives rise to three possible cases:
+Now, examining the geometric-series expression represented by $[\cdots]$ , as before (cf. Section), this gives rise to three possible cases:
   * the terms are decreasing, and therefore the first term dominates ($\frac{a}{b} < 1$ )
   * the terms are increasing, and therefore the last term dominates ($\frac{a}{b} > 1$ )
   * all terms are equal ($\frac{a}{b} = 1$ )
