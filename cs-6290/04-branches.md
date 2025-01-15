@@ -251,9 +251,9 @@ To explore this question, consider the following comparisons:
 
 | Pipeline | Branch Instruction Resolution | Misprediction Penalty | CPI for "Not-Taken" Predictor (88% Accuracy) | CPI for Better Predictor (99% Accuracy) | Speedup |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 5-Stage | Stage `3` | `2` cycles | `1 + 0.12*2 = 1.24` | `1 + 0.01*2 = 1.02` | `1.24/1.02 = 1.22` |
-| 14-Stage | Stage `11` | `10` cycles | `1 + 0.12*10 = 2.2` | `1 + 0.01*10 = 1.1` | `2.2/1.1 = 2.0` |
-| 14-Stage, executing `4` instructions/cycle* | Stage `11` | `4*10 = 40` cycles | `0.25 + 0.12*10 = 1.45`** | `0.25 + 0.01*10 = 0.35`** | `1.45/0.35 = 4.14` |
+| 5-Stage | Stage `3` | `2` instructions | `1 + 0.12*2 = 1.24` | `1 + 0.01*2 = 1.02` | `1.24/1.02 = 1.22` |
+| 14-Stage | Stage `11` | `10` instructions | `1 + 0.12*10 = 2.2` | `1 + 0.01*10 = 1.1` | `2.2/1.1 = 2.0` |
+| 14-Stage, executing `4` instructions/cycle* | Stage `11` | `4*10 = 40` instructions | `0.25 + 0.12*10 = 1.45`** | `0.25 + 0.01*10 = 0.35`** | `1.45/0.35 = 4.14` |
   * ****N.B.*** This pipeline is most representative of a modern processor.
   * *****N.B.*** The ideal CPI for this pipeline is `1/4 = 0.25`, since it executes `4` (i.e., `> 1`) instructions/cycle.
 
@@ -299,9 +299,9 @@ Additionally, another consideration for why better prediction is useful is to ex
 
 | Pipeline | Branch Instruction Resolution | Misprediction Penalty |
 |:---:|:---:|:---:|
-| 5-Stage | Stage `3` | `2` cycles | 
-| 14-Stage | Stage `11` | `10` cycles |
-| 14-Stage, executing `4` instructions/cycle | Stage `11` | `4*10 = 40` cycles |
+| 5-Stage | Stage `3` | `2` instructions | 
+| 14-Stage | Stage `11` | `10` instructions |
+| 14-Stage, executing `4` instructions/cycle | Stage `11` | `4*10 = 40` instructions |
 
 In particular, for a parallel processor (executing `instructions/cycle > 1`), this can lead to ***many*** wasted cycles. Therefore, correct branch prediction is even more consequential in such systems.
 
