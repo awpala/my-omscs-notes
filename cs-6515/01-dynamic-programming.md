@@ -1818,7 +1818,7 @@ Let us now consider a more general problem:
 
 > Given a directed graph $\vec G$ with edge weights $w(e)$ and starting vertex $s \in V$ , find negative weight cycles in the graph (if they exist at all) which is reachable from $s$ (otherwise, if such cycles are not reachable, then they are not considered). If no such negative weight cycles are found, then the shortest path problem is well defined, and in which case find ${\text{dist}}(z)$ for all $z \in V$ .
 
-We we will next examine how to use dynamic programming to solve this problem.
+We will next examine how to use dynamic programming to solve this problem.
 
 ## 3-7. Single-Source Shortest Path
 

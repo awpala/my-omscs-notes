@@ -1361,7 +1361,7 @@ $$
 T(n) = cn \bigg[ 1 + \bigg( \frac{a}{b} \bigg) + \bigg( \frac{a}{b} \bigg)^{2} + \cdots + \bigg( \frac{a}{b} \bigg)^{\log _b n - 1} \bigg] + a^{\log _b n}T(1)
 $$
 
-***N.B.*** Here, the factor $cn$ arises from the term $+ O(n)$ in the general form. Furthermore, the expansion stop within $n$ finite terms, via the base case $T(1)$ .
+***N.B.*** Here, the factor $cn$ arises from the term $+ O(n)$ in the general form. Furthermore, the expansion stops within $n$ finite terms, via the base case $T(1)$ .
 
 Now, examining the geometric-series expression represented by $[\cdots]$ , as before (cf. Section), this gives rise to three possible cases:
   * the terms are decreasing, and therefore the first term dominates ($\frac{a}{b} < 1$ )
