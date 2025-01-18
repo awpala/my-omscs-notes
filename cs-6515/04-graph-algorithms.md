@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![](./assets/12-GR1-000-01.png){ width=650px }
+![](./assets/12-GR1-000-01.png){ width=350px }
 
 This topic discusses **graph algorithms**. The following may be familiar from previously (cf. course prerequisites):
   * **depth-first search** (**DFS**)
@@ -43,7 +43,86 @@ Next, we will examine depth-first search (DFS) for **directed graphs**. The goal
 
 ### 3. Introduction
 
+For a given **undirected graph** $G$ , how do we find its constituent **connected components**?
+
+![](./assets/12-GR1-001.png){ width=650px }
+
+To find the connected components, we simply run the **depth-first search** (**DFS**) algorithm on undirected graph $G$ and keep track of the resulting number of components (with each vertex being designated by number in this manner accordingly).
+
+Recall (cf. course prerequisites) the pseudocode for algorithm $\text{DFS}$ as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{DFS}}(G):}\\
+\ \ \ \ {{\text{input:\ }} G(V,E) {\text{\ in\ adjacency\ list\ representation}}}\\
+\ \ \ \ {{\text{output:\ }} {\text{vertices\ labeled\ by\ connected\ components}}}\\
+\\
+\ \ \ \ {{\text{cc}} = 0}\\
+\ \ \ \ {{\text{for\ all\ }} v \in V {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{visited}}(v) = {\text{FALSE}}}\\
+\ \ \ \ {{\text{for\ all\ }} v \in V {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{if\ not\ }} {\text{visited}(v) {\text{,\ then:}}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{cc++}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{Explore}}(v)}
+\end{array}
+}
+$$
+
+***N.B.*** We will make further modifications to this algorithm over the course of this lecture.
+
+For now, we take ***input*** graph $G$ as an *undirected* graph, given in adjacency list representation. (Later, we will run the same algorithm on a *directed* graph.)
+
+The ***output*** is the vertices of undirected graph $G$ , now labeled by a connected component number.
+
+The counter ${\text{cc}}$ tracks the current connected component number. Furthermore, the array ${\text{visited}}$ tracks whether or not a given vertex $v$ has been visited yet.
+
+The array ${\text{visited}}$ is initialized to all vertices' entries being set to ${\text{FALSE}}$.
+
+Next, the vertices are iteratively traversed in arbitrary order. If a not-yet-visited vertex is encountered, then we have identified a *new* connected component. Correspondingly, ${\text{cc}}$ is incremented and we further explore from this vertex, as discussed in the next section.
+
 ### 4. Exploring Undirected Graphs
+
+#### Pseudocode
+
+![](./assets/12-GR1-002.png){ width=650px }
+
+The pseudocode for the previously encountered (cf. Section 3) subroutine ${\text{Explore}}$ is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Explore}}(z):}\\
+\ \ \ \ {{\text{ccnum}}(z) = {\text{cc}}}\\
+\ \ \ \ {{\text{visited}}(z) = {\text{TRUE}}}\\
+\ \ \ \ {{\text{for\ all\ }} (z, w) \in E {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{if\ not\ }} {\text{visited}(w) {\text{,\ then:}}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{Explore}}(w)}
+\end{array}
+}
+$$
+
+Given ***input*** vertex $z$ , on initial encounter, its connected component number ${\text{cc}}$ is stored as ${\text{ccnum}}$ , the current count for the connected components.
+
+Next, we set ${{\text{visited}}(z) = {\text{TRUE}}}$ (i.e., vertex $z$ has now been visited.)
+
+Finally, we explore all edges $E$ from vertex $z$ , where the vertex information is readily available via the (linked-list) adjacency list representation of input graph $G$ to upstream caller ${\text{DFS}}$ (cf. Section 3). For a particular neighbor $w$ , if the neighbor has not yet been visited up to this point, then we recursively explore from $w$ accordingly (i.e., ${\text{Explore}}(w)$ ).
+
+We repeat this process until all vertices in the graph have been visited/explored in this manner.
+
+#### Running Time
+
+What, then, is the overall running time for algorithm ${\text{DFS}}$ ?
+
+You might recall (cf. course prerequisites) that algorithm ${\text{DFS}}$ has an overall linear running time when run on an undirected graph. More specifically, the overall running time is characterized as follows:
+
+$$
+O(n + m)
+$$
+
+where $n = |V|$ and $m = |E|$ .
+
+This algorithm provides the ability to identify the connected components of the input undirected graph $G$ . Next, we will examine *directed* graphs, which will require obtaining additional information via depth-first search in order to obtain the appropriate connectivity information accordingly.
 
 ## 5-7. Depth First Search (DFS)
 
