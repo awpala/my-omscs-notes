@@ -490,7 +490,7 @@ There are `16` entries in the BHT, which can be accessed via the offset least-si
 | `0xC018` (`1100 0000 00\|01 10\|00`) | `6` |
 | `0xC01C` (`1100 0000 00\|01 11\|00`) | `7` |
 
-***N.B.*** If `15` were reached in this manner, the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
+***N.B.*** If `15` were reached in this manner (i.e., `...|11 11|00`), the subsequent instruction would result in a wraparound back to `0`, however, this does not occur in this particular program.
 
 ### 19. Quiz 3 and Answers
 
@@ -515,7 +515,7 @@ How many times do we access the branch target buffer (BTB) table for each instru
 
 The BTB table is only accessed if the branch history table (BHT) indicates to take the branch (recall that we assume both tables predict perfectly); otherwise, if the branch is *not* taken, then we simply increment the program counter (PC) without accessing the BTB table at all.
 
-Therefore, by inspection, all non-branching instructions do not access the BTB table at all. The instruction `B Loop` at instruction `0xC01C` is *always* taken, and this occurs `100` times in the program loop. Furthermore, with respect to the instruction `BEQ R1, R2, Done` at instruction address `0xC008`, in every iteration that stays in the loop (i.e., when `R1` and `R2` are not equal, which occurs for `100` iterations, as per the quiz in Section 17), the branch is not taken and therefore the BTB table is not accessed; conversely, when `R1` and `R2` become equal (i.e., both having the value `100`, which occurs once in the final iteration), this causes an access of the BTB table (and consequent branch to `Done`).
+Therefore, by inspection, all non-branching instructions do not access the BTB table at all. The instruction `B Loop` at instruction address `0xC01C` is *always* taken, and this occurs `100` times in the program loop. Furthermore, with respect to the instruction `BEQ R1, R2, Done` at instruction address `0xC008`, in every iteration that stays in the loop (i.e., when `R1` and `R2` are not equal, which occurs for `100` iterations, as per the quiz in Section 17), the branch is not taken and therefore the BTB table is not accessed; conversely, when `R1` and `R2` become equal (i.e., both having the value `100`, which occurs once in the final iteration), this causes an access of the BTB table (and consequent branch to `Done`).
 
 ### 20. Quiz 4 and Answers
 
