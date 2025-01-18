@@ -590,9 +590,7 @@ When proceeding in this manner of analysis, be mindful of the fact that the resu
 
 ## 17-22. ReOrder Buffer (ROB) Example
 
-### 17. Cycles 1-2
-
-#### Introduction
+### Introduction
 
 <center>
 <img src="./assets/08-051.png" width="650">
@@ -604,6 +602,8 @@ Consider the system having the configuration as in the figure shown above. In th
   * Instruction `DIV` requires `40` cycles to execute
 
 ***N.B.*** Note the formats of the fields/entries per the legend in the figure shown above (i.e., register station [RS] fields in purple, ROB fields in orange).
+
+### 17. Cycles 1-2
 
 #### Cycle 1
 
