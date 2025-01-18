@@ -592,6 +592,8 @@ When proceeding in this manner of analysis, be mindful of the fact that the resu
 
 ### 17. Cycles 1-2
 
+#### Introduction
+
 <center>
 <img src="./assets/08-051.png" width="650">
 </center>
@@ -602,6 +604,8 @@ Consider the system having the configuration as in the figure shown above. In th
   * Instruction `DIV` requires `40` cycles to execute
 
 ***N.B.*** Note the formats of the fields/entries per the legend in the figure shown above (i.e., register station [RS] fields in purple, ROB fields in orange).
+
+#### Cycle 1
 
 <center>
 <img src="./assets/08-052.png" width="650">
@@ -619,6 +623,8 @@ The instruction `I1` is issued. To do this, there must be an available RS and co
 | `I1` | `C1` | `C2` | | |
 
 Since this processor is capable of dispatching in the same cycle, instruction `I1` is issued in cycle `C1`, with corresponding execution in the subsequent cycle `C2` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above.
+
+#### Cycle 2
 
 <center>
 <img src="./assets/08-053.png" width="650">
@@ -646,6 +652,8 @@ Since this processor is capable of dispatching in the same cycle, instruction `I
 
 ### 18. Cycles 3-4
 
+#### Cycle 3
+
 <center>
 <img src="./assets/08-054.png" width="650">
 </center>
@@ -664,6 +672,8 @@ At this point, there is nothing to dispatch (i.e., the RSes are empty), but the 
 | `I3` | `C3` | `C4` | `C5` | |
 
 Since this processor is capable of dispatching in the same cycle, instruction `I3` is issued in cycle `C3`, with corresponding execution in the subsequent cycle `C4` (i.e., due to both operands having determinate values by this point already), as depicted in the table shown above. Furthermore, the RS is freed, and the result will eventually be written in cycle `C5` (instruction `ADD` requires `1` cycle to execute).
+
+#### Cycle 4
 
 <center>
 <img src="./assets/08-055.png" width="650">
@@ -689,6 +699,8 @@ Instruction `I4` is *not* capable of executing yet, because both of its operands
 
 ### 19. Cycles 5-6
 
+#### Cycle 5
+
 <center>
 <img src="./assets/08-056.png" width="650">
 </center>
@@ -711,6 +723,8 @@ At this point, the next instruction `I5` can be issued, and there is a correspon
 Instruction `I5` is *not* capable of executing yet, because one of its operands is still pending results at this point, as in the table shown above (similarly, instruction `I4` is pending values for its operands, thereby precluding its execution as well).
 
 Furthermore, instruction `I3` is now ready to write its result (i.e., via `ROB3`) in cycle `C5`. The `Done` bit is updated correspondingly in the ROB (as denoted by the purple checkmark in the figure shown above), and this value is also broadcasted, with a corresponding capture occurring in the RS of instruction `I4`. Note that the RAT is not yet updated at this point (this will not occur until the commit).
+
+#### Cycle 6
 
 <center>
 <img src="./assets/08-057.png" width="650">
@@ -736,9 +750,13 @@ Instruction `I6` is *not* capable of executing yet, because both of its operands
 
 Furthermore, note that at this point, while `I3` has completed execution and writing/broadcasting its result, it cannot yet commit its result, because it is still pending the writing of results and subsequent commits of its two upstream instructions (`I1` and `I2`).
 
+#### Post-Cycle 6
+
 By cycle `C7`, there are no more instructions to issue. However, none of the in-progress instructions can execute yet, as they are pending the broadcast of dependent results. Therefore, based on this "gridlocked" situation, the next "eventful" cycle will not be until cycle `C13`, as described next.
 
 ### 20. Cycles 13-24
+
+#### Cycle 13
 
 <center>
 <img src="./assets/08-058.png" width="650">
@@ -759,6 +777,8 @@ At this point, instruction `I2` finally writes its result and broadcasts. The co
 
 Instruction `I4` captures the broadcast value (i.e., `12`, via `ROB2`), and now has sufficient operands information/values in order to dispatch accordingly, and is able to dispatch and execute in the subsequent cycle `C14`, as indicated in the table shown above. Furthermore, the RS previously occupied by `I4` is freed accordingly.
 
+#### Cycles 14-23
+
 <center>
 <img src="./assets/08-059.png" width="650">
 </center>
@@ -777,6 +797,8 @@ Cycle `C14` is depicted in the figure shown above.
 At this point, instruction `I4` commences execution and continues to do so until cycle `C24` (via `10` cycle requirement for instruction `MUL`).
 
 Furthermore, instructions `I5` and `I6` are still pending their operands in this cycle, and continue to do so from cycles `C15` through `C23`.
+
+#### Cycle 24
 
 <center>
 <img src="./assets/08-060.png" width="650">
@@ -801,6 +823,8 @@ Note that at this point, none of the instructions with their `Done` bit set (i.e
 
 ### 21. Cycles 25-43
 
+#### Cycle 25
+
 <center>
 <img src="./assets/08-061.png" width="650">
 </center>
@@ -818,6 +842,8 @@ Cycle `C25` is depicted in the figure shown above.
 
 At this point, instruction `I5` commences execution and continues to do so until cycle `C26` (via `1` cycle requirement for instruction `SUB`), as in the table shown above.
 
+#### Cycles 26-41
+
 <center>
 <img src="./assets/08-062.png" width="650">
 </center>
@@ -829,6 +855,8 @@ At this point, instruction `I5` finally writes its result and broadcasts. The co
 Instruction `I6` captures the broadcast value (i.e., `33`, via `ROB5`), but is still pending a value for its other operand (i.e., `ROB1`). 
 
 Furthermore, instruction `I6` still cannot dispatch at this point, as it is pending an operand result (`ROB1`); this "gridlock" persists in cycles `C27` through `C41`.
+
+#### Cycle 42
 
 <center>
 <img src="./assets/08-063.png" width="650">
@@ -848,6 +876,8 @@ At this point, instruction `I1` finally writes its result and broadcasts. The co
 | `I6` | `C6` | `C43` | | |
 
 Instruction `I6` captures the broadcast value (i.e., `9`, via `ROB1`), and now has sufficient operands information/values in order to dispatch accordingly, and is able to dispatch and execute in the subsequent cycle `C43`, as indicated in the table shown above. Furthermore, the RS previously occupied by `I6` is freed accordingly.
+
+#### Cycle 43
 
 <center>
 <img src="./assets/08-064.png" width="650">
@@ -876,6 +906,8 @@ At this point, to the programmer, instruction `I1` "appears" as completed. In re
 
 ### 22. Cycles 44-48
 
+#### Cycle 44
+
 <center>
 <img src="./assets/08-065.png" width="650">
 </center>
@@ -899,6 +931,8 @@ Furthermore, instruction `I2` can be committed in this cycle, as in the table sh
   * The ROB entry `ROB2` is cleared
   * Instruction `I2` is committed
 
+#### Cycle 45
+
 <center>
 <img src="./assets/08-066.png" width="650">
 </center>
@@ -919,6 +953,8 @@ At this point, instruction `I3` can be committed in this cycle, as in the table 
   * The RAT entry for `R3` is examined. Since it is pointing to `ROB3` (which is correspondingly the most recently updated value of `R3`), the RAT entry can be cleared accordingly (i.e., indicating to reference the updated value in ARF directly).
   * The ROB entry `ROB3` is cleared
   * Instruction `I3` is committed
+
+#### Cycle 46
 
 <center>
 <img src="./assets/08-067.png" width="650">
@@ -941,6 +977,8 @@ At this point, instruction `I4` can be committed in this cycle, as in the table 
   * The ROB entry `ROB4` is cleared
   * Instruction `I4` is committed
 
+#### Cycle 47
+
 <center>
 <img src="./assets/08-068.png" width="650">
 </center>
@@ -961,6 +999,8 @@ At this point, instruction `I5` can be committed in this cycle, as in the table 
   * The RAT entry for `R4` is examined. Since it is pointing to `ROB5` (which is correspondingly the most recently updated value of `R4`), the RAT entry can be cleared accordingly (i.e., indicating to reference the updated value in ARF directly).
   * The ROB entry `ROB5` is cleared
   * Instruction `I5` is committed
+
+#### Cycle 48
 
 <center>
 <img src="./assets/08-069.png" width="650">

@@ -575,6 +575,8 @@ Lastly, the reservation stations (RSes) are as follows:
 
 ### 22. Cycles 1-2
 
+#### Cycle 1
+
 <center>
 <img src="./assets/07-047.png" width="650">
 </center>
@@ -612,6 +614,8 @@ Since there is a correspondingly empty reservation station, instruction `I1` can
 | `F10` | |
 
 The other operand `F6` is placed into the RAT (via corresponding RS `LD1`), as in the table shown above.
+
+#### Cycle 2
 
 <center>
 <img src="./assets/07-048.png" width="650">
@@ -654,6 +658,8 @@ The other operand `F2` is placed into the RAT (via corresponding RS `LD2`), as i
 Furthermore, note that instruction `I1` is dispatched in cycle `C2`, noted above in the corresponding tables for `C2`. Furthermore, recall (cf. Section 21) that a load instruction requires `2` cycles; here, we shall assume that the write back occurs *after* execution of the second cycle (from initiation) is completed (i.e., two cycles after `C2`, or `C4`).
 
 ### 23. Cycles 3-4
+
+#### Cycle 3
 
 <center>
 <img src="./assets/07-049.png" width="650">
@@ -698,6 +704,8 @@ In cycle `C3`, instruction `I1` (via corresponding RS `LD1`) is still executing;
   * Conversely, without such a pipelined load/store unit, then this is *not* possible. With this assumption holding (as is intended for this particular example), `LD2` will have to wait until cycle `C4` to begin executing the instruction, once the previous instruction `I1` (via `LD1`) has completed execution.
 
 Furthermore, note that nothing is broadcasting yet in cycle `C3`.
+
+#### Cycle 4
 
 <center>
 <img src="./assets/07-050.png" width="650">
@@ -794,6 +802,8 @@ To recap, in cycle `C4`:
 
 ### 24. Cycles 5-6
 
+#### Cycle 5
+
 <center>
 <img src="./assets/07-052.png" width="650">
 </center>
@@ -833,6 +843,8 @@ Since there is a correspondingly empty reservation station, instruction `I5` can
 Furthermore, the remaining operand `F10` is placed into the RAT (via corresponding RS `ML2`), as in the table shown above.
 
 This now covers analysis of issuing in cycle `C5`. Furthermore, instruction `I2` (via RS `LD2`) is still executing in cycle `C5`, so it cannot be dispatched yet, nor is any other instruction able to dispatch at this point yet, either.
+
+#### Cycle 6
 
 <center>
 <img src="./assets/07-053.png" width="650">
@@ -918,6 +930,8 @@ In summary, in cycle `C6`:
 
 ### 25. Cycles 7-9
 
+#### Cycle 7
+
 <center>
 <img src="./assets/07-055.png" width="650">
 </center>
@@ -945,7 +959,11 @@ In cycle `C7`, there is no instruction to issue. This is noted accordingly in th
 
 With respect to dispatch, both RSes `AD1` and `ML1` are ready to be dispatched in cycle `C7`, as in the table shown above. Both are correspondingly dispatched; however, since nothing is currently executing (i.e., both dispatched instructions require multiple cycles to execute), the results are not yet broadcasted at this point.
 
+#### Cycle 8
+
 In cycle `C8`, there is no issue, dispatch, or broadcast, since the instructions are still currently executing at that point.
+
+#### Cycle 9
 
 <center>
 <img src="./assets/07-056.png" width="650">
@@ -987,6 +1005,8 @@ Furthermore, with respect to broadcast and corresponding capture/latch, `AD1` en
 
 ### 26. Cycles 10-end
 
+#### Cycle 10
+
 <center>
 <img src="./assets/07-057.png" width="650">
 </center>
@@ -1012,7 +1032,11 @@ Furthermore, with respect to broadcast and corresponding capture/latch, `AD1` en
 
 In cycle `C10`, instruction `I6` is able to dispatch, as indicated in the tables shown above.
 
+#### Cycle 11
+
 In cycle `C11`, the RSes `AD2` and `ML1` are executing their respective instructions, however, no other operations occur in this time.
+
+#### Cycle 12
 
 <center>
 <img src="./assets/07-058.png" width="650">
@@ -1050,7 +1074,11 @@ In cycle `C12`, instruction `I6` is able to broadcast its result (`-12.1`) via R
 
 Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e., with `F6` now read directly from REGS). Additionally, note that the old value (`7.1`) for `F6` in REGS is overwritten by the new value (`-12.1`).
 
+#### Cycles 13-16
+
 The subsequent cycles `C13` through `C16` simply execute pending instruction via RS `ML1`.
+
+#### Cycle 17
 
 <center>
 <img src="./assets/07-059.png" width="650">
@@ -1088,6 +1116,8 @@ In cycle `C17`, instruction `I3` is able to broadcast its result (`-6.25`) via R
 
 Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e., with `F0` now read directly from REGS).
 
+#### Cycle 18
+
 <center>
 <img src="./assets/07-060.png" width="650">
 </center>
@@ -1113,7 +1143,11 @@ Furthermore, with respect to broadcast, the RAT is updated as shown above (i.e.,
 
 In cycle `C18`, the last-remaining instruction `I5` is able to dispatch, as indicated in the tables shown above.
 
+#### Cycles 19-57
+
 The subsequent cycles `C19` through `C57` simply execute pending instruction via RS `ML2`.
+
+#### Cycle 58 (end)
 
 <center>
 <img src="./assets/07-061.png" width="650">
