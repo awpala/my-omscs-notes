@@ -2,10 +2,40 @@
 
 ## Introduction
 
+![](./assets/12-GR1-000-01.png){ width=650px }
+
+This topic discusses **graph algorithms**. The following may be familiar from previously (cf. course prerequisites):
+  * **depth-first search** (**DFS**)
+  * **breadth-first search** (**BFS**)
+  * **Dijkstra's single-source shortest path** algorithm
+
+First, we will begin with a brief review of how DFS is used to find the **connected components** of an *undirected* graph. From there, we will examine **connectivity** in *directed* graphs. We will use DFS to find the **strongly connected components** (**SCCs**) of directed graphs, which are analogous to connected components in undirected graphs.
+
+Next, we will see an application of the strongly connected component (SCC) algorithm in solving the **2-SAT problem**.
+
+Next, we will examine the **minimum spanning tree** (**MST**) problem.
+  * ***N.B.*** Previously (cf. course prerequisites), you may have already seen Kruskal's and Prim's algorithms for determining the minimum spanning tree (MST) of a graph. Here, we will additionally examine the ***correctness*** of these algorithms.
+
+Finally, we will examine the **PageRank** algorithm, which examines a web graph and assigns weights to its vertices (i.e., webpages), indicating a measure of their importance. This algorithm was devised by Brin and Page, and underlies the Google search engine. Prior to this, there will also be a brief primer on **Markov chains**, which have a corresponding relationship to strongly connected components.
+
 ## Overview
 
 > [!NOTE]
 > ***Instructor's Note***: See [DPV] Chapter 3 (Decompositions of graphs) and Eric's [notes](https://cs6505.wordpress.com/schedule/scc/).
+
+![](./assets/12-GR1-000-02.png){ width=650px }
+
+In this topic, we will examine ***connectivity*** algorithms using algorithms based on **depth-first search** (**DFS**).
+
+We will begin by reviewing depth-first search (DFS) for **undirected graphs**, and examine the algorithm for determining **connected components** in such undirected graphs.
+  * ***N.B.*** This algorithm is likely familiar already (cf. course prerequisites).
+
+Next, we will examine depth-first search (DFS) for **directed graphs**. The goal here is to determine the analog of connected components for such directed graphs.
+  * We will begin by examining **directed acyclic graphs** (**DAGS**), which are characterized by ***no*** cycles (i.e., "acyclic")
+    * We will also examine how to **topologically sort** such directed acyclic graphs (DAGs), i.e., with vertices being ordered, the edges will follow the corresponding order as well (i.e., left-to-right, or equivalent).
+      * ***N.B.*** This algorithm may be familiar already (cf. course prerequisites), however, it will be useful for deriving some additional intuition for more sophisticated algorithms on directed graphs more generally.
+  * Next, for general directed graphs, we will examine how to find the **strongly connected components** (**SCCs**), the analog to connected components in undirected graphs.
+    * As it turns out, the algorithm for identifying these strongly connected components (SCCs) is simply comprised of two depth-first searches (DFSs), which will become more apparent/straightforward with the intuition gained by this point.
 
 # Graph Algorithms 1: Strongly Connected Components
 
