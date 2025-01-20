@@ -469,6 +469,22 @@ Therefore, the overall running time is comprised of $O(m + n)$ to run the depth-
 
 ### 11. Topological Ordering Quiz and Answers
 
+![](./assets/12-GR1-010Q.png){ width=450px }
+
+Consider the graph in the figure shown above. Provide a topological ordering of its five constituent vertices. Furthermore, how many distinct/valid such topical orderings are present in this graph?
+
+![](./assets/12-GR1-011A.png){ width=450px }
+
+One such valid topological ordering is given by inspection as follows:
+
+$$
+X \to Y \to Z \to U \to W
+$$
+
+where the corresponding edges are in strictly increasing order with respect to post-order numbering (i.e., depicted/oriented as "left-to-right" in the figure shown above).
+
+With respect to the number of distinct such topological orderings, the position of vertex $U$ can assume any of the last three positions. After this is specified, there is consequently only one possible (strict) ordering of edge $Z \to W$ . Therefore, in total there are $3$ distinct topological orderings in total.
+
 ### 12. Directed Acyclic Graph (DAG) Structure
 
 ## 13. Outline Review
