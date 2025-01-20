@@ -31,7 +31,7 @@ We will begin by reviewing depth-first search (DFS) for **undirected graphs**, a
   * ***N.B.*** This algorithm is likely familiar already (cf. course prerequisites).
 
 Next, we will examine depth-first search (DFS) for **directed graphs**. The goal here is to determine the analog of connected components for such directed graphs.
-  * We will begin by examining **directed acyclic graphs** (**DAGS**), which are characterized by ***no*** cycles (i.e., "acyclic")
+  * We will begin by examining **directed acyclic graphs** (**DAGs**), which are characterized by ***no*** cycles (i.e., "acyclic")
     * We will also examine how to **topologically sort** such directed acyclic graphs (DAGs), i.e., with vertices being ordered, the edges will follow the corresponding order as well (i.e., left-to-right, or equivalent).
       * ***N.B.*** This algorithm may be familiar already (cf. course prerequisites), however, it will be useful for deriving some additional intuition for more sophisticated algorithms on directed graphs more generally.
   * Next, for general directed graphs, we will examine how to find the **strongly connected components** (**SCCs**), the analog to connected components in undirected graphs.
@@ -438,6 +438,34 @@ Therefore, this proves that the property holds in general via the forward and re
 ## 10-12. Topological Sorting
 
 ### 10. Introduction
+
+Now, consider a **directed acyclic graph** (**DAG**), which are characterized by ***no*** cycles (i.e., "acyclic").
+
+![](./assets/12-GR1-009.png){ width=650px }
+
+Recall (cf. Section 9) that the implication of such a directed acyclic graph (DAG) is that there are correspondingly ***no*** back edges present in the resulting depth-first search (DFS) tree.
+
+Furthermore, consider how to **topologically sort** such a directed acyclic graph, such that the vertices in the resulting depth-first search (DFS) tree are strictly ordered from lower to higher (with respect to their post-order numbering).
+
+To accomplish this, we first run the depth-first search algorithm (cf. Section 6) on the directed acyclic graph (DAG) $G$ in order to produce the corresponding tree. Recall (cf. Section 8) that in such a graph without cycles, without back edges being present, the post-order numbering is strictly increasing (cf. back edges are characterized by a corresponding strictly decreasing ordering in the post-order numbering), i.e.,:
+
+> For all $z \to w$ , ${\text{post}(z)}$ > ${\text{post}(w)}$
+
+Therefore, in order to topologically sort the vertices, we simply start from the highest-post-order-number vertex and then proceed towards the lowest-post-numbered vertex, i.e., in decreasing post-order numbering direction.
+
+In order to actually "sort" the vertices in this manner, note that this is not a simple running time of $O(n \log n)$ , but rather this requires a running time of:
+
+$$
+O(n + m)
+$$
+
+where $n = |V|$ and $m = |E|$ .
+
+To understand this running time, consider the range of potential post-order numberings. In the algorithm ${\text{DFS}}$ (cf. Section 6), ${\text{clock}}$ is initialized to $1$ , the lowest possible value for the post-order numbering. Furthermore, th largest possible value for the post-order numbering is $2n$ (i.e., a fully connected graph).
+
+Utilizing a corresponding array of length $2n$ to track these post-order numberings, we can assign vertex-wise post-order numberings among these array elements upon iterative exploration of the vertices, and then finally traverse this array from the largest to the lowest element/index, outputting the corresponding vertices as they are encountered in this traversal (i.e., decreasing order of post-order numbering).
+
+Therefore, the overall running time is comprised of $O(m + n)$ to run the depth-first search (DFS) algorithm (cf. Section 6), followed by $O(2n) = O(n)$ to perform this subsequent sorting (i.e., depth-first search is the dominating step in this overall sequence).
 
 ### 11. Topological Ordering Quiz and Answers
 
