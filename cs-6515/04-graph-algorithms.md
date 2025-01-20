@@ -487,6 +487,36 @@ With respect to the number of distinct such topological orderings, the position 
 
 ### 12. Directed Acyclic Graph (DAG) Structure
 
+Let us now consider some additional properties of a directed acyclic graph (DAG) which derive from topological ordering (cf. Section 10).
+
+![](./assets/12-GR1-012.png){ width=650px }
+
+In general, there are two distinct ***types*** of vertices of note:
+  * **source vertex**, which has *no* ***incoming*** edges (i.e., neighboring edges are strictly directed "away" from the vertex)
+  * **sink vertex**, which has *no* ***outgoing*** edges (i.e., neighboring edges are strictly directed "into" the vertex)
+
+A directed acyclic graph (DAG) *always* contains at least one source vertex and one sink vertex (furthermore, in general, it can also contain multiple source vertices and/or multiple sink vertices).
+
+How do we know there is always a source vertex in a given directed acyclic graph (DAG)? Taking the topological ordering, the first vertex is always a source vertex (e.g., vertex $X$ in the figure shown above). Furthermore, this is the vertex with the highest post-order numbering via depth-first search (DFS).
+  * ***N.B.*** If there are multiple source vertices in the directed acyclic graph (DAG), then the corresponding multiple distinct topological orderings will correspondingly place these respective source vertices at this first position. However, in either case, this first-position index will be comprised of such a source vertex.
+
+Complementarily to this, taking the topological ordering, the last vertex is similarly always a sink vertex (e.g., vertices $U$ and $W$ in the figure shown above). Furthermore, this is the vertex with the lowest post-order numbering via depth-first search.
+  * ***N.B.*** Furthermore, there may be multiple such last vertex sinks, if the directed acyclic graph (DAG) yields multiple distinct topological orderings (i.e., which place these distinct sink vertices in the last position accordingly).
+
+![](./assets/12-GR1-013.png){ width=650px }
+
+Now, consider an ***alternative*** topological sorting algorithm, defined as follows:
+  * (1) - Find a sink vertex, output it, and delete it
+  * (2) - Repeat (1) until the graph is empty
+
+***N.B.*** This alternative algorithm is not particularly useful for directed acyclic graphs (DAGs), however, it will become much more useful when we later examine more general (i.e., possibly cyclic) directed graphs.
+
+Since we know that in a topological ordering the last vertex is necessarily a sink vertex, we can readily begin at this point, and proceed back towards the starting vertex accordingly. When the starting vertex is reached in this manner, immediately prior to terminating the algorithm, the resulting graph is effectively now a sink vertex in this intermediate graph of current size $1$ ; therefore, now it only remains to eliminate this element to yield an empty graph, thereby terminating the algorithm.
+
+The net result is an output of the vertices in the order from "last" to "first," thereby yielding a valid topological sorting.
+
+However, this begs the question: How to find such a sink vertex a priori in the first place? We will consider this matter more comprehensively in the next section, in the context of the more general notion of "connectivity in directed graphs."
+
 ## 13. Outline Review
 
 ## 14. Connectivity in Directed Graphs
