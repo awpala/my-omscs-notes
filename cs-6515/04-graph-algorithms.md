@@ -397,6 +397,44 @@ Otherwise, forward and cross edges have the same/analogous property as the tree 
 
 ### 9. Cycles
 
+Now, let us examine properties of the directed graph $G$ , and how these properties manifest themselves in the resulting depth-first search (DFS) tree.
+
+![](./assets/12-GR1-008.png){ width=650px }
+
+Consider the property of a **cycle**. How does a cycle manifest itself in the resulting depth-first search (DFS) tree of a directed graph? This key property emerges as follows:
+
+> Directed graph $G$ has a **cycle** if and only if its depth-first search (DFS) tree contains a ***back edge***
+
+***N.B.*** This property holds for the graph irrespectively of which starting vertex is used to produce the depth-first search (DFS) tree. Furthermore, the ordering of the vertices in the adjacency-list representation of the graph similarly does not impact the resulting presence (or absence) of a back edge, thereby indicating the presence (or absence, respectively) cycle in the graph.
+
+#### Proof
+
+Let us consider the proof for why this property holds. Since this is an equivalence relation (i.e., $\iff$ ), we examine the two implications in turn.
+
+##### Forward Implication
+
+Consider the forward implication ($\Rightarrow$ ), given as follows:
+
+> The depth-first search (DFS) tree contains a back edge if directed graph $G$ has a cycle
+
+Here, we suppose that directed graph $G$ has a cycle. We now examine how such a back edge will appear. Let us denote this cycle as $a \to b \to c \to \cdots \to j \to a$ , where vertex $j$ "cycles" back to vertex $a$ .
+
+Necessarily, at least one of these vertices is always explored *first*. Let us denote this first-explored vertex as vertex $i$ . What does this indicate about the resulting sub-tree originating from vertex $i$ ? Since all of the vertices are reachable from $i$ in this sub-tree, then these vertices are correspondingly contained in the subtree as constituent vertices $a, \dots, i-1$ and $i + 1, \dots, j$ .
+
+Among these constituent vertices, at least one has a common edge with $i$ . More specifically, in this case, we know that vertex $i-1$ has a common edge with $i$ ; furthermore, this edge is indeed a back edge.
+
+##### Reverse Implication
+
+Now, consider the reverse implication ($\Leftarrow$ ), given as follows:
+
+> Directed graph $G$ has a cycle if its depth-first search (DFS) tree contains a back edge
+
+Here, we suppose that the resulting depth-first search (DFS) tree contains a back edge. Let us denote this back edge as $a \leftarrow b$ .
+
+We know that vertex $a$ is a descendent of corresponding ancestor vertex $b$ . However, we also know that there are corresponding "intermediate neighbors" edges between vertices $a$ and $b$ . Collectively, this indeed constitutes a cycle, i.e., $b \to \cdots a \to b$ , where the latter edge $a \to b$ is the corresponding back edge in question.
+
+Therefore, this proves that the property holds in general via the forward and reverse implications.
+
 ## 10-12. Topological Sorting
 
 ### 10. Introduction
