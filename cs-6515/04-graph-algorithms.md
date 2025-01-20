@@ -366,6 +366,35 @@ with corresponding final state of the resulting search tree as follows:
 
 ### 8. Introduction
 
+![](./assets/12-GR1-007.png){ width=650px }
+
+Consider a specific **edge** from the directed graph in the previous example (cf. Section 7), e.g., $z \to w$ . Furthermore, let us consider whether this is an explored edge in the resulting depth-first search (DFS) tree (where in the figure shown above, black edges denote such explored edges, whereas teal edges denoted other "re-explored neighbors" edges during the course of running the algorithm, as discussed previously in Section 7).
+
+The **tree edges** are those which are included in the corresponding depth-first search (DFS) tree upon completion of the algorithm. Examples of such edges in this graph include $B \to A$ and $A \to D$ .
+  * ***N.B.*** In this particular example, the resulting tree edges formed a connected **tree**, whereby each vertex is reachable from the start vertex (i.e., vertex $B$ ). More generally, a non-connected **forest** can also result from running this algorithm, whereby multiple groups of such connected trees result from the algorithm. However, for simplicity, here, we will simply use the semantics of a "tree edge," as opposed to a more general "forest edge."
+
+Consider the properties of the post-order numbering in these tree edges. In general, the following property holds:
+
+$$
+{\text{post}}(z) > {\text{post}}(w)
+$$
+
+i.e., the post-order numbering of the "head" edge is generally "later" than that of the "tail" edge, when exploring in this depth-first search manner.
+
+Now, let us consider the other "non-tree" edges (as denoted by teal in the figure shown above). Among these, there are three distinct ***types***, characterized as follows:
+
+| Edge Type | Description | Relationship of post-order numbering | Examples |
+|:--:|:--:|:--:|:--:|
+| **Back** | From descendent vertex $w$ to ancestor vertex $z$ | ${\text{post}}(z) < {\text{post}}(w)$ | $E \to A$ , $F \to B$ |
+| **Forward** | From ancestor vertex $z$ to descendent vertex $w$ | ${\text{post}}(z) > {\text{post}}(w)$ | $D \to G$ , $B \to E$ |
+| **Cross** | No ancestor/descendent relationship among vertices $z$ and $w$ | ${\text{post}}(z) > {\text{post}}(w)$ | $F \to H$ , $H \to G$ |
+
+In particular, observe that back edges have a ***smaller*** post-numbering of the descendent vertex $w$ relative to its ancestor vertex $z$ (i.e., the "head" vertex is "ahead of" the "tail" vertex). This constitutes a ***key property*** for post-order numbering accordingly (i.e., back edges behave differently from the other types of edges).
+
+Otherwise, forward and cross edges have the same/analogous property as the tree edges themselves.
+  * In the case of forward edges, they are similarly "moving down" the tree as tree edges, but simply doing so by more than one vertex (i.e., past the neighboring vertex).
+  * In the case of cross edges, generally the edge of the relatively first-explored vertex $w$ will receive the lower/"earlier" post-order numbering (otherwise, there would have been an ancestor/descendent "sub-tree" relationship between the vertices).
+
 ### 9. Cycles
 
 ## 10-12. Topological Sorting
