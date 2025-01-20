@@ -231,6 +231,137 @@ For determining the connectivity of the vertices, we can then examine the array 
 
 #### 7. Example
 
+![](./assets/12-GR1-006.png){ width=650px }
+
+Consider a specific directed graph comprised of eight vertices, as in the figure shown above. Now, let us run the depth-first search (DFS) algorithm (cf. Section 6) on this graph, starting at vertex $B$ . Furthermore, for concreteness, we assume that the linked-list representation of vertices is stored in alphabetical order with respect to a given vertex's neighboring vertices (e.g., the neighbors of vertex $B$ are represented as list $[A, C, E]$ ).
+
+Starting with vertex $B$ , we initially traverse/explore the directed graph $G$ as follows:
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+
+Now, since $G$ does not have any remaining vertices to explore, we finish exploring $G$ , assign ${\text{post}}(G) = 6$ , and return to vertex $E$ . Furthermore, observe that exploration from $E$ proceeds back to $A$ , which has already been explored/visited by this point.
+  * ***N.B.*** We do not subsequently "re-explore" from vertex $A$ as a result of this (i.e., this does not yield a corresponding "newly included edge" in the resulting depth-first search tree), however, visually we have still denoted this "check" with teal arrow in the figure shown above for additional reference (i.e., as distinguished from the "included edges" denoted in black in the built-out search tree).
+
+The resulting updates are therefore as follows:
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+| $6$ | $G$ | $5$ | $6$ |
+| $7$ | $E$ | $5$ | $7$ |
+
+Proceeding similarly, we now examine vertex $D$ , yielding the following:
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+| $6$ | $G$ | $5$ | $6$ |
+| $7$ | $E$ | $4$ | $7$ |
+| $8$ | $H$ | $8$ | ${\text{NULL}}$ |
+| $9$ | $H$ | $8$ | $9$ |
+| $10$ | $D$ | $3$ | $10$ |
+
+Here, exploring from vertex $D$ , we ultimately encounter already explored vertex $E$ (noted accordingly via ${\text{post}}(E) = 7$ ), as well as similarly terminating exploration of vertices (immediately unexplored) $H$ and (currently explored) $D$ itself.
+
+We then proceed similarly "back up" through to vertices $A$ and $B$ , yielding the following:
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+| $6$ | $G$ | $5$ | $6$ |
+| $7$ | $E$ | $4$ | $7$ |
+| $8$ | $H$ | $8$ | ${\text{NULL}}$ |
+| $9$ | $H$ | $8$ | $9$ |
+| $10$ | $D$ | $3$ | $10$ |
+| $11$ | $A$ | $2$ | $11$ |
+
+From vertex $B$ , we now explore vertex $C$ , i.e.,:
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+| $6$ | $G$ | $5$ | $6$ |
+| $7$ | $E$ | $4$ | $7$ |
+| $8$ | $H$ | $8$ | ${\text{NULL}}$ |
+| $9$ | $H$ | $8$ | $9$ |
+| $10$ | $D$ | $3$ | $10$ |
+| $11$ | $A$ | $2$ | $11$ |
+| $12$ | $C$ | $12$ | ${\text{NULL}}$ |
+
+This in turn results in exploration of vertex $F$ , i.e.,:
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+| $6$ | $G$ | $5$ | $6$ |
+| $7$ | $E$ | $4$ | $7$ |
+| $8$ | $H$ | $8$ | ${\text{NULL}}$ |
+| $9$ | $H$ | $8$ | $9$ |
+| $10$ | $D$ | $3$ | $10$ |
+| $11$ | $A$ | $2$ | $11$ |
+| $12$ | $C$ | $12$ | ${\text{NULL}}$ |
+| $13$ | $F$ | $13$ | ${\text{NULL}}$ |
+
+Since vertex $F$ is neighboring with (at this point) already explored neighbors $B$ and $H$ , we similarly "back up" as before, yielding the following final overall result (with overall exploration correspondingly terminated at originating vertex $B$ ):
+
+| ${\text{clock}}$ | Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|:--:|
+| $1$ | $B$ | $1$ | ${\text{NULL}}$ |
+| $2$ | $A$ | $2$ | ${\text{NULL}}$ |
+| $3$ | $D$ | $3$ | ${\text{NULL}}$ |
+| $4$ | $E$ | $4$ | ${\text{NULL}}$ |
+| $5$ | $G$ | $5$ | ${\text{NULL}}$ |
+| $6$ | $G$ | $5$ | $6$ |
+| $7$ | $E$ | $4$ | $7$ |
+| $8$ | $H$ | $8$ | ${\text{NULL}}$ |
+| $9$ | $H$ | $8$ | $9$ |
+| $10$ | $D$ | $3$ | $10$ |
+| $11$ | $A$ | $2$ | $11$ |
+| $12$ | $C$ | $12$ | ${\text{NULL}}$ |
+| $13$ | $F$ | $13$ | ${\text{NULL}}$ |
+| $14$ | $F$ | $13$ | $14$ |
+| $15$ | $C$ | $12$ | $15$ |
+| $16$ | $B$ | $1$ | $16$ |
+
+with corresponding final state of the resulting search tree as follows:
+
+| Vertex $v$ | ${\text{pre}}(v)$ | ${\text{post}}(v)$ |
+|:--:|:--:|:--:|
+| $B$ | $1$ | $16$ |
+| $A$ | $2$ | $11$ |
+| $D$ | $3$ | $10$ |
+| $E$ | $4$ | $7$ |
+| $G$ | $5$ | $6$ |
+| $H$ | $8$ | $9$ |
+| $C$ | $12$ | $15$ |
+| $F$ | $13$ | $14$ |
+
 ## 8-9. Types of Edges
 
 ### 8. Introduction
