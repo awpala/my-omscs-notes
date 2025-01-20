@@ -181,6 +181,54 @@ This concludes the discussion of the depth-first search (DFS) algorithm on *undi
 
 #### 6. Introduction
 
+Having seen (cf. Section 4) how to determine connected components in an *undirected* graph, now consider how to determine connected components in a ***directed*** graph.
+
+![](./assets/12-GR1-004.png){ width=650px }
+
+![](./assets/12-GR1-005.png){ width=650px }
+
+To accomplish this, in a directed graph $G$ , we similarly use depth-first search (DFS), however, we now consider some additional information: The **preorder** or **postorder** numbers for the **tree** (or **forest**) of the explored edges. The corresponding modification of the previous (cf. Section 4) pseudocode is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{DFS}}(G):}\\
+\ \ \ \ {{\text{input:\ }} G(V,E) {\text{\ in\ adjacency\ list\ representation}}}\\
+\ \ \ \ {{\text{output:\ }} {\text{vertices\ labeled\ by\ connected\ components}}}\\
+\\
+\ \ \ \ {{\text{clock}} = 1}\\
+\ \ \ \ {{\text{for\ all\ }} v \in V {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{visited}}(v) = {\text{FALSE}}}\\
+\ \ \ \ {{\text{for\ all\ }} v \in V {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{if\ not\ }} {\text{visited}(v) {\text{,\ then:}}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{Explore}}(v)}
+\end{array}
+}
+$$
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Explore}}(z):}\\
+\ \ \ \ {{\text{pre}}(z) = {\text{clock}}}\\
+\ \ \ \ {{\text{clock++}}}\\
+\ \ \ \ {{\text{visited}}(z) = {\text{TRUE}}}\\
+\ \ \ \ {{\text{for\ all\ }} (z, w) \in E {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{if\ not\ }} {\text{visited}(w) {\text{,\ then:}}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{Explore}}(w)}\\
+\ \ \ \ {{\text{post}}(z) = {\text{clock}}}\\
+\ \ \ \ {{\text{clock++}}}
+\end{array}
+}
+$$
+
+Here, we no longer require tracking of the connected component number (via corresponding variables ${\text{cc}}$ and ${\text{ccnum}}$ ). Instead, we now track the preorder and postorder numbers, via arrays ${\text{pre}}$ and ${\text{post}}$ (respectively).
+
+Furthermore, to accomplish the corresponding tracking, we add variable ${\text{clock}}$ , which in subroutine ${\text{Explore}}$ is initialized to the value immediately prior to the first visit/traversal of vertex $z$ , and then subsequently incremented immediately following exploration of vertex $z$ (i.e., via the corresponding edges $(z, w) \in E$ ). Correspondingly, these values are stored in arrays ${\text{pre}}$ and ${\text{post}}$ (respectively), along with accompanying increments of variable ${\text{clock}}$ upon this storage to record it accordingly (i.e., ${\text{clock++}}$ ).
+
+For determining the connectivity of the vertices, we can then examine the array ${\text{post}}$ .
+  * ***N.B.*** The preorder array ${\text{pre}}$ is tracked in this canonical formulation of the algorithm, however, as a practical matter, it does not provide any useful information with respect to determining the connected vertices themselves.
+
 #### 7. Example
 
 ## 8-9. Types of Edges
