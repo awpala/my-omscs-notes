@@ -128,6 +128,55 @@ This algorithm provides the ability to identify the connected components of the 
 
 ### 5. Paths
 
+Recall (cf. Section 4) that the depth-first search (DFS) algorithm can be used to identify connected components in an *undirected* graph. Before proceeding onto a similar analysis of *directed* graphs, let us first glean some additional information from the depth-first search (DFS) algorithm.
+
+![](./assets/12-GR1-003.png){ width=650px }
+
+In particular, suppose we are given a pair of vertices $(v, w)$ which reside in the *same* connected component. How to find a **path** between these **connected vertices**? To accomplish this, we must track the **predecessor vertex** when initially visiting a given vertex.
+
+Recall (cf. Section 4) the depth-first search (DFS) algorithm for finding connected components on an undirected graph. Similarly to Dijkstra's algorithm (discussed later), we now additionally use the array ${\text{prev}}$ to track the predecessor vertex. The corresponding modification to the pseudocode is as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{DFS}}(G):}\\
+\ \ \ \ {{\text{input:\ }} G(V,E) {\text{\ in\ adjacency\ list\ representation}}}\\
+\ \ \ \ {{\text{output:\ }} {\text{vertices\ labeled\ by\ connected\ components}}}\\
+\\
+\ \ \ \ {{\text{cc}} = 0}\\
+\ \ \ \ {{\text{for\ all\ }} v \in V {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{visited}}(v) = {\text{FALSE}}}\\
+\ \ \ \ \ \ \ \ {{\text{prev}}(v) = {\text{NULL}}}\\
+\ \ \ \ {{\text{for\ all\ }} v \in V {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{if\ not\ }} {\text{visited}(v) {\text{,\ then:}}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{cc++}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{Explore}}(v)}
+\end{array}
+}
+$$
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{Explore}}(z):}\\
+\ \ \ \ {{\text{ccnum}}(z) = {\text{cc}}}\\
+\ \ \ \ {{\text{visited}}(z) = {\text{TRUE}}}\\
+\ \ \ \ {{\text{for\ all\ }} (z, w) \in E {\text{:}}}\\
+\ \ \ \ \ \ \ \ {{\text{if\ not\ }} {\text{visited}(w) {\text{,\ then:}}}}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{Explore}}(w)}\\
+\ \ \ \ \ \ \ \ \ \ \ \ {{\text{prev}}(w) = z}
+\end{array}
+}
+$$
+
+With this modification, in algorithm ${\text{DFS}}$ , the predecessors array is initialized as ${\text{prev}}(v) = {\text{NULL}}$ with respect to each vertex, i.e., an empty array.
+
+Furthermore, on recursive call of subroutine ${\text{Explore}}$ , we additionally set ${\text{prev}}(w) = z$ , indicating that a predecessor vertex now exists with respect to candidate vertex $w$ .
+
+Upon running this algorithm, we can now use the predecessors array ${\text{prev}}(v)$ to **backtrack**, in order to identify a corresponding **path** between a pair of connected vertices.
+
+This concludes the discussion of the depth-first search (DFS) algorithm on *undirected* graphs. Next, we discuss depth-first search (DFS) on *directed* graphs.
+
 ### 6-7. Depth-First Search (DFS) on Directed Graphs
 
 #### 6. Introduction
