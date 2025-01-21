@@ -527,6 +527,24 @@ In a more general directed graph (potentially containing cycles), the correspond
 
 ## 14. Connectivity in Directed Graphs
 
+In the remainder of this topic (i.e., Graph Algorithms 1), we will focus on ***directed*** graphs. However, let us first consider the notion of **connectivity** in directed graphs.
+
+![](./assets/12-GR1-015.png){ width=650px }
+
+Given a pair of vertices $v$ and $w$ in a directed graph, we formally define **strong connectivity** as follows:
+
+> Vertices $v$ and $w$ are **strongly connected** if there is a pair of complementary **paths** $v \rightsquigarrow w$ and $w \rightsquigarrow v$
+
+where in general the paths $\rightsquigarrow$ may be comprised of multiple intermediate vertices, and furthermore these two paths may intersect at some intermediate point(s).
+
+![](./assets/12-GR1-016.png){ width=650px }
+
+In the context of *directed* graphs, we can characterize **strongly connected components** (**SCCs**) comprised of such vertices (cf. *undirected* graphs are comprised of analogous connected components, as discussed previously in Section 5).
+
+Furthermore, in directed graphs, strongly connected components (SCCs) comprise the ***maximal*** set of strongly connected vertices (cf. the connected components *undirected* graphs are comprised of the maximal set of connected vertices), i.e., the vertices are progressively added to the set until the graph has been fully iterated upon.
+
+Next, we will further discuss the notion of strongly connected components (SCCs), with an opening example to motivate this definition and subsequent discussion.
+
 ## 15-23. Strongly Connected Components (SCC)
 
 ### 15. Examples Quiz and Answers
