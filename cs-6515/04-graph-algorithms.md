@@ -519,6 +519,12 @@ However, this begs the question: How to find such a sink vertex a priori in the 
 
 ## 13. Outline Review
 
+![](./assets/12-GR1-014.png){ width=650px }
+
+We have now seen how to find connected components in undirected graphs (cf. Section 4), as well as how to topologically sort a directed acyclic graph (DAG) (cf. Section 10). Both of the underlying algorithms involved a *single* run of (correspondingly modified versions of) the depth-first search (DFS) algorithm.
+
+In a more general directed graph (potentially containing cycles), the corresponding analog of connected component is **strongly connected components** (**SCCs**). Next, we will examine strongly connected components (SCCs) of such a general directed graph more thoroughly, which will culminate in a corresponding algorithm to find such strongly connected components (SCCs) using *two* runs of the (appropriately modified) depth-first search (DFS) algorithm.
+
 ## 14. Connectivity in Directed Graphs
 
 ## 15-23. Strongly Connected Components (SCC)
