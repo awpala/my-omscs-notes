@@ -1415,6 +1415,30 @@ As a final note, given that $e$ is relatively small (cf. Section 11), which allo
 
 ### 12. Pitfalls
 
+Let us know consider some issues which may arise when implementing the RSA protocol.
+
+![](./assets/05-RA2-018.png){ width=650px }
+
+Consider the case where $m$ is not relatively prime to $N$ , i.e.,:
+
+$$
+{\text{gcd}}(m,N) > 1
+$$
+
+Since $N = pq$ , in this case, the common divisor of $m$ and $N$ must therefore be $p$ or $q$ . Suppose that the common divisor is $p$ , i.e.,:
+
+$$
+{\text{gcd}}(m,N) = p
+$$
+
+
+
+![](./assets/05-RA2-019.png){ width=650px }
+
+![](./assets/05-RA2-020.png){ width=650px }
+
+
+
 ### 13-14. Recap
 
 #### 13. Part 1
