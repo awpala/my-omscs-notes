@@ -549,7 +549,49 @@ Next, we will further discuss the notion of strongly connected components (SCCs)
 
 ### 15. Examples Quiz and Answers
 
+![](./assets/12-GR1-017Q.png){ width=650px }
+
+Consider the directed graph comprised of 12 vertices, as in the figure shown above. How many total strongly connected components (SCCs) are present in this graph? Furthermore, identify these strongly connected components (SCCs) accordingly.
+
+![](./assets/12-GR1-018A.png){ width=650px }
+
+This graph is comprised of $5$ total strongly connected components (SCCs), as denoted in purple in the figure shown above. Furthermore, the corresponding sets are the following:
+
+$$
+\{ A \}
+$$
+
+$$
+\{ B, E \}
+$$
+
+$$
+\{ C, F, G \}
+$$
+
+$$
+\{ D \}
+$$
+
+$$
+\{ H, I, J, K, L \}
+$$
+
+Within a given strongly connected component (SCC), each constituent vertex is mutually path-reachable from every other vertex, however, this "mutual reachability" does *not* generally hold *across* strongly connected components.
+
+Given these $5$ strongly connected components (SCCs), we can further consider a graph comprised of five "meta-vertices," which each such "meta-vertex" representing its corresponding strongly connected component (SCC). When examining in this manner, there are edges which "cross" the corresponding "meta-vertex boundaries" (e.g., "meta-vertex" $A$ has an outbound edge to "meta-vertex" $B$ ).
+
+Next, we will examine this notion of a graph on "meta-vertices" in this manner, which in turn will reveal some interesting properties.
+
 ### 16. Graph of Strongly Connected Components (SCC)
+
+![](./assets/12-GR1-019.png){ width=650px }
+
+![](./assets/12-GR1-020.png){ width=650px }
+
+![](./assets/12-GR1-021.png){ width=650px }
+
+![](./assets/12-GR1-022.png){ width=650px }
 
 ### 17-22. Strongly Connected Component (SCC) Algorithm
 
