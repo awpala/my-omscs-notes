@@ -970,7 +970,7 @@ The instructor recommends the following practice problems from the course compan
   * 6.11 - longest-common subsequence (LCS)
     * This topic was already covered in the current lesson, however, also consider practicing the variant of a longest-common *substring*, which demonstrates variants (i.e., subsequence vs. substring) in how the dynamic programming algorithm is applied
 
-***N.B.*** In general, the suggested practice problems in the lectures will be accompanied by a short descriptor, in order to disambiguate among potential numbering discrepancies across textbook versions.
+***N.B.*** In general, the suggested practice problems in the lectures will be accompanied by a short descriptor (e.g., "Yuckdonald's"), in order to disambiguate among potential numbering discrepancies across textbook versions.
 
 ![](./assets/01-DP1-049.png){ width=650px }
 
