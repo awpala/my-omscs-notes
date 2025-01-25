@@ -585,13 +585,49 @@ Next, we will examine this notion of a graph on "meta-vertices" in this manner, 
 
 ### 16. Graph of Strongly Connected Components (SCC)
 
+Now, consider the **meta-graph** on the strongly connected components (SCCs) from the previous example (cf. Section 15).
+
 ![](./assets/12-GR1-019.png){ width=650px }
+
+In such a **meta-graph**, each strongly connected component (SCC) is represented by a corresponding "composite" vertex (i.e., a "meta-vertex"), as denoted by red in the figure shown above, and summarized as follows:
+
+$$
+\{ A \}
+$$
+
+$$
+\{ B, E \}
+$$
+
+$$
+\{ C, F, G \}
+$$
+
+$$
+\{ D \}
+$$
+
+$$
+\{ H, I, J, K, L \}
+$$
+
+Furthermore, the edges between these vertices can also be represented, as in the figure shown above (bottom section).
+
+Observe that in this **meta-graph** representation of the strongly connected components (SCCs) (via their corresponding vertices), in general, the resulting meta-graph can be a **multi-graph** (e.g., adding an edge from vertex $G$ to vertex $J$ adds a corresponding edge to the meta-graph, as denoted by teal edge in the figure shown above). However, in general, this multiplicity (i.e., of edges) is not significant with respect to the representation of this meta-graph; indeed, for purposes of the current discussion, we will generally *avoid* such multiple (redundant) edges.
 
 ![](./assets/12-GR1-020.png){ width=650px }
 
+So, then, what is a ***key property*** on such a meta-graph of strongly connected components (SCCs)? Observe that there are ***no*** cycles present, i.e., the meta-graph itself is a **directed acyclic graph** (**DAG**). In fact, this is generally *always* the case.
+
+Why are there no cycles in the meta-graph? Suppose there are two strongly connected components $S$ and $S'$ which constitute a cycle (as in the figure shown above). That means that there is a pair of complementary paths $S \rightsquigarrow S'$ and $S' \rightsquigarrow S$ . We know that every vertex within $S$ is connected to each other (i.e., by definition of a strongly connected component), and similarly within $S'$ as well. Therefore, every vertex in $S$ can reach $S'$ via path $S \rightsquigarrow S'$ , and similarly every vertex in $S'$ can reach $S$ via path $S' \rightsquigarrow S$ , and correspondingly $S \cup S'$ is itself a strongly connected component (SCC). Furthermore, note that these strongly connected components (SCCs) are defined to be ***maximal*** sets of strongly connected vertices, resulting in a contradiction: $S \cup S'$ must hold, rather than (separate/disjoint) sets $S$ and $S'$ , i.e., if such a cycle were otherwise present in the meta-graph, then we could simply merge the strongly connected components (SCCs) to form a larger/"composite" strongly connected component (SCC).
+
+Therefore, there cannot be any cycles present in the meta-graph, and thus the meta-graph itself is a directed acyclic graph (DAG).
+
 ![](./assets/12-GR1-021.png){ width=650px }
 
-![](./assets/12-GR1-022.png){ width=650px }
+As a consequence of this key property, since a meta-graph is a directed acyclic graph (DAG) of its constituent strongly connected components (SCCs), we can correspondingly break up such a directed graph into its constituent components, and then order them into a topological ordering (by simple virtue of the meta-graph itself being a directed acyclic graph). Thus, even such an arbitrarily complex directed acyclic graph (DAG) can nonetheless be decomposed into such a relatively simple structure which is intrinsic to it.
+
+Next, we will describe an algorithm which finds these strongly connected components (SCCs), with this search itself resulting in a specific order (i.e., topological ordering). Furthermore, as it turns out, this can be accomplish relatively straightforwardly by two simple applications of depth-first search (DFS).
 
 ### 17-22. Strongly Connected Component (SCC) Algorithm
 
