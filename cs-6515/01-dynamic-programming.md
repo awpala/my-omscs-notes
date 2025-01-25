@@ -611,7 +611,7 @@ Given these last characters, we will examine how $x_i$ and $y_i$ (respectively) 
 
 ![](./assets/01-DP1-027.png){ width=650px }
 
-Proceeding in this manner, there are ***two cases*** two consider:
+Proceeding in this manner, there are ***two cases*** to consider:
   * 1 - The last characters are the *same* (i.e., $x_i = y_i$ )
   * 2 - The last characters are *different* (i.e., $x_i \ne y_i$ )
 
