@@ -735,7 +735,7 @@ Therefore, when we examine graph $G^{R}$ , the corresponding source and sink str
 
 Furthermore, with respect to the resulting directed acyclic meta-graph of these strongly connected components (SCCs), the corresponding topological ordering in the meta-graph of the reverse graph is effectively "reversed," i.e., from "last"/"right-most" to "first"/"left-most." Correspondingly, a ***source*** strongly connected component (SCC) in graph $G$ is now a ***sink*** strongly connected component (SCC) in graph $G^{R}$ ; and similarly a ***sink*** strongly connected component (SCC) in graph $G$ is now a ***source*** strongly connected component (SCC) in graph $G^{R}$ .
 
-Now, returning to the original problem at hand, how do we find vertex $w$ residing in a *sink* strongly connected component (SCC) with respect to directed graph $G$ ? If we take the directed graph $G$ as the input, we can construct reverse directed graph $G^{R}$ from it, and then take the vertex with the *highest* postorder number in the latter, which is guaranteed to be a *source* strongly connected component (SCC) in directed graph $G^{R}$ , but then also correspondingly/complementarily a *sink* strongly component in the original directed graph $G$ itself. Therefore, this constitutes the desired algorithm in question accordingly: We have now successfully identified the sink strongly connected component (SCC) in directed graph $G$ (i.e., in intended topological ordering)!
+Now, returning to the original problem at hand, how do we find vertex $w$ residing in a *sink* strongly connected component (SCC) with respect to directed graph $G$ ? If we take the directed graph $G$ as the input, we can construct reverse directed graph $G^{R}$ from it, and then take the vertex with the *highest* postorder number in the latter, which is guaranteed to be a *source* strongly connected component (SCC) in directed graph $G^{R}$ , but then also correspondingly/complementarily a *sink* strongly connected component (SCC) in the original directed graph $G$ itself. Therefore, this constitutes the desired algorithm in question accordingly: We have now successfully identified the sink strongly connected component (SCC) in directed graph $G$ (i.e., in intended topological ordering)!
 
 #### 20. Example
 
@@ -758,7 +758,7 @@ $$
 \{ H, I, J, K, L \}
 $$
 
-Recall (cf. Section 17) that if we run depth first search (DFS) from a vertex residing in either of these sink strongly connected components (SCCs) (e.g., vertex $K$ ), then no other vertices are visited besides those of the sink strongly connected component (SCC) itself. Once we have fully explored such a sink strongly connected component (SCC), we can designate it accordingly as visited (e.g., $1$ in the figure shown above) and then proceed onto the next sink strongly strongly component (SCC) via corresponding topological ordering (e.g., $\{ D \}$ in the figure shown above), proceeding in this manner until the entire graph has been explored.
+Recall (cf. Section 17) that if we run depth first search (DFS) from a vertex residing in either of these sink strongly connected components (SCCs) (e.g., vertex $K$ ), then no other vertices are visited besides those of the sink strongly connected component (SCC) itself. Once we have fully explored such a sink strongly connected component (SCC), we can designate it accordingly as visited (e.g., $1$ in the figure shown above) and then proceed onto the next sink strongly connected component (SCC) via corresponding topological ordering (e.g., $\{ D \}$ in the figure shown above), proceeding in this manner until the entire graph has been explored.
 
 ![](./assets/12-GR1-029.png){ width=650px }
 
@@ -895,6 +895,24 @@ Overall, this algorithm comprises of two runs of the depth first search algorith
 ### 22-23. Proof of Key Strongly Connected Component (SCC) Fact
 
 #### 22. Introduction
+
+![](./assets/12-GR1-034.png){ width=650px }
+
+Recall (cf. Section 18) that in the formulation of for finding strongly connected components (SCCs) in topological ordering in a general directed graph, we took the following fact for granted as a "given":
+
+> In a general directed graph $G$ , the vertex $v$ with ***highest*** postorder number ***always*** lies in a ***source*** strongly connected component (SCC)
+
+In order to prove this fact more formally, let us first examine the following *simpler* claim:
+
+> For strongly connected components $S$ and $S'$ , if $v \in S \rightarrow w \in S'$ (i.e., vertices $v$ and $w$ have a common connecting edge between their respective strongly connected components), then the maximum postorder numbering in $S$ is (strictly) ***greater*** than the maximum postorder numbering in $S'$
+
+This simpler claim provides the ability to topologically sort these respective strongly connected components (SCCs). To accomplish this, we topologically sort the constituent vertices in these respective strongly connected components (SCCs), taking the corresponding maximum postorder numbering as the representative of the given strongly connected component (SCC).
+
+Next, we sort these strongly connected components (SCCs) (i.e., comprising "meta-vertices" with respect to their constituent vertices) by decreasing postorder numbering. Per the claim, this implies that the maximum postorder numbering achieved in this manner for strongly connected component (SCC) $S$ will be generally higher than that of $S'$ .
+
+Furthermore, generalizing this comparison, the strongly connected component (SCC) with the *highest* postorder numbering among these component-wise maxima will correspondingly yield the ***source*** strongly connected component (SCC), occurring at the "first"/"left-most" such strongly connected component (SCC) in the corresponding topological ordering.
+
+Therefore, by proving this simpler claim (i.e., topologically sorting by maximum postorder numbering of the respective strongly connected components), then by direct corollary, we correspondingly arrive at the original key claim/fact that the vertex with the highest postorder numbering lies in a source strongly connected component (SCC) accordingly.
 
 #### 23. Simpler Claim
 
