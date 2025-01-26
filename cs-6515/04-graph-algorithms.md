@@ -846,7 +846,51 @@ Next, we will formalize this algorithm, as well as analyze its corresponding run
 
 ##### Pseudocode
 
+![](./assets/12-GR1-032.png){ width=650px }
+
+The pseudocode for finding strongly connected components (SCCs) in topological ordering in a general directed graph (i.e., potentially containing cycles) is given as follows:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{DFS}}(G):}\\
+\ \ \ \ {{\text{input:\ }} {\text{general\ directed\ graph\ }} G(V,E) {\text{\ in\ adjacency\ list\ representation}}}\\
+\ \ \ \ {{\text{output:\ }} {\text{meta-vertices\ labeled\ by\ strongly\ connected\ components}}}\\
+\\
+\ \ \ \ {{\text{1.\ }} {\text{Construct\ }} G^{R}}\\
+\ \ \ \ {{\text{2.\ }} {\text{Run\ DFS\ on\ }} G^{R}}\\
+\ \ \ \ {{\text{3.\ }} {\text{Order\ }} V {\text{by\ decreasing\ postorder numbering}}}\\
+\ \ \ \ {{\text{4.\ }} {\text{Run\ undirected\ connected\ components\ algorithm\ on\ }} G}
+\end{array}
+}
+$$
+
+In the first step, we construct the reverse graph $G^{R}$ .
+
+In the second step, we run algorithm ${\text{DFS}}$ (cf. Section 6) on graph $G^{R}$ .
+  * ***N.B.*** Recall (cf. Section 20) that the *highest* postorder numbered vertex from this run of ${\text{DFS}}$ is guaranteed to reside in a *source* strongly connected component (SCC) in graph $G^{R}$ , and therefore complementarily in a *sink* strongly connected component (SCC) in original input graph $G$ . Therefore, it now simply remains to explore from this vertex accordingly.
+
+In the third step, we order the vertices set $V$ by ***decreasing*** postorder numbering with respect to $G^{R}$ (i.e., as obtained in the previous step).
+  * ***N.B.*** This is analogous to ordering with respect to topological order in the corresponding algorithm for directed acyclic graphs (cf. Section 10).
+
+In the fourth/final step, we now run algorithm ${\text{DFS}}$ (cf. Section 4) on graph $G$ .
+  * ***N.B.*** In this step, we run the version of ${\text{DFS}}$ for ***undirected*** connected components. This version of the algorithm numbers the connected components upon traversal/exploration, which in turn will yield a topological ordering of the corresponding strongly connected components (SCCs) comprising the "meta-vertices" of the input directed graph.
+
 ##### Running Time Quiz and Answers
+
+![](./assets/12-GR1-033Q.png){ width=650px }
+
+Recalling (cf. Section 4) the corresponding pseudocode for the undirected connected components (as in the figure shown above), what is the overall running time for the algorithm to find strongly connected components (SCCs) in topological ordering in a general directed graph as the input?
+
+The corresponding overall running time for this algorithm is:
+
+$$
+O(n + m)
+$$
+
+where $n = |V|$ and $m = |E|$ . 
+
+Overall, this algorithm comprises of two runs of the depth first search algorithm, with each run of depth first search requiring $O(n + m)$ (cf. Section 4), i.e., $O(2 \times (n + m)) = O(n + m)$ .
 
 ### 22-23. Proof of Key Strongly Connected Component (SCC) Fact
 
