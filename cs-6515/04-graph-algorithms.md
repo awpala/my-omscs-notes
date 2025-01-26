@@ -681,6 +681,34 @@ So, then, how do we identify such a vertex $v$ which is *guaranteed* to reside w
 
 #### 18. Vertex in Sink Strongly Connected Component (SCC)
 
+![](./assets/12-GR1-026.png){ width=650px }
+
+Recall (cf. Section 12) that in a directed acyclic graph (DAG), the vertex with the ***lowest*** postorder number is a ***sink***.
+
+Now, consider a more general directed graph $G$ (which may contain cycles). If we run depth first search (DFS) on such a general directed graph, is there some corresponding property with respect to postorder numbers which can analogously guarantee the presence of a vertex residing within a sink strongly connected component (SCC)?
+
+In such a general directed graph, we might postulate that perhaps vertex $v$ with the lowest postorder numbering *always* lies within a sink strongly connected component (SCC). If this were indeed the case, then, as before (cf. Section 17), we would simply run the algorithm straightforwardly from this sink strongly connected component (SCC). However, unfortunately, this property does ***not*** generally hold for such a general directed graph.
+
+As a counter-example, consider the graph comprised of vertices $B$ , $A$ , and $C$ , as in the figure shown above (as depicted in green), with vertices $B$ and $A$ forming a strongly connected component (SCC), and vertex $C$ constituting a separate strongly connected component (SCC). If we run depth first search (DFS) starting from vertex $A$ (as depicted in purple in the figure shown above), the resulting postorder numbering is as follows:
+
+| Vertex | Postorder numbering |
+|:--:|:--:|
+| $A$ | $1, 6$ |
+| $B$ | $2, 3$ |
+| $C$ | $4, 5$ |
+
+Here, the vertex with the *lowest* postorder numbering is vertex $B$ . However, vertex $B$ resides in the strongly connected component (SCC) which is ***not*** a *sink* strongly connected component (SCC), but rather a *source* strongly connected component (SCC).
+
+Now, consider reformulating as follows:
+
+> In a directed acyclic graph (DAG), the vertex with ***highest*** postorder number is a ***source***
+
+And correspondingly, with respect to a more general directed graph:
+
+> In a general directed graph $G$ , the vertex $v$ with ***highest*** postorder number ***always*** lies in a ***source*** strongly connected component (SCC)
+
+We will later prove more thoroughly that this latter formulation does indeed hold in general. Next, we will first utilize this key property to devise the corresponding algorithm for eventually finding a *sink* strongly connected component (SCC) in a general directed graph, as desired (i.e., for corresponding topological ordering).
+
 #### 19. Finding Sink Strongly Connected Component (SCC)
 
 #### 20. Example
