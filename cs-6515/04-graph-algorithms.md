@@ -742,6 +742,106 @@ Now, returning to the original problem at hand, how do we find vertex $w$ residi
 > [!NOTE]
 > ***Instructor's Note***: Typo: The preorder number of $D$ and the postorder number of $C$ are both $12$ . The preorder number of $D$ should be $13$ and all preorder/postorder numbers from $13$ onwards should be incremented by $1$ . The resulting order on the postorder numbers does not change.
 
+To illustrate the algorithm for finding a sink strongly connected component (SCC) in a general directed graph, we will do so using the example graph from previously (cf. Section 15).
+
+![](./assets/12-GR1-028.png){ width=550px }
+
+In this graph, there are two sink strongly connected components (SCCs) (as denoted by red in the figure shown above), i.e.,:
+
+$$
+\{ D \}
+$$
+
+and
+
+$$
+\{ H, I, J, K, L \}
+$$
+
+Recall (cf. Section 17) that if we run depth first search (DFS) from a vertex residing in either of these sink strongly connected components (SCCs) (e.g., vertex $K$ ), then no other vertices are visited besides those of the sink strongly connected component (SCC) itself. Once we have fully explored such a sink strongly connected component (SCC), we can designate it accordingly as visited (e.g., $1$ in the figure shown above) and then proceed onto the next sink strongly strongly component (SCC) via corresponding topological ordering (e.g., $\{ D \}$ in the figure shown above), proceeding in this manner until the entire graph has been explored.
+
+![](./assets/12-GR1-029.png){ width=650px }
+
+Furthermore, to identify such a sink strongly connected component (SCC) in the input directed graph $G$ , we first examine the complementary reverse graph $G^{R}$ (as in the figure shown above), comprised of the same vertex set but with every edge being reversed. In the latter graph, recall (cf. Section 19) that the vertex with the *highest* postorder numbering will now reside in a *source* strongly connected component (SCC) with respect to graph $G^{R}$ ; these *source* strongly connected components (SCCs) are in fact the complementary ones relative to the aforementioned *sink* strongly connected components (SCCs) in original input graph $G$ (as denoted by red in the figure shown above).
+
+![](./assets/12-GR1-030.png){ width=650px }
+
+Now, consider a run of depth first search (DFS) on the reverse directed graph $G^{R}$ . Here, for simplicity, we wil make arbitrary choices with respect to the ordering of vertices and visited neighbors (this choice is inconsequential to the algorithm itself).
+
+Consider a run of depth first search (DFS) starting at vertex $C$ . The corresponding exploration yields the following postorder numberings:
+
+(*source strongly connected component 1*)
+
+| Vertex | Postorder numbering |
+|:--:|:--:|
+| $C$ | $1, 12$ |
+| $G$ | $2, 5$ |
+| $F$ | $3, 4$ |
+| $B$ | $6, 11$ |
+| $A$ | $7, 8$ |
+| $E$ | $9, 10$ |
+
+(*source strongly connected component 2*)
+
+| Vertex | Postorder numbering |
+|:--:|:--:|
+| $D$ | $12, 13$ |
+
+(*source strongly connected component 3*)
+
+| Vertex | Postorder numbering |
+|:--:|:--:|
+| $L$ | $14, 23$ |
+| $K$ | $15, 22$ |
+| $J$ | $16, 21$ |
+| $H$ | $17, 18$ |
+| $I$ | $19, 20$ |
+
+Observe that in any given strongly connected component (SCC), the *highest* postnumber ordered vertex resides within a *source* strongly connected component (SCC).
+  * ***N.B.*** This particular ordering arose by virtue of the arbitrary choice of strongly connected components' vertices traversal (i.e., starting with vertex $C$ in this particular case). Strictly speaking, other resulting exploration trees are also possible, however, in general, this particular graph contains two distinct source strongly connected components (SCCs), i.e., one comprised of $\{ D }\$ and the other comprised of the other vertices (which in turn form a "composite" strongly connected component per appropriate traversal, e.g., if starting from vertex $K$ , then *two* such trees would result, rather than three as resulting from a start at vertex $C$ ).
+
+Based on this run of depth first search (DFS), now consider the overall ordering with respect to decreasing postorder numbering (i.e., from highest to lowest), as follows:
+
+$$
+L, K, J, I, H, D, C, B, E, A, G, F
+$$
+
+***N.B.*** This ordering will facilitate determining the vertex with the *highest* postorder numbering of the remaining vertices when we subsequently explore the constituent vertices in the respective strongly connected components (SCCs) of the original input directed graph $G$ .
+
+![](./assets/12-GR1-031.png){ width=650px }
+
+Now, returning to the original input directed graph $G$ , we run depth first search (DFS), starting with vertex $L$ residing in its *sink* strongly connected component (SCC).
+
+Visiting the corresponding vertices of this strongly connected component, we "mark off" in turn, and assign a corresponding number for this strongly connected component (i.e., $1$ in the figure shown above), comprised of the following vertices:
+
+$$
+\{ L, K, J, I, H \}
+$$
+
+Next, we proceed onto vertex $D$ , which has the next-highest postorder numbering (via graph $G^{R}$ ) at this point among the remaining vertices. Exploring similarly yields the following strongly connected component (i.e., $2$ in the figure shown above):
+
+$$
+\{ D \}
+$$
+
+Further proceeding in this manner, strongly connected components (SCCs) $3$ , $4$ , and $5$ arise respectively as follows:
+
+$$
+\{ C, G, F \}
+$$
+
+$$
+\{ B, E \}
+$$
+
+$$
+\{ A \}
+$$
+
+Now, we have our strongly connected components (SCCs) fully identified, as well as numbered accordingly (i.e., with respect to topological ordering), as in the figure shown above. Furthermore, observe that these meta-vertices direct accordingly from "last"/"right-most" to "first"/"left-most" (i.e., reverse topological ordering). Furthermore, note that we have accomplished this with *two* runs of depth first search (DFS): Firstly on the reverse directed graph $G^{R}$ , followed by a subsequent run on the original input directed graph $G$ . In the process of this, we have identified *both* the strongly connected components (SCCs) *and* their output in (reverse) topological ordering. Note that this generally holds for any such general directed graph.
+
+Next, we will formalize this algorithm, as well as analyze its corresponding running time.
+
 #### 21. Algorithm
 
 ##### Pseudocode
