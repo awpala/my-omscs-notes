@@ -633,6 +633,52 @@ Next, we will describe an algorithm which finds these strongly connected compone
 
 #### 17. Algorithm Idea
 
+Now, consider the main idea for the algorithm to identify the strongly connected components (SCC) in a meta-graph. Furthermore, these strongly connected components (SCCs) will be found in topological ordering as the algorithm proceeds.
+
+![](./assets/12-GR1-022.png){ width=650px }
+
+Consider the topological ordering of a directed acyclic graph (DAG), where vertex $v$ is the "first"/"left-most" and vertex $w$ is the "last"/"right-most," as in the figure shown above.
+
+We know that vertex $w$ must be a **sink vertex**, i.e., only edges which go "in" but no edges that go "out." This is due to the nature of the ordering itself (i.e., edges can't go "back" in "reverse order").
+
+Analogously, vertex $v$ must be a **source vertex**, i.e., only edges which go "out" but no edges that go "in."
+
+Furthermore, this gives rise to a natural search algorithm, given these properties: We begin with finding the sink vertex, and then progress in this manner "backwards" towards the source vertex, outputting the intermediate sink vertices encountered in this manner along the way.
+
+Analogously, we can also find the source vertex, and proceed in the "forward" direction towards the sink vertex (via intermediate source vertices) as well.
+
+![](./assets/12-GR1-023.png){ width=650px }
+
+We will therefore use an analogous method, however, rather than finding a sink vertex, instead, we will find a ***sink*** strongly connected component (SCC), i.e., an analogous sink vertex in the meta-graph on the constituent strongly connected components (SCCs).
+
+Once this sink meta-vertex is found (which is present at the "end" of the topological ordering), we output it, and then remove it from the meta-graph and then repeat in this manner, until the meta-graph is eventually empty.
+
+![](./assets/12-GR1-024.png){ width=650px }
+
+This begs the question: Why the *sink* strongly connected component (SCC) (i.e., as opposed to the *source*)?
+
+With respect to the topological ordering of the directed acyclic graph (DAG) itself, the choice itself is arbitrary. However, with respect to strongly connected components (SCCs), the decision is in fact consequential: Sinks are more straightforward to work with.
+
+Why is it the case that sinks strongly connected components (SCCs) are "easier" to work with? Take any vertex $v \in S$ , where $S$ is a sink strongly connected component (SCC) in the meta-graph, and then run the procedure ${\text{Explore}(v)}$ (cf. Section 6) on it. When exploring from $v$ in this manner, which vertices are actually explored?
+
+Consider the strongly connected component (SCC) from previously (cf. Section 16) comprised of the following vertices:
+
+$$
+\{ H, I, J, K, L \}
+$$
+
+Here, we will explore *all* of these vertices in this sink strongly connected component (SCC), however, we will *not* consequently explore any other vertices in the process, since the latter are not reachable.
+
+Therefore, exploring $S$ results in visiting ***all*** of the vertices of $S$ , and ***nothing*** else!
+
+Therefore, if we find such a vertex $v$ which is guaranteed to be in such a sink strongly connected component (SCC), then we can run procedure ${\text{Explore}(v)}$ , which will correspondingly explore within the scope of this sink strongly connected component (SCC). Correspondingly, this is a ***key property*** of such sink strongly connected components (SCCs). Once we have marked all of this sink strongly connected component's vertices as visited, we can remove them accordingly and proceed onto the next sink strongly connected component (SCC) in this manner.
+
+Now, consider if we find vertex $A$ in a source strongly connected component (SCC). When we run procedure ${\text{Explore}(A)}$ , all we know is that we can reach many vertices, given that $A$ is a source vertex (in fact, we can reach the *entire* graph from vertex $A$ ). Therefore, given that the *entire* graph can be potentially explored in this manner, there is no straightforward way to mark intermediate vertices which reside within the source strongly connected component (SCC) vs. in other intermediate strongly connected components (SCCs). Conversely, this issue does *not* generally result when exploring in this manner starting at a *sink* strongly connected component (SCC), which otherwise guarantees exploration of only the constituent vertices within this sink strongly connected component (SCC) in any given iteration of the exploration, and nothing else.
+
+![](./assets/12-GR1-025.png){ width=650px }
+
+So, then, how do we identify such a vertex $v$ which is *guaranteed* to reside within a sink strongly connected component (SCC)? This is the ***key task*** which will be explored in the subsequent sections.
+
 #### 18. Vertex in Sink Strongly Connected Component (SCC)
 
 #### 19. Finding Sink Strongly Connected Component (SCC)
