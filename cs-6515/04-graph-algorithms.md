@@ -711,6 +711,32 @@ We will later prove more thoroughly that this latter formulation does indeed hol
 
 #### 19. Finding Sink Strongly Connected Component (SCC)
 
+![](./assets/12-GR1-027.png){ width=650px }
+
+Recall (cf. Section 18) the following property, which is generally true for a general directed graph (i.e., which may otherwise contain cycles):
+
+> In a general directed graph $G$ , the vertex $v$ with ***highest*** postorder number ***always*** lies in a ***source*** strongly connected component (SCC)
+
+Given this property, how do we then find a vertex $w$ residing in a corresponding ***sink*** strongly connected component (SCC)?
+
+We can accomplish this straightforwardly by simply "reversing" the constituent edges of the graph. Consequently, the former "sink" strongly connected component (SCC) becomes a "source" strongly connected component (SCC), and vice versa. More formally:
+
+> For directed graph $G = (V, E)$ , examine the reverse graph $G^{R} = (V, E^{R})$
+
+where the reverse edges set $E^{R}$ in the latter is defined as:
+
+$$
+E^{R} = \{ \vec{wv}: \vec{vw} \in E  \}
+$$
+
+i.e., every edge in graph $G^{R}$ is the reverse of every edge in graph $G$ .
+
+Therefore, when we examine graph $G^{R}$ , the corresponding source and sink strongly connected components (SCCs) are similarly "reversed" relative to the original graph $G$ . Nevertheless, the strongly connected components (SCCs) still remain as such in ***both*** graphs (i.e., with respect to the constituent vertex-pairs in the respective graphs).
+
+Furthermore, with respect to the resulting directed acyclic meta-graph of these strongly connected components (SCCs), the corresponding topological ordering in the meta-graph of the reverse graph is effectively "reversed," i.e., from "last"/"right-most" to "first"/"left-most." Correspondingly, a ***source*** strongly connected component (SCC) in graph $G$ is now a ***sink*** strongly connected component (SCC) in graph $G^{R}$ ; and similarly a ***sink*** strongly connected component (SCC) in graph $G$ is now a ***source*** strongly connected component (SCC) in graph $G^{R}$ .
+
+Now, returning to the original problem at hand, how do we find vertex $w$ residing in a *sink* strongly connected component (SCC) with respect to directed graph $G$ ? If we take the directed graph $G$ as the input, we can construct reverse directed graph $G^{R}$ from it, and then take the vertex with the *highest* postorder number in the latter, which is guaranteed to be a *source* strongly connected component (SCC) in directed graph $G^{R}$ , but then also correspondingly/complementarily a *sink* strongly component in the original directed graph $G$ itself. Therefore, this constitutes the desired algorithm in question accordingly: We have now successfully identified the sink strongly connected component (SCC) in directed graph $G$ (i.e., in intended topological ordering)!
+
 #### 20. Example
 
 > [!NOTE]
