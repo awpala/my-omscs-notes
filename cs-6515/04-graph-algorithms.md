@@ -979,7 +979,7 @@ As opposed to depth first search (DFS), **breadth first search** (**BFS**) explo
 
 ***N.B.*** The constraint of $\ell(e) > 0$ for every edge $e \in E$ is strictly necessary for correctness of Dijkstra's algorithm. To relax this assumption (i.e., to potentially include *negative* edge weights), refer to the algorithm described in topic Dynamic Programming 3 (i.e., all-pairs shortest paths).
 
-***N.B.*** There are other variants of Dijkstra's algorithm beyond what is described here (i.e., using alternative data structures to min-heaps), however, in general, this course will only be concerned with that which specifically uses the min-heap data structure. For additional reference, Chapter 4 of the course companion textbook *Algorithms* by Dasgupta et al. further elaborates upon this topic.
+***N.B.*** There are other variants of Dijkstra's algorithm beyond what is described here (i.e., using alternative data structures to min-heaps), however, in general, this course will only be concerned with that implementation which specifically uses the min-heap data structure. For additional reference, Chapter 4 of the course companion textbook *Algorithms* by Dasgupta et al. further elaborates upon this topic.
 
 # Graph Algorithms 2: 2-Satisfiability
 
