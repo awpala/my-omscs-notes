@@ -916,6 +916,48 @@ Therefore, by proving this simpler claim (i.e., topologically sorting by maximum
 
 #### 23. Simpler Claim
 
+![](./assets/12-GR1-035.png){ width=650px }
+
+To prove the following simpler claim (cf. Section 22):
+
+> For strongly connected components $S$ and $S'$ , if $v \in S \rightarrow w \in S'$ (i.e., vertices $v$ and $w$ have a common connecting edge between their respective strongly connected components), then the maximum postorder numbering in $S$ is (strictly) ***greater*** than the maximum postorder numbering in $S'$
+
+consider two such strongly connected components $S$ and $S'$ (as in the figure shown above, as depicted by purple), containing vertices $v$ and $w$ (respectively) connected by edge $\vec{vw}$ .
+
+Note the following observation with respect to this graph:
+
+> There is no path $S' \rightsquigarrow S$
+
+This is necessarily true, because, by definition (cf. Section 16), there are *no* cycles among any two such strongly connected components (SCCs).
+
+Now, consider a run of depth first search on this graph. Initially, all vertices in the graph are not visited. Eventually, some vertex $z$ in the (super)set $S \cup S'$ must be visited prior to termination of the algorithm. Furthermore, let us assume that vertex $z$ is visited *first* in this manner (i.e., upon exploring $S \cup S'$ ). This gives rise to exactly two possibilities:
+  * $z \in S'$ (i.e., $z \notin S$ ), or
+  * $z \in S$ (i.e., $z \notin S'$ )
+
+##### First Case: $z \in S'$
+
+In the first case, $z \in S'$ . Here, when we run ${\text{Explore}(z)}$ , we consequently visit *all* vertices in $S'$ , but *none* of the vertices in $S$ , i.e., all of the vertices in $S'$ will be assigned postorder numberings before *any* of the vertices in $S$ . Therefore, in this case, the following holds in general:
+
+> All postorder numberings in $S'$ are (strictly) ***less*** than all postorder numberings in $S$
+
+Correspondingly, the vertex with the maximum postorder numbering in $S'$ is strictly smaller than that of $S$ , thereby proving the claim.
+
+##### Second Case: $z \in S$
+
+![](./assets/12-GR1-036.png){ width=650px }
+
+In the first case, $z \in S$ . Initially, all of the vertices in $S$ and $S'$ are not visited. Here, when we run ${\text{Explore}(z)}$ , we consequently visit *all* vertices in $S$ , *and* all of the vertices in $S'$ (i.e., via correspondingly connecting edge $\vec{vw}$ across the respective strongly connected components).
+
+Correspondingly, the resulting search tree is comprised of vertex $z$ at the root, as well as the remaining vertices in $S \cup S'$ in its corresponding subtree. Furthermore, given that vertex $z$ is in this root position, it also correspondingly receives the ***maximum*** postorder numbering upon corresponding completion of the depth first search traversal (i.e., it is necessarily true that traversal of the descendent vertices will conclude prior to terminating on this root vertex).
+
+Therefore, since vertex $z$ resides in strongly connected component (SCC) $S$ , this in turn proves the claim as intended, i.e.,:
+
+> For strongly connected components $S$ and $S'$ , if $v \in S \rightarrow w \in S'$ (i.e., vertices $v$ and $w$ have a common connecting edge between their respective strongly connected components), then the maximum postorder numbering in $S$ is (strictly) ***greater*** than the maximum postorder numbering in $S'$
+
+This concludes the proof of the simpler claim, and by extension/corollary also proves the key fact/claim (cf. ) which depends on this simpler claim, i.e.,:
+
+> In a general directed graph $G$ , the vertex $v$ with ***highest*** postorder number ***always*** lies in a ***source*** strongly connected component (SCC)
+
 ## 24. Comparison: Depth-First Search (DFS), Breadth-First Search (BFS), and Dijkstra's Algorithm
 
 # Graph Algorithms 2: 2-Satisfiability
