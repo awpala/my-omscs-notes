@@ -960,6 +960,27 @@ This concludes the proof of the simpler claim, and by extension/corollary also p
 
 ## 24. Comparison: Depth-First Search (DFS), Breadth-First Search (BFS), and Dijkstra's Algorithm
 
+![](./assets/12-GR1-037.png){ width=650px }
+
+We have now seen how to use the depth first search (DFS) algorithm to solve connectivity problems in both undirected and directed graphs.
+
+As a review, let us also briefly examine some other common algorithms used to explore graphs.
+
+As opposed to depth first search (DFS), **breadth first search** (**BFS**) explores the graph in "layers."
+  * The ***input*** to the algorithm is similarly a graph $G = (V, E)$ (which can be either undirected or directed), given in adjacency-list representation, as well as a starting vertex $s \in V$ .
+  * As an ***output***, breadth first search (BFS) the distance $\text{dist}(v)$ for every vertex $v \in V$ in the graph $G$ . Since the graph $G$ is otherwise ***unweighted***, $\text{dist}(v)$ is simply defined as the minimum number of edges from (starting) vertex $s$ to (ending) vertex $v$ (if no such path exists, then this distance is defined as $\infty$ ). In order to determine this distance, breadth first search (BFS) similarly tracks array $\text{prev}(v)$ , which correspondingly enables construction of the path of minimum length from $s$ to $v$ .
+  * Like depth first search (DFS), breadth first search (BFS) also has a corresponding overall linear ***running time*** of $O(n + m)$ (where $n = |V|$ and $m = |E|$ ).
+
+**Dijkstra's algorithm** is a somewhat "more sophisticated" version of breadth first search (BFS). Dijkstra's algorithm solves a similar problem to breadth first search (BFS), however, it considers a ***weighted*** graph as its input.
+  * Correspondingly, the ***inputs*** to Dijkstra's algorithm are (weighted) graph $G = (V, E)$ (in adjacency-list representation), starting vertex $s \in V$ , as well as weight parameter $\ell$ , subject to the constraint that $\ell(e) > 0$ for every edge $e \in E$ .
+  * The resulting ***output*** of Dijkstra's algorithm is essentially the weighted analog of breadth first search (BFS), where resulting $\text{dist}(v)$ is the length of the shortest (directed) path $s \rightsquigarrow v$ in graph $G$ for a given ending vertex $v$ .
+  * The overall ***running time*** of Dijkstra's algorithm is $O((n + m) \log n)$ (where $n = |V|$ and $m = |E|$ ).
+    * ***N.B.*** Dijkstra's algorithm uses the breadth first search (BFS) framework along with a **min-heap** data structure (also called a **priority queue**), which in general gives rise to $O(\log n)$ operations with respect to this data structure (i.e., element-wise search, insertion, deletion, etc.).
+
+***N.B.*** The constraint of $\ell(e) > 0$ for every edge $e \in E$ is strictly necessary for correctness of Dijkstra's algorithm. To relax this assumption (i.e., to potentially include *negative* edge weights), refer to the algorithm described in topic Dynamic Programming 3 (i.e., all-pairs shortest paths).
+
+***N.B.*** There are other variants of Dijkstra's algorithm beyond what is described here (i.e., using alternative data structures to min-heaps), however, in general, this course will only be concerned with that which specifically uses the min-heap data structure. For additional reference, Chapter 4 of the course companion textbook *Algorithms* by Dasgupta et al. further elaborates upon this topic.
+
 # Graph Algorithms 2: 2-Satisfiability
 
 ## 1-4. Satisfiability (SAT)
