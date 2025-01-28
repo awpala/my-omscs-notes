@@ -1530,7 +1530,7 @@ So, then, which of these is the best? And what is the corresponding cost of this
 
 ![](./assets/02-DP2-025.png){ width=650px }
 
-Consider a matrix $W$ of six $a \times b$ and another matrix $Y$ of size $b \times c$ . Furthermore, consider the product $Z$ of these matrices, i.e., $Z = W \times Y$ , having corresponding size $a \times c$ .
+Consider a matrix $W$ of size $a \times b$ and another matrix $Y$ of size $b \times c$ . Furthermore, consider the product $Z$ of these matrices, i.e., $Z = W \times Y$ , having corresponding size $a \times c$ .
 
 ![](./assets/02-DP2-026.png){ width=650px }
 
