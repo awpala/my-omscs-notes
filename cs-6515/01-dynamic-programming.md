@@ -362,7 +362,7 @@ So, then, how do we maintain such a "sub-optimal" solution? The ***key*** is tha
 
 ![](./assets/01-DP1-015.png){ width=650px }
 
-Therefore, we need to know the length fo the longest increasing subsequence for every possible ending element. If we know every possible ending element, then upon examining a new element (e.g., $5$ ) we can correspondingly match this against the previous ending elements to determine the appropriate current solution accordingly.
+Therefore, we need to know the length of the longest increasing subsequence for every possible ending element. If we know every possible ending element, then upon examining a new element (e.g., $5$ ) we can correspondingly match this against the previous ending elements to determine the appropriate current solution accordingly.
 
 This begs the question: How many possible ending elements exist at any given solution point, and what are they? Necessarily, one of the ending elements must be an earlier element in the input array, therefore the potential candidates are finite (i.e., at most $i - 1$ such possible candidates).
 
@@ -1763,7 +1763,7 @@ The figure shown above depicts such a representative directed graph, having six 
 
 In the first problem, we have a designated/fixed ***starting vertex*** $s \in V$ , and attempt to determine the length of the ***shortest path*** from this starting vertex to every other vertex in the graph. To accomplish this, we define a function ${\text{dist}}(z)$ as follows:
 
-> For $z \in V$ , ${\text{dist}}(z)$ = length fo shortest path from $s$ to $z$
+> For $z \in V$ , ${\text{dist}}(z)$ = length of shortest path from $s$ to $z$
 
 where $z$ denotes each vertex in the graph.
 
