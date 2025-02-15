@@ -1244,6 +1244,25 @@ Therefore, next, we will use this idea of complementary sink and source strongly
 
 ### 10. Approach 2
 
+![](./assets/13-GR2-015.png){ width=650px }
+
+Consider the previous idea (cf. Section 9), whereby a sink strongly connected component (SCC) is satisfied with respect to its constituent literals.
+
+Furthermore, now, consider the reverse idea: Take source strongly connected component (SCC) $S'$ , having no incoming edges, and set $S' = \text{F}$ (i.e., not satisfied) with respect to its constituent literals.
+
+For example, given such a sink strongly connected component (SCC) comprised of set $\{ \overline{x_2}, x_4 \}$ (as in the figure shown above), let $x_2 = \text{T}$ and $x_4 = \text{F}$ .
+
+Since there are no incoming edges, there are no later (i.e., "downstream/tail") implications to satisfy. Furthermore, since the constituent literals of this source strongly connected component (SCC) are not satisfied (i.e., set to $\text{F}$ ), we are not particularly concerned with the implications of the outgoing edges. Therefore, we can remove this source strongly connected component (SCC), and proceed onto the remainder of the graph.
+
+Correspondingly, in the complementary set $\overline{S'}$ (e.g., $\{ x_2, \overline{x_4} \}$ ), these reside in a sink strongly connected component (SCC) which is set to $\overline{S'} = \text{T}$ accordingly. Furthermore, with this setting of $\overline{S'} = \text{T}$ , the latest (i.e., downstream-most) implications are set accordingly, and furthermore there are no outgoing edges from $\overline{S'}$ requiring any additional such satisfying assignment for the corresponding (non-existent) implications.
+
+As it turns out, these two approaches are equivalent: Setting a sink strongly connected component (SCC) $\overline{S'} = \text{T}$ and simultaneously setting source strongly connected component (SCC) $S' = \text{F}$ are complementary operations accordingly.
+
+Therefore, we can summarize this procedure as follows:
+  * 1 - Take source strongly connected component (SCC) $S'$ and set $S' = \text{F}$, and simultaneously take sink source strongly connected component $\overline{S'}$ and set $\overline{S'} = \text{T}$
+  * 2 - Remove the corresponding literals (i.e., those appearing in $S'$ and $\overline{S'}$ ), and repeat this process
+    * ***N.B.*** This removal correspondingly simplifies the resulting formula (i.e., remainder of the graph)
+
 ## 11. 2-SAT Algorithm
 
 ## 12-13. Proof of Key Fact
