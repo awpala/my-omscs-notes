@@ -1193,6 +1193,22 @@ Therefore, by corollary, we will next see that that, in general, if literal $x_i
 
 ## 8. Strongly Connected Components (SCC)
 
+Let us now formalize the previously described (cf. Section 7) relationship between the strongly connected components (SCCs) of the directed graph resulting from the input formula $f$ in cumulative normal form (CNF) for the 2-SAT problem, and the corresponding satisfiability of $f$ .
+
+![](./assets/13-GR2-012.png){ width=650px }
+
+Consider the following ***lemma***:
+
+> For some $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in the ***same*** strongly connected component (SCC), then $f$ is ***not*** satisfiable.
+
+***N.B.*** Recall (cf. Section 7) that this is proved to be necessarily true, because otherwise the existence of such a strongly connected component (SCC) results in a contradiction between $x_i$ and $\overline{x_i}$ with respect to the corresponding assignments.
+
+Now, consider the complementary corollary ***lemma***:
+
+> For all $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in the ***different*** strongly connected component (SCC), then $f$ ***is*** satisfiable.
+
+In this latter lemma, we will prove this by directly finding such a corresponding satisfying assignment via the corresponding directed graph form of the input $f$ . To accomplish this, we will next construct an algorithm to find such a satisfying assignment.
+
 ## 9-10. Algorithm Idea
 
 ### 9. Approach 1
