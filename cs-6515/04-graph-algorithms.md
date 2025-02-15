@@ -1205,7 +1205,7 @@ Consider the following ***lemma***:
 
 Now, consider the complementary corollary ***lemma***:
 
-> For all $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in the ***different*** strongly connected component (SCC), then $f$ ***is*** satisfiable.
+> For all $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in a ***different*** strongly connected component (SCC), then $f$ ***is*** satisfiable.
 
 In this latter lemma, we will prove this by directly finding such a corresponding satisfying assignment via the corresponding directed graph form of the input $f$ . To accomplish this, we will next construct an algorithm to find such a satisfying assignment.
 
@@ -1264,6 +1264,50 @@ Therefore, we can summarize this procedure as follows:
     * ***N.B.*** This removal correspondingly simplifies the resulting formula (i.e., remainder of the graph)
 
 ## 11. 2-SAT Algorithm
+
+![](./assets/13-GR2-016.png){ width=650px }
+
+The ***key fact*** that we have discussed (cf. Section 10), but not yet proven, is the following:
+
+> For all $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in a ***different*** strongly connected component (SCC), then $S$ is a ***sink*** strongly connected component (SCC) if and only if its complement $\overline{S}$ is a ***source*** strongly connected component (and vice versa).
+
+### Pseudocode
+
+Taking this key fact for granted (for now), we can design the corresponding algorithm for the 2SAT problem as per the following pseudocode:
+
+$$
+\boxed{
+\begin{array}{l}
+{{\text{2SAT}}(f):}\\
+\ \ \ \ {{\text{input:\ }} {\text{formula\ }} f {\text{\ in\ conjunctive\ normal\ form\ (CNF)}}}\\
+\ \ \ \ {{\text{output:\ }} {\text{a\ satisfiable\ assignment\ for\ }} f}\\
+\\
+\ \ \ \ {{\text{1.\ }} {\text{Construct\ graph\ }} G {\text{\ for\ }} f}\\
+\ \ \ \ {{\text{2.\ }} {\text{Take\ a\ sink\ source\ strongly\ connected\ component\ (SCC),\ }} S:}\\
+\ \ \ \ \ \ \ \ {{\text{Set\ }} S = {\text{T}} {\text{\ and\ set\ }} \overline{S} = {\text{F}}}\\
+\ \ \ \ \ \ \ \ {{\text{Remove\ }} S {\text{\ and\ }} \overline{S} {\text{\ from\ graph\ }} G}\\
+\ \ \ \ \ \ \ \ {{\text{Repeat\ Step\ 2\ until\ graph\ }} G {\text{\ is\ empty}}}\\
+\end{array}
+}
+$$
+
+As ***input*** we have formula $f$ in conjunctive normal form (CNF). Here, we assume that all of the clauses in $f$ are of exactly size $2$ .
+
+Next, we construct the (directed) graph of implications $G$ corresponding to formula $f$ . Given this graph $G$ , we run the strongly connected component (SCC) algorithm (cf. Graphing Algorithms 1) on this graph, resulting in a topological ordering of these strongly connected components (SCCs) in $G$ .
+
+Now, we take the last component $S$ (i.e., a sink strongly connected component [SCC]) in $G$ via corresponding topological ordering, and then set it such that $S = \text{T}$ (i.e., all/both of the constituent literals in $S$ are satisfied); correspondingly, we also set $\overline{S}$ (the complementary source strongly connected component [SCC]) such that $\overline{S}$ (i.e., all/both of the constituent literals in $\overline{S}$ are unsatisfied). Upon setting in this manner, we simultaneously remove $S$ and $\overline{S}$ from $G$ , and then repeat this procedure on the resulting remainder graph, until the remainder graph is ultimately empty. At this point, input formula $f$ has been satisfied.
+
+### Running Time
+
+By inspection, the main/"bottlenecking" step in this algorithm is construction of the strongly connected components (SCCs); recall (cf. Graphing Algorithms 1) that this has an overall linear running time, i.e.,:
+
+$$
+O(n + m)
+$$
+
+where $n = |V|$ and $m = |E|$ .
+
+Now, it still remains to prove the aforementioned "key fact" which underlies this algorithm, as discussed next.
 
 ## 12-13. Proof of Key Fact
 
