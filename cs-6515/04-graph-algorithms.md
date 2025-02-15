@@ -990,9 +990,42 @@ As opposed to depth first search (DFS), **breadth first search** (**BFS**) explo
 > [!NOTE]
 > ***Instructor's Note***: For Eric's notes see [here](https://cs6505.wordpress.com/schedule/2-sat/).
 
+Now, we consider an application of the strongly connected components (SCCs) algorithm (cf. Graph Algorithms 1), the **satisfiability** (**SAT**) **problem**.
+  * ***N.B.*** The satisfiability problem has a central role in our later study/examination of NP-completeness.
+
+![](./assets/13-GR2-001.png){ width=650px }
+
+First, consider some relevant ***terminology***.
+
+A **Boolean formula** is comprised of $n$ **variables** $x_1, x_2, \dots, x_n$ (having Boolean values $true$ or $false$ ) and $2n$ **literals** $x_1, \overline{x_1}, x_2, \overline{x_2}, \dots, x_n, \overline{x_n}$ (where $\overline{x_i}$ is the complement of $x_i$ ). Furthermore, the formulas are composed of logical **operators** $\wedge$ ($\text{AND}$ ) and $\vee$ ($\text{OR}$ )
+
+Given this notation, we examine formulas in **conjunctive normal form** (**CNF**), which is composed of several **clauses** (the $\text{OR}$ of several literals, e.g., $x_3 \vee \overline{x_5} \vee \overline{x_1} \vee x_2$ ), which are used to construct such a **formula** $f$ in conjunctive normal form, which is in the $\text{AND}$ form of $m$ such clauses.
+
+An example of a formula in conjunctive normal form is as follows:
+
+$$
+(x_2) \wedge (\overline{x_3} \vee x_4) \wedge (x_3 \vee \overline{x_5} \vee \overline{x_1} \vee x_2) \wedge (\overline{x_2} \vee \overline{x_1})
+$$
+
+This formula is comprised of four clauses (where each such clause is comprised of at least one literal). In order to satisfy this formula, at least one literal in each these clauses must be satisfied. For example, the following satisfies this formula:
+
+$$
+x_1 = \text{F}\\
+x_2 = \text{T}\\
+x_3 = \text{F}
+$$
+
+***N.B.*** In this particular case/formula, this is sufficient to satisfy the formula, irrespectively of the values of $x_4$ and $x_5$ .
+
+In general, any given formula can be converted into conjunctive normal form (CNF), however, the size of the resulting formula may also generally increase arbitrarily.
+
+Given this background information, we next define the satisfiability (SAT) problem more precisely.
+
 ### 2-3. Satisfiability (SAT) Problem
 
 #### 2. Introduction
+
+
 
 #### 3. Quiz and Answers
 
