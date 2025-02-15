@@ -1313,6 +1313,26 @@ Now, it still remains to prove the aforementioned "key fact" which underlies thi
 
 ### 12. Introduction
 
+![](./assets/13-GR2-017.png){ width=650px }
+
+It still remains to prove the previously seen (cf. Section 11) key fact, given as follows:
+
+> For all $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in a ***different*** strongly connected component (SCC), then $S$ is a ***sink*** strongly connected component (SCC) if and only if its complement $\overline{S}$ is a ***source*** strongly connected component (and vice versa).
+
+In order to prove this key fact, we can first examine the follow *simpler* claim:
+
+> Given a pair of literals $\alpha$ and $\beta$ , if there is a path $\alpha \rightsquigarrow \beta$ then there is also a path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ (and vice versa).
+
+Let us assume that this claim holds true for now, and use it to prove the original key fact.
+
+Consider a sink strongly connected component (SCC) $S$ , and let us prove that complementary strongly connected component (SCC) $\overline{S}$ is indeed a source. Let the vertices pair $\{ \alpha, \beta \}$ reside in $S$ (i.e., $\alpha, \beta \in S$ ). Since $S$ is a strongly connected component (SCC), then necessarily $\alpha$ and $\beta$ are strongly connected with each other (by virtue of being constituents of the same strongly connected components [sCC]), and correspondingly there exist both paths $\alpha \rightsquigarrow \beta$ and $\beta \rightsquigarrow \alpha$ .
+
+Furthermore, our simpler claim implies that paths $\overline{\beta} \rightsquigarrow \overline{\alpha}$ and $\overline{\alpha} \rightsquigarrow \overline{\beta}$ (respectively) also exist, and therefore this implies that $\overline{\alpha}$ and $\overline{\beta}$ also exist in the same strongly connected component (SCC), denoted by $\overline{S}$ . Therefore, this proves the following part of the original key fact, i.e.,:
+
+> If $S$ is a strongly connected component (SCC), then $\overline{S}$ is also a strongly connected component (SCC) (and vice versa).
+
+However, it still remains to prove that if $S$ is a *sink* strongly connected component (SCC), then $\overline{S}$ is a *source* strongly connected component (SCC) (and vice versa); we prove this next.
+
 ### 13. Rest of Proof
 
 ## 14. Proof of Claim
