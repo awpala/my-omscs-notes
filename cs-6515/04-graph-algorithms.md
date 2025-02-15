@@ -1025,17 +1025,50 @@ Given this background information, we next define the satisfiability (SAT) probl
 
 #### 2. Introduction
 
+![](./assets/13-GR2-002.png){ width=650px }
 
+The ***input*** to the **satisfiability** (**SAT**) **problem** is a formula $f$ in conjunctive normal form (CNF) with $n$ variables ($x_1, x_2, \dots, x_n$ ) and $m$ clauses.
+
+The ***output*** is an assignment (i.e., assign $\text{T}$ or $\text{F}$ to each input variable) which satisfies the formula $f$ , if such an assignment exists, otherwise $\text{NO}$ if no such assignment exists.
 
 #### 3. Quiz and Answers
 
-#### Question 1
+![](./assets/13-GR2-003Q.png){ width=650px }
 
-#### Question 2
+Consider the following input formula to the satisfiability (SAT) problem:
 
-#### Question 3
+$$
+f = (\overline{x_1} \vee \overline{x_2} \vee x_3) \wedge (x_2 \vee x_3) \wedge (\overline{x_3} \vee \overline{x_1}) \wedge (\overline{x_3})
+$$
+
+Specify the corresponding output for this input.
+
+![](./assets/13-GR2-004A.png){ width=650px }
+
+One such satisfying assignment for this formula is the following:
+
+$$
+x_1 = \text{F}\\
+x_2 = \text{T}\\
+x_3 = \text{F}
+$$
 
 ### 4. $k$-SAT
+
+![](./assets/13-GR2-005A.png){ width=650px }
+
+We will now consider a more ***restrictive*** form of the satisfiability (SAT) problem called **$k$-SAT**,e.g., in the 3-SAT problem, the input is a formula $f$ in conjunctive normal form (CNF) with clause of size at most $3$ .
+
+More generally we can restate the ***input*** as follows:
+
+> Formula $f$ in conjunctive normal form (CNF) with $n$ variables ($x_1, x_2, \dots, x_n$ ) and $m$ clauses, with each clause of size at most $k$ (i.e., $\le k$ ).
+
+***N.B.*** Recall (cf. Section 1) that the size of a given clause is based on the number of literals that it contains (e.g., $x_1, x_2, x_3$ in a 3-SAT problem).
+
+We will later see (cf. NP-completeness) that the satisfiability (SAT) problem is NP-complete, and furthermore $k$-SAT is NP-complete for all $k \ge 3$ .
+
+For now, we will next examine a polynomial-time algorithm for the 2-SAT problem.
+  * ***N.B.*** Note the interesting dichotomy here: While the 2-SAT problem (i.e., $k = 2$ ) has a polynomial-time algorithm (as will be demonstrated shortly), the $k$-SAT problem with $k \ge 3$ is generally NP-complete.
 
 ## 5. Simplifying Input
 
