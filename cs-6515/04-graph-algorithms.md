@@ -1399,6 +1399,19 @@ This concludes the proof of the simpler claim, as well as the corresponding key 
 
 ## 1. Greedy Approach
 
+![](./assets/14-GR3-001.png){ width=650px }
+
+We will now consider the **greedy approach** for optimization problems.
+
+In this approach, when taking a ***locally*** optimal move (i.e., at a given step of a partial solution), we next determine the following: When does this eventually lead to the ***global*** optimum?
+
+Recall (cf. Dynamic Programming 2) that this approach does *not* work for the knapsack problem, but rather a dynamic programming approach can be used to find this optimal solution instead.
+
+Conversely, in the **minimum spanning tree** (**MST**) problem, we will next examine how such a greedy approach can indeed yield a (globally) optimal solution. In particular, we will examine **Kruskal's algorithm** (which may be familiar from course prerequisites), with additional emphasis on proof of its correctness via the corresponding lemma called the **cut property**.
+  * ***N.B.*** For present purposes, it is important to understand the statement of the cut property and its corresponding proof. Furthermore, the proof itself introduces some useful ideas which are also important to understand accordingly. Furthermore, as a byproduct of this general lemma (i.e., the cut property), we will also see that **Prim's algorithm** is correct by similar rationale/proof.
+
+Next, we will recall (cf. course prerequisites) the formulation of **minimum spanning tree** (**MST**) problem, followed by corresponding formulation and proof of the cut property.
+
 ## 2. Minimum Spanning Tree (MST) Problem
 
 > [!NOTE]
