@@ -1167,6 +1167,30 @@ i.e., inability to satisfy the left (complementary) literal implies necessary sa
 
 ## 7. Graph Properties
 
+![](./assets/13-GR2-011.png){ width=650px }
+
+Recall (cf. Section 2) the following example input (with corresponding graph as in the figure shown above):
+
+$$
+f = (\overline{x_1} \vee \overline{x_2}) \wedge (x_2 \vee x_3) \wedge (\overline{x_3} \vee \overline{x_1})
+$$
+
+Now, let us further consider this graph, and explore some of its corresponding properties.
+
+Consider the particular path $x_1 \rightarrow \overline{x_2} \rightarrow x_3 \rightarrow \overline{x_1}$ (as denoted by black shading in the figure shown above), or equivalently $x_1 \rightsquigarrow \overline{x_1}$ .
+
+Observe that this is a ***path of implications***, where each such edge is an implication.
+
+Following along this path, if $x_1 = \text{T}$ (start of path), then ultimately necessarily $\overline{x_1} = \text{F}$ (end of path); however, this is clearly a *contradiction*. Therefore, $x_1 = \text{T}$ *cannot* satisfy formula $f$ in this manner.
+
+Conversely, if $x_1 = \text{F}$ (start of path), since there are no edges out of $\overline{x_1}$ , then there are no corresponding implications, therefore, this *may* be appropriate. At this point, we can proceed to other variables, since all that is known is that there is a path $x_1 \rightsquigarrow \overline{x_1}$ for which $x_1 = \text{F}$ is *not* a valid choice. Therefore, if $x_1$ and $\overline{x_1}$ are in the *same* strongly connected component (SCC), then formula $f$ is ***not*** satisfiable.
+
+Now, consider the following: If there were such a reverse path $\overline{x_1} \rightsquigarrow x_1$ in addition to the original path $x_1 \rightsquigarrow \overline{x_1}$ , then $f$ is necessarily not satisfiable, since there is no way to set $x_1$ and $\overline{x_1}$ in such a consistent manner which is satisfiably assignable.
+
+Furthermore, with respect ot the graph, if there are two such complementary paths $x_1 \rightsquigarrow \overline{x_1}$ and $\overline{x_1} \rightsquigarrow x_1$ , then this implies that both corresponding vertices $x_1$ and $\overline{x_1}$ reside in the *same* strongly connected component (SCC). More generally, this holds for any such complementary pair of variables $x_i$ and $\overline{x_i}$ , i.e., the presence of both in the same strongly connected component (SCC) implies that input $f$ is *not* satisfiable.
+
+Therefore, by corollary, we will next see that that, in general, if literal $x_i$ and its negation $\overline{x_i}$ are in *different* strongly connected components (SCCs), and if this holds true for all of the variables (i.e., vertices in the corresponding graph), then we can find a corresponding satisfiable assignment for $f$ . Furthermore, finding such a satisfiable assignment will correspondingly prove the satisfiability of $f$ accordingly.
+
 ## 8. Strongly Connected Components (SCC)
 
 ## 9-10. Algorithm Idea
