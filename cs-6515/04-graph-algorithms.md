@@ -1106,11 +1106,64 @@ A ***key observation*** is the following:
 
 > $f$ is satisfiable $\iff$ $f'$ is satisfiable
 
-This is readily true, as the only way to satisfy $f$ (the original formula) is via corresponding sastifiability of the unit clause used to simplify $f$ to $f'$ . Furthermore, the implication of this simplification procedure is that as long as there are unit clauses, eventually the resulting formula is either satisfied or otherwise yields clauses of exactly size $2$ .
+This is readily true, as the only way to satisfy $f$ (the original formula) is via corresponding satisfiability of the unit clause used to simplify $f$ to $f'$ . Furthermore, the implication of this simplification procedure is that as long as there are unit clauses, eventually the resulting formula is either satisfied or otherwise yields clauses of exactly size $2$ .
 
 Now, in order to design an algorithm, we can assume that the input to the 2-SAT problem has clauses which are all of exactly size $2$ . Next, we will examine the relationship between this 2-SAT problem and the previously seen (cf. Graph Algorithms 1) strongly connected components (SCCs) algorithm.
 
 ## 6. Graph of Implications
+
+Now, take the input $f$ in cumulative normal form (CNF) with all clauses assumed to be of exactly size $2$ (cf. Section 5), where $f$ is comprised of $n$ variables and $m$ such clauses.
+
+![](./assets/13-GR2-009.png){ width=650px }
+
+We want to convert this logic problem into a graph problem. To accomplish this, we take Boolean formula $f$ and convert it into corresponding directed graph, whereby the graph encodes all of the information in this input formula. The general correspondence is a follows:
+  * $2n$ vertices correspond to inputs $x_1, \overline{x_1}, \dots, x_n, \overline{x_n}$
+  * $2m$ edges correspond to $2$ "implications" per clause
+
+Consider the following example input:
+
+$$
+f = (\overline{x_1} \vee \overline{x_2}) \wedge (x_2 \vee x_3) \wedge (\overline{x_3} \vee \overline{x_1})
+$$
+
+The corresponding graph has six vertices corresponding to the six literals (as in the figure shown above, denoted by purple vertices).
+
+In the first clause $\overline{x_1} \vee \overline{x_2}$ , suppose that $x_1 = \text{T}$ . In this case, the first literal (i.e., $\overline{x_1}$ ) is *not* satisfied, and therefore it is necessarily true that $x_2 = \text{F}$ , i.e., $x_1 = \text{T} \rightarrow x_2 = \text{F}$ . Similarly, in this first clause, $x_2 = \text{T} \rightarrow x_1 = \text{F}$ .
+
+Therefore, to encode these ***implications***, we add the corresponding edges as follows (as denoted by red edges/arrows in the figure shown above):
+
+$$
+x_1 \rightarrow \overline{x_2}\\
+x_2 \rightarrow \overline{x_1}
+$$
+
+Similarly, the second clause yields the following pair of implications:
+
+$$
+\overline{x_2} \rightarrow x_3\\
+\overline{x_3} \rightarrow x_2
+$$
+
+And, finally, the third clause similarly yields the following pair of implications:
+
+$$
+x_3 \rightarrow \overline{x_1}\\
+x_1 \rightarrow \overline{x_3}
+$$
+
+
+![](./assets/13-GR2-010.png){ width=650px }
+
+The resulting graph is in the figure shown above.
+
+Furthermore, in general, given a clause comprised of literals $\alpha$ and $\beta$ (i.e., clause $(\alpha \vee \beta)$ for the 2-SAT problem), then the corresponding edges are given as:
+
+$$
+\overline{\alpha} \rightarrow \beta\\
+\overline{\beta} \rightarrow \alpha
+$$
+
+i.e., inability to satisfy the left (complementary) literal implies necessary satisfiability of the right literal in the corresponding pairs $x \rightarrow y$ .
 
 ## 7. Graph Properties
 
