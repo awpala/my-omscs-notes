@@ -1213,6 +1213,35 @@ In this latter lemma, we will prove this by directly finding such a correspondin
 
 ### 9. Approach 1
 
+Recall (cf. Graphing Algorithms 1) the strongly connected component (SCC) algorithm:
+  * 1 - Find the sink strongly connected component (SCC)
+  * 2 - Mark the vertices in the sink strongly connected component (SCC)
+  * 3 - Remove the sink strongly connected component (SCC) and recurse on the resulting remainder graph
+
+![](./assets/13-GR2-013.png){ width=650px }
+
+In this first approach, we follow a similar procedure.
+
+First, we identify a sink strongly connected component (SCC) $S$ (as in the figure shown above). In this example, sink strongly connected component (SCC) $S$ is comprised of literals $x_1$ and $\overline{x_3}$ .
+
+Sink strongly connected component (SSC) $S$ only has edges coming in, but none going out. How should we set the values of the literals? We should set them both to $\text{T}$ .
+
+Why is this the case? Consider the edge into literal $\overline{x_3}$ , i.e., let this edge be denoted by $x_2 \rightarrow \overline{x_3}$ . If we let $x_2 = \text{T}$ , then necessarily this implication only holds if correspondingly $\overline{x_3} = \text{F}$ . Therefore, in order to satisfy all such literals in sink strongly connected component (SCC) $S$ , it is necessarily the case that all (i.e., both) of its constituent literals are $\text{T}$ (e.g., $x_1 = \text{T}$ and $\overline{x_3} = \text{T} \implies x_3 = \text{F}$ in this particular case).
+
+Correspondingly, we set the sink strongly connected component (SCC) $S$ to be $S = T$ (i.e., satisfy all of the literals in $S$ accordingly). Since $S$ is a sink, there are no outgoing edges, and therefore there are no corresponding implications to follow as a result of this assignment; correspondingly, the "tail" end of the implications for incoming edges are already satisfied.
+
+![](./assets/13-GR2-014.png){ width=650px }
+
+Now, we can remove this sink strongly connected component (SCC) and proceed onto the remainder of the graph (as in the figure shown above).
+
+We repeat the aforementioned procedure on the remainder of the graph.
+
+However, there is a problem: What to do about the complement of the set $\{ x_1, \overline{x_3} \}$ (i.e., $\{ \overline{x_1}, x_3  \}$ ) in the initial sink strongly connected component (SCC)? In general, we have *not* satisfied the complementary set, which may generally have incoming edges that result in a contradictory assignment for these (complementary) literals.
+
+To potentially resolve this issue, ideally, the complementary strongly connected component (SCC) $\overline{S}$ would be a source strongly connected component (SCC), which correspondingly does *not* contain any such incoming edges, thereby satisfying the assignments of the complementary-pairs sets. In this case, we can safely set $\overline{S} = \text{F}$ accordingly; furthermore, such a source strongly connected component (SCC) $\overline{S}$ does *not* have outbound edges (i.e., implications) requiring satisfiable assignment for the (non-existent) "downstream/tali" literal.
+
+Therefore, next, we will use this idea of complementary sink and source strongly connected components (SCCs) to reformulate our approach for this algorithm.
+
 ### 10. Approach 2
 
 ## 11. 2-SAT Algorithm
