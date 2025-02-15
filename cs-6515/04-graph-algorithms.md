@@ -1309,7 +1309,7 @@ where $n = |V|$ and $m = |E|$ .
 
 Now, it still remains to prove the aforementioned "key fact" which underlies this algorithm, as discussed next.
 
-## 12-13. Proof of Key Fact
+## 12-14. Proof of Key Fact
 
 ### 12. Introduction
 
@@ -1335,7 +1335,33 @@ However, it still remains to prove that if $S$ is a *sink* strongly connected co
 
 ### 13. Rest of Proof
 
-## 14. Proof of Claim
+Now, let us conclude the proof of the previously assumed (cf. Section 11) key fact, repeated here as follows:
+
+> For all $i$ , if literals $x_i$ and $\overline{x_i}$ (the negation of $x_i$ ) are both in a ***different*** strongly connected component (SCC), then $S$ is a ***sink*** strongly connected component (SCC) if and only if its complement $\overline{S}$ is a ***source*** strongly connected component (and vice versa).
+
+Furthermore, recall (cf. Section 12) the following simpler claim to facilitate the proof of this key fact:
+
+> Given a pair of literals $\alpha$ and $\beta$ , if there is a path $\alpha \rightsquigarrow \beta$ then there is also a path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ (and vice versa).
+
+![](./assets/13-GR2-018.png){ width=650px }
+
+So far (cf. Section 12), we have proven the forward implication, i.e.,:
+
+> If $S$ is source a strongly connected component (SCC), then $\overline{S}$ is a sink strongly connected component (SCC).
+
+Therefore, it still remains to prove the reverse implication, i.e.,:
+
+> If $\overline{S}$ is sink a strongly connected component (SCC), then $S$ is a source strongly connected component (SCC).
+
+To prove the latter, take sink strongly connected component (SCC) $S$ , and consider vertex/literal $\alpha \in S$ . Since $S$ is a strongly connected component (SCC), then this implies the following for all $\alpha \in S$ :
+  * There are no (outgoing) edges $\alpha \rightarrow \beta$ in $S$ (via corresponding simpler claim) $\implies$ there are no edges $\overline{\beta} \rightarrow \overline{\alpha}$ (via corresponding simpler claim)
+  * There are no (outgoing) edges from $\alpha$ $\implies$ no incoming edges to $\overline{\alpha}$
+
+Given these properties, it is therefore necessarily true that $\overline{S}$ is a source strongly connected component (SCC). Furthermore, the reverse is also true by this reasoning: If $\overline{S}$ is a source strongly connected component (SCC), then $S$ is a sink strongly connected component (SCC), thereby proving the key fact accordingly.
+
+However, it still remains to prove the claim used in establishing this key fact, as discussed next.
+
+### 14. Proof of Claim
 
 # Graph Algorithms 3: Minimum Spanning Tree
 
