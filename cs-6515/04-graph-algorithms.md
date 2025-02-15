@@ -1043,8 +1043,6 @@ $$
 
 Specify the corresponding output for this input.
 
-![](./assets/13-GR2-004A.png){ width=650px }
-
 One such satisfying assignment for this formula is the following:
 
 $$
@@ -1068,9 +1066,49 @@ More generally we can restate the ***input*** as follows:
 We will later see (cf. NP-completeness) that the satisfiability (SAT) problem is NP-complete, and furthermore $k$-SAT is NP-complete for all $k \ge 3$ .
 
 For now, we will next examine a polynomial-time algorithm for the 2-SAT problem.
-  * ***N.B.*** Note the interesting dichotomy here: While the 2-SAT problem (i.e., $k = 2$ ) has a polynomial-time algorithm (as will be demonstrated shortly), the $k$-SAT problem with $k \ge 3$ is generally NP-complete.
+  * ***N.B.*** Note the interesting dichotomy here: While the 2-SAT problem (i.e., $k = 2$ ) has a polynomial-time algorithm (as will be demonstrated shortly), conversely, the $k$-SAT problem with $k \ge 3$ is generally NP-complete.
 
 ## 5. Simplifying Input
+
+![](./assets/13-GR2-006.png){ width=650px }
+
+Consider the following input $f$ for the 2-SAT problem:
+
+$$
+(x_3 \vee \overline{x_2}) \wedge (\overline{x_1}) \wedge (x_1 \vee x_4) \wedge (\overline{x_4} \vee x_2) \wedge (\overline{x_3} \vee x_4)
+$$
+
+Now, consider how to ***simplify*** this input to the 2-SAT problem. In particular, we wish to remove ***unit clauses*** (i.e., clauses with exactly *one* literal).
+
+In this particular example, the only way to satisfy the unit clause $\overline{x_1}$ is to set $x_1 = \text{F} \implies \overline{x_1} = \text{T}$ .
+
+More generally, to to simplify unit clauses, use the following ***procedure***:
+  * 1 - Given a unit clause comprised of literal $a_i$
+  * 2 - Satisfy the unit clause by setting $a_i = \text{T}$
+  * 3 - Eliminate any clauses containing $a_i$ and drop $\overline{a_i}$
+  * 4 - Let $f'$ be the resulting formula
+
+Following this procedure with $x_1 = \text{F} \implies \overline{x_1} = \text{T}$ as before, the input $f$ simplifies to $f'$ as follows (with corresponding elimination of $x_1$ )
+
+$$
+(x_3 \vee \overline{x_2}) \wedge (x_4) \wedge (\overline{x_4} \vee x_2) \wedge (\overline{x_3} \vee x_4)
+$$
+
+![](./assets/13-GR2-007.png){ width=650px }
+
+The ***claim*** now is that $f$ is satisfiable if and only if $f'$ is also satisfiable.
+
+Furthermore, with this simplified input, observe that another unit clause results, $x_4$ . We can set $x_4 = \text{T}$ and repeat the aforementioned process, repeating in this manner until an empty formula results (which is trivially satisfied), or where all clauses are of size exactly $2$ .
+
+![](./assets/13-GR2-008.png){ width=650px }
+
+A ***key observation*** is the following:
+
+> $f$ is satisfiable $\iff$ $f'$ is satisfiable
+
+This is readily true, as the only way to satisfy $f$ (the original formula) is via corresponding sastifiability of the unit clause used to simplify $f$ to $f'$ . Furthermore, the implication of this simplification procedure is that as long as there are unit clauses, eventually the resulting formula is either satisfied or otherwise yields clauses of exactly size $2$ .
+
+Now, in order to design an algorithm, we can assume that the input to the 2-SAT problem has clauses which are all of exactly size $2$ . Next, we will examine the relationship between this 2-SAT problem and the previously seen (cf. Graph Algorithms 1) strongly connected components (SCCs) algorithm.
 
 ## 6. Graph of Implications
 
@@ -1084,7 +1122,7 @@ For now, we will next examine a polynomial-time algorithm for the 2-SAT problem.
 
 ### 10. Approach 2
 
-## 11. 2SAT Algorithm
+## 11. 2-SAT Algorithm
 
 ## 12-13. Proof of Key Fact
 
