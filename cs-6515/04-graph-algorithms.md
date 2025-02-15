@@ -1273,12 +1273,12 @@ The ***key fact*** that we have discussed (cf. Section 10), but not yet proven, 
 
 ### Pseudocode
 
-Taking this key fact for granted (for now), we can design the corresponding algorithm for the 2SAT problem as per the following pseudocode:
+Taking this key fact for granted (for now), we can design the corresponding algorithm for the 2-SAT problem as per the following pseudocode:
 
 $$
 \boxed{
 \begin{array}{l}
-{{\text{2SAT}}(f):}\\
+{{\text{2-SAT}}(f):}\\
 \ \ \ \ {{\text{input:\ }} {\text{formula\ }} f {\text{\ in\ conjunctive\ normal\ form\ (CNF)}}}\\
 \ \ \ \ {{\text{output:\ }} {\text{a\ satisfiable\ assignment\ for\ }} f}\\
 \\
@@ -1362,6 +1362,38 @@ Given these properties, it is therefore necessarily true that $\overline{S}$ is 
 However, it still remains to prove the claim used in establishing this key fact, as discussed next.
 
 ### 14. Proof of Claim
+
+![](./assets/13-GR2-019.png){ width=650px }
+
+Finally, it remains to prove the following simpler claim (cf. Section 12):
+
+> Given a pair of literals $\alpha$ and $\beta$ , if there is a path $\alpha \rightsquigarrow \beta$ then there is also a path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ (and vice versa).
+
+Consider a path $\alpha \rightsquigarrow \beta$ , and let us furthermore construct the corresponding path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ .
+
+To do this, let us first denote the vertices in the path $\alpha \rightsquigarrow \beta$ as follows:
+
+$$
+\gamma _0 \rightarrow \gamma _1 \rightarrow \gamma _2 \rightarrow \cdots \rightarrow \gamma _{\ell}
+$$
+
+where $\gamma _0 = \alpha$ and $\gamma _{\ell} = \beta$ .
+
+Consider edge $\gamma _1 \rightarrow \gamma _2$ . This edge derives from the clause $(\overline{\gamma _1} \vee \gamma _2)$ . Furthermore, every such clause implies *two* edges; in this case, the other is $\overline{\gamma _2} \rightarrow \overline{\gamma _1}$ .
+
+Similarly, examining edge $\gamma _0 \rightarrow \gamma _1$ implies the corresponding edge $\overline{\gamma _1} \rightarrow \overline{\gamma _0}$ .
+
+Proceeding in this manner, the corresponding "chaining" results in the following overall "reversed" path $\overline{\gamma _{\ell}} \rightsquigarrow \overline{\gamma _0}$ (as in the figure shown above, as denoted in red):
+
+$$
+\overline{\gamma _0} \leftarrow  \overline{\gamma _1} \leftarrow  \overline{\gamma _2} \leftarrow \cdots \leftarrow \overline{\gamma _{\ell}}
+$$
+
+This equivalently describes path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ (via $\gamma _0 = \alpha$ and $\gamma _{\ell} = \beta$ ), thereby correspondingly proving the reverse implication (i.e., if there is a path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ then there is a path $\alpha \rightsquigarrow \beta$ ) accordingly.
+
+Furthermore, the forward implication (i.e., if there is a path $\alpha \rightsquigarrow \beta$ then there is also a path $\overline{\beta} \rightsquigarrow \overline{\alpha}$ ) results directly from a symmetric argument in the other direction.
+
+This concludes the proof of the simpler claim, as well as the corresponding key fact (cf. Section 13) in which it is used to prove the correctness of the algorithm for the 2-SAT problem.
 
 # Graph Algorithms 3: Minimum Spanning Tree
 
