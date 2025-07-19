@@ -3,10 +3,10 @@
 # This is a simple script to output the table of contents from a course's constituent
 # .md markdown notes files. By default, the script will parse the current working
 # directory inside of which it is located and output file toc.txt. Otherwise, specify
-# the path to the course subfolder as the first command line argument (e.g., cs-6200)
+# the path to the course subfolder as the first command line argument (e.g., ../cs-6200)
 # and the target output file as the second command line argument (e.g., gios-toc),
 # for example:
-# $ ./get-toc ./cs-6200 gios-toc 
+# $ ./get-toc ../cs-6200 gios-toc
 
 # Get the path from the first command line argument, or use the current directory if no argument is provided
 path=${1:-.}

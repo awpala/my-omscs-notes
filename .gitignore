@@ -1,0 +1,3 @@
+# ignore script output for table of contents generation
+*toc*
+toc.txt
