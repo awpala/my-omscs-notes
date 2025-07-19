@@ -9,6 +9,9 @@
 | [CS 8803-O08](/cs-8803-o08/) | Compilers - Theory and Practice | (N/A) |
 | [CSE 6220](/cse-6220) | High Performance Computing | ~~Spring 2024~~ Withdrawal |
 
+> [!WARNING]
+> Included video links are invalid/defunct as of 2025. See [OMSCS Open Courseware](https://sites.gatech.edu/omscsopencourseware/) as the current alternative.
+
 ## License and Terms
 
 [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
