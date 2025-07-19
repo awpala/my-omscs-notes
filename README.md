@@ -5,6 +5,7 @@
 | [CS 6200](/cs-6200) | Graduate Introduction to Operating Systems | Fall 2021 |
 | [CS 6290](/cs-6290) | High Performance Computer Architecture | Fall 2023 |
 | [CS 6515](/cs-6515) | Graduate Algorithms | Spring 2025 |
+| [CS 7641](/cs-7641) | Machine Learning | Spring 2026 |
 | [CS 8803-O08](/cs-8803-o08/) | Compilers - Theory and Practice | (N/A) |
 | [CSE 6220](/cse-6220) | High Performance Computing | ~~Spring 2024~~ Withdrawal |
 
