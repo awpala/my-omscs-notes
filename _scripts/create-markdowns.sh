@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This is a simple script to generate/initialize the .md markdown files from a course's constituent
-# top-level README.md markdown, with the corresponding Title as the top-level heading(s) in the first
+# top-level README.md markdown, with the corresponding Topic as the top-level heading(s) in the first
 # line of the correspondingly generated file(s). By default, the script will parse the current working
 # directory inside of which it is located and output to this as well. Otherwise, specify the path to the
 # course subfolder as the first command line argument (e.g., ../cs-7641) and the target output folder as
