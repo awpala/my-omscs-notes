@@ -1,5 +1,3 @@
-
-
 # My OMSCS Notes
 
 | Course Number | Course Title | Semester Taken |
