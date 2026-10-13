@@ -430,7 +430,7 @@ The key **benefit** of the asymmetric model is that it resolves some of the limi
   * Better portability
   * Achieves concurrency with a relatively smaller memory footprint than a regular worker thread in a multi-process or multi-threaded model
     * In the latter case, the worker must perform *everything* for a full request, therefore its memory requirements are comparatively larger than a comparable helper entity
-    * Additionally, in the AMPEG model, there is only a helper entity for each concurrent *blocking* I/o operation, whereas the multi-threaded and multi-process models require as many concurrent entities, processes, or threads as there are actual concurrent requests, irrespectively of whether or not they block
+    * Additionally, in the AMPED model, there is only a helper entity for each concurrent *blocking* I/o operation, whereas the multi-threaded and multi-process models require as many concurrent entities, processes, or threads as there are actual concurrent requests, irrespectively of whether or not they block
 
 The key **drawbacks** of the asymmetric model include:
   * Although it works well with such a server application, it is not necessarily as generally applicable to arbitrary applications.
