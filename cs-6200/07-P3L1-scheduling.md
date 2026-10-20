@@ -285,7 +285,7 @@ Consider the configuration described in the figure shown above, which assumes a 
 
 The sequence of events is as follows:
   1. Initially, `T3` is the only task present in the system. At time `t = 3s`, `T3` acquires a lock.
-  2. At time `t = 3s`, `T2` arrives, and since `T2` has a higher priority than `T1`, `T3` is preempted to allow for `T2`'s execution.
+  2. At time `t = 3s`, `T2` arrives, and since `T2` has a higher priority than `T3`, `T3` is preempted to allow for `T2`'s execution.
   3. At time `t = 5s`, `T1` arrives, and since `T1` has a higher priority than `T2`, `T2` is preempted to allow for `T1`'s execution.
   4. `T1` executes for `2s`, at which point it reaches a point in its execution where it must acquire the lock held by `T3`.
   5. Since the lock is not accessible by `T1`, `T1` is put on a wait queue associated with the lock, and the next highest priority task `T2` is consequently scheduled to execute.
