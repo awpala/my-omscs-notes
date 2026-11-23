@@ -122,8 +122,6 @@ TODO
 
 ### **8. Bare Metal**
 
-TODO
-
 <center>
 <img src="./assets/P03L06-005.png" width="650">
 </center>
@@ -131,6 +129,43 @@ TODO
 <center>
 <img src="./assets/P03L06-006.png" width="650">
 </center>
+
+### Two Main Virtualization Models & Type Naming
+
+  * Before describing the technical requirements for virtualization, review the **Two Main Virtualization Models**: **Bare-metal or Hypervisor-based** and **Hosted**.
+  * They are also commonly referred to as **Type 1** (for the Hypervisor-based model) and **Type 2** (for the Hosted model) in virtualization solutions.
+
+**Bare - metal == hyper visor -based**
+
+  * **VMM (HYPERVISOR)**
+  * The bare-metal model matches what was illustrated earlier: a Virtual Machine Monitor (VMM) or hypervisor manages physical resources and supports executing entire virtual machines.
+  * **Device challenge:** One issue with this model is devices. Under this model, the hypervisor must manage all possible devices—meaning device manufacturers must provide device drivers not only for different operating systems, but also for the different hypervisors that exist.
+
+
+**PRIVileged, service VM**
+  * To illustrate how this is addressed, the hypervisor model typically integrates a special virtual machine, such as a **service VM** (or **privileged VM**).
+  * It runs a standard operating system and holds full hardware privileges to access and perform any kind of hardware manipulation, just as if working directly on physical hardware.
+  * This privileged/service VM runs all of the device drivers and controls how devices on the platform are used.
+  * The service VM also runs management and configuration tasks, such as specifying exactly how the hypervisor shares resources across guest VMs.
+
+
+
+### Implementations: Xen & VMware ESX
+
+* This model is adopted by the **Xen** virtualization solution and by VMware's **ESX** hypervisor.
+* **Xen Open source or Citrix Xen Server**
+  * Applies to both the open-source version of Xen and the Citrix-supported version, **XenServer**.
+  * VMs running in the virtualized environment are referred to as **domains**.
+  * The privileged domain is called **dom 0**, and guest VMs are referred to as **domUs**.
+  * **Xen** is the actual hypervisor, while all drivers run in the privileged domain, **dom 0**—so managing all devices involves executing drivers that are part of **dom 0**.
+
+
+* *ESX vmware*
+  * Because VMware and its hypervisors were first to market, VMware still owns the largest percentage of virtualized server cores, which run the **ESX** hypervisor.
+  * Given this position, VMware can mandate from hardware vendors that they provide drivers for different devices included in the hypervisor.
+  * This is less severe because it targets the server market space, where servers in data centers have fewer devices (and less device variety) than laptops, desktops, or client platforms in general.
+  * To support a third-party developer community, VMware exports a number of **APIs**, helping both developers and users configure the exact policies enforced by the hypervisor.
+  * **Architectural change:** In the past, the ESX architecture had a control core / core domain based on a regular operating system—specifically **Linux**—whereas **right now**, all configuration-related tasks are configured via **remote APIs**.
 
 ### **9. Hosted**
 
