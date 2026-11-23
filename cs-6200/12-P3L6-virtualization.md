@@ -37,11 +37,16 @@ This section introduces the origin, core concept, and basic architecture of **Vi
 
 ## 3. Defining Virtualization
 
-TODO
-
 <center>
 <img src="./assets/P03L06-002.png" width="650">
 </center>
+
+This section covers the formal definition of **Virtualization** and the **three essential characteristics of a Virtual Machine Monitor (VMM)** based on Popek and Goldberg's classic 1974 paper :
+
+* **Formal Definition:** A virtual machine is defined as an **efficient, isolated duplicate of the real machine**, enabled and managed by a **Virtual Machine Monitor (VMM)**.
+* **Characteristic 1 — Equivalence / Fidelity:** The VMM provides a program environment essentially identical to the original machine—matching CPU architecture and device types—even if resource capacities differ (e.g., fewer CPUs or less memory), ensuring fidelity between virtualized hardware and the physical platform.
+* **Characteristic 2 — Efficiency / Near-Native Performance:** Programs running in the virtualized environment experience at most a minor slowdown; if allocated equivalent resources to the physical machine, the guest OS and its processes should perform as close to native speed as possible.
+* **Characteristic 3 — Complete Resource Control & Isolation:** The VMM retains full control over system resources—deciding which VM accesses what resource and when. Rather than inspecting every single hardware access, the VMM governs direct hardware access permissions and prevents a VM from altering resource policies to harm co-located VMs, guaranteeing safety and isolation.
 
 Reference: Popek and Goldberg "*Formal Requirements for Virtualizable Third Generation Architectures*" (1974)
 
