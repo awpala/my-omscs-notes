@@ -70,11 +70,17 @@ Based on the classical definition of **virtualization** by Popek and Goldberg (1
 
 ## 5. Benefits of Virtualization
 
-TODO
-
 <center>
 <img src="./assets/P03L06-003.png" width="650">
 </center>
+
+The **key benefits of Virtualization**, organized into five main areas:
+
+* **Consolidation & Cost Efficiency:** Enables running multiple VMs (with their own OSs and applications) on a single physical platform. Using fewer physical machines reduces space requirements, administrative overhead, and power bills while running the same workloads—lowering costs and improving system manageability.
+* **Hardware Decoupling, Availability & Reliability:** Encapsulating the OS and applications inside a VM decouples them from physical hardware, making it easy to **migrate**, **copy**, or **clone** workloads across physical hosts. This boosts **availability** (rapidly cloning VMs to handle load spikes) and **reliability** (migrating VMs off overheating or failing hardware nodes).
+* **Fault & Security Containment:** Encapsulation isolates software bugs and malicious behavior strictly within the resources allocated to that individual VM, preventing failures or attacks from compromising the entire physical host.
+* **Accelerated OS Research & Debugging:** Serves as a vital testbed for operating systems research, allowing developers to introduce new OS features inside a VM, observe behavior, and debug rapidly—bypassing the slow traditional cycle of physical hardware reboots and manual error-log searches.
+* **Cost-Effective Legacy OS Support:** Eliminates the need to dedicate separate physical hardware to outdated operating systems required by legacy applications; instead, legacy OSs can be packaged as VMs and co-located alongside modern workloads on shared hardware.
 
 ## 6. Benefits of Virtualization Quiz 1 and Answers
 
