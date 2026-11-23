@@ -24,11 +24,16 @@ Reference: Rosenblum and Garfinkel "*Virtual Machine Monitors: Current Technolog
 
 ## 2. What Is Virtualization?
 
-TODO
-
 <center>
 <img src="./assets/P03L06-001.png" width="650">
 </center>
+
+This section introduces the origin, core concept, and basic architecture of **Virtualization**, summarized into four key points:
+
+* **Historical Origin:** Virtualization originated in the 1960s at IBM. At the time, computing relied on a few large mainframes shared by many users and business services. To run diverse workloads concurrently on the same hardware without forcing everything onto a single operating system, a model was needed to deploy multiple OSs simultaneously on one physical platform.
+* **Core Concept (Hardware Illusion):** With virtualization, each operating system running on the shared physical platform operates under the illusion that it directly owns the underlying hardware resources—or at least a dedicated subset of them (e.g., believing it owns a smaller portion of the machine's actual physical memory).
+* **Virtual Machine (VM) & Terminology:** An operating system, its applications, and the virtual resources it perceives together form a **Virtual Machine (VM)**, distinguishing it from the natively managed physical machine. VMs are commonly referred to as **guests** (e.g., *guest VMs*) or **domains** (e.g., *guest domains*).
+* **The Virtualization Layer (VMM / Hypervisor):** Supporting multiple coexisting VMs requires an underlying software layer to allocate and manage real physical hardware resources while enforcing **isolation guarantees** across VMs. This layer is called a **Virtual Machine Monitor (VMM)** or **Hypervisor**, which can be designed and implemented using various technical approaches.
 
 ## 3. Defining Virtualization
 
