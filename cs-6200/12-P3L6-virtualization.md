@@ -2,7 +2,23 @@
 
 ## 1. Preview
 
-TODO
+<center>
+<img src="./assets/P03L06-025.png" width="650">
+</center>
+
+This lesson preview introduces the core topics and reference materials for System Virtualization, summarized into four key points:
+
+- **Core Topic & Role:** Explains what system virtualization is and why it is critical for managing physical resources within the system software stack.
+
+- **Key Virtualization Technologies:** Examines the core technical approaches behind popular virtualization solutions, including Xen, KVM, and VMware ESX .
+
+- **Hardware Advances (x86 Architecture):** Covers major hardware developments over the past decade driven by virtualization trends, specifically within the context of the x86 architecture.
+
+Reference Material: Much of the lecture draws from Rosenblum and Garfinkel's classic 2005 paper, Virtual Machine Monitors: Current Technologies and Future Trends. While the field has evolved significantly since 2005, the paper remains a useful foundational reference.
+
+<center>
+<img src="./assets/P03L06-026.png" width="650">
+</center>
 
 Reference: Rosenblum and Garfinkel "*Virtual Machine Monitors: Current Technologies and Future Trends*" (2005).
 
